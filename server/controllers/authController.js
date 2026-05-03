@@ -46,6 +46,58 @@ async function inscription(req, res) {
   }
 }
 
+// Connexion d'un utilisateur
+async function connexion(req, res) {
+  try {
+    const { email, motDePasse } = req.body;
+
+    if (!email || !motDePasse) {
+      return res.status(400).json({
+        message: "Veuillez remplir tous les champs."
+      });
+    }
+
+    const utilisateur = await userModel.trouverUtilisateurParEmail(email);
+
+    if (!utilisateur) {
+      return res.status(400).json({
+        message: "Email ou mot de passe incorrect."
+      });
+    }
+
+    const motDePasseValide = await bcrypt.compare(
+      motDePasse,
+      utilisateur.mot_de_passe
+    );
+
+    if (!motDePasseValide) {
+      return res.status(400).json({
+        message: "Email ou mot de passe incorrect."
+      });
+    }
+
+    req.session.utilisateur = {
+      id: utilisateur.id,
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
+      email: utilisateur.email,
+      role: utilisateur.role
+    };
+
+    res.status(200).json({
+      message: "Connexion réussie.",
+      utilisateur: req.session.utilisateur
+    });
+  } catch (error) {
+    console.error("Erreur connexion :", error.message);
+
+    res.status(500).json({
+      message: "Erreur serveur."
+    });
+  }
+}
+
 module.exports = {
-  inscription
+  inscription,
+  connexion
 };

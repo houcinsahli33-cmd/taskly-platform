@@ -9,5 +9,7 @@ const router = express.Router();
 
 // Route pour inscrire un nouvel utilisateur
 router.post("/register", authController.inscription);
+// Route pour connecter un utilisateur
+router.post("/login", authController.connexion);
 
 module.exports = router;
