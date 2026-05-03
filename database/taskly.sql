@@ -1,3 +1,7 @@
+-- Ce fichier contient la structure de la base de données du projet Taskly.
+-- Il crée la base taskly_db et les tables principales :users, services, artisans et demandes.
+-- Ce fichier peut être importé dans phpMyAdmin pour recréer la base.
+
 CREATE DATABASE IF NOT EXISTS taskly_db; -- Création de la base de données du projet
 
 USE taskly_db; -- Utiliser cette base de données pour les tables suivantes
