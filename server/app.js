@@ -1,4 +1,5 @@
 const express = require("express"); // on importe express
+require("./config/db"); // on importe la configuration de la base de données
 
 const app = express(); // on crée une application express
 
