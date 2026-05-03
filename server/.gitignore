@@ -1,2 +1,2 @@
-node_modules/  // Dossier contenant les dépendances du projet   
-.env // Fichier de configuration pour les variables d'environnement
+node_modules/  
+.env 
