@@ -21,7 +21,7 @@ pool.getConnection((err, connection) => {   // on recupere une connexion de la b
   }
 
   console.log("Connexion à la base de données réussie !");  // sinon on affiche un message de reussite
-  connection.release();
+  connection.release(); // on libere la connexion, c'est a dire : on la rend disponible pour d'autres requetes
 });
 
 module.exports = pool;  // on exporte le pool de connexion pour l'utiliser dans les models

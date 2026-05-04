@@ -13,7 +13,7 @@ app.use(express.json()); // on utilise le middleware express.json() pour analyse
 
 app.use(session({   // Configuration des sessions utilisateur
     secret: process.env.SESSION_SECRET, // la clé privee de session qui vient de .env. Elle sert à protéger le cookie de session
-    resave: false,  // sauvegarde pas la session si elle n’a pas change
+    resave: false,  // sauvegarde pas la session si elle n’a pas changee
     saveUninitialized: false    // cree pas de session vide pour les visiteurs qui ne sont pas connectes
 }))
 

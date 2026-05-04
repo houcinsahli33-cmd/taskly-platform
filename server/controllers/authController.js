@@ -95,7 +95,39 @@ async function connexion(req, res) {
     }
 }
 
+// Deconnexion de l'utilisateur connecte
+function deconnexion(req, res) {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({  // on renvoie une reponse avec le status 500 qui indique que le serveur a rencontre une erreur
+                message: "Erreur lors de la déconnexion."
+            });
+        }
+
+        res.clearCookie("connect.sid"); // on supprime le cookie de session
+
+        res.status(200).json({  // on renvoie une reponse avec le status 200 qui indique que la requete a ete acceptee
+            message: "Déconnexion réussie."
+        });
+    });
+}
+
+// Recuperer l'utilisateur actuellement connecte
+function utilisateurConnecte(req, res) {
+    if (!req.session.utilisateur) {
+        return res.status(401).json({  // on renvoie une reponse avec le status 401 qui indique que l'utilisateur n'est pas authentifie
+            message: "Aucun utilisateur connecté."
+        });
+    }
+
+    res.status(200).json({  // on renvoie une reponse avec le status 200 qui indique que la requete a ete acceptee
+        utilisateur: req.session.utilisateur    // on renvoie ses informations stockees dans la session
+    });
+}
+
 module.exports = {  // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
     inscription,
-    connexion
+    connexion,
+    deconnexion,
+    utilisateurConnecte
 };

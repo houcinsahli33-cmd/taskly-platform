@@ -8,7 +8,13 @@ const router = express.Router(); // on cree un routeur express pour definir les 
 // route pour inscrire un nouvel utilisateur
 router.post("/register", authController.inscription); // on cree une route POST pour l'inscription, qui appelle la fonction inscription du controller
 
-// route pour se connecter
+// route pour connecter un utilisateur
 router.post("/login", authController.connexion); // on cree une route POST pour la connexion, qui appelle la fonction connexion du controller
+
+// route pour deconnecter un utilisateur
+router.post("/logout", authController.deconnexion); // on cree une route POST pour la deconnexion, qui appelle la fonction deconnexion du controller
+
+// route pour recuperer l'utilisateur connecte
+router.get("/me", authController.utilisateurConnecte); // on cree une route GET pour recuperer l'utilisateur connecte, qui appelle la fonction utilisateurConnecte du controller
 
 module.exports = router; // on exporte le routeur pour pouvoir l'utiliser dans d'autres fichiers
