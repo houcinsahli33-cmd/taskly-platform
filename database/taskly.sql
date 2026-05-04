@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS artisans (
     description TEXT ,
     experience INT NOT NULL DEFAULT 0,
     photo VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, 
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS demandes (
     adresse VARCHAR(255),
     date_souhaitee DATE,
     statut ENUM('en_attente', 'acceptee', 'refusee') DEFAULT 'en_attente',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
 
     FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE

@@ -6,6 +6,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const artisanModel = require("../models/artisanModel");
+const serviceModel = require("../models/serviceModel");// pour vérifier que le service choisi par l'artisan existe bien
 
 // Inscription d'un nouvel utilisateur
 async function inscription(req, res) {
@@ -30,6 +31,12 @@ async function inscription(req, res) {
         message: "Veuillez remplir tous les champs."
       });
     }
+// Vérifier que le rôle est soit "client" soit "artisan" sinon c'est une erreur
+    if (role !== "client" && role !== "artisan") {
+    return res.status(400).json({
+        message: "Rôle invalide."
+    });
+}
 
     // Vérifier les champs obligatoires si l'utilisateur est artisan
     if (
@@ -40,6 +47,16 @@ async function inscription(req, res) {
         message: "Le service, la ville, le téléphone et l'expérience sont obligatoires pour un artisan."
       });
     }
+// Si le rôle est artisan, vérifier que le service choisi existe bien dans la base de données
+    if (role === "artisan") {
+    const service = await serviceModel.trouverServiceParId(serviceId);
+
+    if (!service) {
+        return res.status(404).json({
+            message: "Service introuvable."
+        });
+    }
+}
 
     // Vérifier si l'email existe déjà
     const utilisateurExistant = await userModel.trouverUtilisateurParEmail(email);

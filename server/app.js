@@ -14,11 +14,14 @@ const app = express(); // on crée une application express
 
 app.use(express.json()); // on utilise le middleware express.json() pour analyser les requetes JSON envoyees par le client, ce qui permet de lire les corps de requetes JSON comme req.body
 
-app.use(session({   // Configuration des sessions utilisateur
-    secret: process.env.SESSION_SECRET, // la clé privee de session qui vient de .env. Elle sert à protéger le cookie de session
-    resave: false,  // sauvegarde pas la session si elle n’a pas change
-    saveUninitialized: false    // cree pas de session vide pour les visiteurs qui ne sont pas connectes
-}))
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 2
+    }
+}));
 
 app.use("/api/services", serviceRoutes); // on utilise le routeur de services serviceRoutes pour les routes commencant par /api/services
 app.use("/api/artisans", artisanRoutes); // on utilise le routeur d'artisans artisanRoutes pour les routes commencant par /api/artisans
@@ -27,6 +30,13 @@ app.use("/api/auth", authRoutes); // on utilise le routeur d'authentification au
 
 app.get("/", (req, res) => {    // on crée une route
     res.send("Bienvenue sur Taskly!"); // on envoie une réponse
+});
+
+// Middleware pour gérer les routes inexistantes
+app.use((req, res) => {
+    res.status(404).json({
+        message: "Route introuvable."
+    });
 });
 
 module.exports = app; // on exporte l'application vers un autre fichier
