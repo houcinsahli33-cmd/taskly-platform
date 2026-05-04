@@ -29,7 +29,7 @@ async function inscription(req, res) {  // fonction d'inscription, req est la re
 
         const motDePasseHash = await bcrypt.hash(motDePasse, 10); // on hash le mot de passe avec bcrypt pour le stocker dans la base de donnees, motDePasse est le vrai mdp, motDePasseHash est le mdp hashe, 10 est le niveau de securite
 
-        await userModel.creeUtilisateur(nom, prenom, email, motDePasseHash, role); // on cree l'utilisateur dans la base de donnees
+        await userModel.creerUtilisateur(nom, prenom, email, motDePasseHash, role); // on cree l'utilisateur dans la base de donnees
 
         res.status(201).json({  // on renvoie une reponse avec le status 201 qui indique que la requete a ete acceptee
             message: "Compte créé avec succès !"

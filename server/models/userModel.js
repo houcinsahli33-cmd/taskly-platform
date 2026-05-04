@@ -11,7 +11,7 @@ async function trouverUtilisateurParEmail(email) {
 }
 
 // cree un nouvel utilisateur
-async function creeUtilisateur(nom, prenom, email, motDePasse, role) {
+async function creerUtilisateur(nom, prenom, email, motDePasse, role) {
     const sql = "INSERT INTO users (nom, prenom, email, mot_de_passe, role) VALUES (?, ?, ?, ?, ?)";
 
     const [resultat] = await db.promise().query(sql, [nom, prenom, email, motDePasse, role]);   // on execute la requete et on attends et on recupere le resultat
@@ -21,5 +21,5 @@ async function creeUtilisateur(nom, prenom, email, motDePasse, role) {
 // exportation des fonctions pour pouvoir les utiliser dans d'autres fichiers
 module.exports = {
     trouverUtilisateurParEmail,
-    creeUtilisateur
+    creerUtilisateur
 };
