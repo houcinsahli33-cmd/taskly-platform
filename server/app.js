@@ -8,6 +8,7 @@ require("./config/db");
 
 const authRoutes = require("./routes/authRoutes"); //  les routes d'authentification
 const serviceRoutes = require("./routes/serviceRoutes"); // les routes de services
+const artisanRoutes = require("./routes/artisanRoutes"); // les routes d'artisans
 
 // creation de l'application express
 const app = express();
@@ -24,6 +25,7 @@ app.use(session({   // Configuration des sessions utilisateur
 // routes
 app.use("/api/auth", authRoutes); // routes liées à l'authentification
 app.use("/api/services", serviceRoutes); // routes liées aux services
+app.use("/api/artisans", artisanRoutes); // routes liées aux artisans
 
 app.get("/", (req, res) => {    // on crée une route
     res.send("Bienvenue sur Taskly!"); // on envoie une réponse
