@@ -8,4 +8,7 @@ const router = express.Router(); // on cree un routeur express pour definir les 
 // route pour inscrire un nouvel utilisateur
 router.post("/register", authController.inscription); // on cree une route POST pour l'inscription, qui appelle la fonction inscription du controller
 
+// route pour se connecter
+router.post("/login", authController.connexion); // on cree une route POST pour la connexion, qui appelle la fonction connexion du controller
+
 module.exports = router; // on exporte le routeur pour pouvoir l'utiliser dans d'autres fichiers

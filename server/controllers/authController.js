@@ -44,6 +44,58 @@ async function inscription(req, res) {  // fonction d'inscription, req est la re
     }
 }
 
+// Connexion d'un nouvel utilisateur
+async function connexion(req, res) {
+    try {
+        const { email, motDePasse } = req.body; // on recupere les donnees envoyees par le formulaire de connexion
+
+        if (!email || !motDePasse) {
+            // on renvoie une erreur si ya au moins un champ manquant
+            return res.status(400).json({   // on arrete avec return et on affiche lerreur status(400) qui indique que la requete du client est incorrecte
+                message: "Veuillez remplir tous les champs."
+            }); 
+        }
+
+        const utilisateur = await userModel.trouverUtilisateurParEmail(email); // on cherche si un utilisateur avec cet email existe dans la base de donnees
+
+        if (!utilisateur) {
+            // on renvoie une erreur si l'utilisateur n'existe pas
+            return res.status(400).json({   // on arrete avec return et on affiche lerreur
+                message: "Email ou mot de passe incorrect."
+            });
+        }
+
+        const motDePasseValide = await bcrypt.compare(motDePasse, utilisateur.mot_de_passe); // on compare le mot de passe envoyee par le client avec le mot de passe hashe stocke dans la base de donnees
+
+        if (!motDePasseValide) {
+            // on renvoie une erreur si le mot de passe est incorrect
+            return res.status(400).json({   // on arrete avec return et on affiche lerreur 
+                message: "Email ou mot de passe incorrect."
+            });
+        }
+
+        req.session.utilisateur = { // on cree une session pour l'utilisateur
+            id: utilisateur.id,
+            nom: utilisateur.nom,
+            prenom: utilisateur.prenom,
+            email: utilisateur.email,
+            role: utilisateur.role
+        };
+
+        res.status(200).json({  // on renvoie une reponse avec le status 200 qui indique que la requete a ete acceptee
+            message: "Connexion réussie.",
+            utilisateur: req.session.utilisateur
+        });
+    } catch (error) {
+        console.error("Erreur connexion :", error.message);
+
+        res.status(500).json({  // on renvoie une reponse avec le status 500 qui indique que le serveur a rencontre une erreur
+            message: "Erreur serveur."
+        });
+    }
+}
+
 module.exports = {  // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
-    inscription
+    inscription,
+    connexion
 };
