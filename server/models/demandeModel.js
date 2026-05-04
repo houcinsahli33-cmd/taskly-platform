@@ -74,9 +74,25 @@ async function trouverDemandesParArtisan(artisanUserId) {
 
     return resultats;
 }
+// Modifier le statut d'une demande
+async function modifierStatutDemande(demandeId, statut) {
+    const sql = `
+        UPDATE demandes
+        SET statut = ?
+        WHERE id = ?
+    `;
+
+    const [resultat] = await db.promise().query(sql, [
+        statut,
+        demandeId
+    ]);
+
+    return resultat;
+}
 
 module.exports = {
     creerDemande,
     trouverDemandesParClient,
-    trouverDemandesParArtisan
+    trouverDemandesParArtisan,
+    modifierStatutDemande
 };

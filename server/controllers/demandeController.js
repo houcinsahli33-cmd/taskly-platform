@@ -36,6 +36,46 @@ async function creerDemande(req, res) {
     }
 }
 
+// Récupérer les demandes envoyées par le client connecté
+async function listerDemandesClient(req, res) {
+    try {
+        const clientId = req.session.utilisateur.id;
+
+        const demandes = await demandeModel.trouverDemandesParClient(clientId);
+
+        res.status(200).json({
+            demandes: demandes
+        });
+    } catch (error) {
+        console.error("Erreur récupération demandes client :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
+// Récupérer les demandes reçues par l'artisan connecté
+async function listerDemandesArtisan(req, res) {
+    try {
+        const artisanUserId = req.session.utilisateur.id;
+
+        const demandes = await demandeModel.trouverDemandesParArtisan(artisanUserId);
+
+        res.status(200).json({
+            demandes: demandes
+        });
+    } catch (error) {
+        console.error("Erreur récupération demandes artisan :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
 module.exports = {
-    creerDemande
+    creerDemande,
+    listerDemandesArtisan,
+    listerDemandesClient
 };

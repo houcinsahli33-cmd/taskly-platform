@@ -6,7 +6,8 @@ const demandeController = require("../controllers/demandeController");
 
 const {
     verifierConnexion,
-    verifierClient
+    verifierClient,
+    verifierArtisan
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.post("/", verifierConnexion, verifierClient, demandeController.creerDeman
 
 // Route pour récupérer les demandes d'un client
 router.get("/client", verifierConnexion, verifierClient, demandeController.listerDemandesClient);
-
+// Route pour récupérer les demandes d'un artisan
+router.get("/artisan", verifierConnexion, verifierArtisan, demandeController.listerDemandesArtisan);
 module.exports = router;
