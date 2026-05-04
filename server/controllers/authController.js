@@ -4,35 +4,60 @@
 
 const bcrypt = require("bcrypt"); // on importe bcrypt pour hasher le mot de passe avant de l'enregistrer dans la base de données (le transformer en version securisée)
 const userModel = require("../models/userModel"); // on importe les fonctions du fichier userModel.js pour interagir avec la table users
+const artisanModel = require("../models/artisanModel"); // on importe les fonctions du fichier artisanModel.js pour interagir avec la table artisans
 
 
 // Inscription d'un nouvel utilisateur
 async function inscription(req, res) {  // fonction d'inscription, req est la requete envoyee par le client, res est la reponse envoyee par le serveur
     try {
-        const { nom, prenom, email, motDePasse, role } = req.body; // on recupere les donnees envoyees par le formulaire
+        const { nom, prenom, email, motDePasse, role, serviceId, ville, telephone, description, experience, photo } = req.body; // on recupere les donnees envoyees par le formulaire
 
         if (!nom || !prenom || !email || !motDePasse || !role) {
             // on renvoie une erreur si ya au moins un champ manquant
             return res.status(400).json({   // on arrete avec return et on affiche lerreur status(400) qui indique que la requete du client est incorrecte
-                message: "Tous les champs doivent être remplis !"  
+                message: "Tous les champs sont obligatoires et doivent être remplis."  
             }); 
         }
 
+        if (role === "artisan" && (!serviceId || !ville || !telephone || experience === undefined)) {
+            // on renvoie une erreur si le role est artisan et que l'un des champs obligatoires sont manquants
+            return res.status(400).json({
+                message: "Veuillez remplir les champs obligatoires."
+            });
+        }
 
         const utilisateurExistant = await userModel.trouverUtilisateurParEmail(email); // on cherche si un utilisateur avec cet email existe deja dans la base de donnees
         
         if (utilisateurExistant) {  // si un utilisateur avec cet email existe deja, on renvoie une erreur et on arrete la fonction
             return res.status(400).json({
-                message: "Un utilisateur avec cet e-mail existe déjà !"  
+                message: "Un utilisateur avec cet e-mail existe déjà."  
             });
         }
 
         const motDePasseHash = await bcrypt.hash(motDePasse, 10); // on hash le mot de passe avec bcrypt pour le stocker dans la base de donnees, motDePasse est le vrai mdp, motDePasseHash est le mdp hashe, 10 est le niveau de securite
 
-        await userModel.creerUtilisateur(nom, prenom, email, motDePasseHash, role); // on cree l'utilisateur dans la base de donnees
+        const resultatUtilisateur = await userModel.creerUtilisateur(   // on cree l'utilisateur dans la base de donnees
+            nom,
+            prenom,
+            email,
+            motDePasseHash,
+            role
+        );
+
+        if (role === "artisan") {
+            await artisanModel.creerProfilArtisan(
+                resultatUtilisateur.insertId,   // on recupere l'id de l'utilisateur de la table users
+                serviceId,
+                ville,
+                telephone,
+                description || null,
+                experience,
+                photo || null
+            );
+        }
 
         res.status(201).json({  // on renvoie une reponse avec le status 201 qui indique que la requete a ete acceptee
-            message: "Compte créé avec succès !"
+            message: "Compte créé avec succès."
         });
 
     } catch (error) {     // si une erreur arrive dans le try, on l'affiche dans la console (terminal)

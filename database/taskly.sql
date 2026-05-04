@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS artisans (
     user_id INT NOT NULL,       
     service_id INT NOT NULL,    
     ville VARCHAR(255) NOT NULL,
-    telephone VARCHAR(20),
+    telephone VARCHAR(20) NOT NULL,
     description TEXT,
-    experience INT DEFAULT 0,
+    experience INT DEFAULT 0 NOT NULL,
     photo VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, -- id de l'utilisateur dans users, suppression de l'artisan si le compte utilisateur est supprimé
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE  -- id du service dans services, suppression de l'artisan si le service est supprimé
@@ -46,9 +46,19 @@ CREATE TABLE IF NOT EXISTS demandes (
     message TEXT,
     adresse VARCHAR(255),
     date_souhaitee DATE,
-    status ENUM('en attente', 'acceptee', 'refusee') DEFAULT 'en attente',
+    statut ENUM('en attente', 'acceptee', 'refusee') DEFAULT 'en attente',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE, -- id du client dans users, suppression de la demande si le compte utilisateur est supprimé
     FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE -- id de l'artisan dans artisans, suppression de la demande si l'artisan est supprimé
 );
+
+-- Données de test pour les services
+-- Elles permettent de tester l'inscription artisan et l'affichage des catégories
+INSERT INTO services (nom, description, image) VALUES
+('Plomberie', 'Services de plomberie pour la maison.', 'plomberie.jpg'),
+('Électricité', 'Installation et réparation électrique.', 'electricite.jpg'),
+('Peinture', 'Travaux de peinture intérieure et extérieure.', 'peinture.jpg'),
+('Menuiserie', 'Fabrication et réparation en bois.', 'menuiserie.jpg'),
+('Nettoyage', 'Services de nettoyage pour maisons et locaux.', 'nettoyage.jpg'),
+('Climatisation', 'Installation et réparation de climatiseurs.', 'climatisation.jpg');
