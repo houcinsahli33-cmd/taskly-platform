@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const artisanModel = require("../models/artisanModel");
 const serviceModel = require("../models/serviceModel");// pour vérifier que le service choisi par l'artisan existe bien
-
+const clientModel = require("../models/clientModel");// pour vérifier que le client existe bien
 // Inscription d'un nouvel utilisateur
 async function inscription(req, res) {
   try {
@@ -21,6 +21,7 @@ async function inscription(req, res) {
       ville,
       telephone,
       description,
+      adresse,
       experience,
       photo
     } = req.body;
@@ -78,6 +79,16 @@ async function inscription(req, res) {
       motDePasseHash,
       role
     );
+    
+// Si le rôle est client, créer aussi son profil dans la table clients
+    if (role === "client") {
+    await clientModel.creerProfilClient(
+        resultatUtilisateur.insertId,
+        telephone || null,
+        ville || null,
+        adresse || null
+    );
+}
 
     // Si le rôle est artisan, créer aussi son profil dans la table artisans
     if (role === "artisan") {
