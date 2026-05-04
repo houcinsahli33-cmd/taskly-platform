@@ -19,7 +19,10 @@ app.use(express.json()); // permet de lire les données JSON envoyées dans les 
 app.use(session({   // Configuration des sessions utilisateur
     secret: process.env.SESSION_SECRET, // cle utilisee pour sécuriser la session
     resave: false,  // sauvegarde pas la session si elle n’a pas changee
-    saveUninitialized: false    // cree pas de session vide pour les visiteurs qui ne sont pas connectes
+    saveUninitialized: false,    // cree pas de session vide pour les visiteurs qui ne sont pas connectes
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 2  // duree de validite de la session (2 heures)
+    }
 }))
 
 // routes
@@ -29,6 +32,11 @@ app.use("/api/artisans", artisanRoutes); // routes liées aux artisans
 
 app.get("/", (req, res) => {    // on crée une route
     res.send("Bienvenue sur Taskly!"); // on envoie une réponse
+});
+
+// Middleware pour gérer les routes inexistantes
+app.use((req, res) => {
+  res.status(404).json({ message: "Route introuvable." });
 });
 
 module.exports = app; // on exporte l'application vers un autre fichier

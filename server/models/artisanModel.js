@@ -72,7 +72,7 @@ async function trouverTousLesArtisans(filtres = {}) {
         valeurs.push(recherche, recherche, recherche, recherche, recherche);    // on ajoute les valeurs de recherche dans le tableau
     }
 
-    sql += " ORDER BY artisans.id DESC";    // on ajoute la condition de tri
+    sql += " ORDER BY artisans.created_at DESC";    // on ajoute la condition de tri
 
     const [resultats] = await db.promise().query(sql, valeurs); // on execute la requete et on attends et on recupere le resultat
     return resultats;    // on retourne tous les artisans trouves

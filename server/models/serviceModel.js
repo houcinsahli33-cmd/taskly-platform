@@ -10,6 +10,16 @@ async function trouverTousLesServices() {
     return resultats; // on retourne tous les services
 }
 
+// recuperer un service par son id
+async function trouverServiceParId(id) {
+    const sql = "SELECT * FROM services WHERE id = ?";
+
+    const [resultats] = await db.promise().query(sql, [id]);
+
+    return resultats[0];
+}
+
 module.exports = {  // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
-    trouverTousLesServices
+    trouverTousLesServices,
+    trouverServiceParId
 };

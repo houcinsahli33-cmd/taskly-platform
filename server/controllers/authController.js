@@ -3,13 +3,14 @@
 
 const bcrypt = require("bcrypt"); // on importe bcrypt pour hasher le mot de passe avant de l'enregistrer dans la base de données (le transformer en version securisée)
 const userModel = require("../models/userModel"); // on importe les fonctions du fichier userModel.js pour interagir avec la table users
+const clientModel = require("../models/clientModel"); // on importe les fonctions du fichier clientModel.js pour interagir avec la table clients
 const artisanModel = require("../models/artisanModel"); // on importe les fonctions du fichier artisanModel.js pour interagir avec la table artisans
-
+const serviceModel = require("../models/serviceModel"); // on importe les fonctions du fichier serviceModel.js pour interagir avec la table services
 
 // Inscription d'un nouvel utilisateur
 async function inscription(req, res) {
     try {
-        const { nom, prenom, email, motDePasse, role, serviceId, ville, telephone, description, experience, photo } = req.body; // on recupere les donnees envoyees par le formulaire
+        const { nom, prenom, email, motDePasse, role, serviceId, ville, telephone, adresse, description, experience, photo } = req.body; // on recupere les donnees envoyees par le formulaire
 
         if (!nom || !prenom || !email || !motDePasse || !role) {
             // on renvoie une erreur si ya au moins un champ manquant
@@ -18,11 +19,29 @@ async function inscription(req, res) {
             }); 
         }
 
+        if (role !== "client" && role !== "artisan") {
+            // on renvoie une erreur si le role est invalide
+            return res.status(400).json({
+                message: "Rôle invalide."
+            });
+        }
+
         if (role === "artisan" && (!serviceId || !ville || !telephone || experience === undefined)) {
             // on renvoie une erreur si le role est artisan et que l'un des champs obligatoires sont manquants
             return res.status(400).json({
                 message: "Veuillez remplir les champs obligatoires."
             });
+        }
+
+        if (role === "artisan") {
+            const service = await serviceModel.trouverServiceParId(serviceId);
+
+            if (!service) {
+                // on renvoie une erreur si le service n'existe pas
+                return res.status(404).json({
+                    message: "Service introuvable."
+                });
+            }
         }
 
         const utilisateurExistant = await userModel.trouverUtilisateurParEmail(email); // on cherche si un utilisateur avec cet email existe deja dans la base de donnees
@@ -42,6 +61,15 @@ async function inscription(req, res) {
             motDePasseHash,
             role
         );
+
+        if (role === "client") {
+            await clientModel.creerProfilClient(
+                resultatUtilisateur.insertId,   // on recupere l'id de l'utilisateur cree dans la table users
+                telephone || null,
+                ville || null,
+                adresse || null
+            );
+        }
 
         if (role === "artisan") {
             await artisanModel.creerProfilArtisan(
