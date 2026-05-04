@@ -8,5 +8,7 @@ const router = express.Router();
 
 // Route pour récupérer tous les artisans
 router.get("/", artisanController.listerArtisans);
+// Route pour récupérer un artisan par son id
+router.get("/:id", artisanController.detailsArtisan);
 
 module.exports = router;
