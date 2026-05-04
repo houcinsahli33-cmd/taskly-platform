@@ -18,6 +18,8 @@ app.use(session({   // Configuration des sessions utilisateur
     saveUninitialized: false    // cree pas de session vide pour les visiteurs qui ne sont pas connectes
 }))
 
+app.use("/api/services", serviceRoutes); // on utilise le routeur de services serviceRoutes pour les routes commencant par /api/services
+
 app.use("/api/auth", authRoutes); // on utilise le routeur d'authentification authRoutes pour les routes commencant par /api/auth
 
 app.get("/", (req, res) => {    // on crée une route
