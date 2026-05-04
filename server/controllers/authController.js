@@ -1,5 +1,4 @@
-// Ce fichier contient la logique liée à l'authentification.
-// Il gère l'inscription, la connexion et la déconnexion des utilisateurs.
+// Ce fichier contient la logique liée à l'authentification. Il gère l'inscription, la connexion et la déconnexion des utilisateurs.
 // Il utilise userModel.js pour communiquer avec la table users.
 
 const bcrypt = require("bcrypt"); // on importe bcrypt pour hasher le mot de passe avant de l'enregistrer dans la base de données (le transformer en version securisée)
@@ -8,13 +7,13 @@ const artisanModel = require("../models/artisanModel"); // on importe les foncti
 
 
 // Inscription d'un nouvel utilisateur
-async function inscription(req, res) {  // fonction d'inscription, req est la requete envoyee par le client, res est la reponse envoyee par le serveur
+async function inscription(req, res) {
     try {
         const { nom, prenom, email, motDePasse, role, serviceId, ville, telephone, description, experience, photo } = req.body; // on recupere les donnees envoyees par le formulaire
 
         if (!nom || !prenom || !email || !motDePasse || !role) {
             // on renvoie une erreur si ya au moins un champ manquant
-            return res.status(400).json({   // on arrete avec return et on affiche lerreur status(400) qui indique que la requete du client est incorrecte
+            return res.status(400).json({
                 message: "Tous les champs sont obligatoires et doivent être remplis."  
             }); 
         }
@@ -56,14 +55,14 @@ async function inscription(req, res) {  // fonction d'inscription, req est la re
             );
         }
 
-        res.status(201).json({  // on renvoie une reponse avec le status 201 qui indique que la requete a ete acceptee
+        res.status(201).json({  // la requete a ete acceptee
             message: "Compte créé avec succès."
         });
 
     } catch (error) {     // si une erreur arrive dans le try, on l'affiche dans la console (terminal)
         console.error("Erreur inscription :", error.message);
 
-        res.status(500).json({  // on renvoie une reponse avec le status 500 qui indique que le serveur a rencontre une erreur
+        res.status(500).json({
             message: "Erreur serveur."
         });
     }
@@ -76,25 +75,25 @@ async function connexion(req, res) {
 
         if (!email || !motDePasse) {
             // on renvoie une erreur si ya au moins un champ manquant
-            return res.status(400).json({   // on arrete avec return et on affiche lerreur status(400) qui indique que la requete du client est incorrecte
+            return res.status(400).json({
                 message: "Veuillez remplir tous les champs."
             }); 
         }
 
-        const utilisateur = await userModel.trouverUtilisateurParEmail(email); // on cherche si un utilisateur avec cet email existe dans la base de donnees
+        const utilisateur = await userModel.trouverUtilisateurParEmail(email); // on cherche si un utilisateur avec cet email existe dans la bdd
 
         if (!utilisateur) {
             // on renvoie une erreur si l'utilisateur n'existe pas
-            return res.status(400).json({   // on arrete avec return et on affiche lerreur
+            return res.status(400).json({
                 message: "Email ou mot de passe incorrect."
             });
         }
 
-        const motDePasseValide = await bcrypt.compare(motDePasse, utilisateur.mot_de_passe); // on compare le mot de passe envoyee par le client avec le mot de passe hashe stocke dans la base de donnees
+        const motDePasseValide = await bcrypt.compare(motDePasse, utilisateur.mot_de_passe); // on compare le mot de passe envoyee par le client avec le mot de passe hashe stocké dans la base de donnees
 
         if (!motDePasseValide) {
             // on renvoie une erreur si le mot de passe est incorrect
-            return res.status(400).json({   // on arrete avec return et on affiche lerreur 
+            return res.status(400).json({
                 message: "Email ou mot de passe incorrect."
             });
         }
@@ -107,14 +106,14 @@ async function connexion(req, res) {
             role: utilisateur.role
         };
 
-        res.status(200).json({  // on renvoie une reponse avec le status 200 qui indique que la requete a ete acceptee
+        res.status(200).json({  // la requete a ete acceptee
             message: "Connexion réussie.",
             utilisateur: req.session.utilisateur
         });
-    } catch (error) {
+    } catch (error) {   // si une erreur arrive dans le try, on l'affiche dans la console (terminal)
         console.error("Erreur connexion :", error.message);
 
-        res.status(500).json({  // on renvoie une reponse avec le status 500 qui indique que le serveur a rencontre une erreur
+        res.status(500).json({
             message: "Erreur serveur."
         });
     }
@@ -123,15 +122,15 @@ async function connexion(req, res) {
 // Deconnexion de l'utilisateur connecte
 function deconnexion(req, res) {
     req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({  // on renvoie une reponse avec le status 500 qui indique que le serveur a rencontre une erreur
+        if (err) {  // si erreur, on arrete et affiche
+            return res.status(500).json({
                 message: "Erreur lors de la déconnexion."
             });
         }
 
         res.clearCookie("connect.sid"); // on supprime le cookie de session
 
-        res.status(200).json({  // on renvoie une reponse avec le status 200 qui indique que la requete a ete acceptee
+        res.status(200).json({  // la requete a ete acceptee
             message: "Déconnexion réussie."
         });
     });
@@ -140,12 +139,12 @@ function deconnexion(req, res) {
 // Recuperer l'utilisateur actuellement connecte
 function utilisateurConnecte(req, res) {
     if (!req.session.utilisateur) {
-        return res.status(401).json({  // on renvoie une reponse avec le status 401 qui indique que l'utilisateur n'est pas authentifie
+        return res.status(401).json({  // erreur, l'utilisateur n'est pas authentifie
             message: "Aucun utilisateur connecté."
         });
     }
 
-    res.status(200).json({  // on renvoie une reponse avec le status 200 qui indique que la requete a ete acceptee
+    res.status(200).json({  // la requete a ete acceptee
         utilisateur: req.session.utilisateur    // on renvoie ses informations stockees dans la session
     });
 }

@@ -6,15 +6,15 @@ const authController = require("../controllers/authController"); // on importe l
 const router = express.Router(); // on cree un routeur express pour definir les routes
 
 // route pour inscrire un nouvel utilisateur
-router.post("/register", authController.inscription); // on cree une route POST pour l'inscription, qui appelle la fonction inscription du controller
+router.post("/register", authController.inscription);
 
 // route pour connecter un utilisateur
-router.post("/login", authController.connexion); // on cree une route POST pour la connexion, qui appelle la fonction connexion du controller
+router.post("/login", authController.connexion);
 
 // route pour deconnecter un utilisateur
-router.post("/logout", authController.deconnexion); // on cree une route POST pour la deconnexion, qui appelle la fonction deconnexion du controller
+router.post("/logout", authController.deconnexion);
 
 // route pour recuperer l'utilisateur connecte
-router.get("/me", authController.utilisateurConnecte); // on cree une route GET pour recuperer l'utilisateur connecte, qui appelle la fonction utilisateurConnecte du controller
+router.get("/me", authController.utilisateurConnecte);
 
-module.exports = router; // on exporte le routeur pour pouvoir l'utiliser dans d'autres fichiers
+module.exports = router; // on exporte le routeur

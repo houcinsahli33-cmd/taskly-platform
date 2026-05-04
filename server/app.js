@@ -1,23 +1,29 @@
 // Ce fichier prépare l'application Express. Il contient la configuration principale du serveur : routes, middlewares, fichiers statiques, sessions et gestion des erreurs.
 // Le serveur est lancé séparément dans server.js.
 
-const express = require("express"); // on importe express pour créer l'application
-const session = require("express-session"); // on importe express-session pour la gestion des sessions
-require("./config/db"); // on importe la configuration de la base de données
+// imports
+const express = require("express");
+const session = require("express-session");
+require("./config/db");
 
-const authRoutes = require("./routes/authRoutes"); // on importe les routes d'authentification
+const authRoutes = require("./routes/authRoutes"); //  les routes d'authentification
+const serviceRoutes = require("./routes/serviceRoutes"); // les routes de services
 
-const app = express(); // on crée une application express
+// creation de l'application express
+const app = express();
 
-app.use(express.json()); // on utilise le middleware express.json() pour analyser les requetes JSON envoyees par le client, ce qui permet de lire les corps de requetes JSON comme req.body
+// middlewares
+app.use(express.json()); // permet de lire les données JSON envoyées dans les requêtes comme req.body
 
 app.use(session({   // Configuration des sessions utilisateur
-    secret: process.env.SESSION_SECRET, // la clé privee de session qui vient de .env. Elle sert à protéger le cookie de session
+    secret: process.env.SESSION_SECRET, // cle utilisee pour sécuriser la session
     resave: false,  // sauvegarde pas la session si elle n’a pas changee
     saveUninitialized: false    // cree pas de session vide pour les visiteurs qui ne sont pas connectes
 }))
 
-app.use("/api/auth", authRoutes); // on utilise le routeur d'authentification authRoutes pour les routes commencant par /api/auth
+// routes
+app.use("/api/auth", authRoutes); // routes liées à l'authentification
+app.use("/api/services", serviceRoutes); // routes liées aux services
 
 app.get("/", (req, res) => {    // on crée une route
     res.send("Bienvenue sur Taskly!"); // on envoie une réponse
