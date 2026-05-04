@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     prenom VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(255) NOT NULL,
-    role ENUM('client', 'artisant', 'admin') NOT NULL ,
+    role ENUM('client', 'artisan', 'admin') NOT NULL ,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS artisans (
     user_id INT NOT NULL,
     service_id INT NOT NULL,
     ville VARCHAR(255) NOT NULL,
-    telephone VARCHAR(20),
-    description TEXT,
-    experience INT DEFAULT 0,
+    telephone VARCHAR(20) NOT NULL,
+    description TEXT ,
+    experience INT NOT NULL DEFAULT 0,
     photo VARCHAR(255),
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, 

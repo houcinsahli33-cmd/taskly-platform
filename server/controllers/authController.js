@@ -1,21 +1,47 @@
 // Ce fichier contient la logique liée à l'authentification.
 // Il gère l'inscription, la connexion et la déconnexion des utilisateurs.
 // Il utilise userModel.js pour communiquer avec la table users.
+// Il utilise artisanModel.js pour créer un profil artisan si le rôle est "artisan".
 
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
+const artisanModel = require("../models/artisanModel");
 
 // Inscription d'un nouvel utilisateur
 async function inscription(req, res) {
   try {
-    const { nom, prenom, email, motDePasse, role } = req.body;
+    const {
+      nom,
+      prenom,
+      email,
+      motDePasse,
+      role,
+      serviceId,
+      ville,
+      telephone,
+      description,
+      experience,
+      photo
+    } = req.body;
 
+    // Vérifier les champs obligatoires communs
     if (!nom || !prenom || !email || !motDePasse || !role) {
       return res.status(400).json({
         message: "Veuillez remplir tous les champs."
       });
     }
 
+    // Vérifier les champs obligatoires si l'utilisateur est artisan
+    if (
+      role === "artisan" &&
+      (!serviceId || !ville || !telephone || experience === undefined)
+    ) {
+      return res.status(400).json({
+        message: "Le service, la ville, le téléphone et l'expérience sont obligatoires pour un artisan."
+      });
+    }
+
+    // Vérifier si l'email existe déjà
     const utilisateurExistant = await userModel.trouverUtilisateurParEmail(email);
 
     if (utilisateurExistant) {
@@ -24,15 +50,30 @@ async function inscription(req, res) {
       });
     }
 
+    // Hasher le mot de passe
     const motDePasseHash = await bcrypt.hash(motDePasse, 10);
 
-    await userModel.creerUtilisateur(
+    // Créer l'utilisateur dans la table users
+    const resultatUtilisateur = await userModel.creerUtilisateur(
       nom,
       prenom,
       email,
       motDePasseHash,
       role
     );
+
+    // Si le rôle est artisan, créer aussi son profil dans la table artisans
+    if (role === "artisan") {
+      await artisanModel.creerProfilArtisan(
+        resultatUtilisateur.insertId,
+        serviceId,
+        ville,
+        telephone,
+        description || null,
+        experience,
+        photo || null
+      );
+    }
 
     res.status(201).json({
       message: "Compte créé avec succès."
@@ -57,6 +98,7 @@ async function connexion(req, res) {
       });
     }
 
+    // Chercher l'utilisateur par email
     const utilisateur = await userModel.trouverUtilisateurParEmail(email);
 
     if (!utilisateur) {
@@ -65,6 +107,7 @@ async function connexion(req, res) {
       });
     }
 
+    // Comparer le mot de passe tapé avec le mot de passe hashé
     const motDePasseValide = await bcrypt.compare(
       motDePasse,
       utilisateur.mot_de_passe
@@ -76,6 +119,7 @@ async function connexion(req, res) {
       });
     }
 
+    // Créer la session utilisateur
     req.session.utilisateur = {
       id: utilisateur.id,
       nom: utilisateur.nom,
@@ -99,14 +143,14 @@ async function connexion(req, res) {
 
 // Déconnexion de l'utilisateur connecté
 function deconnexion(req, res) {
-  req.session.destroy((err) => { // Détruit la session de l'utilisateur 
+  req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({
         message: "Erreur lors de la déconnexion."
       });
     }
 
-    res.clearCookie("connect.sid");// Efface le cookie de session du navigateur 
+    res.clearCookie("connect.sid");
 
     res.status(200).json({
       message: "Déconnexion réussie."
