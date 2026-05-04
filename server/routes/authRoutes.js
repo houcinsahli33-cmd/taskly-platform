@@ -11,5 +11,9 @@ const router = express.Router();
 router.post("/register", authController.inscription);
 // Route pour connecter un utilisateur
 router.post("/login", authController.connexion);
+// Route pour déconnecter un utilisateur
+router.post("/logout", authController.deconnexion); 
+// Route pour vérifier si un utilisateur est connecté
+router.get("/me", authController.utilisateurConnecte);
 
 module.exports = router;

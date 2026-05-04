@@ -97,7 +97,39 @@ async function connexion(req, res) {
   }
 }
 
+// Déconnexion de l'utilisateur connecté
+function deconnexion(req, res) {
+  req.session.destroy((err) => { // Détruit la session de l'utilisateur 
+    if (err) {
+      return res.status(500).json({
+        message: "Erreur lors de la déconnexion."
+      });
+    }
+
+    res.clearCookie("connect.sid");// Efface le cookie de session du navigateur 
+
+    res.status(200).json({
+      message: "Déconnexion réussie."
+    });
+  });
+}
+
+// Récupérer l'utilisateur actuellement connecté
+function utilisateurConnecte(req, res) {
+  if (!req.session.utilisateur) {
+    return res.status(401).json({
+      message: "Aucun utilisateur connecté."
+    });
+  }
+
+  res.status(200).json({
+    utilisateur: req.session.utilisateur
+  });
+}
+
 module.exports = {
   inscription,
-  connexion
+  connexion,
+  deconnexion,
+  utilisateurConnecte
 };
