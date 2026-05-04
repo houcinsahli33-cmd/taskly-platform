@@ -45,6 +45,17 @@ CREATE TABLE IF NOT EXISTS demandes (
     statut ENUM('en_attente', 'acceptee', 'refusee') DEFAULT 'en_attente',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
 
-    FOREIGN KEY (client_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
     FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS clients (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    telephone VARCHAR(20),
+    ville VARCHAR(255),
+    adresse VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
