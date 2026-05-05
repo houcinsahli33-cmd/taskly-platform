@@ -74,17 +74,19 @@ async function trouverDemandesParArtisan(artisanUserId) {
 
     return resultats;
 }
-// Modifier le statut d'une demande
-async function modifierStatutDemande(demandeId, statut) {
+// Modifier le statut d'une demande (sécurisé)
+async function modifierStatutDemande(demandeId, statut, artisanUserId) {
     const sql = `
         UPDATE demandes
-        SET statut = ?
-        WHERE id = ?
+        JOIN artisans ON demandes.artisan_id = artisans.id
+        SET demandes.statut = ?
+        WHERE demandes.id = ? AND artisans.user_id = ?
     `;
 
     const [resultat] = await db.promise().query(sql, [
         statut,
-        demandeId
+        demandeId,
+        artisanUserId
     ]);
 
     return resultat;
@@ -120,10 +122,27 @@ async function trouverToutesLesDemandesParAdmin() {
     return resultats;
 }
 
+// Annuler une demande envoyée par un client
+async function annulerDemande(demandeId, clientId) {
+    const sql = `
+        UPDATE demandes
+        SET statut = 'annulee'
+        WHERE id = ? AND client_id = ?
+    `;
+
+    const [resultat] = await db.promise().query(sql, [
+        demandeId,
+        clientId
+    ]);
+
+    return resultat;
+}
+
 module.exports = {
     creerDemande,
     trouverDemandesParClient,
     trouverDemandesParArtisan,
     modifierStatutDemande,
-    trouverToutesLesDemandesParAdmin
+    trouverToutesLesDemandesParAdmin,
+    annulerDemande
 };

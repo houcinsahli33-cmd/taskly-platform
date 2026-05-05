@@ -6,11 +6,12 @@ const express = require("express");
 const authController = require("../controllers/authController");
 
 const { verifierConnexion } = require("../middleware/authMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
 // Route pour inscrire un nouvel utilisateur
-router.post("/register", authController.inscription);
+router.post("/register", upload.single("photo"), authController.inscription);
 
 // Route pour connecter un utilisateur
 router.post("/login", authController.connexion);

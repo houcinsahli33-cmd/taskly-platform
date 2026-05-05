@@ -14,7 +14,7 @@ const adminRoutes = require("./routes/adminRoutes"); // on importe les routes d'
 const app = express(); // on crée une application express
 
 app.use(express.json()); // on utilise le middleware express.json() pour analyser les requetes JSON envoyees par le client, ce qui permet de lire les corps de requetes JSON comme req.body
-
+app.use("/uploads", express.static("server/uploads")); // on utilise le middleware express.static() pour servir les fichiers statiques du dossier uploads, ce qui permet d'accéder aux photos uploadées via l'URL /uploads/nom_du_fichier
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,

@@ -21,7 +21,55 @@ async function trouverServiceParId(id) {
     return resultats[0];
 }
 
+// Ajouter un nouveau service
+async function ajouterService(nom, description, image) {
+    const sql = `
+        INSERT INTO services (nom, description, image)
+        VALUES (?, ?, ?)
+    `;
+
+    const [resultat] = await db.promise().query(sql, [
+        nom,
+        description,
+        image
+    ]);
+
+    return resultat;
+}
+
+// Modifier un service
+async function modifierService(id, nom, description, image) {
+    const sql = `
+        UPDATE services
+        SET nom = ?, description = ?, image = ?
+        WHERE id = ?
+    `;
+
+    const [resultat] = await db.promise().query(sql, [
+        nom,
+        description,
+        image,
+        id
+    ]);
+
+    return resultat;
+}
+
+// Supprimer un service
+async function supprimerService(id) {
+    const sql = "DELETE FROM services WHERE id = ?";
+
+    const [resultat] = await db.promise().query(sql, [id]);
+
+    return resultat;
+}
+
+
+
 module.exports = {
     trouverTousLesServices,
-    trouverServiceParId
+    trouverServiceParId,
+    ajouterService,
+    modifierService,
+    supprimerService
 };

@@ -4,17 +4,18 @@
 const db = require("../config/db");
 
 // Créer le profil d'un client
-async function creerProfilClient(userId, telephone, ville, adresse) {
+async function creerProfilClient(userId, telephone, ville, adresse, photo) {
     const sql = `
-        INSERT INTO clients (user_id, telephone, ville, adresse)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO clients (user_id, telephone, ville, adresse, photo)
+        VALUES (?, ?, ?, ?, ?)
     `;
 
     const [resultat] = await db.promise().query(sql, [
         userId,
         telephone,
         ville,
-        adresse
+        adresse,
+        photo
     ]);
 
     return resultat;

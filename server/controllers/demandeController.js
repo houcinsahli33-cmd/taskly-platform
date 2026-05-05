@@ -106,9 +106,36 @@ async function modifierStatutDemande(req, res) {
     }
 }
 
+// Annuler une demande envoyée par le client connecté
+async function annulerDemande(req, res) {
+    try {
+        const { id } = req.params;
+        const clientId = req.session.utilisateur.id;
+
+        const resultat = await demandeModel.annulerDemande(id, clientId);
+
+        if (resultat.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Demande introuvable ou non autorisée."
+            });
+        }
+
+        res.status(200).json({
+            message: "Demande annulée avec succès."
+        });
+    } catch (error) {
+        console.error("Erreur annulation demande :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
 module.exports = {
     creerDemande,
     listerDemandesArtisan,
     listerDemandesClient,
+    annulerDemande,
     modifierStatutDemande
 };

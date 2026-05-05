@@ -22,4 +22,6 @@ router.get("/client", verifierConnexion, verifierClient, demandeController.liste
 router.get("/artisan", verifierConnexion, verifierArtisan, demandeController.listerDemandesArtisan);
 // Route pour modifier le statut d'une demande (acceptée, refusée, terminée)
 router.put("/:id/statut", verifierConnexion, verifierArtisan, demandeController.modifierStatutDemande);
+// Route pour annuler une demande (par le client)
+router.put("/:id/annuler", verifierConnexion, verifierClient, demandeController.annulerDemande);
 module.exports = router;

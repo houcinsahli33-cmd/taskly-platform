@@ -22,9 +22,11 @@ async function inscription(req, res) {
       telephone,
       description,
       adresse,
-      experience,
-      photo
+      experience
     } = req.body;
+
+// Récupérer le nom du fichier de la photo si elle a été uploadée, sinon mettre null
+    const photo = req.file ? req.file.filename : null;
 
     // Vérifier les champs obligatoires communs
     if (!nom || !prenom || !email || !motDePasse || !role) {
@@ -86,7 +88,8 @@ async function inscription(req, res) {
         resultatUtilisateur.insertId,
         telephone || null,
         ville || null,
-        adresse || null
+        adresse || null,
+        photo || null
     );
 }
 
