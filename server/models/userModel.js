@@ -31,7 +31,21 @@ async function creerUtilisateur(nom, prenom, email, motDePasse, role) {
   return resultat;
 }
 
+// Récupérer tous les utilisateurs
+async function trouverTousLesUtilisateurs() {
+    const sql = `
+        SELECT id, nom, prenom, email, role, created_at
+        FROM users
+        ORDER BY id DESC
+    `;
+
+    const [resultats] = await db.promise().query(sql);
+
+    return resultats;
+}
+
 module.exports = {
   trouverUtilisateurParEmail,
-  creerUtilisateur
+  creerUtilisateur,
+  trouverTousLesUtilisateurs
 };
