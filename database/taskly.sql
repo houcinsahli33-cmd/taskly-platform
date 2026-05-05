@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS clients (
     telephone VARCHAR(20),
     ville VARCHAR(255),
     adresse VARCHAR(255),
+    photo VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -52,17 +53,17 @@ CREATE TABLE IF NOT EXISTS artisans (
 );
 
 CREATE TABLE IF NOT EXISTS demandes (
-    id INT AUTO_INCREMENT PRIMARY KEY, -- id de la demande
+    id INT AUTO_INCREMENT PRIMARY KEY,
     client_id INT NOT NULL,
     artisan_id INT NOT NULL,
     message TEXT,
     adresse VARCHAR(255),
     date_souhaitee DATE,
-    statut ENUM('en_attente', 'acceptee', 'refusee') DEFAULT 'en_attente',
+    statut ENUM('en_attente', 'acceptee', 'refusee', 'annulee') DEFAULT 'en_attente',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE, -- id du client dans clients, suppression de la demande si le compte utilisateur est supprimé
-    FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE -- id de l'artisan dans artisans, suppression de la demande si l'artisan est supprimé
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE
 );
 
 -- Données de test pour les services
