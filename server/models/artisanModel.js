@@ -36,6 +36,7 @@ async function trouverTousLesArtisans(filtres = {}) {
             artisans.description,
             artisans.experience,
             artisans.photo,
+            artisans.created_at,
             users.nom,
             users.prenom,
             users.email,
@@ -80,7 +81,7 @@ async function trouverTousLesArtisans(filtres = {}) {
         );
     }
 
-    sql += " ORDER BY artisans.id DESC";
+    sql += " ORDER BY artisans.created_at DESC";
 
     const [resultats] = await db.promise().query(sql, valeurs);
 

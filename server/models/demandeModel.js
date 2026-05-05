@@ -90,9 +90,40 @@ async function modifierStatutDemande(demandeId, statut) {
     return resultat;
 }
 
+// Récupérer toutes les demandes pour l'administrateur
+async function trouverToutesLesDemandesParAdmin() {
+    const sql = `
+        SELECT 
+            demandes.id,
+            demandes.client_id,
+            demandes.artisan_id,
+            demandes.message,
+            demandes.adresse,
+            demandes.date_souhaitee,
+            demandes.statut,
+            demandes.created_at,
+            client.nom AS client_nom,
+            client.prenom AS client_prenom,
+            artisan_user.nom AS artisan_nom,
+            artisan_user.prenom AS artisan_prenom,
+            services.nom AS service_nom
+        FROM demandes
+        JOIN users AS client ON demandes.client_id = client.id
+        JOIN artisans ON demandes.artisan_id = artisans.id
+        JOIN users AS artisan_user ON artisans.user_id = artisan_user.id
+        JOIN services ON artisans.service_id = services.id
+        ORDER BY demandes.created_at DESC
+    `;
+
+    const [resultats] = await db.promise().query(sql);
+
+    return resultats;
+}
+
 module.exports = {
     creerDemande,
     trouverDemandesParClient,
     trouverDemandesParArtisan,
-    modifierStatutDemande
+    modifierStatutDemande,
+    trouverToutesLesDemandesParAdmin
 };
