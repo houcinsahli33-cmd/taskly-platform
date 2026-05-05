@@ -74,8 +74,41 @@ async function listerDemandesArtisan(req, res) {
     }
 }
 
+// Modifier le statut d'une demande
+async function modifierStatutDemande(req, res) {
+    try {
+        const { id } = req.params;
+        const { statut } = req.body;
+
+        if (statut !== "acceptee" && statut !== "refusee") {
+            return res.status(400).json({
+                message: "Statut invalide."
+            });
+        }
+
+        const resultat = await demandeModel.modifierStatutDemande(id, statut);
+
+        if (resultat.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Demande introuvable."
+            });
+        }
+
+        res.status(200).json({
+            message: "Statut de la demande modifié avec succès."
+        });
+    } catch (error) {
+        console.error("Erreur modification statut demande :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
 module.exports = {
     creerDemande,
     listerDemandesArtisan,
-    listerDemandesClient
+    listerDemandesClient,
+    modifierStatutDemande
 };

@@ -20,4 +20,6 @@ router.post("/", verifierConnexion, verifierClient, demandeController.creerDeman
 router.get("/client", verifierConnexion, verifierClient, demandeController.listerDemandesClient);
 // Route pour récupérer les demandes d'un artisan
 router.get("/artisan", verifierConnexion, verifierArtisan, demandeController.listerDemandesArtisan);
+// Route pour modifier le statut d'une demande (acceptée, refusée, terminée)
+router.put("/:id/statut", verifierConnexion, verifierArtisan, demandeController.modifierStatutDemande);
 module.exports = router;
