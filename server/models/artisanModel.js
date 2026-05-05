@@ -4,16 +4,15 @@
 const db = require("../config/db"); // on importe la connexion à la base de données depuis db.js
 
 // création d'un profil artisan
-async function creerProfilArtisan(userId, serviceId, ville, telephone, description, experience, photo) {
-    const sql = "INSERT INTO artisans (user_id, service_id, ville, telephone, description, experience, photo) VALUES (?, ?, ?, ?, ?, ?, ?)"; // requete SQL pour créer un profil artisan
+async function creerProfilArtisan(userId, serviceId, ville, telephone, description, experience) {
+    const sql = "INSERT INTO artisans (user_id, service_id, ville, telephone, description, experience) VALUES (?, ?, ?, ?, ?, ?)"; // requete SQL pour créer un profil artisan
     const [resultat] = await db.promise().query(sql, [
         userId,
         serviceId,
         ville,
         telephone,
         description,
-        experience,
-        photo
+        experience
     ]); // on execute la requete et on attends et on recupere le resultat
     return resultat; // on retourne le resultat qui est l'id de l'artisan
 }
@@ -30,7 +29,7 @@ async function trouverTousLesArtisans(filtres = {}) {
             artisans.telephone,
             artisans.description,
             artisans.experience,
-            artisans.photo,
+            users.photo_profil,
             users.nom,
             users.prenom,
             users.email,
@@ -89,7 +88,7 @@ async function trouverArtisanParId(id) {
             artisans.telephone,
             artisans.description,
             artisans.experience,
-            artisans.photo,
+            users.photo_profil,
             users.nom,
             users.prenom,
             users.email,

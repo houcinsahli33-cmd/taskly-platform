@@ -10,7 +10,7 @@ const serviceModel = require("../models/serviceModel"); // on importe les foncti
 // Inscription d'un nouvel utilisateur
 async function inscription(req, res) {
     try {
-        const { nom, prenom, email, motDePasse, role, serviceId, ville, telephone, adresse, description, experience, photo } = req.body; // on recupere les donnees envoyees par le formulaire
+        const { nom, prenom, email, motDePasse, role, serviceId, ville, telephone, adresse, description, experience } = req.body; // on recupere les donnees envoyees par le formulaire
 
         if (!nom || !prenom || !email || !motDePasse || !role) {
             // on renvoie une erreur si ya au moins un champ manquant
@@ -78,8 +78,7 @@ async function inscription(req, res) {
                 ville,
                 telephone,
                 description || null,
-                experience,
-                photo || null
+                experience
             );
         }
 

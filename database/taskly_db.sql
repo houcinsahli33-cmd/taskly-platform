@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     mot_de_passe VARCHAR(255) NOT NULL,
     role ENUM('client', 'artisan', 'admin') NOT NULL,
+    photo_profil VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -45,7 +46,6 @@ CREATE TABLE IF NOT EXISTS artisans (
     telephone VARCHAR(20) NOT NULL,
     description TEXT,
     experience INT DEFAULT 0 NOT NULL,
-    photo VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, -- id de l'utilisateur dans users, suppression de l'artisan si le compte utilisateur est supprimé
     FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE  -- id du service dans services, suppression de l'artisan si le service est supprimé
@@ -58,11 +58,31 @@ CREATE TABLE IF NOT EXISTS demandes (
     message TEXT,
     adresse VARCHAR(255),
     date_souhaitee DATE,
-    statut ENUM('en_attente', 'acceptee', 'refusee') DEFAULT 'en_attente',
+    statut ENUM('en_attente', 'acceptee', 'refusee', 'annulee', 'terminee') DEFAULT 'en_attente',
+    annulee_par ENUM('client', 'artisan') DEFAULT NULL,
+    motif_annulation TEXT,
+    date_traitement DATETIME DEFAULT NULL,
+    date_annulation DATETIME DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE, -- id du client dans clients, suppression de la demande si le compte utilisateur est supprimé
     FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE -- id de l'artisan dans artisans, suppression de la demande si l'artisan est supprimé
+);
+
+CREATE TABLE IF NOT EXISTS avis (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    demande_id INT NOT NULL UNIQUE,
+    client_id INT NOT NULL,
+    artisan_id INT NOT NULL,
+    note INT NOT NULL,
+    commentaire TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (demande_id) REFERENCES demandes(id) ON DELETE CASCADE, -- id de la demande dans demandes, suppression de l'avis si la demande est supprimé
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE, -- id du client dans clients, suppression de l'avis si le compte utilisateur est supprimé
+    FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE, -- id de l'artisan dans artisans, suppression de l'avis si l'artisan est supprimé
+
+    CHECK (note >= 1 AND note <= 5) -- La note doit etre comprise entre 1 et 5
 );
 
 -- Données de test pour les services
