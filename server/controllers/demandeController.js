@@ -42,9 +42,9 @@ async function creerDemande(req, res) {
     try {
         const { artisanId, message, adresse, dateSouhaitee } = req.body;
         
-        if (!artisanId || !message || !adresse || !dateSouhaitee) {
+        if (!artisanId || !message || !adresse) {
             return res.status(400).json({
-                message: "Tous les champs sont obligatoires."
+                message: "Certains champs sont obligatoires."
             });
         }
 
@@ -69,7 +69,7 @@ async function creerDemande(req, res) {
             artisanId,
             message,
             adresse,
-            dateSouhaitee
+            dateSouhaitee || null
         );
 
         res.status(201).json({

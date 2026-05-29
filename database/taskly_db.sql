@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS demandes (
     artisan_id INT NOT NULL,
     message TEXT,
     adresse VARCHAR(255),
-    date_souhaitee DATE NOT NULL,
+    date_souhaitee DATE DEFAULT NULL,
     statut ENUM('en_attente', 'acceptee', 'refusee', 'annulee', 'terminee') DEFAULT 'en_attente',
     annulee_par ENUM('client', 'artisan') DEFAULT NULL,
     motif_annulation TEXT,
