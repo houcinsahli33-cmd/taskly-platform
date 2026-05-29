@@ -26,6 +26,12 @@ async function inscription(req, res) {
             });
         }
 
+        if (role === "client" && (!telephone || !ville || !adresse)) {
+            return res.status(400).json({
+            message: "Veuillez remplir les champs obligatoires."
+            });
+        }
+
         if (role === "artisan" && (!serviceId || !ville || !telephone || experience === undefined)) {
             // on renvoie une erreur si le role est artisan et que l'un des champs obligatoires sont manquants
             return res.status(400).json({
@@ -65,9 +71,9 @@ async function inscription(req, res) {
         if (role === "client") {
             await clientModel.creerProfilClient(
                 resultatUtilisateur.insertId,   // on recupere l'id de l'utilisateur cree dans la table users
-                telephone || null,
-                ville || null,
-                adresse || null
+                telephone,
+                ville,
+                adresse
             );
         }
 

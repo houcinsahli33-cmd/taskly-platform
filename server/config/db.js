@@ -1,8 +1,7 @@
 // Ce fichier prépare la connexion entre Node.js et MySQL.
 // Il utilise les informations du fichier .env pour se connecter à la base.
-// Le pool sera utilisé plus tard par les models pour exécuter les requêtes SQL.
 
-const mysql = require("mysql2"); // on importe mysql2
+const mysql = require("mysql2"); // on importe mysql2 pour pouvoir communiquer avec MySQL depuis Node.js
 require("dotenv").config(); // on importe le fichier .env pour lire les valeurs comme DB_HOST, DB_USER, DB_PASSWORD
 
 const pool = mysql.createPool({  // on cree un pool de connexion MySQL

@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS clients (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL UNIQUE,
-    telephone VARCHAR(20),
-    ville VARCHAR(255),
-    adresse VARCHAR(255),
+    telephone VARCHAR(20) NOT NULL,
+    ville VARCHAR(255) NOT NULL,
+    adresse VARCHAR(255) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS demandes (
     artisan_id INT NOT NULL,
     message TEXT,
     adresse VARCHAR(255),
-    date_souhaitee DATE,
+    date_souhaitee DATE NOT NULL,
     statut ENUM('en_attente', 'acceptee', 'refusee', 'annulee', 'terminee') DEFAULT 'en_attente',
     annulee_par ENUM('client', 'artisan') DEFAULT NULL,
     motif_annulation TEXT,

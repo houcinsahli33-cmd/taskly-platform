@@ -103,8 +103,18 @@ async function trouverArtisanParId(id) {
     return resultats[0]; // on retourne l'artisan
 }
 
+// Recuperer un artisan a partir de son user_id
+async function trouverArtisanParUserId(userId) {
+    const sql = "SELECT * FROM artisans WHERE user_id = ?";
+
+    const [resultats] = await db.promise().query(sql, [userId]);
+
+    return resultats[0];
+}
+
 module.exports = {  // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
     creerProfilArtisan,
     trouverTousLesArtisans,
-    trouverArtisanParId
+    trouverArtisanParId,
+    trouverArtisanParUserId
 };
