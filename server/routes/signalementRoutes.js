@@ -8,11 +8,6 @@ const { verifierConnexion, verifierClient } = require("../middleware/authMiddlew
 const router = express.Router();
 
 // Créer un signalement : seulement un client connecté
-router.post(
-    "/",
-    verifierConnexion,
-    verifierClient,
-    signalementController.creerSignalement
-);
+router.post("/", verifierConnexion, verifierClient, signalementController.creerSignalement);
 
 module.exports = router;

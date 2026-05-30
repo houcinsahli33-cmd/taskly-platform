@@ -9,60 +9,25 @@ const router = express.Router();
 
 // Routes côté client
 // Créer une demande
-router.post(
-    "/",
-    verifierConnexion,
-    verifierClient,
-    demandeController.creerDemande
-);
+router.post("/", verifierConnexion, verifierClient, demandeController.creerDemande);
 
 // Lister les demandes envoyées par le client connecté
-router.get(
-    "/client",
-    verifierConnexion,
-    verifierClient,
-    demandeController.listerDemandesClient
-);
+router.get("/client", verifierConnexion, verifierClient, demandeController.listerDemandesClient);
 
 // Annuler une demande encore en attente
-router.put(
-    "/:id/annuler",
-    verifierConnexion,
-    verifierClient,
-    demandeController.annulerDemandeClient
-);
+router.put("/:id/annuler", verifierConnexion, verifierClient, demandeController.annulerDemandeClient);
 
 // Routes côté artisan
 // Lister les demandes reçues par l'artisan connecté
-router.get(
-    "/artisan",
-    verifierConnexion,
-    verifierArtisan,
-    demandeController.listerDemandesArtisan
-);
+router.get("/artisan", verifierConnexion, verifierArtisan, demandeController.listerDemandesArtisan);
 
 // Accepter ou refuser une demande
-router.put(
-    "/:id/statut",
-    verifierConnexion,
-    verifierArtisan,
-    demandeController.modifierStatutDemande
-);
+router.put("/:id/statut", verifierConnexion, verifierArtisan, demandeController.modifierStatutDemande);
 
 // Annuler une demande acceptée avec un motif
-router.put(
-    "/:id/annuler-artisan",
-    verifierConnexion,
-    verifierArtisan,
-    demandeController.annulerDemandeArtisan
-);
+router.put("/:id/annuler-artisan", verifierConnexion, verifierArtisan, demandeController.annulerDemandeArtisan);
 
 // Marquer une demande acceptée comme terminée
-router.put(
-    "/:id/terminer",
-    verifierConnexion,
-    verifierArtisan,
-    demandeController.terminerDemande
-);
+router.put("/:id/terminer", verifierConnexion, verifierArtisan, demandeController.terminerDemande);
 
 module.exports = router;
