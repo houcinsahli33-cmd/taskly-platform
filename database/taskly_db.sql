@@ -118,9 +118,9 @@ CREATE TABLE IF NOT EXISTS contacts_support (
 -- Données de test pour les services
 -- Elles permettent de tester l'inscription artisan et l'affichage des catégories
 INSERT INTO services (nom, description, image) VALUES
-('Plomberie', 'Services de plomberie pour la maison.', 'plomberie.jpg'),
-('Électricité', 'Installation et réparation électrique.', 'electricite.jpg'),
-('Peinture', 'Travaux de peinture intérieure et extérieure.', 'peinture.jpg'),
-('Menuiserie', 'Fabrication et réparation en bois.', 'menuiserie.jpg'),
-('Nettoyage', 'Services de nettoyage pour maisons et locaux.', 'nettoyage.jpg'),
-('Climatisation', 'Installation et réparation de climatiseurs.', 'climatisation.jpg');
+('Plomberie', 'Services de plomberie pour la maison.', '/images/services/plomberie.jpg'),
+('Électricité', 'Installation et réparation électrique.', '/images/services/electricite.jpg'),
+('Peinture', 'Travaux de peinture intérieure et extérieure.', '/images/services/peinture.jpg'),
+('Menuiserie', 'Fabrication et réparation en bois.', '/images/services/menuiserie.jpg'),
+('Nettoyage', 'Services de nettoyage pour maisons et locaux.', '/images/services/nettoyage.jpg'),
+('Climatisation', 'Installation et réparation de climatiseurs.', '/images/services/climatisation.jpg');

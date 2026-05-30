@@ -4,6 +4,7 @@
 // imports
 const express = require("express");
 const session = require("express-session");
+const path = require("path");
 require("./config/db");
 
 const authRoutes = require("./routes/authRoutes"); //  les routes d'authentification
@@ -20,6 +21,7 @@ const app = express();
 
 // middlewares
 app.use(express.json()); // permet de lire les données JSON envoyées dans les requêtes comme req.body
+app.use(express.static(path.join(__dirname, "../client/public"))); // permet de servir les fichiers statiques depuis le dossier public
 
 app.use(session({   // Configuration des sessions utilisateur
     secret: process.env.SESSION_SECRET, // cle utilisee pour sécuriser la session

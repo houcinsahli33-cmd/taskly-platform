@@ -8,5 +8,6 @@ const router = express.Router();    // on cree un routeur express pour definir l
 
 // Route pour récupérer tous les services
 router.get("/", serviceController.listerServices);
+router.get("/:id", serviceController.obtenirServiceParId);
 
 module.exports = router;
