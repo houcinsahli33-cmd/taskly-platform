@@ -131,6 +131,14 @@ async function connexion(req, res) {
             });
         }
 
+        if (utilisateur.statut_compte === "bloque") {
+            return res.status(403).json({
+                message: "Votre compte a été bloqué.",
+                motif: utilisateur.motif_blocage,
+                aide: "Veuillez contacter le support Taskly pour plus d'informations."
+            });
+        }
+
         req.session.utilisateur = { // on cree une session pour l'utilisateur
             id: utilisateur.id,
             nom: utilisateur.nom,

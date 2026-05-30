@@ -19,7 +19,40 @@ async function trouverServiceParId(id) {
     return resultats[0];
 }
 
+// Creer un service
+async function creerService(nom, description, image) {
+    const sql = `
+        INSERT INTO services (nom, description, image)
+        VALUES (?, ?, ?)
+    `;
+
+    const [resultat] = await db.promise().query(sql, [nom, description, image]);
+    return resultat;
+}
+
+// Modifier un service
+async function modifierService(id, nom, description, image) {
+    const sql = `
+        UPDATE services
+        SET nom = ?, description = ?, image = ?
+        WHERE id = ?
+    `;
+    
+    const [resultat] = await db.promise().query(sql, [nom, description, image, id]);
+    return resultat;
+}
+
+// Supprimer un service
+async function supprimerService(id) {
+    const sql = "DELETE FROM services WHERE id = ?";
+    const [resultat] = await db.promise().query(sql, [id]);
+    return resultat;
+}
+
 module.exports = {  // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
     trouverTousLesServices,
-    trouverServiceParId
+    trouverServiceParId,
+    creerService,
+    modifierService,
+    supprimerService
 };

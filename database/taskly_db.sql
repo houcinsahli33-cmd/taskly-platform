@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS users (
     mot_de_passe VARCHAR(255) NOT NULL,
     role ENUM('client', 'artisan', 'admin') NOT NULL,
     photo_profil VARCHAR(255),
+    statut_compte ENUM('actif', 'bloque') DEFAULT 'actif',
+    motif_blocage TEXT,
+    date_blocage DATETIME DEFAULT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -83,6 +86,18 @@ CREATE TABLE IF NOT EXISTS avis (
     FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE, -- id de l'artisan dans artisans, suppression de l'avis si l'artisan est supprimé
 
     CHECK (note >= 1 AND note <= 5) -- La note doit etre comprise entre 1 et 5
+);
+
+CREATE TABLE IF NOT EXISTS signalements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT NOT NULL,
+    artisan_id INT NOT NULL,
+    motif VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE
 );
 
 -- Données de test pour les services

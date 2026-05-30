@@ -11,6 +11,8 @@ const serviceRoutes = require("./routes/serviceRoutes"); // les routes de servic
 const artisanRoutes = require("./routes/artisanRoutes"); // les routes d'artisans
 const demandeRoutes = require("./routes/demandeRoutes"); // les routes de demandes
 const avisRoutes = require("./routes/avisRoutes"); // les routes d'avis
+const adminRoutes = require("./routes/adminRoutes"); // les routes admin
+const signalementRoutes = require("./routes/signalementRoutes"); // les routes de signalements
 
 // creation de l'application express
 const app = express();
@@ -28,13 +30,15 @@ app.use(session({   // Configuration des sessions utilisateur
 }))
 
 // routes
-app.use("/api/auth", authRoutes); // routes liées à l'authentification
-app.use("/api/services", serviceRoutes); // routes liées aux services
-app.use("/api/artisans", artisanRoutes); // routes liées aux artisans
-app.use("/api/demandes", demandeRoutes); // routes liées aux demandes
-app.use("/api/avis", avisRoutes); // routes liées aux avis
+app.use("/api/auth", authRoutes); // routes liees a l'authentification
+app.use("/api/services", serviceRoutes); // routes liees aux services
+app.use("/api/artisans", artisanRoutes); // routes liees aux artisans
+app.use("/api/demandes", demandeRoutes); // routes liees aux demandes
+app.use("/api/avis", avisRoutes); // routes liees aux avis
+app.use("/api/admin", adminRoutes); // routes liees a l'administration
+app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
 
-app.get("/", (req, res) => {    // on crée une route
+app.get("/", (req, res) => {    // on cree une route
     res.send("Bienvenue sur Taskly!"); // on envoie une réponse
 });
 
