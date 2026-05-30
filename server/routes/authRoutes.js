@@ -2,6 +2,8 @@
 
 const express = require("express"); // on importe express pour créer les routes
 const authController = require("../controllers/authController"); // on importe le controller d'authentification qui contient les fonctions liées à l'authentification
+const { verifierConnexion } = require("../middleware/authMiddleware"); // on importe le middleware pour verifier la connexion
+const { uploadPhotoProfil } = require("../middleware/uploadMiddleware"); // on importe le middleware pour l'upload des photos de profil
 
 const router = express.Router(); // on cree un routeur express pour definir les routes
 
@@ -16,5 +18,11 @@ router.post("/logout", authController.deconnexion);
 
 // route pour recuperer l'utilisateur connecte
 router.get("/me", authController.utilisateurConnecte);
+
+// Modifier la photo de profil
+router.put("/photo", verifierConnexion, uploadPhotoProfil.single("photo"), authController.modifierPhotoProfil);
+
+// Supprimer la photo de profil
+router.delete("/photo", verifierConnexion, authController.supprimerPhotoProfil);
 
 module.exports = router; // on exporte le routeur

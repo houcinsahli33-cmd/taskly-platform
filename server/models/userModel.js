@@ -18,8 +18,53 @@ async function creerUtilisateur(nom, prenom, email, motDePasse, role) {
     return resultat;    // on retourne le resultat qui est l'id de l'utilisateur
 }
 
+// Trouver un utilisateur par son id
+async function trouverUtilisateurParId(id) {
+    const sql = `
+        SELECT id, nom, prenom, email, role, photo_profil, statut_compte, motif_blocage
+        FROM users
+        WHERE id = ?
+    `;
+
+    const [resultats] = await db.promise().query(sql, [id]);
+
+    return resultats[0];
+}
+
+// Modifier la photo de profil d'un utilisateur
+async function modifierPhotoProfil(userId, photoProfil) {
+    const sql = `
+        UPDATE users
+        SET photo_profil = ?
+        WHERE id = ?
+    `;
+
+    const [resultat] = await db.promise().query(sql, [
+        photoProfil,
+        userId
+    ]);
+
+    return resultat;
+}
+
+// Supprimer la photo de profil d'un utilisateur
+async function supprimerPhotoProfil(userId) {
+    const sql = `
+        UPDATE users
+        SET photo_profil = NULL
+        WHERE id = ?
+    `;
+
+    const [resultat] = await db.promise().query(sql, [userId]);
+
+    return resultat;
+}
+
 // exportation des fonctions pour pouvoir les utiliser dans d'autres fichiers
 module.exports = {
     trouverUtilisateurParEmail,
-    creerUtilisateur
+    creerUtilisateur,
+    trouverUtilisateurParId,
+    modifierPhotoProfil,
+    supprimerPhotoProfil
 };

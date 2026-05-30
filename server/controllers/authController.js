@@ -1,6 +1,9 @@
 // Ce fichier contient la logique liée à l'authentification. Il gère l'inscription, la connexion et la déconnexion des utilisateurs.
 // Il utilise userModel.js pour communiquer avec la table users.
 
+const fs = require("fs"); // on importe fs pour manipuler les fichiers
+const path = require("path");   // on importe path pour travailler avec les chemins de fichiers
+
 const bcrypt = require("bcrypt"); // on importe bcrypt pour hasher le mot de passe avant de l'enregistrer dans la base de données (le transformer en version securisée)
 const userModel = require("../models/userModel"); // on importe les fonctions du fichier userModel.js pour interagir avec la table users
 const clientModel = require("../models/clientModel"); // on importe les fonctions du fichier clientModel.js pour interagir avec la table clients
@@ -190,9 +193,92 @@ function utilisateurConnecte(req, res) {
     });
 }
 
+// Modifier la photo de profil de l'utilisateur connecte
+async function modifierPhotoProfil(req, res) {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Veuillez choisir une image."
+            });
+        }
+
+        const utilisateur = await userModel.trouverUtilisateurParId(req.session.utilisateur.id);
+
+        if (!utilisateur) {
+            return res.status(404).json({
+                message: "Utilisateur introuvable."
+            });
+        }
+
+        // Supprimer l'ancienne photo
+        if (utilisateur.photo_profil) {
+            const ancienChemin = path.join(__dirname, "../../client/public", utilisateur.photo_profil);
+
+            if (fs.existsSync(ancienChemin)) {
+                fs.unlinkSync(ancienChemin);
+            }
+        }
+
+        const cheminPhoto = "/uploads/profiles/" + req.file.filename;
+
+        await userModel.modifierPhotoProfil(
+            req.session.utilisateur.id,
+            cheminPhoto
+        );
+
+        res.status(200).json({
+            message: "Photo de profil mise à jour avec succès.",
+            photo_profil: cheminPhoto
+        });
+
+    } catch (error) {
+        console.error("Erreur modification photo :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
+// Supprimer la photo de profil de l'utilisateur connecte
+async function supprimerPhotoProfil(req, res) {
+    try {
+        const utilisateur = await userModel.trouverUtilisateurParId(req.session.utilisateur.id);
+
+        if (!utilisateur) {
+            return res.status(404).json({
+                message: "Utilisateur introuvable."
+            });
+        }
+
+        if (utilisateur.photo_profil) {
+            const cheminPhoto = path.join(__dirname, "../../client/public", utilisateur.photo_profil);
+
+            if (fs.existsSync(cheminPhoto)) {
+                fs.unlinkSync(cheminPhoto);
+            }
+        }
+
+        await userModel.supprimerPhotoProfil(req.session.utilisateur.id);
+
+        res.status(200).json({
+            message: "Photo de profil supprimée avec succès."
+        });
+
+    } catch (error) {
+        console.error("Erreur suppression photo :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
 module.exports = {  // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
     inscription,
     connexion,
     deconnexion,
-    utilisateurConnecte
+    utilisateurConnecte,
+    modifierPhotoProfil,
+    supprimerPhotoProfil
 };
