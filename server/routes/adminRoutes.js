@@ -33,4 +33,10 @@ router.put("/users/:id/bloquer",adminController.bloquerUtilisateur);
 // Debloquer un utilisateur
 router.put("/users/:id/debloquer",adminController.debloquerUtilisateur);
 
+// Lister les messages de contact/support
+router.get("/contacts", adminController.listerMessagesContact);
+
+// Marquer un message de contact comme traité
+router.put("/contacts/:id/traiter", adminController.traiterMessageContact);
+
 module.exports = router;

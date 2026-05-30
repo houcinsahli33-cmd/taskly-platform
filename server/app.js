@@ -13,6 +13,7 @@ const demandeRoutes = require("./routes/demandeRoutes"); // les routes de demand
 const avisRoutes = require("./routes/avisRoutes"); // les routes d'avis
 const adminRoutes = require("./routes/adminRoutes"); // les routes admin
 const signalementRoutes = require("./routes/signalementRoutes"); // les routes de signalements
+const contactRoutes = require("./routes/contactRoutes"); // les routes de contact/support
 
 // creation de l'application express
 const app = express();
@@ -37,6 +38,7 @@ app.use("/api/demandes", demandeRoutes); // routes liees aux demandes
 app.use("/api/avis", avisRoutes); // routes liees aux avis
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
+app.use("/api/contact", contactRoutes); // routes liées au contact/support
 
 app.get("/", (req, res) => {    // on cree une route
     res.send("Bienvenue sur Taskly!"); // on envoie une réponse

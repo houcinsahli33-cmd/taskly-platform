@@ -14,10 +14,12 @@ async function statistiques(req, res) {
             totalDemandes,
             totalAvis,
             totalSignalements,
+            totalContactsSupport,
             demandesParStatut,
             derniersUtilisateurs,
             dernieresDemandes,
-            derniersAvis
+            derniersAvis,
+            derniersContactsSupport
         ] = await Promise.all([
             adminModel.compter("users"),
             adminModel.compter("clients"),
@@ -26,10 +28,12 @@ async function statistiques(req, res) {
             adminModel.compter("demandes"),
             adminModel.compter("avis"),
             adminModel.compter("signalements"),
+            adminModel.compter("contacts_support"),
             adminModel.demandesParStatut(),
             adminModel.derniersUtilisateurs(),
             adminModel.dernieresDemandes(),
-            adminModel.derniersAvis()
+            adminModel.derniersAvis(),
+            adminModel.derniersMessagesContact()
         ]);
 
         res.status(200).json({
@@ -40,12 +44,14 @@ async function statistiques(req, res) {
                 totalServices,
                 totalDemandes,
                 totalAvis,
-                totalSignalements
+                totalSignalements,
+                totalContactsSupport
             },
             demandesParStatut,
             derniersUtilisateurs,
             dernieresDemandes,
-            derniersAvis
+            derniersAvis,
+            derniersContactsSupport
         });
     } catch (error) {
         console.error("Erreur statistiques admin :", error.message);
@@ -261,6 +267,56 @@ async function debloquerUtilisateur(req, res) {
     }
 }
 
+// Lister les messages envoyes au support
+async function listerMessagesContact(req, res) {
+    try {
+        const { statut } = req.query;
+
+        if (statut && statut !== "nouveau" && statut !== "traite") {
+            return res.status(400).json({
+                message: "Statut invalide."
+            });
+        }
+
+        const contacts = await adminModel.listerMessagesContact(statut);
+
+        res.status(200).json({
+            contacts
+        });
+
+    } catch (error) {
+        console.error("Erreur liste contacts support :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
+// Marquer un message de contact comme traite
+async function traiterMessageContact(req, res) {
+    try {
+        const resultat = await adminModel.traiterMessageContact(req.params.id);
+
+        if (resultat.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Message de contact introuvable."
+            });
+        }
+
+        res.status(200).json({
+            message: "Message marqué comme traité."
+        });
+
+    } catch (error) {
+        console.error("Erreur traitement contact support :", error.message);
+
+        res.status(500).json({
+            message: "Erreur serveur."
+        });
+    }
+}
+
 module.exports = {
     statistiques,
     creerService,
@@ -269,5 +325,7 @@ module.exports = {
     listerUtilisateurs,
     listerSignalements,
     bloquerUtilisateur,
-    debloquerUtilisateur
+    debloquerUtilisateur,
+    listerMessagesContact,
+    traiterMessageContact
 };

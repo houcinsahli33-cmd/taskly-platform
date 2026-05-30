@@ -104,6 +104,17 @@ CREATE TABLE IF NOT EXISTS signalements (
     UNIQUE (demande_id, signaleur_user_id, signale_user_id)
 );
 
+CREATE TABLE IF NOT EXISTS contacts_support (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    sujet VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    statut ENUM('nouveau', 'traite') DEFAULT 'nouveau',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    date_traitement DATETIME DEFAULT NULL
+);
+
 -- Données de test pour les services
 -- Elles permettent de tester l'inscription artisan et l'affichage des catégories
 INSERT INTO services (nom, description, image) VALUES

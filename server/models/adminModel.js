@@ -2,10 +2,11 @@
 
 const db = require("../config/db");
 const signalementModel = require("../models/signalementModel");
+const contactModel = require("../models/contactModel");
 
 // Compter les lignes d'une table
 async function compter(table) {
-    const tablesAutorisees = ["users", "clients", "artisans", "services", "demandes", "avis", "signalements"]; 
+    const tablesAutorisees = ["users", "clients", "artisans", "services", "demandes", "avis", "signalements","contacts_support"]; 
     
     // si la table donnees n'est pas autorisee, renvoyer une erreur
     if (!tablesAutorisees.includes(table)) {
@@ -186,5 +187,8 @@ module.exports = {
     trouverUtilisateurParId,
     bloquerUtilisateur,
     debloquerUtilisateur,
-    listerSignalements: signalementModel.listerSignalements
+    listerSignalements: signalementModel.listerSignalements,
+    listerMessagesContact: contactModel.listerMessagesContact,
+    traiterMessageContact: contactModel.traiterMessageContact,
+    derniersMessagesContact: contactModel.derniersMessagesContact
 };
