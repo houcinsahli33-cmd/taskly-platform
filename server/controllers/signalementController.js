@@ -1,37 +1,40 @@
 // Ce fichier contient la logique métier liée aux signalements.
 
 const signalementModel = require("../models/signalementModel");
-const clientModel = require("../models/clientModel");
-const artisanModel = require("../models/artisanModel");
 
 // Creer un signalement
 async function creerSignalement(req, res) {
     try {
-        const { artisanId, motif, description } = req.body;
+        const { demandeId, motif, description } = req.body;
 
-        if (!artisanId || !motif) {
+        if (!demandeId || !motif) {
             return res.status(400).json({
-                message: "L'artisan et le motif sont obligatoires."
+            message: "La demande et le motif sont obligatoires."
             });
         }
 
-        const client = await clientModel.trouverClientParUserId(req.session.utilisateur.id);
+        const demande = await signalementModel.trouverDemandePourSignalement(demandeId);
 
-        if (!client) {
+        if (!demande) {
             return res.status(404).json({
-                message: "Profil client introuvable."
+                message: "Demande introuvable."
             });
         }
 
-        const artisan = await artisanModel.trouverArtisanParId(artisanId);
+        const userId = req.session.utilisateur.id;
+        let signaleUserId = null;
 
-        if (!artisan) {
-            return res.status(404).json({
-                message: "Artisan introuvable."
+        if (userId === demande.client_user_id) {    // si l'utilisateur qui signale est le client
+            signaleUserId = demande.artisan_user_id;    // le signaleUserId est l'artisan
+        } else if (userId === demande.artisan_user_id) {    // si l'utilisateur est l'artisan
+            signaleUserId = demande.client_user_id; // le signaleUserId est le client
+        } else {
+            return res.status(403).json({
+                message: "Vous ne pouvez signaler que les utilisateurs liés à vos demandes."
             });
         }
 
-        const resultat = await signalementModel.creerSignalement(client.id, artisanId, motif, description || null);
+        const resultat = await signalementModel.creerSignalement(demandeId, userId, signaleUserId, motif, description || null);
 
         res.status(201).json({
             message: "Signalement envoyé avec succès.",
@@ -39,8 +42,13 @@ async function creerSignalement(req, res) {
         });
 
     } catch (error) {
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(400).json({
+                message: "Vous avez déjà signalé cet utilisateur pour cette demande."
+            });
+        }
         console.error("Erreur création signalement :", error.message);
-
+        
         res.status(500).json({
             message: "Erreur serveur."
         });

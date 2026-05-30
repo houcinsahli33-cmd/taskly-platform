@@ -90,14 +90,18 @@ CREATE TABLE IF NOT EXISTS avis (
 
 CREATE TABLE IF NOT EXISTS signalements (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    client_id INT NOT NULL,
-    artisan_id INT NOT NULL,
+    demande_id INT NOT NULL,
+    signaleur_user_id INT NOT NULL,
+    signale_user_id INT NOT NULL,
     motif VARCHAR(255) NOT NULL,
     description TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
-    FOREIGN KEY (artisan_id) REFERENCES artisans(id) ON DELETE CASCADE
+    FOREIGN KEY (demande_id) REFERENCES demandes(id) ON DELETE CASCADE,
+    FOREIGN KEY (signaleur_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (signale_user_id) REFERENCES users(id) ON DELETE CASCADE,
+
+    UNIQUE (demande_id, signaleur_user_id, signale_user_id)
 );
 
 -- Données de test pour les services
