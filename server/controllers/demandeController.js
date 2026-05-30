@@ -51,16 +51,14 @@ async function creerDemande(req, res) {
         const client = await obtenirClientConnecte(req, res);
 
         if (!client) {
-            return res.status(404).json({
-                message: "Client introuvable."
-            });
+            return;
         }
 
         const artisan = await artisanModel.trouverArtisanParId(artisanId);
 
         if (!artisan) {
             return res.status(404).json({
-                message: "Artisan introuvable."
+            message: "Artisan introuvable."
             });
         }
 
@@ -92,9 +90,7 @@ async function listerDemandesClient(req, res) {
         const client = await obtenirClientConnecte(req, res);
 
         if (!client) {
-            return res.status(404).json({
-                message: "Client introuvable."
-            });
+            return;
         }
 
         const demandes = await demandeModel.listerDemandesClient(client.id);
@@ -118,9 +114,7 @@ async function listerDemandesArtisan(req, res) {
         const artisan = await obtenirArtisanConnecte(req, res);
 
         if (!artisan) {
-            return res.status(404).json({
-                message: "Artisan introuvable."
-            });
+            return;
         }
 
         const demandes = await demandeModel.listerDemandesArtisan(artisan.id);
@@ -152,9 +146,7 @@ async function modifierStatutDemande(req, res) {
         const artisan = await obtenirArtisanConnecte(req, res);
 
         if (!artisan) {
-            return res.status(404).json({
-                message: "Artisan introuvable."
-            });
+            return;
         }
 
         const resultat = await demandeModel.modifierStatutDemande(
@@ -188,9 +180,7 @@ async function annulerDemandeClient(req, res) {
         const client = await obtenirClientConnecte(req, res);
 
         if (!client) {
-            return res.status(404).json({
-                message: "Client introuvable."
-            });
+            return;
         }
 
         const resultat = await demandeModel.annulerDemandeClient(
@@ -231,9 +221,7 @@ async function annulerDemandeArtisan(req, res) {
         const artisan = await obtenirArtisanConnecte(req, res);
 
         if (!artisan) {
-            return res.status(404).json({
-                message: "Artisan introuvable."
-            });
+            return;
         }
 
         const resultat = await demandeModel.annulerDemandeArtisan(
@@ -267,9 +255,7 @@ async function terminerDemande(req, res) {
         const artisan = await obtenirArtisanConnecte(req, res);
 
         if (!artisan) {
-            return res.status(404).json({
-                message: "Artisan introuvable."
-            });
+            return;
         }
 
         const resultat = await demandeModel.terminerDemande(

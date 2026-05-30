@@ -46,11 +46,15 @@ async function listerDemandesClient(clientId) {
             artisans.telephone AS artisan_telephone,
             artisans.experience AS artisan_experience,
 
-            services.nom AS service_nom
+            services.nom AS service_nom,
+
+            avis.id AS avis_id,
+            avis.note AS avis_note
         FROM demandes
         JOIN artisans ON demandes.artisan_id = artisans.id
         JOIN users ON artisans.user_id = users.id
         JOIN services ON artisans.service_id = services.id
+        LEFT JOIN avis ON demandes.id = avis.demande_id
         WHERE demandes.client_id = ?
         ORDER BY demandes.created_at DESC
     `;
