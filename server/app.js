@@ -10,6 +10,7 @@ const authRoutes = require("./routes/authRoutes"); //  les routes d'authentifica
 const serviceRoutes = require("./routes/serviceRoutes"); // les routes de services
 const artisanRoutes = require("./routes/artisanRoutes"); // les routes d'artisans
 const demandeRoutes = require("./routes/demandeRoutes"); // les routes de demandes
+const avisRoutes = require("./routes/avisRoutes"); // les routes d'avis
 
 // creation de l'application express
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/auth", authRoutes); // routes liées à l'authentification
 app.use("/api/services", serviceRoutes); // routes liées aux services
 app.use("/api/artisans", artisanRoutes); // routes liées aux artisans
 app.use("/api/demandes", demandeRoutes); // routes liées aux demandes
+app.use("/api/avis", avisRoutes); // routes liées aux avis
 
 app.get("/", (req, res) => {    // on crée une route
     res.send("Bienvenue sur Taskly!"); // on envoie une réponse
