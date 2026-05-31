@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact support - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/contact.js"></script>
+</head>
+<body data-active="contact">
+  <div id="site-header"></div>
+  <main class="page-main">
+    <section class="section compact alt">
+      <div class="container section-heading">
+        <p class="eyebrow">Support Taskly</p>
+        <h1>Contactez notre équipe support</h1>
+        <p class="lead">Envoyez un message, récupérez votre numéro de suivi et consultez l'état de votre demande à tout moment.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container contact-grid">
+        <section class="form-card">
+          <h2>Contacter le support</h2>
+          <p class="muted" style="margin:10px 0 22px">Votre demande sera enregistrée dans le système support Taskly.</p>
+          <div id="contact-alert" class="alert"></div>
+          <form id="contact-form" class="grid">
+            <label>
+              <span class="field-label">Nom</span>
+              <input class="form-control" id="contact-name" required placeholder="Votre nom">
+            </label>
+            <label>
+              <span class="field-label">Email</span>
+              <input class="form-control" id="contact-email" type="email" required placeholder="votre@email.com">
+            </label>
+            <label>
+              <span class="field-label">Sujet</span>
+              <select class="form-select" id="contact-subject" data-support-subjects required></select>
+            </label>
+            <label>
+              <span class="field-label">Message</span>
+              <textarea class="form-textarea" id="contact-message" required placeholder="Expliquez votre situation"></textarea>
+            </label>
+            <button class="btn primary" type="submit">Envoyer le message</button>
+          </form>
+        </section>
+
+        <aside class="support-info">
+          <section class="form-card">
+            <h2>Suivre un message</h2>
+            <p class="muted" style="margin:10px 0 22px">Utilisez le numéro reçu après l'envoi.</p>
+            <form id="follow-form" class="grid">
+              <label>
+                <span class="field-label">Numéro de suivi</span>
+                <input class="form-control" id="follow-id" required placeholder="Exemple : 12">
+              </label>
+              <label>
+                <span class="field-label">Email</span>
+                <input class="form-control" id="follow-email" type="email" required placeholder="votre@email.com">
+              </label>
+              <button class="btn outline" type="submit">Consulter le statut</button>
+            </form>
+          </section>
+          <div id="follow-result"></div>
+          <section class="form-card">
+            <h2>Informations support</h2>
+            <div class="support-info" style="margin-top:18px">
+              <div class="info-row"><strong>Email</strong><br><a href="mailto:support@taskly.dz">support@taskly.dz</a></div>
+              <div class="info-row"><strong>Téléphone</strong><br><span class="muted">+213 555 000 000</span></div>
+              <div class="info-row"><strong>Adresse</strong><br><span class="muted">Alger, Algérie</span></div>
+              <div class="info-row"><strong>Horaires</strong><br><span class="muted">Samedi à jeudi, 9h00 - 18h00</span></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+</body>
+</html>

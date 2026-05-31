@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/auth-pages.js"></script>
+</head>
+<body class="auth-page" data-auth-page="true">
+  <main class="auth-card">
+    <a class="brand auth-logo" href="/index.html">
+      <span class="brand-mark">T</span>
+      <span>Taskly</span>
+    </a>
+    <div class="section-heading" style="margin-bottom:22px">
+      <h1>Créer un compte</h1>
+      <p class="lead">Rejoignez Taskly comme client ou comme artisan.</p>
+    </div>
+    <div id="register-alert" class="alert"></div>
+    <form id="register-form">
+      <input type="hidden" id="register-role" value="client">
+      <div class="role-switch">
+        <button type="button" data-role-choice="client">Client</button>
+        <button type="button" data-role-choice="artisan">Artisan</button>
+      </div>
+      <div class="form-grid">
+        <label>
+          <span class="field-label">Nom</span>
+          <input class="form-control" id="register-nom" required placeholder="Nom">
+        </label>
+        <label>
+          <span class="field-label">Prénom</span>
+          <input class="form-control" id="register-prenom" required placeholder="Prénom">
+        </label>
+        <label>
+          <span class="field-label">Email</span>
+          <input class="form-control" id="register-email" type="email" required placeholder="votre@email.com">
+        </label>
+        <label>
+          <span class="field-label">Mot de passe</span>
+          <input class="form-control" id="register-password" type="password" required placeholder="Mot de passe">
+        </label>
+      </div>
+
+      <div class="form-grid" data-role-fields="client" style="margin-top:18px">
+        <label>
+          <span class="field-label">Téléphone</span>
+          <input class="form-control" id="register-client-phone" placeholder="0550 00 00 00">
+        </label>
+        <label>
+          <span class="field-label">Ville</span>
+          <input class="form-control" id="register-client-city" placeholder="Alger">
+        </label>
+        <label class="full">
+          <span class="field-label">Adresse</span>
+          <input class="form-control" id="register-client-address" placeholder="Adresse complète">
+        </label>
+      </div>
+
+      <div class="form-grid" data-role-fields="artisan" style="margin-top:18px" hidden>
+        <label>
+          <span class="field-label">Service</span>
+          <select class="form-select" id="register-service"></select>
+        </label>
+        <label>
+          <span class="field-label">Ville</span>
+          <input class="form-control" id="register-artisan-city" placeholder="Alger">
+        </label>
+        <label>
+          <span class="field-label">Téléphone</span>
+          <input class="form-control" id="register-artisan-phone" placeholder="0550 00 00 00">
+        </label>
+        <label>
+          <span class="field-label">Expérience</span>
+          <input class="form-control" id="register-experience" type="number" min="0" value="0">
+        </label>
+        <label class="full">
+          <span class="field-label">Description</span>
+          <textarea class="form-textarea" id="register-description" placeholder="Présentez vos compétences"></textarea>
+        </label>
+      </div>
+
+      <button class="btn primary block" type="submit" style="margin-top:22px">Créer mon compte</button>
+    </form>
+    <p class="muted" style="margin-top:22px;text-align:center">Déjà inscrit ? <a href="/login.html" style="color:var(--primary);font-weight:800">Se connecter</a></p>
+  </main>
+</body>
+</html>

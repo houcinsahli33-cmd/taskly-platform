@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskly - Artisans de confiance près de chez vous</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/home.js"></script>
+</head>
+<body data-active="home">
+  <div id="site-header"></div>
+
+  <main class="page-main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Services locaux, artisans vérifiés</p>
+          <h1>Trouvez rapidement un artisan de confiance près de chez vous</h1>
+          <p class="lead">Taskly vous aide à comparer les profils, envoyer une demande claire et suivre vos interventions en toute simplicité.</p>
+
+          <form class="search-panel" id="home-search-form">
+            <label>
+              <span class="field-label">Service</span>
+              <select class="form-select" id="home-service">
+                <option value="">Tous les services</option>
+              </select>
+            </label>
+            <label>
+              <span class="field-label">Ville</span>
+              <input class="form-control" id="home-city" type="text" placeholder="Alger, Oran, Constantine...">
+            </label>
+            <button class="btn primary" type="submit">Rechercher</button>
+          </form>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="/artisans.html">Trouver un artisan</a>
+            <a class="btn outline" href="/register.html?role=artisan">Devenir artisan</a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <img src="/images/hero-taskly.svg" alt="Artisan Taskly en intervention">
+          <div class="hero-badge">
+            <strong>Demandes simples</strong>
+            <span class="muted">Décrivez votre besoin, choisissez un artisan et suivez le statut depuis votre espace.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Catégories populaires</p>
+          <h2>Des services prêts pour les petits et grands travaux</h2>
+        </div>
+        <div class="carousel-wrap">
+          <div class="carousel-track" id="services-carousel"></div>
+          <div class="carousel-controls">
+            <button class="icon-btn" type="button" data-carousel="services-carousel" data-direction="prev" aria-label="Services précédents">‹</button>
+            <button class="icon-btn" type="button" data-carousel="services-carousel" data-direction="next" aria-label="Services suivants">›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-tint">
+      <div class="container">
+        <div class="trust-band">
+          <div class="trust-item">
+            <strong>4 étapes</strong>
+            <span>Un parcours clair de la recherche à l'avis.</span>
+          </div>
+          <div class="trust-item">
+            <strong>100%</strong>
+            <span>Demandes liées à de vrais profils utilisateurs.</span>
+          </div>
+          <div class="trust-item">
+            <strong>Support</strong>
+            <span>Suivi public avec numéro de dossier.</span>
+          </div>
+          <div class="trust-item">
+            <strong>Admin</strong>
+            <span>Modération des comptes et signalements.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Comment ça marche</p>
+          <h2>Un service simple, humain et organisé</h2>
+        </div>
+        <div class="grid four steps">
+          <article class="card step-card">
+            <h3>Choisissez un service</h3>
+            <p class="muted">Sélectionnez la catégorie qui correspond à votre besoin.</p>
+          </article>
+          <article class="card step-card">
+            <h3>Comparez les artisans</h3>
+            <p class="muted">Consultez les profils, villes, expériences et avis.</p>
+          </article>
+          <article class="card step-card">
+            <h3>Envoyez une demande</h3>
+            <p class="muted">Partagez le message, l'adresse et la date souhaitée.</p>
+          </article>
+          <article class="card step-card">
+            <h3>Donnez votre avis</h3>
+            <p class="muted">Après une mission terminée, laissez une note utile.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Artisans en avant</p>
+          <h2>Des profils locaux à découvrir</h2>
+        </div>
+        <div class="grid three" id="home-artisans"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>

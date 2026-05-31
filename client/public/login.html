@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/auth-pages.js"></script>
+</head>
+<body class="auth-page" data-auth-page="true">
+  <main class="auth-card">
+    <a class="brand auth-logo" href="/index.html">
+      <span class="brand-mark">T</span>
+      <span>Taskly</span>
+    </a>
+    <div class="section-heading" style="margin-bottom:22px">
+      <h1>Connexion</h1>
+      <p class="lead">Accédez à votre espace client, artisan ou administrateur.</p>
+    </div>
+    <div id="login-alert" class="alert"></div>
+    <form id="login-form" class="grid">
+      <label>
+        <span class="field-label">Adresse email</span>
+        <input class="form-control" id="login-email" type="email" required placeholder="votre@email.com">
+      </label>
+      <label>
+        <span class="field-label">Mot de passe</span>
+        <input class="form-control" id="login-password" type="password" required placeholder="Votre mot de passe">
+      </label>
+      <button class="btn primary block" type="submit">Se connecter</button>
+    </form>
+    <p class="muted" style="margin-top:22px;text-align:center">Pas encore de compte ? <a href="/register.html" style="color:var(--primary);font-weight:800">Créer un compte</a></p>
+  </main>
+</body>
+</html>

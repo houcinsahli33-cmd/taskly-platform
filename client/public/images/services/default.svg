@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title">
+  <title id="title">Service Taskly</title>
+  <rect width="640" height="420" fill="#e8f7f2"/>
+  <circle cx="502" cy="92" r="78" fill="#0f766e" opacity=".16"/>
+  <circle cx="119" cy="342" r="98" fill="#f59e0b" opacity=".18"/>
+  <rect x="164" y="115" width="312" height="198" rx="34" fill="#fff" filter="drop-shadow(0 20px 26px rgba(15,23,42,.12))"/>
+  <path d="M258 254l101-101M258 153l101 101" stroke="#0f766e" stroke-width="24" stroke-linecap="round"/>
+  <circle cx="236" cy="153" r="34" fill="#d9f5ef" stroke="#0f766e" stroke-width="12"/>
+  <circle cx="381" cy="254" r="34" fill="#d9f5ef" stroke="#0f766e" stroke-width="12"/>
+</svg>

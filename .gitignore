@@ -1,0 +1,4 @@
+# Ignorer les dépendances Node.js (trop lourd, recréé avec npm install)
+# Ignorer les variables sensibles (mot de passe, clés, etc.)
+node_modules/
+.env

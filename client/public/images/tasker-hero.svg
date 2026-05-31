@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-labelledby="title desc">
+  <title id="title">Artisan indépendant</title>
+  <desc id="desc">Illustration d'une artisane souriante avec une échelle.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d9f5ef"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="700" fill="url(#bg)"/>
+  <path d="M104 96h101l-12 520H92zM245 96h101l-12 520H233z" fill="#cbd5e1"/>
+  <path d="M126 188h198M124 292h198M121 396h198M119 500h198" stroke="#94a3b8" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="532" cy="214" r="82" fill="#f6c492"/>
+  <path d="M453 222c0-69 55-113 121-95 45 13 72 48 74 92-48-2-91-23-120-62-14 40-41 63-75 65z" fill="#173b36"/>
+  <path d="M410 650c24-134 79-216 168-230 93-15 178 72 209 230z" fill="#0f766e"/>
+  <path d="M477 430l70 124 73-126c-48-23-95-22-143 2z" fill="#ffffff"/>
+  <path d="M397 445l-109 91 44 62 118-101zM704 438l112 80-42 66-119-91z" fill="#f6c492"/>
+  <path d="M254 617h582v33H254z" fill="#083f39"/>
+  <circle cx="737" cy="146" r="46" fill="#f59e0b" opacity=".78"/>
+</svg>

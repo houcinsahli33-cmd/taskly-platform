@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img" aria-labelledby="title desc">
+  <title id="title">Communauté Taskly</title>
+  <desc id="desc">Illustration de clients et artisans autour d'une plateforme locale.</desc>
+  <rect width="900" height="650" fill="#eef7f4"/>
+  <circle cx="156" cy="126" r="82" fill="#0f766e" opacity=".16"/>
+  <circle cx="739" cy="501" r="126" fill="#f59e0b" opacity=".18"/>
+  <rect x="164" y="144" width="572" height="360" rx="34" fill="#fff" filter="drop-shadow(0 22px 30px rgba(15,23,42,.12))"/>
+  <rect x="226" y="214" width="448" height="54" rx="18" fill="#d9f5ef"/>
+  <rect x="226" y="304" width="190" height="130" rx="22" fill="#0f766e"/>
+  <rect x="476" y="304" width="198" height="130" rx="22" fill="#f59e0b"/>
+  <circle cx="296" cy="369" r="34" fill="#fff"/>
+  <circle cx="546" cy="369" r="34" fill="#fff"/>
+  <path d="M342 394c30-28 72-28 102 0" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+  <path d="M592 394c30-28 72-28 102 0" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+</svg>
