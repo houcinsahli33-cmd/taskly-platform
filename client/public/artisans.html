@@ -6,19 +6,21 @@
   <title>Artisans - Taskly</title>
   <link rel="stylesheet" href="/css/style.css">
   <script defer src="/js/api.js"></script>
+  <script defer src="/js/algeria-locations.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/artisans.js"></script>
 </head>
 <body data-active="artisans">
   <div id="site-header"></div>
   <main class="page-main">
-    <section class="section compact alt">
+    <section class="page-hero">
       <div class="container section-heading">
         <p class="eyebrow">Artisans Taskly</p>
         <h1>Comparez les artisans disponibles</h1>
-        <p class="lead">Filtrez par service, ville ou recherche pour trouver le bon profil.</p>
+        <p class="lead">Filtrez par service, wilaya, commune ou mot-clé pour trouver un profil adapté à votre demande.</p>
       </div>
     </section>
+
     <section class="section">
       <div class="container">
         <form class="filters" id="artisans-filter-form">
@@ -27,22 +29,29 @@
             <select class="form-select" id="filter-service"></select>
           </label>
           <label>
-            <span class="field-label">Ville</span>
-            <input class="form-control" id="filter-city" placeholder="Ville">
+            <span class="field-label">Wilaya</span>
+            <select class="form-select" id="filter-wilaya"></select>
+          </label>
+          <label>
+            <span class="field-label">Commune</span>
+            <select class="form-select" id="filter-commune">
+              <option value="">Choisir une commune</option>
+            </select>
           </label>
           <label>
             <span class="field-label">Recherche</span>
             <input class="form-control" id="filter-search" placeholder="Nom, service, description">
           </label>
           <div class="request-actions">
-            <button class="btn primary" type="submit">Filtrer</button>
-            <button class="btn outline" id="reset-filters" type="button">Réinitialiser</button>
+            <button class="btn primary" type="submit" aria-label="Rechercher">Rechercher</button>
+            <button class="btn outline" id="reset-filters" type="button" aria-label="Réinitialiser les filtres">Réinitialiser</button>
           </div>
         </form>
         <div class="grid three" id="artisans-grid"></div>
       </div>
     </section>
   </main>
+
   <div id="request-modal" class="modal-backdrop">
     <div class="modal" role="dialog" aria-modal="true">
       <div class="modal-header">

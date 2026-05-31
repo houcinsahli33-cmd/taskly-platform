@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devenir artisan - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/algeria-locations.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/auth-pages.js"></script>
+</head>
+<body data-active="become">
+  <div id="site-header"></div>
+  <main class="page-main">
+    <section class="container become-hero">
+      <img src="/images/auth/become-artisan.jpg" alt="Artisan au travail">
+      <div>
+        <p class="eyebrow">Devenir artisan</p>
+        <h1>Développez votre activité<br>avec des demandes claires</h1>
+        <p class="lead">Présentez votre service, choisissez votre zone de travail<br>et recevez des demandes adaptées à votre expérience.</p>
+        <div class="service-stats">
+          <span class="badge primary">Choisissez vos missions</span>
+          <span class="badge accent">Construisez votre réputation</span>
+          <span class="badge">Gérez vos statuts</span>
+        </div>
+        <a class="btn primary" href="#inscription-artisan" style="margin-top:24px">Commencer l'inscription</a>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Pourquoi Taskly ?</p>
+          <h2>Un espace simple pour gérer votre activité</h2>
+        </div>
+        <div class="grid four">
+          <article class="card card-body"><h3>Développez votre activité</h3><p class="muted">Un profil clair aide les clients à comprendre vos compétences.</p></article>
+          <article class="card card-body"><h3>Recevez des demandes claires</h3><p class="muted">Chaque demande contient un message, une adresse et une date souhaitée.</p></article>
+          <article class="card card-body"><h3>Choisissez les missions</h3><p class="muted">Vous pouvez accepter, refuser, terminer ou annuler avec motif.</p></article>
+          <article class="card card-body"><h3>Construisez votre réputation</h3><p class="muted">Les avis après missions terminées renforcent votre profil.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container split-feature">
+        <div>
+          <p class="eyebrow">Comment commencer ?</p>
+          <h2>Cinq étapes simples</h2>
+          <div class="steps-list">
+            <div class="step-row"><span class="step-number">1</span><div><h3>Créez votre compte artisan</h3><p class="muted">Renseignez vos informations principales.</p></div></div>
+            <div class="step-row"><span class="step-number">2</span><div><h3>Choisissez votre service</h3><p class="muted">Sélectionnez la catégorie qui décrit votre métier.</p></div></div>
+            <div class="step-row"><span class="step-number">3</span><div><h3>Ajoutez votre wilaya et commune</h3><p class="muted">Les clients pourront vous trouver plus facilement.</p></div></div>
+            <div class="step-row"><span class="step-number">4</span><div><h3>Présentez votre expérience</h3><p class="muted">Expliquez brièvement les interventions que vous acceptez.</p></div></div>
+            <div class="step-row"><span class="step-number">5</span><div><h3>Recevez vos premières demandes</h3><p class="muted">Gérez-les depuis votre espace artisan.</p></div></div>
+          </div>
+        </div>
+        <img src="/images/hero/workflow.jpg" alt="Organisation d'une mission artisan">
+      </div>
+    </section>
+
+    <section class="section alt" id="inscription-artisan">
+      <div class="container become-form-wrap">
+        <div class="section-heading">
+          <p class="eyebrow">Inscription artisan</p>
+          <h2>Créez votre profil professionnel</h2>
+        </div>
+        <section class="form-card">
+          <div id="artisan-register-alert" class="alert"></div>
+          <form id="artisan-register-form" class="form-grid">
+            <p class="form-section-title">Compte</p>
+            <label><span class="field-label">Nom</span><input class="form-control" id="artisan-nom" required placeholder="Nom"></label>
+            <label><span class="field-label">Prénom</span><input class="form-control" id="artisan-prenom" required placeholder="Prénom"></label>
+            <label><span class="field-label">Email</span><input class="form-control" id="artisan-email" type="email" required placeholder="votre@email.com"></label>
+            <label><span class="field-label">Mot de passe</span><input class="form-control" id="artisan-password" type="password" required placeholder="Mot de passe"></label>
+            <p class="form-section-title">Activité</p>
+            <label><span class="field-label">Téléphone</span><input class="form-control" id="artisan-phone" required placeholder="0550 00 00 00"></label>
+            <label><span class="field-label">Service</span><select class="form-select" id="artisan-service" required></select></label>
+            <label><span class="field-label">Wilaya</span><select class="form-select" id="artisan-wilaya" required></select></label>
+            <label><span class="field-label">Commune</span><select class="form-select" id="artisan-commune" required><option value="">Choisir une commune</option></select></label>
+            <label><span class="field-label">Expérience</span><input class="form-control" id="artisan-experience" type="number" min="0" max="50" value="0" required></label>
+            <label class="full"><span class="field-label">Description</span><textarea class="form-textarea" id="artisan-description" required placeholder="Présentez brièvement vos compétences, votre expérience et les types d'interventions que vous acceptez."></textarea></label>
+            <button class="btn primary block full" type="submit">Créer mon compte artisan</button>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+</body>
+</html>

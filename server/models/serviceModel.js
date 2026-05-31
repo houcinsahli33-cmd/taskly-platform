@@ -5,14 +5,70 @@ const db = require("../config/db"); // on importe la connexion à la base de don
 
 // recuperer tous les services
 async function trouverTousLesServices() {
-    const sql = "SELECT * FROM services"; // requete SQL pour trouver tous les services
+    const sql = `
+        SELECT
+            services.*,
+            (
+                SELECT COUNT(*)
+                FROM artisans
+                WHERE artisans.service_id = services.id
+            ) AS total_artisans,
+            (
+                SELECT COUNT(*)
+                FROM demandes
+                JOIN artisans ON demandes.artisan_id = artisans.id
+                WHERE artisans.service_id = services.id
+            ) AS total_demandes,
+            (
+                SELECT COALESCE(ROUND(AVG(avis.note), 1), 0)
+                FROM avis
+                JOIN artisans ON avis.artisan_id = artisans.id
+                WHERE artisans.service_id = services.id
+            ) AS moyenne_notes,
+            (
+                SELECT COUNT(*)
+                FROM avis
+                JOIN artisans ON avis.artisan_id = artisans.id
+                WHERE artisans.service_id = services.id
+            ) AS total_avis
+        FROM services
+        ORDER BY services.nom ASC
+    `; // requete SQL pour trouver les services avec leurs statistiques
     const [resultats] = await db.promise().query(sql); // on execute la requete et on attends et on recupere les resultats dans un tableau
     return resultats; // on retourne tous les services
 }
 
 // recuperer un service par son id
 async function trouverServiceParId(id) {
-    const sql = "SELECT * FROM services WHERE id = ?";
+    const sql = `
+        SELECT
+            services.*,
+            (
+                SELECT COUNT(*)
+                FROM artisans
+                WHERE artisans.service_id = services.id
+            ) AS total_artisans,
+            (
+                SELECT COUNT(*)
+                FROM demandes
+                JOIN artisans ON demandes.artisan_id = artisans.id
+                WHERE artisans.service_id = services.id
+            ) AS total_demandes,
+            (
+                SELECT COALESCE(ROUND(AVG(avis.note), 1), 0)
+                FROM avis
+                JOIN artisans ON avis.artisan_id = artisans.id
+                WHERE artisans.service_id = services.id
+            ) AS moyenne_notes,
+            (
+                SELECT COUNT(*)
+                FROM avis
+                JOIN artisans ON avis.artisan_id = artisans.id
+                WHERE artisans.service_id = services.id
+            ) AS total_avis
+        FROM services
+        WHERE services.id = ?
+    `;
 
     const [resultats] = await db.promise().query(sql, [id]);
 

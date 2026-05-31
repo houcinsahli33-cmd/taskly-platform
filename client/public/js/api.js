@@ -61,19 +61,29 @@ function imageProfil(chemin) {
 function imageServiceFallback(nom) {
   const cle = normaliserTexte(nom);
   const images = {
-    plomberie: "/images/services/plomberie.svg",
-    electricite: "/images/services/electricite.svg",
-    peinture: "/images/services/peinture.svg",
-    menuiserie: "/images/services/menuiserie.svg",
-    nettoyage: "/images/services/nettoyage.svg",
-    climatisation: "/images/services/climatisation.svg"
+    plomberie: "/images/services/plomberie.jpg",
+    electricite: "/images/services/electricite.jpg",
+    peinture: "/images/services/peinture.jpg",
+    menuiserie: "/images/services/menuiserie.jpg",
+    nettoyage: "/images/services/nettoyage.jpg",
+    climatisation: "/images/services/climatisation.jpg",
+    jardinage: "/images/services/jardinage.jpg",
+    demenagement: "/images/services/demenagement.jpg",
+    electromenager: "/images/services/electromenager.jpg",
+    carrelage: "/images/services/carrelage.jpg",
+    maconnerie: "/images/services/maconnerie.jpg",
+    serrurerie: "/images/services/serrurerie.jpg"
   };
 
-  return images[cle] || "/images/services/default.svg";
+  return images[cle] || "/images/services/default.jpg";
 }
 
 function imageService(service) {
-  return service?.image || imageServiceFallback(service?.nom);
+  if (service?.image && !service.image.endsWith(".svg")) {
+    return service.image;
+  }
+
+  return imageServiceFallback(service?.nom);
 }
 
 function gererImageService(img, nom) {
@@ -107,6 +117,11 @@ function formatDateHeure(valeur) {
   });
 }
 
+function formatNombre(valeur) {
+  const nombre = Number(valeur || 0);
+  return Number.isInteger(nombre) ? String(nombre) : nombre.toFixed(1);
+}
+
 function libelleStatut(statut) {
   const libelles = {
     en_attente: "En attente",
@@ -136,6 +151,23 @@ function tronquer(texte, longueur = 130) {
   const valeur = String(texte || "");
   if (valeur.length <= longueur) return valeur;
   return `${valeur.slice(0, longueur).trim()}...`;
+}
+
+function afficherEtoiles(note) {
+  const valeur = Math.round(Number(note || 0));
+  if (!valeur) return "Nouveau";
+  return "★".repeat(valeur) + "☆".repeat(5 - valeur);
+}
+
+function noteArtisan(artisan) {
+  const note = artisan.moyenne_notes || artisan.moyenne_note || 0;
+  const total = artisan.total_avis || 0;
+
+  if (!Number(note) || !Number(total)) {
+    return "Nouveau profil";
+  }
+
+  return `${formatNombre(note)}/5 · ${total} avis`;
 }
 
 function afficherAlerte(element, message, type = "success") {
@@ -170,6 +202,15 @@ function afficherToast(message, type = "success") {
 
 function etatVide(message) {
   return `<div class="empty-state">${echapperHTML(message)}</div>`;
+}
+
+function etatVideDeuxLignes(titre, texte) {
+  return `
+    <div class="empty-state">
+      <strong>${echapperHTML(titre)}</strong><br>
+      <span>${echapperHTML(texte)}</span>
+    </div>
+  `;
 }
 
 function etatChargement(message = "Chargement en cours...") {

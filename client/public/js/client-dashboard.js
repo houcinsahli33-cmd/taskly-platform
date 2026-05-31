@@ -9,6 +9,7 @@ function statsDemandes(demandes) {
   };
 }
 
+// Afficher les statistiques du client
 function afficherStatsClient() {
   const cible = document.getElementById("client-stats");
   if (!cible) return;
@@ -53,6 +54,7 @@ function carteDemandeClient(demande) {
   `;
 }
 
+// Afficher les demandes du client
 function afficherDemandesClient() {
   const cible = document.getElementById("client-requests");
   if (!cible) return;
@@ -65,6 +67,7 @@ function afficherDemandesClient() {
   cible.innerHTML = demandesClient.map(carteDemandeClient).join("");
 }
 
+// Charger les demandes depuis le backend
 async function chargerDemandesClient() {
   const cible = document.getElementById("client-requests");
   if (cible) cible.innerHTML = etatChargement("Chargement de vos demandes...");
@@ -99,6 +102,7 @@ function ouvrirSignalementClient(id) {
   ouvrirModale("report-modal");
 }
 
+// Initialiser les actions sur les demandes
 function initialiserActionsClient() {
   document.addEventListener("click", (event) => {
     const annuler = event.target.closest("[data-cancel-request]");
@@ -162,23 +166,38 @@ function initialiserActionsClient() {
   });
 }
 
+// Afficher le profil client
 function afficherProfilClient() {
   const cible = document.getElementById("client-profile-card");
   if (!cible || !window.utilisateurCourant) return;
   const utilisateur = window.utilisateurCourant;
 
+  const bienvenue = document.getElementById("client-welcome");
+  if (bienvenue) {
+    bienvenue.textContent = `Bienvenue ${nomComplet(utilisateur)}`;
+  }
+
   cible.innerHTML = `
-    <div class="artisan-top">
-      <img class="avatar large" id="client-photo-preview" src="${DEFAULT_AVATAR}" alt="${echapperHTML(nomComplet(utilisateur))}">
+    <div class="profile-panel">
+      <img class="avatar large" id="client-photo-preview" src="${echapperHTML(imageProfil(utilisateur.photo_profil))}" alt="${echapperHTML(nomComplet(utilisateur))}" onerror="this.src='${DEFAULT_AVATAR}'">
       <div>
         <h3>${echapperHTML(nomComplet(utilisateur))}</h3>
         <p class="muted">${echapperHTML(utilisateur.email)}</p>
         <span class="badge primary">Compte client</span>
       </div>
     </div>
+    <div class="profile-fields">
+      <div><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></div>
+      <div><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></div>
+      <div><strong>Email</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></div>
+      <div><strong>Téléphone</strong><br><span class="muted">Non disponible dans cette session</span></div>
+      <div><strong>Commune</strong><br><span class="muted">Non disponible dans cette session</span></div>
+      <div><strong>Adresse</strong><br><span class="muted">Non disponible dans cette session</span></div>
+    </div>
   `;
 }
 
+// Modifier la photo de profil
 function initialiserPhotoClient() {
   const form = document.getElementById("client-photo-form");
   if (!form) return;

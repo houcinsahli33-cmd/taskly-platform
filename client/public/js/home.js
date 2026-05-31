@@ -1,18 +1,17 @@
+let servicesAccueil = [];
+let serviceChoisiAccueil = null;
+
+// Charger les services depuis le backend
 async function chargerServicesAccueil() {
   const piste = document.getElementById("services-carousel");
-  const select = document.getElementById("home-service");
+  const miniServices = document.getElementById("home-mini-services");
   if (!piste) return;
 
   piste.innerHTML = etatChargement("Chargement des services...");
 
   try {
     const { services } = await requeteAPI("/api/services");
-
-    if (select) {
-      select.innerHTML = `<option value="">Tous les services</option>` + services
-        .map((service) => `<option value="${service.id}">${echapperHTML(service.nom)}</option>`)
-        .join("");
-    }
+    servicesAccueil = services;
 
     if (!services.length) {
       piste.innerHTML = etatVide("Aucun service disponible pour le moment.");
@@ -25,12 +24,18 @@ async function chargerServicesAccueil() {
         <div class="card-body">
           <div>
             <h3>${echapperHTML(service.nom)}</h3>
-            <p class="muted">${echapperHTML(tronquer(service.description, 96))}</p>
+            <p class="muted">${echapperHTML(tronquer(service.description, 105))}</p>
           </div>
-          <a class="btn outline" href="/service.html?id=${service.id}">Voir les artisans</a>
+          <a class="btn outline" href="/service.html?id=${service.id}">Consulter le service</a>
         </div>
       </article>
     `).join("");
+
+    if (miniServices) {
+      miniServices.innerHTML = services.slice(0, 5).map((service) => (
+        `<a href="/service.html?id=${service.id}">${echapperHTML(service.nom)}</a>`
+      )).join("");
+    }
 
     piste.querySelectorAll("[data-service-image]").forEach((img) => {
       gererImageService(img, img.dataset.serviceImage);
@@ -40,58 +45,68 @@ async function chargerServicesAccueil() {
   }
 }
 
-async function chargerArtisansAccueil() {
-  const cible = document.getElementById("home-artisans");
+// Afficher les suggestions dans la barre de recherche
+function afficherSuggestionsAccueil(texte) {
+  const cible = document.getElementById("home-suggestions");
   if (!cible) return;
 
-  cible.innerHTML = etatChargement("Recherche d'artisans...");
-
-  try {
-    const { artisans } = await requeteAPI("/api/artisans");
-    const visibles = artisans.slice(0, 3);
-
-    if (!visibles.length) {
-      cible.innerHTML = etatVide("Les artisans apparaîtront ici dès leur inscription.");
-      return;
-    }
-
-    cible.innerHTML = visibles.map((artisan) => `
-      <article class="card artisan-card">
-        <div class="card-body">
-          <div class="artisan-top">
-            <img class="avatar" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}">
-            <div>
-              <h3>${echapperHTML(nomComplet(artisan))}</h3>
-              <p class="muted">${echapperHTML(artisan.service_nom)} à ${echapperHTML(artisan.ville)}</p>
-            </div>
-          </div>
-          <div class="meta-row">
-            <span class="badge primary">${Number(artisan.experience || 0)} an(s) d'expérience</span>
-            <span class="badge accent">Disponible</span>
-          </div>
-          <p class="muted">${echapperHTML(tronquer(artisan.description || "Artisan Taskly prêt à intervenir.", 110))}</p>
-          <a class="btn outline" href="/artisan-profile.html?id=${artisan.id}">Voir le profil</a>
-        </div>
-      </article>
-    `).join("");
-  } catch (error) {
-    cible.innerHTML = etatVide(error.message);
+  const recherche = normaliserTexte(texte);
+  if (!recherche) {
+    cible.classList.remove("show");
+    cible.innerHTML = "";
+    serviceChoisiAccueil = null;
+    return;
   }
+
+  const resultats = servicesAccueil
+    .filter((service) => normaliserTexte(service.nom).includes(recherche))
+    .slice(0, 6);
+
+  if (!resultats.length) {
+    cible.classList.remove("show");
+    cible.innerHTML = "";
+    return;
+  }
+
+  cible.innerHTML = resultats.map((service) => (
+    `<button type="button" data-suggestion-service="${service.id}">${echapperHTML(service.nom)}</button>`
+  )).join("");
+  cible.classList.add("show");
 }
 
+// Initialiser la recherche de la page d'accueil
 function initialiserRechercheAccueil() {
   const form = document.getElementById("home-search-form");
-  if (!form) return;
+  const input = document.getElementById("home-search-input");
+  const suggestions = document.getElementById("home-suggestions");
+  if (!form || !input) return;
+
+  input.addEventListener("input", () => {
+    afficherSuggestionsAccueil(input.value);
+  });
+
+  suggestions?.addEventListener("click", (event) => {
+    const bouton = event.target.closest("[data-suggestion-service]");
+    if (!bouton) return;
+
+    serviceChoisiAccueil = servicesAccueil.find((service) => String(service.id) === String(bouton.dataset.suggestionService));
+    input.value = serviceChoisiAccueil.nom;
+    suggestions.classList.remove("show");
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const serviceId = document.getElementById("home-service")?.value;
-    const ville = document.getElementById("home-city")?.value.trim();
+
+    const recherche = input.value.trim();
+    const service = serviceChoisiAccueil || servicesAccueil.find((item) => normaliserTexte(item.nom) === normaliserTexte(recherche));
+
+    if (service) {
+      window.location.href = `/service.html?id=${service.id}`;
+      return;
+    }
+
     const params = new URLSearchParams();
-
-    if (serviceId) params.set("serviceId", serviceId);
-    if (ville) params.set("ville", ville);
-
+    if (recherche) params.set("recherche", recherche);
     window.location.href = `/artisans.html${params.toString() ? `?${params}` : ""}`;
   });
 
@@ -100,8 +115,14 @@ function initialiserRechercheAccueil() {
       const piste = document.getElementById(bouton.dataset.carousel);
       if (!piste) return;
       const direction = bouton.dataset.direction === "prev" ? -1 : 1;
-      piste.scrollBy({ left: direction * 320, behavior: "smooth" });
+      piste.scrollBy({ left: direction * 340, behavior: "smooth" });
     });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".search-shell")) {
+      suggestions?.classList.remove("show");
+    }
   });
 }
 
@@ -109,5 +130,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   initialiserRechercheAccueil();
   chargerServicesAccueil();
-  chargerArtisansAccueil();
 });

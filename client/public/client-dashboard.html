@@ -15,8 +15,8 @@
     <aside class="sidebar">
       <p class="sidebar-title">Espace client</p>
       <nav class="side-nav">
-        <a class="active" href="#demandes">Demandes</a>
-        <a href="/artisans.html">Trouver un artisan</a>
+        <a class="active" href="#demandes">Mes demandes</a>
+        <a href="#profil">Mon profil</a>
         <a href="/contact.html">Support</a>
         <button type="button" data-logout>Déconnexion</button>
       </nav>
@@ -25,42 +25,41 @@
     <section class="dashboard-content">
       <div class="dashboard-hero">
         <div>
-          <p class="eyebrow" style="color:#bff3e8">Bienvenue</p>
-          <h1>Votre espace client</h1>
-          <p>Suivez vos demandes, laissez des avis et contactez le support si besoin.</p>
+          <p class="eyebrow" style="color:#bff3e8">Client</p>
+          <h1 id="client-welcome">Bienvenue</h1>
+          <p>Suivez vos demandes, laissez des avis après les missions terminées et contactez le support si besoin.</p>
         </div>
         <a class="btn light" href="/artisans.html">Nouvelle demande</a>
       </div>
 
       <div class="stats-grid" id="client-stats"></div>
 
-      <div class="dashboard-two">
-        <section class="panel">
+      <div class="dashboard-grid">
+        <section class="panel" id="demandes">
           <div class="panel-header">
-            <h2>Profil</h2>
+            <h2>Mes demandes</h2>
+          </div>
+          <div class="panel-body">
+            <div class="request-list" id="client-requests"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="profil">
+          <div class="panel-header">
+            <h2>Mon profil</h2>
           </div>
           <div class="panel-body">
             <div id="client-profile-card"></div>
             <form id="client-photo-form" style="margin-top:22px">
               <label>
                 <span class="field-label">Photo de profil</span>
-                <input class="form-control" id="client-photo-input" type="file" accept="image/*">
+                <input class="form-control" id="client-photo-input" type="file" accept="image/jpeg,image/png,image/webp">
               </label>
               <div class="request-actions">
                 <button class="btn primary" type="submit">Mettre à jour</button>
                 <button class="btn outline" type="button" id="client-photo-delete">Supprimer</button>
               </div>
             </form>
-          </div>
-        </section>
-
-        <section class="panel" id="demandes">
-          <div class="panel-header">
-            <h2>Mes demandes</h2>
-            <a class="btn small outline" href="/artisans.html">Trouver un artisan</a>
-          </div>
-          <div class="panel-body">
-            <div class="request-list" id="client-requests"></div>
           </div>
         </section>
       </div>

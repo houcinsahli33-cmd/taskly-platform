@@ -1,18 +1,19 @@
-function definirRoleInscription(role) {
-  const roleFinal = role === "artisan" ? "artisan" : "client";
-  document.getElementById("register-role").value = roleFinal;
+// Remplir les champs wilaya/commune des formulaires
+function initialiserLocalisationAuth() {
+  const clientWilaya = document.getElementById("client-wilaya");
+  const clientCommune = document.getElementById("client-commune");
+  const artisanWilaya = document.getElementById("artisan-wilaya");
+  const artisanCommune = document.getElementById("artisan-commune");
 
-  document.querySelectorAll("[data-role-choice]").forEach((bouton) => {
-    bouton.classList.toggle("active", bouton.dataset.roleChoice === roleFinal);
-  });
+  if (typeof remplirWilayas !== "function") return;
 
-  document.querySelectorAll("[data-role-fields]").forEach((bloc) => {
-    bloc.hidden = bloc.dataset.roleFields !== roleFinal;
-  });
+  remplirWilayas(clientWilaya, clientCommune);
+  remplirWilayas(artisanWilaya, artisanCommune);
 }
 
-async function chargerServicesInscription() {
-  const select = document.getElementById("register-service");
+// Charger les services dans le formulaire artisan
+async function chargerServicesInscriptionArtisan() {
+  const select = document.getElementById("artisan-service");
   if (!select) return;
 
   try {
@@ -26,6 +27,27 @@ async function chargerServicesInscription() {
   }
 }
 
+// Changer l'onglet connexion / inscription
+function initialiserOngletsAuth() {
+  document.querySelectorAll("[data-auth-tab]").forEach((bouton) => {
+    bouton.addEventListener("click", () => {
+      document.querySelectorAll("[data-auth-tab]").forEach((item) => {
+        item.classList.toggle("active", item === bouton);
+      });
+
+      document.querySelectorAll("[data-auth-panel]").forEach((panel) => {
+        panel.classList.toggle("active", panel.dataset.authPanel === bouton.dataset.authTab);
+      });
+    });
+  });
+
+  const mode = document.body.dataset.authMode;
+  if (mode === "register") {
+    document.querySelector("[data-auth-tab='register']")?.click();
+  }
+}
+
+// Envoyer le formulaire de connexion
 function initialiserConnexion() {
   const form = document.getElementById("login-form");
   if (!form) return;
@@ -66,46 +88,29 @@ function initialiserConnexion() {
   });
 }
 
-function initialiserInscription() {
-  const form = document.getElementById("register-form");
+// Inscrire un client
+function initialiserInscriptionClient() {
+  const form = document.getElementById("client-register-form");
   if (!form) return;
 
-  const roleDepuisUrl = obtenirParametre("role");
-  definirRoleInscription(roleDepuisUrl || "client");
-  chargerServicesInscription();
-
-  document.querySelectorAll("[data-role-choice]").forEach((bouton) => {
-    bouton.addEventListener("click", () => definirRoleInscription(bouton.dataset.roleChoice));
-  });
-
-  const alerte = document.getElementById("register-alert");
+  const alerte = document.getElementById("client-register-alert");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     masquerAlerte(alerte);
 
-    const role = document.getElementById("register-role").value;
-    const payload = {
-      role,
-      nom: document.getElementById("register-nom").value.trim(),
-      prenom: document.getElementById("register-prenom").value.trim(),
-      email: document.getElementById("register-email").value.trim(),
-      motDePasse: document.getElementById("register-password").value
-    };
-
-    if (role === "client") {
-      payload.telephone = document.getElementById("register-client-phone").value.trim();
-      payload.ville = document.getElementById("register-client-city").value.trim();
-      payload.adresse = document.getElementById("register-client-address").value.trim();
-    } else {
-      payload.serviceId = Number(document.getElementById("register-service").value);
-      payload.ville = document.getElementById("register-artisan-city").value.trim();
-      payload.telephone = document.getElementById("register-artisan-phone").value.trim();
-      payload.description = document.getElementById("register-description").value.trim();
-      payload.experience = Number(document.getElementById("register-experience").value || 0);
-    }
-
     const bouton = form.querySelector("button[type='submit']");
     bouton.disabled = true;
+
+    const payload = {
+      role: "client",
+      nom: document.getElementById("client-nom").value.trim(),
+      prenom: document.getElementById("client-prenom").value.trim(),
+      email: document.getElementById("client-email").value.trim(),
+      motDePasse: document.getElementById("client-password").value,
+      telephone: document.getElementById("client-phone").value.trim(),
+      ville: document.getElementById("client-commune").value,
+      adresse: document.getElementById("client-address").value.trim()
+    };
 
     try {
       await requeteAPI("/api/auth/register", {
@@ -113,12 +118,60 @@ function initialiserInscription() {
         body: JSON.stringify(payload)
       });
 
-      afficherAlerte(alerte, "Compte créé avec succès. Vous pouvez maintenant vous connecter.", "success");
+      afficherAlerte(alerte, "Compte client créé avec succès. Vous pouvez vous connecter.", "success");
       form.reset();
-      definirRoleInscription(role);
+      document.querySelector("[data-auth-tab='login']")?.click();
+    } catch (error) {
+      afficherAlerte(alerte, echapperHTML(error.message), "error");
+    } finally {
+      bouton.disabled = false;
+    }
+  });
+}
+
+// Inscrire un artisan
+function initialiserInscriptionArtisan() {
+  const form = document.getElementById("artisan-register-form");
+  if (!form) return;
+
+  const alerte = document.getElementById("artisan-register-alert");
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    masquerAlerte(alerte);
+
+    const experience = Number(document.getElementById("artisan-experience").value || 0);
+    if (experience < 0 || experience > 50) {
+      afficherAlerte(alerte, "L'expérience doit être comprise entre 0 et 50 ans.", "error");
+      return;
+    }
+
+    const bouton = form.querySelector("button[type='submit']");
+    bouton.disabled = true;
+
+    const payload = {
+      role: "artisan",
+      nom: document.getElementById("artisan-nom").value.trim(),
+      prenom: document.getElementById("artisan-prenom").value.trim(),
+      email: document.getElementById("artisan-email").value.trim(),
+      motDePasse: document.getElementById("artisan-password").value,
+      telephone: document.getElementById("artisan-phone").value.trim(),
+      serviceId: Number(document.getElementById("artisan-service").value),
+      ville: document.getElementById("artisan-commune").value,
+      experience,
+      description: document.getElementById("artisan-description").value.trim()
+    };
+
+    try {
+      await requeteAPI("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+
+      afficherAlerte(alerte, "Compte artisan créé avec succès. Vous pouvez maintenant vous connecter.", "success");
+      form.reset();
       window.setTimeout(() => {
         window.location.href = "/login.html";
-      }, 1200);
+      }, 1000);
     } catch (error) {
       afficherAlerte(alerte, echapperHTML(error.message), "error");
     } finally {
@@ -134,6 +187,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
+  initialiserLocalisationAuth();
+  initialiserOngletsAuth();
   initialiserConnexion();
-  initialiserInscription();
+  initialiserInscriptionClient();
+  initialiserInscriptionArtisan();
+  chargerServicesInscriptionArtisan();
 });

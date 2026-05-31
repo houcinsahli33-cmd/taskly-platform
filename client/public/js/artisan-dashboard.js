@@ -6,11 +6,11 @@ function statsDemandesArtisan(demandes) {
     total: demandes.length,
     en_attente: demandes.filter((d) => d.statut === "en_attente").length,
     acceptee: demandes.filter((d) => d.statut === "acceptee").length,
-    terminee: demandes.filter((d) => d.statut === "terminee").length,
-    annulee: demandes.filter((d) => d.statut === "annulee" || d.statut === "refusee").length
+    terminee: demandes.filter((d) => d.statut === "terminee").length
   };
 }
 
+// Afficher les statistiques artisan
 function afficherStatsArtisan() {
   const cible = document.getElementById("artisan-stats");
   if (!cible) return;
@@ -33,7 +33,7 @@ function carteDemandeArtisan(demande) {
       <div class="request-head">
         <div>
           <h3>${echapperHTML(nomComplet(demande, "client_"))}</h3>
-          <p class="muted">${echapperHTML(demande.client_ville || "Ville non précisée")} · ${echapperHTML(demande.client_telephone || "Téléphone non précisé")}</p>
+          <p class="muted">${echapperHTML(demande.client_ville || "Commune non précisée")} · ${echapperHTML(demande.client_telephone || "Téléphone non précisé")}</p>
         </div>
         ${badgeStatut(demande.statut)}
       </div>
@@ -55,6 +55,7 @@ function carteDemandeArtisan(demande) {
   `;
 }
 
+// Afficher les demandes reçues
 function afficherDemandesArtisan() {
   const cible = document.getElementById("artisan-requests");
   if (!cible) return;
@@ -67,6 +68,7 @@ function afficherDemandesArtisan() {
   cible.innerHTML = demandesArtisan.map(carteDemandeArtisan).join("");
 }
 
+// Charger les demandes depuis le backend
 async function chargerDemandesArtisan() {
   const cible = document.getElementById("artisan-requests");
   if (cible) cible.innerHTML = etatChargement("Chargement des demandes reçues...");
@@ -114,6 +116,7 @@ function ouvrirSignalementArtisan(id) {
   ouvrirModale("artisan-report-modal");
 }
 
+// Initialiser les actions artisan
 function initialiserActionsArtisan() {
   document.addEventListener("click", (event) => {
     const statut = event.target.closest("[data-set-status]");
@@ -177,6 +180,7 @@ function initialiserActionsArtisan() {
   });
 }
 
+// Charger le profil de l'artisan connecte
 async function chargerProfilArtisanDashboard() {
   const cible = document.getElementById("artisan-profile-card");
   if (!cible || !window.utilisateurCourant) return;
@@ -189,23 +193,39 @@ async function chargerProfilArtisanDashboard() {
   }
 
   const utilisateur = window.utilisateurCourant;
+  const bienvenue = document.getElementById("artisan-welcome");
+  if (bienvenue) {
+    bienvenue.textContent = `Bienvenue ${nomComplet(utilisateur)}`;
+  }
+
   cible.innerHTML = `
-    <div class="artisan-top">
-      <img class="avatar large" id="artisan-photo-preview" src="${echapperHTML(imageProfil(profilArtisanCourant?.photo_profil))}" alt="${echapperHTML(nomComplet(utilisateur))}">
+    <div class="profile-panel">
+      <img class="avatar large" id="artisan-photo-preview" src="${echapperHTML(imageProfil(profilArtisanCourant?.photo_profil))}" alt="${echapperHTML(nomComplet(utilisateur))}" onerror="this.src='${DEFAULT_AVATAR}'">
       <div>
         <h3>${echapperHTML(nomComplet(utilisateur))}</h3>
         <p class="muted">${echapperHTML(profilArtisanCourant?.service_nom || "Artisan Taskly")} · ${echapperHTML(profilArtisanCourant?.ville || "")}</p>
         <div class="meta-row" style="margin-top:12px">
           <span class="badge primary">${Number(profilArtisanCourant?.experience || 0)} an(s) d'expérience</span>
-          <span class="badge">Compte artisan</span>
+          <span class="badge accent">${echapperHTML(noteArtisan(profilArtisanCourant || {}))}</span>
         </div>
       </div>
+    </div>
+    <div class="profile-fields">
+      <div><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></div>
+      <div><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></div>
+      <div><strong>Email</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></div>
+      <div><strong>Téléphone</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.telephone || "Non précisé")}</span></div>
+      <div><strong>Service</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.service_nom || "Non précisé")}</span></div>
+      <div><strong>Commune</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.ville || "Non précisée")}</span></div>
+      <div><strong>Expérience</strong><br><span class="muted">${Number(profilArtisanCourant?.experience || 0)} an(s)</span></div>
+      <div><strong>Description</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.description || "Non précisée")}</span></div>
     </div>
   `;
 
   chargerAvisArtisan();
 }
 
+// Charger les avis de l'artisan
 async function chargerAvisArtisan() {
   const cible = document.getElementById("artisan-reviews-dashboard");
   if (!cible || !profilArtisanCourant) {
@@ -224,13 +244,15 @@ async function chargerAvisArtisan() {
 
     cible.innerHTML = `
       <div class="alert show success">Moyenne actuelle : <strong>${statistiques.moyenne_note || 0}/5</strong> sur ${statistiques.total_avis || 0} avis.</div>
-      <div class="review-grid">
+      <div class="grid three">
         ${avis.slice(0, 6).map((item) => `
           <article class="card review-card">
-            <div class="stars">${"★".repeat(Number(item.note || 0))}${"☆".repeat(5 - Number(item.note || 0))}</div>
-            <h3>${echapperHTML(nomComplet(item, "client_"))}</h3>
-            <p class="muted">${echapperHTML(item.commentaire || "Avis sans commentaire.")}</p>
-            <p class="text-small muted">${formatDate(item.created_at)}</p>
+            <div class="card-body">
+              <div class="stars">${afficherEtoiles(item.note)}</div>
+              <h3>${echapperHTML(nomComplet(item, "client_"))}</h3>
+              <p class="muted">${echapperHTML(item.commentaire || "Avis sans commentaire.")}</p>
+              <p class="text-small muted">${formatDate(item.created_at)}</p>
+            </div>
           </article>
         `).join("")}
       </div>
@@ -240,6 +262,7 @@ async function chargerAvisArtisan() {
   }
 }
 
+// Modifier la photo de profil
 function initialiserPhotoArtisan() {
   const form = document.getElementById("artisan-photo-form");
   if (!form) return;

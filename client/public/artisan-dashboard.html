@@ -17,6 +17,7 @@
       <nav class="side-nav">
         <a class="active" href="#demandes">Demandes reçues</a>
         <a href="#avis">Avis</a>
+        <a href="#profil">Mon profil</a>
         <a href="/contact.html">Support</a>
         <button type="button" data-logout>Déconnexion</button>
       </nav>
@@ -25,35 +26,16 @@
     <section class="dashboard-content">
       <div class="dashboard-hero">
         <div>
-          <p class="eyebrow" style="color:#bff3e8">Activité artisan</p>
-          <h1>Gérez vos missions Taskly</h1>
-          <p>Traitez les demandes, finalisez les missions et gardez une trace claire de vos interventions.</p>
+          <p class="eyebrow" style="color:#bff3e8">Artisan</p>
+          <h1 id="artisan-welcome">Bienvenue</h1>
+          <p>Traitez les demandes reçues, finalisez vos missions et consultez vos avis.</p>
         </div>
         <a class="btn light" href="/contact.html">Contacter le support</a>
       </div>
 
       <div class="stats-grid" id="artisan-stats"></div>
 
-      <div class="dashboard-two">
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Profil</h2>
-          </div>
-          <div class="panel-body">
-            <div id="artisan-profile-card"></div>
-            <form id="artisan-photo-form" style="margin-top:22px">
-              <label>
-                <span class="field-label">Photo de profil</span>
-                <input class="form-control" id="artisan-photo-input" type="file" accept="image/*">
-              </label>
-              <div class="request-actions">
-                <button class="btn primary" type="submit">Mettre à jour</button>
-                <button class="btn outline" type="button" id="artisan-photo-delete">Supprimer</button>
-              </div>
-            </form>
-          </div>
-        </section>
-
+      <div class="dashboard-grid">
         <section class="panel" id="demandes">
           <div class="panel-header">
             <h2>Demandes reçues</h2>
@@ -62,14 +44,33 @@
             <div class="request-list" id="artisan-requests"></div>
           </div>
         </section>
-      </div>
 
-      <section class="panel" id="avis">
-        <div class="panel-header">
-          <h2>Avis reçus</h2>
-        </div>
-        <div class="panel-body" id="artisan-reviews-dashboard"></div>
-      </section>
+        <section class="panel" id="avis">
+          <div class="panel-header">
+            <h2>Avis reçus</h2>
+          </div>
+          <div class="panel-body" id="artisan-reviews-dashboard"></div>
+        </section>
+
+        <section class="panel" id="profil">
+          <div class="panel-header">
+            <h2>Mon profil</h2>
+          </div>
+          <div class="panel-body">
+            <div id="artisan-profile-card"></div>
+            <form id="artisan-photo-form" style="margin-top:22px">
+              <label>
+                <span class="field-label">Photo de profil</span>
+                <input class="form-control" id="artisan-photo-input" type="file" accept="image/jpeg,image/png,image/webp">
+              </label>
+              <div class="request-actions">
+                <button class="btn primary" type="submit">Mettre à jour</button>
+                <button class="btn outline" type="button" id="artisan-photo-delete">Supprimer</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
     </section>
   </main>
 

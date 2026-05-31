@@ -12,15 +12,28 @@
 <body data-active="services">
   <div id="site-header"></div>
   <main class="page-main">
-    <section class="section compact alt">
-      <div class="container section-heading">
-        <p class="eyebrow">Services Taskly</p>
-        <h1>Trouvez le bon service pour votre projet</h1>
-        <p class="lead">Parcourez les catégories disponibles et choisissez les artisans adaptés à votre ville.</p>
+    <section class="photo-hero">
+      <img src="/images/hero/home-service.jpg" alt="Artisan en intervention chez un client">
+      <div class="container">
+        <p class="eyebrow">Catalogue</p>
+        <h1>Trouvez le service adapté à votre besoin</h1>
+        <p class="lead">Explorez les services disponibles, comparez les artisans et choisissez le profil qui correspond à votre projet.</p>
       </div>
     </section>
+
     <section class="section">
       <div class="container">
+        <div class="filters" style="grid-template-columns:1fr auto">
+          <label>
+            <span class="field-label">Rechercher un service</span>
+            <input class="form-control" id="service-search" type="search" placeholder="Plomberie, peinture, nettoyage...">
+          </label>
+          <div class="filter-tabs" style="margin-bottom:0">
+            <button class="active" type="button" data-service-filter="tous">Tous</button>
+            <button type="button" data-service-filter="populaires">Services populaires</button>
+            <button type="button" data-service-filter="notes">Mieux notés</button>
+          </div>
+        </div>
         <div class="grid three" id="services-grid"></div>
       </div>
     </section>

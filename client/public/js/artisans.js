@@ -6,17 +6,19 @@ function carteArtisan(artisan) {
     <article class="card artisan-card">
       <div class="card-body">
         <div class="artisan-top">
-          <img class="avatar" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}">
+          <img class="avatar large" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.src='${DEFAULT_AVATAR}'">
           <div>
             <h3>${echapperHTML(nomComplet(artisan))}</h3>
-            <p class="muted">${echapperHTML(artisan.service_nom || "Service")} à ${echapperHTML(artisan.ville || "Ville non précisée")}</p>
+            <p class="muted">${echapperHTML(artisan.service_nom || "Service")} · ${echapperHTML(artisan.ville || "Commune non précisée")}</p>
+            <div class="stars">${echapperHTML(afficherEtoiles(artisan.moyenne_notes))}</div>
           </div>
         </div>
         <div class="meta-row">
           <span class="badge primary">${Number(artisan.experience || 0)} an(s) d'expérience</span>
-          <span class="badge">Profil vérifié</span>
+          <span class="badge accent">${echapperHTML(noteArtisan(artisan))}</span>
+          <span class="badge">${Number(artisan.total_demandes || 0)} mission(s)</span>
         </div>
-        <p class="muted">${echapperHTML(tronquer(artisan.description || "Artisan Taskly disponible pour vos demandes.", 130))}</p>
+        <p class="muted">${echapperHTML(tronquer(artisan.description || "Artisan Taskly disponible pour vos demandes.", 150))}</p>
         <div class="request-actions">
           <a class="btn outline" href="/artisan-profile.html?id=${artisan.id}">Voir le profil</a>
           ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${artisan.id}">Envoyer une demande</button>` : ""}
@@ -26,6 +28,7 @@ function carteArtisan(artisan) {
   `;
 }
 
+// Charger les services pour les filtres
 async function chargerFiltresArtisans() {
   const serviceSelect = document.getElementById("filter-service");
   if (!serviceSelect) return;
@@ -44,10 +47,19 @@ async function chargerFiltresArtisans() {
   }
 }
 
+// Remplir les filtres de localisation
+function initialiserLocalisationArtisans() {
+  const wilaya = document.getElementById("filter-wilaya");
+  const commune = document.getElementById("filter-commune");
+  if (typeof remplirWilayas === "function") {
+    remplirWilayas(wilaya, commune);
+  }
+}
+
 function construireQueryArtisans() {
   const params = new URLSearchParams();
   const serviceId = document.getElementById("filter-service")?.value;
-  const ville = document.getElementById("filter-city")?.value.trim();
+  const ville = document.getElementById("filter-commune")?.value;
   const recherche = document.getElementById("filter-search")?.value.trim();
 
   if (serviceId) params.set("serviceId", serviceId);
@@ -56,6 +68,7 @@ function construireQueryArtisans() {
   return params.toString();
 }
 
+// Charger les artisans selon les filtres
 async function chargerArtisans() {
   const grille = document.getElementById("artisans-grid");
   if (!grille) return;
@@ -66,7 +79,10 @@ async function chargerArtisans() {
     const { artisans } = await requeteAPI(`/api/artisans${query ? `?${query}` : ""}`);
 
     if (!artisans.length) {
-      grille.innerHTML = etatVide("Aucun artisan ne correspond à votre recherche.");
+      grille.innerHTML = etatVideDeuxLignes(
+        "Aucun artisan ne correspond à vos critères.",
+        "Essayez de changer le service, la wilaya ou la commune."
+      );
       return;
     }
 
@@ -76,13 +92,12 @@ async function chargerArtisans() {
   }
 }
 
+// Initialiser les filtres de la page artisans
 function initialiserFiltresArtisans() {
   const form = document.getElementById("artisans-filter-form");
   if (!form) return;
 
-  const ville = obtenirParametre("ville");
   const recherche = obtenirParametre("recherche");
-  if (ville) document.getElementById("filter-city").value = ville;
   if (recherche) document.getElementById("filter-search").value = recherche;
 
   form.addEventListener("submit", (event) => {
@@ -92,10 +107,13 @@ function initialiserFiltresArtisans() {
 
   document.getElementById("reset-filters")?.addEventListener("click", () => {
     form.reset();
+    const commune = document.getElementById("filter-commune");
+    if (commune) commune.innerHTML = `<option value="">Choisir une commune</option>`;
     chargerArtisans();
   });
 }
 
+// Ouvrir la modale de demande
 async function ouvrirDemandeArtisan(id) {
   if (!window.utilisateurCourant) {
     window.location.href = `/login.html?redirect=${encodeURIComponent(`/artisan-profile.html?id=${id}`)}`;
@@ -118,6 +136,7 @@ async function ouvrirDemandeArtisan(id) {
   }
 }
 
+// Envoyer la demande au backend
 function initialiserDemandeArtisan() {
   document.addEventListener("click", (event) => {
     const bouton = event.target.closest("[data-open-request]");
@@ -157,6 +176,7 @@ function initialiserDemandeArtisan() {
   });
 }
 
+// Charger le profil public d'un artisan
 async function chargerProfilArtisan() {
   const cible = document.getElementById("artisan-profile");
   const avisCible = document.getElementById("artisan-reviews");
@@ -178,19 +198,19 @@ async function chargerProfilArtisan() {
       requeteAPI(`/api/avis/artisan/${encodeURIComponent(id)}`).catch(() => ({ avis: [], statistiques: {} }))
     ]);
 
-    const moyenne = avisData.statistiques?.moyenne_note || "Nouveau";
-    const total = avisData.statistiques?.total_avis || 0;
+    const moyenne = avisData.statistiques?.moyenne_note || artisan.moyenne_notes || 0;
+    const total = avisData.statistiques?.total_avis || artisan.total_avis || 0;
 
     cible.innerHTML = `
       <div class="profile-hero">
-        <img class="avatar large" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}">
+        <img class="avatar large" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.src='${DEFAULT_AVATAR}'">
         <div>
           <p class="eyebrow">Profil artisan</p>
           <h1>${echapperHTML(nomComplet(artisan))}</h1>
           <p class="lead">${echapperHTML(artisan.service_nom)} à ${echapperHTML(artisan.ville)}</p>
           <div class="meta-row" style="margin-top:16px">
             <span class="badge primary">${Number(artisan.experience || 0)} an(s) d'expérience</span>
-            <span class="badge accent">${echapperHTML(String(moyenne))}${total ? " / 5" : ""} · ${total} avis</span>
+            <span class="badge accent">${Number(moyenne) ? formatNombre(moyenne) + " / 5" : "Nouveau"} · ${total} avis</span>
           </div>
         </div>
         ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${artisan.id}">Envoyer une demande</button>` : `<a class="btn outline" href="/login.html">Se connecter pour demander</a>`}
@@ -216,10 +236,12 @@ async function chargerProfilArtisan() {
 
     avisCible.innerHTML = avisData.avis.map((avis) => `
       <article class="card review-card">
-        <div class="stars">${"★".repeat(Number(avis.note || 0))}${"☆".repeat(5 - Number(avis.note || 0))}</div>
-        <h3>${echapperHTML(nomComplet(avis, "client_"))}</h3>
-        <p class="muted">${echapperHTML(avis.commentaire || "Avis sans commentaire.")}</p>
-        <p class="text-small muted">${formatDate(avis.created_at)}</p>
+        <div class="card-body">
+          <div class="stars">${afficherEtoiles(avis.note)}</div>
+          <h3>${echapperHTML(nomComplet(avis, "client_"))}</h3>
+          <p class="muted">${echapperHTML(avis.commentaire || "Avis sans commentaire.")}</p>
+          <p class="text-small muted">${formatDate(avis.created_at)}</p>
+        </div>
       </article>
     `).join("");
   } catch (error) {
@@ -230,6 +252,7 @@ async function chargerProfilArtisan() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
+  initialiserLocalisationArtisans();
   await chargerFiltresArtisans();
   initialiserFiltresArtisans();
   initialiserDemandeArtisan();

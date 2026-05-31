@@ -2,11 +2,19 @@
 
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+
+const dossierUpload = path.join(__dirname, "../../client/public/uploads/profiles");
+
+// Creer le dossier si il n'existe pas
+if (!fs.existsSync(dossierUpload)) {
+    fs.mkdirSync(dossierUpload, { recursive: true });
+}
 
 // Dossier où les photos seront enregistrées
 const stockage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, "client/public/uploads/profiles");
+        cb(null, dossierUpload);
     },
 
     filename: function (req, file, cb) {

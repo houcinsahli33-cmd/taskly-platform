@@ -10,6 +10,7 @@ const sujetsSupport = [
   "Autre"
 ];
 
+// Remplir les sujets du formulaire support
 function remplirSujetsSupport() {
   document.querySelectorAll("[data-support-subjects]").forEach((select) => {
     select.innerHTML = `<option value="">Choisir un sujet</option>` + sujetsSupport
@@ -18,6 +19,7 @@ function remplirSujetsSupport() {
   });
 }
 
+// Envoyer le message au support
 function initialiserContactSupport() {
   const form = document.getElementById("contact-form");
   const alerte = document.getElementById("contact-alert");
@@ -42,7 +44,7 @@ function initialiserContactSupport() {
 
       afficherAlerte(
         alerte,
-        `Votre message a été envoyé. Numéro de suivi : <strong>${data.contactId}</strong>. Conservez ce numéro pour suivre votre demande.`,
+        `Votre message a été envoyé. Numéro de suivi : <strong>${data.contactId}</strong>`,
         "success"
       );
       form.reset();
@@ -54,6 +56,7 @@ function initialiserContactSupport() {
   });
 }
 
+// Suivre un message support avec son numero
 function initialiserSuiviSupport() {
   const form = document.getElementById("follow-form");
   const cible = document.getElementById("follow-result");

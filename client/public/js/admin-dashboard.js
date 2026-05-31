@@ -13,12 +13,28 @@ function activerOngletAdmin(onglet) {
   });
 }
 
+// Initialiser les onglets du dashboard admin
 function initialiserNavigationAdmin() {
   document.querySelectorAll("[data-admin-tab]").forEach((bouton) => {
     bouton.addEventListener("click", () => activerOngletAdmin(bouton.dataset.adminTab));
   });
 }
 
+function tableSimple(entetes, lignes, mapper) {
+  if (!lignes || !lignes.length) return etatVide("Aucune donnée à afficher.");
+  return `
+    <div class="table-wrap">
+      <table>
+        <thead><tr>${entetes.map((e) => `<th>${echapperHTML(e)}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${lignes.slice(0, 4).map((ligne) => `<tr>${mapper(ligne).map((cellule) => `<td>${echapperHTML(cellule)}</td>`).join("")}</tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// Charger les statistiques admin
 async function chargerStatsAdmin() {
   const statsCible = document.getElementById("admin-stats-grid");
   const latestUsers = document.getElementById("admin-latest-users");
@@ -68,20 +84,7 @@ async function chargerStatsAdmin() {
   }
 }
 
-function tableSimple(entetes, lignes, mapper) {
-  if (!lignes || !lignes.length) return etatVide("Aucune donnée à afficher.");
-  return `
-    <div class="table-wrap">
-      <table>
-        <thead><tr>${entetes.map((e) => `<th>${echapperHTML(e)}</th>`).join("")}</tr></thead>
-        <tbody>
-          ${lignes.map((ligne) => `<tr>${mapper(ligne).map((cellule) => `<td>${echapperHTML(cellule)}</td>`).join("")}</tr>`).join("")}
-        </tbody>
-      </table>
-    </div>
-  `;
-}
-
+// Charger les utilisateurs
 async function chargerUtilisateursAdmin() {
   const cible = document.getElementById("admin-users-table");
   if (!cible) return;
@@ -133,6 +136,7 @@ async function chargerUtilisateursAdmin() {
   }
 }
 
+// Charger les signalements
 async function chargerSignalementsAdmin() {
   const cible = document.getElementById("admin-reports-list");
   if (!cible) return;
@@ -155,7 +159,7 @@ async function chargerSignalementsAdmin() {
               <th>Signalement</th>
               <th>Signalé par</th>
               <th>Utilisateur signalé</th>
-              <th>Demande</th>
+              <th>Demande liée</th>
               <th>Date</th>
               <th>Action</th>
             </tr>
@@ -166,7 +170,7 @@ async function chargerSignalementsAdmin() {
                 <td><strong>${echapperHTML(s.motif)}</strong><br><span class="muted">${echapperHTML(s.description || "Aucune description.")}</span></td>
                 <td>${echapperHTML(nomComplet(s, "signaleur_"))}<br><span class="text-small muted">${echapperHTML(s.signaleur_email)} · ${echapperHTML(s.signaleur_role)}</span></td>
                 <td>${echapperHTML(nomComplet(s, "signale_"))}<br><span class="text-small muted">${echapperHTML(s.signale_email)} · ${echapperHTML(s.signale_role)}</span><br>${badgeStatut(s.signale_statut_compte)}</td>
-                <td>#${s.demande_id}</td>
+                <td>Demande #${s.demande_id}</td>
                 <td>${formatDateHeure(s.created_at)}</td>
                 <td>${s.signale_role === "admin" || s.signale_statut_compte === "bloque" ? `<span class="muted">Aucune</span>` : `<button class="btn small danger" type="button" data-open-block="${s.signale_user_id}">Bloquer</button>`}</td>
               </tr>
@@ -180,6 +184,7 @@ async function chargerSignalementsAdmin() {
   }
 }
 
+// Charger les messages support
 async function chargerContactsAdmin() {
   const cible = document.getElementById("admin-contacts-list");
   if (!cible) return;
@@ -214,7 +219,7 @@ async function chargerContactsAdmin() {
                 <td>${echapperHTML(c.nom)}<br><span class="text-small muted">${echapperHTML(c.email)}</span></td>
                 <td>${badgeStatut(c.statut)}</td>
                 <td>Envoyé : ${formatDateHeure(c.created_at)}${c.date_traitement ? `<br>Traité : ${formatDateHeure(c.date_traitement)}` : ""}</td>
-                <td>${c.statut === "nouveau" ? `<button class="btn small primary" type="button" data-mark-contact="${c.id}">Marquer traité</button>` : `<span class="muted">Traité</span>`}</td>
+                <td>${c.statut === "nouveau" ? `<button class="btn small outline" type="button" data-mark-contact="${c.id}">Marquer comme traité</button>` : `<span class="muted">Traité</span>`}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -226,6 +231,7 @@ async function chargerContactsAdmin() {
   }
 }
 
+// Charger les services dans l'administration
 async function chargerServicesAdmin() {
   const cible = document.getElementById("admin-services-list");
   if (!cible) return;
@@ -248,7 +254,6 @@ async function chargerServicesAdmin() {
             <div class="card-body">
               <h3>${echapperHTML(service.nom)}</h3>
               <p class="muted">${echapperHTML(service.description || "")}</p>
-              <p class="text-small muted">${echapperHTML(service.image || "Aucun chemin image")}</p>
               <div class="request-actions">
                 <button class="btn small outline" type="button" data-edit-service="${service.id}">Modifier</button>
                 <button class="btn small danger" type="button" data-delete-service="${service.id}">Supprimer</button>
@@ -283,10 +288,10 @@ function ouvrirServiceModal(service = null) {
   document.getElementById("service-modal-title").textContent = service ? "Modifier le service" : "Ajouter un service";
   document.getElementById("service-name").value = service?.nom || "";
   document.getElementById("service-description").value = service?.description || "";
-  document.getElementById("service-image").value = service?.image || "";
   ouvrirModale("service-modal");
 }
 
+// Initialiser les actions admin
 function initialiserActionsAdmin() {
   document.addEventListener("click", async (event) => {
     const blocage = event.target.closest("[data-open-block]");
@@ -312,7 +317,7 @@ function initialiserActionsAdmin() {
     if (marquerContact) {
       try {
         await requeteAPI(`/api/admin/contacts/${marquerContact.dataset.markContact}/traiter`, { method: "PUT" });
-        afficherToast("Message marqué comme traité.");
+        afficherToast("Message support marqué comme traité.");
         chargerContactsAdmin();
         chargerStatsAdmin();
       } catch (error) {
@@ -372,11 +377,12 @@ function initialiserActionsAdmin() {
     const id = document.getElementById("service-id").value;
     const bouton = form.querySelector("button[type='submit']");
     bouton.disabled = true;
+    const serviceActuel = adminServices.find((service) => String(service.id) === String(id));
 
     const payload = {
       nom: document.getElementById("service-name").value.trim(),
       description: document.getElementById("service-description").value.trim(),
-      image: document.getElementById("service-image").value.trim() || null
+      image: serviceActuel?.image || null
     };
 
     try {

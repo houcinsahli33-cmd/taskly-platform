@@ -7,47 +7,42 @@
   <link rel="stylesheet" href="/css/style.css">
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
+  <script defer src="/js/help.js"></script>
 </head>
 <body>
   <div id="site-header"></div>
   <main class="page-main">
-    <section class="section compact alt">
+    <section class="page-hero">
       <div class="container section-heading">
         <p class="eyebrow">Centre d'aide</p>
-        <h1>Questions fréquentes</h1>
-        <p class="lead">Retrouvez les réponses aux principales questions sur l'utilisation de Taskly.</p>
+        <h1>Comment pouvons-nous vous aider ?</h1>
+        <p class="lead">Retrouvez les réponses aux questions les plus fréquentes sur les services, les demandes, les avis, les signalements et le support.</p>
       </div>
     </section>
+
     <section class="section">
-      <div class="container faq-list">
-        <article class="faq-item">
-          <h2>Comment trouver un artisan ?</h2>
-          <p class="muted">Ouvrez la page Artisans, filtrez par service ou ville, puis consultez les profils avant d'envoyer une demande.</p>
-        </article>
-        <article class="faq-item">
-          <h2>Comment envoyer une demande ?</h2>
-          <p class="muted">Connectez-vous comme client, ouvrez un profil artisan et renseignez le message, l'adresse et la date souhaitée.</p>
-        </article>
-        <article class="faq-item">
-          <h2>Comment devenir artisan ?</h2>
-          <p class="muted">Créez un compte artisan depuis la page d'inscription, choisissez votre service et complétez votre expérience.</p>
-        </article>
-        <article class="faq-item">
-          <h2>Comment laisser un avis ?</h2>
-          <p class="muted">Depuis votre espace client, une demande terminée sans avis affiche le bouton “Laisser un avis”.</p>
-        </article>
-        <article class="faq-item">
-          <h2>Que faire si mon compte est bloqué ?</h2>
-          <p class="muted">Le message de connexion affiche le motif du blocage et un lien vers la page Contact pour joindre le support.</p>
-        </article>
-        <article class="faq-item">
-          <h2>Comment contacter le support ?</h2>
-          <p class="muted">Utilisez la page Contact. Après envoi, Taskly affiche un numéro de suivi à conserver.</p>
-        </article>
-        <article class="faq-item">
-          <h2>Comment signaler un utilisateur ?</h2>
-          <p class="muted">Le signalement se fait uniquement depuis une demande existante dans votre dashboard client ou artisan.</p>
-        </article>
+      <div class="container" style="max-width:920px">
+        <div class="faq-tools">
+          <input class="form-control" id="faq-search" type="search" placeholder="Rechercher une question...">
+          <div class="filter-tabs">
+            <button class="active" type="button" data-faq-category="general">Général</button>
+            <button type="button" data-faq-category="clients">Clients</button>
+            <button type="button" data-faq-category="artisans">Artisans</button>
+            <button type="button" data-faq-category="avis">Avis et signalements</button>
+            <button type="button" data-faq-category="support">Compte et support</button>
+          </div>
+        </div>
+        <div class="faq-list" id="faq-list"></div>
+      </div>
+    </section>
+
+    <section class="section compact">
+      <div class="container cta-band">
+        <div>
+          <p class="eyebrow">Support</p>
+          <h2>Vous n'avez pas trouvé votre réponse ?</h2>
+        </div>
+        <a class="btn light" href="/contact.html">Contacter le support</a>
       </div>
     </section>
   </main>
