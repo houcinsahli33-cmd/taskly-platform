@@ -91,3 +91,21 @@
   color: var(--primary);
   font-weight: 900;
 }
+/* Amélioration page inscription artisan */
+
+.auth-body .role-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.auth-body .role-tabs .btn {
+  min-height: 46px;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-weight: 900;
+}
+
+.artisan-description-small {
+  min-height: 60px;
+}

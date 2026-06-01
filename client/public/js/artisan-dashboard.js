@@ -283,7 +283,10 @@ function initialiserPhotoArtisan() {
         method: "PUT",
         body: data
       });
+      window.utilisateurCourant.photo_profil = reponse.photo_profil;
+      if (profilArtisanCourant) profilArtisanCourant.photo_profil = reponse.photo_profil;
       document.getElementById("artisan-photo-preview").src = reponse.photo_profil;
+      construireHeader();
       afficherToast("Photo de profil mise à jour.");
       form.reset();
     } catch (error) {
@@ -294,7 +297,10 @@ function initialiserPhotoArtisan() {
   document.getElementById("artisan-photo-delete")?.addEventListener("click", async () => {
     try {
       await requeteAPI("/api/auth/photo", { method: "DELETE" });
+      window.utilisateurCourant.photo_profil = null;
+      if (profilArtisanCourant) profilArtisanCourant.photo_profil = null;
       document.getElementById("artisan-photo-preview").src = DEFAULT_AVATAR;
+      construireHeader();
       afficherToast("Photo de profil supprimée.");
     } catch (error) {
       afficherToast(error.message, "error");

@@ -218,7 +218,9 @@ function initialiserPhotoClient() {
         method: "PUT",
         body: data
       });
+      window.utilisateurCourant.photo_profil = reponse.photo_profil;
       document.getElementById("client-photo-preview").src = reponse.photo_profil;
+      construireHeader();
       afficherToast("Photo de profil mise à jour.");
       form.reset();
     } catch (error) {
@@ -229,7 +231,9 @@ function initialiserPhotoClient() {
   document.getElementById("client-photo-delete")?.addEventListener("click", async () => {
     try {
       await requeteAPI("/api/auth/photo", { method: "DELETE" });
+      window.utilisateurCourant.photo_profil = null;
       document.getElementById("client-photo-preview").src = DEFAULT_AVATAR;
+      construireHeader();
       afficherToast("Photo de profil supprimée.");
     } catch (error) {
       afficherToast(error.message, "error");

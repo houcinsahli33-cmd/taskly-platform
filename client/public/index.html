@@ -13,26 +13,40 @@
   <div id="site-header"></div>
 
   <main class="page-main">
-    <section class="hero">
-      <div class="container hero-centered">
-        <p class="eyebrow">Services locaux en Algérie</p>
-        <h1>Trouvez rapidement<br>un artisan de confiance<br>près de chez vous</h1>
-        <p class="lead">Choisissez un service, comparez les profils<br>et envoyez une demande claire en quelques clics.</p>
-
-        <div class="search-shell">
-          <form class="hero-search" id="home-search-form">
-            <input id="home-search-input" type="search" autocomplete="off" placeholder="Quel service ?">
-            <button type="submit" aria-label="Rechercher">⌕</button>
-          </form>
-          <div class="suggestions" id="home-suggestions"></div>
+      <section class="hero">
+      <div class="hero-slider" aria-hidden="true">
+        <div class="hero-slide hero-slide-1">
+          <img class="hero-person" src="/images/hero/floating/artisan-1.png" alt="">
         </div>
 
-        <div class="hero-mini-services" id="home-mini-services"></div>
+        <div class="hero-slide hero-slide-2">
+          <img class="hero-person" src="/images/hero/floating/artisan-2.png" alt="">
+        </div>
 
-        <div class="hero-photo-band">
-          <img src="/images/hero/home-service.jpg" alt="Artisan en intervention à domicile">
+        <div class="hero-slide hero-slide-3">
+          <img class="hero-person" src="/images/hero/floating/artisan-3.png" alt="">
         </div>
       </div>
+
+        <div class="container hero-content">
+          <div class="hero-left-text">
+            <p class="eyebrow">Services locaux en Algérie</p>
+            <h1>Votre artisan<br>près de chez vous</h1>
+            <p class="lead"><span>Trouvez rapidement un professionnel de confiance pour vos services à domicile.</span></p>
+          </div>
+
+          <div class="hero-search-zone">
+            <div class="search-shell">
+              <form class="hero-search" id="home-search-form">
+                <input id="home-search-input" type="search" autocomplete="off" placeholder="Quel service ?">
+                 <button type="submit" aria-label="Rechercher">⌕</button>
+              </form>
+              <div class="suggestions" id="home-suggestions"></div>
+            </div>
+
+            <div class="hero-mini-services" id="home-mini-services"></div>
+          </div>
+        </div>
     </section>
 
     <section class="section">
@@ -52,45 +66,53 @@
       </div>
     </section>
 
-    <section class="section alt">
-      <div class="container split-feature">
-        <img src="/images/hero/workflow.jpg" alt="Client qui organise un service depuis son téléphone">
+    <section class="section how-section-bg">
+  <div class="how-overlay"></div>
+
+  <div class="container how-bg-layout">
+    <div class="how-bg-text">
+      <p class="eyebrow">Comment ça marche</p>
+      <h2>Un parcours simple,<br>du besoin jusqu'à l'avis</h2>
+      <p>
+        Choisissez un service, comparez les artisans disponibles et envoyez une demande claire en quelques clics.
+      </p>
+    </div>
+
+    <div class="steps-list how-bg-steps">
+      <div class="step-row">
+        <span class="step-number">1</span>
         <div>
-          <p class="eyebrow">Comment ça marche</p>
-          <h2>Un parcours simple, du besoin jusqu'à l'avis</h2>
-          <div class="steps-list">
-            <div class="step-row">
-              <span class="step-number">1</span>
-              <div>
-                <h3>Choisissez un service</h3>
-                <p class="muted">Sélectionnez la catégorie qui correspond à votre intervention.</p>
-              </div>
-            </div>
-            <div class="step-row">
-              <span class="step-number">2</span>
-              <div>
-                <h3>Comparez les artisans</h3>
-                <p class="muted">Consultez les profils, l'expérience, les communes et les avis.</p>
-              </div>
-            </div>
-            <div class="step-row">
-              <span class="step-number">3</span>
-              <div>
-                <h3>Envoyez une demande</h3>
-                <p class="muted">Décrivez votre besoin avec l'adresse et la date souhaitée.</p>
-              </div>
-            </div>
-            <div class="step-row">
-              <span class="step-number">4</span>
-              <div>
-                <h3>Suivez la mission et laissez un avis</h3>
-                <p class="muted">Gardez une trace du statut, puis notez l'intervention terminée.</p>
-              </div>
-            </div>
-          </div>
+          <h3>Choisissez un service</h3>
+          <p class="muted">Sélectionnez la catégorie qui correspond à votre intervention.</p>
         </div>
       </div>
-    </section>
+
+      <div class="step-row">
+        <span class="step-number">2</span>
+        <div>
+          <h3>Comparez les artisans</h3>
+          <p class="muted">Consultez les profils, l'expérience, les communes et les avis.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <span class="step-number">3</span>
+        <div>
+          <h3>Envoyez une demande</h3>
+          <p class="muted">Décrivez votre besoin avec l'adresse et la date souhaitée.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <span class="step-number">4</span>
+        <div>
+          <h3>Suivez la mission</h3>
+          <p class="muted">Gardez une trace du statut, puis notez l'intervention terminée.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
     <section class="section">
       <div class="container">

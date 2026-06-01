@@ -27,23 +27,37 @@ async function chargerServicesInscriptionArtisan() {
   }
 }
 
+function afficherOngletAuth(nomOnglet) {
+  const boutonActif = document.querySelector(`[data-auth-tab="${nomOnglet}"]`);
+  if (!boutonActif) return;
+
+  document.querySelectorAll("[data-auth-tab]").forEach((bouton) => {
+    bouton.classList.toggle("active", bouton === boutonActif);
+  });
+
+  document.querySelectorAll("[data-auth-panel]").forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.authPanel === nomOnglet);
+  });
+}
+
 // Changer l'onglet connexion / inscription
 function initialiserOngletsAuth() {
   document.querySelectorAll("[data-auth-tab]").forEach((bouton) => {
     bouton.addEventListener("click", () => {
-      document.querySelectorAll("[data-auth-tab]").forEach((item) => {
-        item.classList.toggle("active", item === bouton);
-      });
-
-      document.querySelectorAll("[data-auth-panel]").forEach((panel) => {
-        panel.classList.toggle("active", panel.dataset.authPanel === bouton.dataset.authTab);
-      });
+      afficherOngletAuth(bouton.dataset.authTab);
     });
   });
 
-  const mode = document.body.dataset.authMode;
+  document.querySelectorAll("[data-switch-auth]").forEach((lien) => {
+    lien.addEventListener("click", (event) => {
+      event.preventDefault();
+      afficherOngletAuth(lien.dataset.switchAuth);
+    });
+  });
+
+  const mode = obtenirParametre("mode") || document.body.dataset.authMode;
   if (mode === "register") {
-    document.querySelector("[data-auth-tab='register']")?.click();
+    afficherOngletAuth("register");
   }
 }
 
