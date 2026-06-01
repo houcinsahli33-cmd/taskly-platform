@@ -424,6 +424,16 @@
     inset: auto 0 -20px 0;
   }
 
+  .cta-band .request-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .cta-band .request-actions .btn {
+    flex: 1 1 180px;
+  }
+
   .trust-panel,
   .cta-band {
     padding: 28px;

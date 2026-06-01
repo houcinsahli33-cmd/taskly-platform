@@ -48,7 +48,7 @@ function carteDemandeClient(demande) {
       <div class="request-actions">
         ${peutAnnuler ? `<button class="btn outline" type="button" data-cancel-request="${demande.id}">Annuler</button>` : ""}
         ${peutAvis ? `<button class="btn primary" type="button" data-open-review="${demande.id}">Laisser un avis</button>` : ""}
-        <button class="btn ghost" type="button" data-open-report="${demande.id}">Signaler</button>
+        <button class="btn danger" type="button" data-open-report="${demande.id}">Signaler</button>
       </div>
     </article>
   `;
