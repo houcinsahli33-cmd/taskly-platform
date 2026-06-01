@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aide - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/help.js"></script>
+</head>
+<body>
+  <div id="site-header"></div>
+  <main class="page-main">
+    <section class="page-hero">
+      <div class="container section-heading">
+        <p class="eyebrow">Centre d'aide</p>
+        <h1>Comment pouvons-nous vous aider ?</h1>
+        <p class="lead">Retrouvez les réponses aux questions les plus fréquentes sur les services, les demandes, les avis, les signalements et le support.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container" style="max-width:920px">
+        <div class="faq-tools">
+          <input class="form-control" id="faq-search" type="search" placeholder="Rechercher une question...">
+          <div class="filter-tabs">
+            <button class="active" type="button" data-faq-category="general">Général</button>
+            <button type="button" data-faq-category="clients">Clients</button>
+            <button type="button" data-faq-category="artisans">Artisans</button>
+            <button type="button" data-faq-category="avis">Avis et signalements</button>
+            <button type="button" data-faq-category="support">Compte et support</button>
+          </div>
+        </div>
+        <div class="faq-list" id="faq-list"></div>
+      </div>
+    </section>
+
+    <section class="section compact">
+      <div class="container cta-band">
+        <div>
+          <p class="eyebrow">Support</p>
+          <h2>Vous n'avez pas trouvé votre réponse ?</h2>
+        </div>
+        <a class="btn light" href="/contact.html">Contacter le support</a>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+</body>
+</html>

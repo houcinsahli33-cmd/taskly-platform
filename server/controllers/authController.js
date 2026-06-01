@@ -147,7 +147,8 @@ async function connexion(req, res) {
             nom: utilisateur.nom,
             prenom: utilisateur.prenom,
             email: utilisateur.email,
-            role: utilisateur.role
+            role: utilisateur.role,
+            photo_profil: utilisateur.photo_profil
         };
 
         res.status(200).json({  // la requete a ete acceptee
@@ -226,6 +227,8 @@ async function modifierPhotoProfil(req, res) {
             cheminPhoto
         );
 
+        req.session.utilisateur.photo_profil = cheminPhoto;
+
         res.status(200).json({
             message: "Photo de profil mise à jour avec succès.",
             photo_profil: cheminPhoto
@@ -260,6 +263,8 @@ async function supprimerPhotoProfil(req, res) {
         }
 
         await userModel.supprimerPhotoProfil(req.session.utilisateur.id);
+
+        req.session.utilisateur.photo_profil = null;
 
         res.status(200).json({
             message: "Photo de profil supprimée avec succès."

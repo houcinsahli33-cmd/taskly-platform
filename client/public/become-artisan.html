@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devenir artisan - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/algeria-locations.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/auth-pages.js"></script>
+</head>
+<body class="auth-page" data-auth-page="true">
+  <main class="auth-card">
+    <section class="auth-aside">
+      <a class="brand auth-logo" href="/index.html"><img src="/images/taskly-logo.svg" alt="Taskly"></a>
+      <h1>Devenir artisan sur Taskly</h1>
+      <p>Cr&eacute;ez un profil professionnel, choisissez votre service et recevez des demandes adapt&eacute;es &agrave; votre zone de travail.</p>
+      <p class="muted" style="color:#cce3dc;margin-top:22px">Vous avez d&eacute;j&agrave; un compte ? Connectez-vous pour rejoindre votre espace.</p>
+      <a class="btn light" href="/login.html" style="margin-top:22px">Se connecter</a>
+    </section>
+
+    <section class="auth-body">
+
+      <div class="role-tabs">
+        <a class="btn outline" href="/login.html">Se connecter</a>
+        <a class="btn primary" href="/become-artisan.html">S'inscrire</a>
+      </div>
+      <h2>Cr&eacute;er un compte artisan</h2>
+      <div id="artisan-register-alert" class="alert"></div>
+
+      <form id="artisan-register-form" class="form-grid">
+        <p class="form-section-title">Compte</p>
+        <label>
+          <span class="field-label">Nom</span>
+          <input class="form-control" id="artisan-nom" required placeholder="Nom">
+        </label>
+        <label>
+          <span class="field-label">Pr&eacute;nom</span>
+          <input class="form-control" id="artisan-prenom" required placeholder="Pr&eacute;nom">
+        </label>
+        <label>
+          <span class="field-label">Email</span>
+          <input class="form-control" id="artisan-email" type="email" required placeholder="votre@email.com">
+        </label>
+        <label>
+          <span class="field-label">Mot de passe</span>
+          <input class="form-control" id="artisan-password" type="password" required placeholder="Mot de passe">
+        </label>
+
+        <p class="form-section-title">Activit&eacute;</p>
+        <label>
+          <span class="field-label">T&eacute;l&eacute;phone</span>
+          <input class="form-control" id="artisan-phone" required placeholder="0550 00 00 00">
+        </label>
+        <label>
+          <span class="field-label">Service</span>
+          <select class="form-select" id="artisan-service" required></select>
+        </label>
+        <label>
+          <span class="field-label">Wilaya</span>
+          <select class="form-select" id="artisan-wilaya" required></select>
+        </label>
+        <label>
+          <span class="field-label">Commune</span>
+          <select class="form-select" id="artisan-commune" required>
+            <option value="">Choisir une commune</option>
+          </select>
+        </label>
+        <label>
+          <span class="field-label">Exp&eacute;rience</span>
+          <input class="form-control" id="artisan-experience" type="number" min="0" max="50" value="0" required>
+        </label>
+        <label class="full">
+          <span class="field-label">Description</span>
+          <textarea class="form-textarea" id="artisan-description" required placeholder="Pr&eacute;sentez bri&egrave;vement vos comp&eacute;tences, votre exp&eacute;rience et les types d'interventions que vous acceptez."></textarea>
+        </label>
+        <button class="btn primary block full" type="submit">Cr&eacute;er mon compte artisan</button>
+      </form>
+
+      <p class="auth-small-link">Vous avez d&eacute;j&agrave; un compte ? <a href="/login.html">Se connecter</a></p>
+    </section>
+  </main>
+</body>
+</html>

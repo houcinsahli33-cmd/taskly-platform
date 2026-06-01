@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil artisan - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/artisans.js"></script>
+</head>
+<body data-active="artisans">
+  <div id="site-header"></div>
+  <main class="page-main">
+    <section class="section compact">
+      <div class="container" id="artisan-profile"></div>
+    </section>
+    <section class="section alt">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Avis clients</p>
+          <h2>Ce que les clients disent de cet artisan</h2>
+        </div>
+        <div class="grid three" id="artisan-reviews"></div>
+      </div>
+    </section>
+  </main>
+  <div id="request-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Envoyer une demande</h2>
+        <button class="modal-close" type="button" data-close-modal="request-modal">×</button>
+      </div>
+      <form class="modal-body" id="request-form">
+        <input type="hidden" id="request-artisan-id">
+        <p class="muted" style="margin-bottom:18px">Artisan : <strong id="request-artisan-name"></strong></p>
+        <label class="field-label" for="request-message">Message</label>
+        <textarea class="form-textarea" id="request-message" required placeholder="Décrivez votre besoin"></textarea>
+        <label class="field-label" for="request-address">Adresse</label>
+        <input class="form-control" id="request-address" required placeholder="Adresse de l'intervention">
+        <label class="field-label" for="request-date">Date souhaitée</label>
+        <input class="form-control" id="request-date" type="date">
+        <button class="btn primary block" type="submit" style="margin-top:18px">Envoyer</button>
+      </form>
+    </div>
+  </div>
+  <div id="site-footer"></div>
+</body>
+</html>

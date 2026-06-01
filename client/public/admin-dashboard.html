@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin-dashboard.js"></script>
+</head>
+<body class="dashboard-page" data-require-role="admin">
+  <div id="site-header"></div>
+  <main class="admin-layout">
+    <aside class="admin-sidebar">
+      <p class="sidebar-title">Administration</p>
+      <nav class="side-nav admin-nav">
+        <button class="active" type="button" data-admin-tab="overview">Vue d'ensemble</button>
+        <button type="button" data-admin-tab="users">Utilisateurs</button>
+        <button type="button" data-admin-tab="reports">Signalements</button>
+        <button type="button" data-admin-tab="contacts">Support</button>
+        <button type="button" data-admin-tab="services">Services</button>
+        <button type="button" data-logout>Déconnexion</button>
+      </nav>
+    </aside>
+
+    <section class="admin-content">
+      <div class="dashboard-hero">
+        <div>
+          <p class="eyebrow" style="color:#bff3e8">Administration</p>
+          <h1>Administration de la plateforme</h1>
+          <p>Gérez les utilisateurs, suivez les demandes, consultez les signalements, traitez les messages support et maintenez les services proposés sur Taskly.</p>
+        </div>
+      </div>
+
+      <section class="admin-section active" id="admin-overview">
+        <div class="stats-grid" id="admin-stats-grid"></div>
+        <div class="admin-overview-grid">
+          <div class="panel"><div class="panel-header"><h2>Derniers utilisateurs</h2></div><div class="panel-body" id="admin-latest-users"></div></div>
+          <div class="panel"><div class="panel-header"><h2>Dernières demandes</h2></div><div class="panel-body" id="admin-latest-requests"></div></div>
+          <div class="panel"><div class="panel-header"><h2>Derniers avis</h2></div><div class="panel-body" id="admin-latest-reviews"></div></div>
+          <div class="panel"><div class="panel-header"><h2>Derniers messages support</h2></div><div class="panel-body" id="admin-latest-contacts"></div></div>
+        </div>
+      </section>
+
+      <section class="admin-section" id="admin-users">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Gestion des utilisateurs</h2>
+          </div>
+          <div class="panel-body" id="admin-users-table"></div>
+        </div>
+      </section>
+
+      <section class="admin-section" id="admin-reports">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Signalements</h2>
+          </div>
+          <div class="panel-body" id="admin-reports-list"></div>
+        </div>
+      </section>
+
+      <section class="admin-section" id="admin-contacts">
+        <div class="toolbar">
+          <h2>Messages support</h2>
+          <div class="segmented">
+            <button class="active" type="button" data-contact-filter="">Tous</button>
+            <button type="button" data-contact-filter="nouveau">Nouveaux</button>
+            <button type="button" data-contact-filter="traite">Traités</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-body" id="admin-contacts-list"></div>
+        </div>
+      </section>
+
+      <section class="admin-section" id="admin-services">
+        <div class="toolbar">
+          <h2>Services</h2>
+          <button class="btn primary" id="add-service-btn" type="button">Ajouter un service</button>
+        </div>
+        <div id="admin-services-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="block-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Bloquer un utilisateur</h2>
+        <button class="modal-close" type="button" data-close-modal="block-modal">×</button>
+      </div>
+      <form class="modal-body" id="block-form">
+        <input type="hidden" id="block-user-id">
+        <p class="muted" style="margin-bottom:18px">Utilisateur : <strong id="block-user-name"></strong></p>
+        <label>
+          <span class="field-label">Motif du blocage</span>
+          <textarea class="form-textarea" id="block-reason" required placeholder="Motif clair et précis"></textarea>
+        </label>
+        <button class="btn danger block" type="submit">Bloquer</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="service-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 id="service-modal-title">Ajouter un service</h2>
+        <button class="modal-close" type="button" data-close-modal="service-modal">×</button>
+      </div>
+      <form class="modal-body" id="service-form">
+        <input type="hidden" id="service-id">
+        <label>
+          <span class="field-label">Nom</span>
+          <input class="form-control" id="service-name" required placeholder="Nom du service">
+        </label>
+        <label>
+          <span class="field-label">Description</span>
+          <textarea class="form-textarea" id="service-description" required placeholder="Description du service"></textarea>
+        </label>
+        <button class="btn primary block" type="submit">Enregistrer</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

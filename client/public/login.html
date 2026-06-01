@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion / Inscription - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/algeria-locations.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/auth-pages.js"></script>
+</head>
+<body class="auth-page" data-auth-page="true">
+  <main class="auth-card">
+    <section class="auth-aside">
+      <a class="brand auth-logo" href="/index.html"><img src="/images/taskly-logo.svg" alt="Taskly"></a>
+      <h1>Votre espace Taskly</h1>
+      <p>Connectez-vous ou créez un compte client pour envoyer et suivre vos demandes de service.</p>
+      <p class="muted" style="color:#cce3dc;margin-top:22px">Vous êtes artisan ? Utilisez la page dédiée pour créer un profil professionnel.</p>
+      <a class="btn light" href="/become-artisan.html" style="margin-top:22px">Devenir artisan</a>
+    </section>
+
+    <section class="auth-body">
+      <div class="role-tabs">
+        <button class="active" type="button" data-auth-tab="login">Se connecter</button>
+        <button type="button" data-auth-tab="register">S'inscrire</button>
+      </div>
+
+      <div class="auth-panel active" data-auth-panel="login">
+        <h2>Connexion</h2>
+        <p class="muted" style="margin-bottom:20px">Accédez à votre espace client, artisan ou administrateur.</p>
+        <div id="login-alert" class="alert"></div>
+        <form id="login-form" class="grid">
+          <label>
+            <span class="field-label">Email</span>
+            <input class="form-control" id="login-email" type="email" required placeholder="votre@email.com">
+          </label>
+          <label>
+            <span class="field-label">Mot de passe</span>
+            <input class="form-control" id="login-password" type="password" required placeholder="Votre mot de passe">
+          </label>
+          <button class="btn primary block" type="submit">Se connecter</button>
+        </form>
+        <p class="auth-small-link">Vous n'avez pas encore de compte ? <a href="#" data-switch-auth="register">S'inscrire</a></p>
+      </div>
+
+      <div class="auth-panel" data-auth-panel="register">
+        <h2>Créer un compte client</h2>
+        <p class="muted" style="margin-bottom:20px">Ce formulaire crée uniquement un compte client.</p>
+        <div id="client-register-alert" class="alert"></div>
+        <form id="client-register-form" class="form-grid">
+          <label>
+            <span class="field-label">Nom</span>
+            <input class="form-control" id="client-nom" required placeholder="Nom">
+          </label>
+          <label>
+            <span class="field-label">Prénom</span>
+            <input class="form-control" id="client-prenom" required placeholder="Prénom">
+          </label>
+          <label>
+            <span class="field-label">Email</span>
+            <input class="form-control" id="client-email" type="email" required placeholder="votre@email.com">
+          </label>
+          <label>
+            <span class="field-label">Mot de passe</span>
+            <input class="form-control" id="client-password" type="password" required placeholder="Mot de passe">
+          </label>
+          <label>
+            <span class="field-label">Téléphone</span>
+            <input class="form-control" id="client-phone" required placeholder="0550 00 00 00">
+          </label>
+          <label>
+            <span class="field-label">Wilaya</span>
+            <select class="form-select" id="client-wilaya" required></select>
+          </label>
+          <label>
+            <span class="field-label">Commune</span>
+            <select class="form-select" id="client-commune" required>
+              <option value="">Choisir une commune</option>
+            </select>
+          </label>
+          <label>
+            <span class="field-label">Adresse</span>
+            <input class="form-control" id="client-address" required placeholder="Adresse complète">
+          </label>
+          <button class="btn primary block full" type="submit">Créer mon compte</button>
+        </form>
+        <p class="auth-small-link">Vous avez d&eacute;j&agrave; un compte ? <a href="#" data-switch-auth="login">Se connecter</a></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

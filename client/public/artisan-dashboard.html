@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace artisan - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/artisan-dashboard.js"></script>
+</head>
+<body class="dashboard-page" data-require-role="artisan">
+  <div id="site-header"></div>
+  <main class="dashboard-shell">
+    <aside class="sidebar">
+      <p class="sidebar-title">Espace artisan</p>
+      <nav class="side-nav">
+        <a class="active" href="#demandes">Demandes reçues</a>
+        <a href="#avis">Avis</a>
+        <a href="#profil">Mon profil</a>
+        <a href="/contact.html">Support</a>
+        <button type="button" data-logout>Déconnexion</button>
+      </nav>
+    </aside>
+
+    <section class="dashboard-content">
+      <div class="dashboard-hero">
+        <div>
+          <p class="eyebrow" style="color:#bff3e8">Artisan</p>
+          <h1 id="artisan-welcome">Bienvenue</h1>
+          <p>Traitez les demandes reçues, finalisez vos missions et consultez vos avis.</p>
+        </div>
+        <a class="btn light" href="/contact.html">Contacter le support</a>
+      </div>
+
+      <div class="stats-grid" id="artisan-stats"></div>
+
+      <div class="dashboard-grid">
+        <section class="panel" id="demandes">
+          <div class="panel-header">
+            <h2>Demandes reçues</h2>
+          </div>
+          <div class="panel-body">
+            <div class="request-list" id="artisan-requests"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="avis">
+          <div class="panel-header">
+            <h2>Avis reçus</h2>
+          </div>
+          <div class="panel-body" id="artisan-reviews-dashboard"></div>
+        </section>
+
+        <section class="panel" id="profil">
+          <div class="panel-header">
+            <h2>Mon profil</h2>
+          </div>
+          <div class="panel-body">
+            <div id="artisan-profile-card"></div>
+            <form id="artisan-photo-form" style="margin-top:22px">
+              <label>
+                <span class="field-label">Photo de profil</span>
+                <input class="form-control" id="artisan-photo-input" type="file" accept="image/jpeg,image/png,image/webp">
+              </label>
+              <div class="request-actions">
+                <button class="btn primary" type="submit">Mettre à jour</button>
+                <button class="btn outline" type="button" id="artisan-photo-delete">Supprimer</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div id="cancel-artisan-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Annuler la demande</h2>
+        <button class="modal-close" type="button" data-close-modal="cancel-artisan-modal">×</button>
+      </div>
+      <form class="modal-body" id="cancel-artisan-form">
+        <input type="hidden" id="cancel-artisan-demande-id">
+        <label>
+          <span class="field-label">Motif d'annulation</span>
+          <textarea class="form-textarea" id="cancel-artisan-reason" required placeholder="Expliquez le motif au client"></textarea>
+        </label>
+        <button class="btn primary block" type="submit">Annuler avec motif</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="artisan-report-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Signaler un client</h2>
+        <button class="modal-close" type="button" data-close-modal="artisan-report-modal">×</button>
+      </div>
+      <form class="modal-body" id="artisan-report-form">
+        <input type="hidden" id="artisan-report-demande-id">
+        <label>
+          <span class="field-label">Motif</span>
+          <select class="form-select" id="artisan-report-motif" required>
+            <option>Comportement non professionnel</option>
+            <option>Ne répond pas</option>
+            <option>Fausse information</option>
+            <option>Retard important</option>
+            <option>Problème avec la demande</option>
+            <option>Annulation abusive</option>
+            <option>Autre</option>
+          </select>
+        </label>
+        <label>
+          <span class="field-label">Description</span>
+          <textarea class="form-textarea" id="artisan-report-description" placeholder="Ajoutez des détails utiles"></textarea>
+        </label>
+        <button class="btn primary block" type="submit">Envoyer le signalement</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

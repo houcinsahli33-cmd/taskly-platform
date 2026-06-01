@@ -33,10 +33,15 @@ async function trouverTousLesArtisans(filtres = {}) {
             users.nom,
             users.prenom,
             users.email,
-            services.nom AS service_nom
+            services.nom AS service_nom,
+            COALESCE(ROUND(AVG(avis.note), 1), 0) AS moyenne_notes,
+            COUNT(DISTINCT avis.id) AS total_avis,
+            COUNT(DISTINCT demandes.id) AS total_demandes
         FROM artisans
         JOIN users ON artisans.user_id = users.id
         JOIN services ON artisans.service_id = services.id
+        LEFT JOIN avis ON avis.artisan_id = artisans.id
+        LEFT JOIN demandes ON demandes.artisan_id = artisans.id
         -- Condition toujours vraie qui permet d'ajouter facilement d'autres conditions avec AND
         WHERE 1 = 1
     `;
@@ -71,7 +76,10 @@ async function trouverTousLesArtisans(filtres = {}) {
         valeurs.push(recherche, recherche, recherche, recherche, recherche);    // on ajoute les valeurs de recherche dans le tableau
     }
 
-    sql += " ORDER BY artisans.created_at DESC";    // on ajoute la condition de tri
+    sql += `
+        GROUP BY artisans.id
+        ORDER BY artisans.created_at DESC
+    `;    // on ajoute la condition de tri
 
     const [resultats] = await db.promise().query(sql, valeurs); // on execute la requete et on attends et on recupere le resultat
     return resultats;    // on retourne tous les artisans trouves
@@ -92,11 +100,17 @@ async function trouverArtisanParId(id) {
             users.nom,
             users.prenom,
             users.email,
-            services.nom AS service_nom
+            services.nom AS service_nom,
+            COALESCE(ROUND(AVG(avis.note), 1), 0) AS moyenne_notes,
+            COUNT(DISTINCT avis.id) AS total_avis,
+            COUNT(DISTINCT demandes.id) AS total_demandes
         FROM artisans
         JOIN users ON artisans.user_id = users.id
         JOIN services ON artisans.service_id = services.id
+        LEFT JOIN avis ON avis.artisan_id = artisans.id
+        LEFT JOIN demandes ON demandes.artisan_id = artisans.id
         WHERE artisans.id = ?
+        GROUP BY artisans.id
     `; 
 
     const [resultats] = await db.promise().query(sql, [id]); // on execute la requete

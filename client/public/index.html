@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskly - Artisans de confiance près de chez vous</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/home.js"></script>
+</head>
+<body data-active="home">
+  <div id="site-header"></div>
+
+  <main class="page-main">
+      <section class="hero">
+      <div class="hero-slider" aria-hidden="true">
+        <div class="hero-slide hero-slide-1">
+          <img class="hero-person" src="/images/hero/floating/artisan-1.png" alt="">
+        </div>
+
+        <div class="hero-slide hero-slide-2">
+          <img class="hero-person" src="/images/hero/floating/artisan-2.png" alt="">
+        </div>
+
+        <div class="hero-slide hero-slide-3">
+          <img class="hero-person" src="/images/hero/floating/artisan-3.png" alt="">
+        </div>
+      </div>
+
+        <div class="container hero-content">
+          <div class="hero-left-text">
+            <p class="eyebrow">Services locaux en Algérie</p>
+            <h1>Votre artisan<br>près de chez vous</h1>
+            <p class="lead"><span>Trouvez rapidement un professionnel de confiance pour vos services à domicile.</span></p>
+          </div>
+
+          <div class="hero-search-zone">
+            <div class="search-shell">
+              <form class="hero-search" id="home-search-form">
+                <input id="home-search-input" type="search" autocomplete="off" placeholder="Quel service ?">
+                 <button type="submit" aria-label="Rechercher">⌕</button>
+              </form>
+              <div class="suggestions" id="home-suggestions"></div>
+            </div>
+
+            <div class="hero-mini-services" id="home-mini-services"></div>
+          </div>
+        </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Services populaires</p>
+          <h2>Des services utiles<br>pour les travaux du quotidien</h2>
+          <p class="lead">Parcourez les catégories, puis ouvrez une fiche service pour voir les artisans disponibles.</p>
+        </div>
+        <div class="carousel-wrap">
+          <div class="carousel-track" id="services-carousel"></div>
+          <div class="carousel-controls">
+            <button class="icon-btn" type="button" data-carousel="services-carousel" data-direction="prev" aria-label="Services précédents">‹</button>
+            <button class="icon-btn" type="button" data-carousel="services-carousel" data-direction="next" aria-label="Services suivants">›</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section how-section-bg">
+  <div class="how-overlay"></div>
+
+  <div class="container how-bg-layout">
+    <div class="how-bg-text">
+      <p class="eyebrow">Comment ça marche</p>
+      <h2>Un parcours simple,<br>du besoin jusqu'à l'avis</h2>
+      <p>
+        Choisissez un service, comparez les artisans disponibles et envoyez une demande claire en quelques clics.
+      </p>
+    </div>
+
+    <div class="steps-list how-bg-steps">
+      <div class="step-row">
+        <span class="step-number">1</span>
+        <div>
+          <h3>Choisissez un service</h3>
+          <p class="muted">Sélectionnez la catégorie qui correspond à votre intervention.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <span class="step-number">2</span>
+        <div>
+          <h3>Comparez les artisans</h3>
+          <p class="muted">Consultez les profils, l'expérience, les communes et les avis.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <span class="step-number">3</span>
+        <div>
+          <h3>Envoyez une demande</h3>
+          <p class="muted">Décrivez votre besoin avec l'adresse et la date souhaitée.</p>
+        </div>
+      </div>
+
+      <div class="step-row">
+        <span class="step-number">4</span>
+        <div>
+          <h3>Suivez la mission</h3>
+          <p class="muted">Gardez une trace du statut, puis notez l'intervention terminée.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Avis clients</p>
+          <h2>Des retours variés pour mieux choisir</h2>
+        </div>
+        <div class="grid four">
+          <article class="card testimonial-card card-body">
+            <div class="stars">★★★★★</div>
+            <h3>Plomberie</h3>
+            <p class="muted">"Demande claire, artisan ponctuel et suivi facile depuis mon espace client."</p>
+          </article>
+          <article class="card testimonial-card card-body">
+            <div class="stars">★★★★☆</div>
+            <h3>Électricité</h3>
+            <p class="muted">"J'ai pu comparer deux profils avant de choisir. La réparation a été bien expliquée."</p>
+          </article>
+          <article class="card testimonial-card card-body">
+            <div class="stars">★★★☆☆</div>
+            <h3>Nettoyage</h3>
+            <p class="muted">"Service correct. J'aurais aimé plus de disponibilités dans ma commune."</p>
+          </article>
+          <article class="card testimonial-card card-body">
+            <div class="stars">★★★★★</div>
+            <h3>Peinture</h3>
+            <p class="muted">"Le profil détaillé et les avis m'ont aidé à envoyer une demande précise."</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container trust-panel">
+        <h2>Votre confiance, notre priorité</h2>
+        <p>Taskly garde un parcours clair : profils transparents, demandes suivies, support avec numéro de dossier et signalements liés à de vraies demandes.</p>
+        <div class="trust-list">
+          <div><strong>Profils lisibles</strong><br><span>Service, commune, expérience et avis visibles.</span></div>
+          <div><strong>Demandes suivies</strong><br><span>Chaque mission garde son statut dans le dashboard.</span></div>
+          <div><strong>Support traçable</strong><br><span>Un numéro de suivi est fourni après contact.</span></div>
+          <div><strong>Modération</strong><br><span>Les comptes problématiques peuvent être bloqués avec motif.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section compact">
+      <div class="container cta-band">
+        <div>
+          <p class="eyebrow">Commencer</p>
+          <h2>Prêt à trouver un artisan ?</h2>
+          <p>Explorez les services disponibles ou créez votre compte client pour envoyer une demande.</p>
+        </div>
+        <div class="request-actions">
+          <a class="btn light" href="/services.html">Explorer les services</a>
+          <a class="btn outline" href="/login.html">Créer un compte</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+</body>
+</html>

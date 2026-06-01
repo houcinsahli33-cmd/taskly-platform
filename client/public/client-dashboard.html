@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace client - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/client-dashboard.js"></script>
+</head>
+<body class="dashboard-page" data-require-role="client">
+  <div id="site-header"></div>
+  <main class="dashboard-shell">
+    <aside class="sidebar">
+      <p class="sidebar-title">Espace client</p>
+      <nav class="side-nav">
+        <a class="active" href="#demandes">Mes demandes</a>
+        <a href="#profil">Mon profil</a>
+        <a href="/contact.html">Support</a>
+        <button type="button" data-logout>Déconnexion</button>
+      </nav>
+    </aside>
+
+    <section class="dashboard-content">
+      <div class="dashboard-hero">
+        <div>
+          <p class="eyebrow" style="color:#bff3e8">Client</p>
+          <h1 id="client-welcome">Bienvenue</h1>
+          <p>Suivez vos demandes, laissez des avis après les missions terminées et contactez le support si besoin.</p>
+        </div>
+        <a class="btn light" href="/artisans.html">Nouvelle demande</a>
+      </div>
+
+      <div class="stats-grid" id="client-stats"></div>
+
+      <div class="dashboard-grid">
+        <section class="panel" id="demandes">
+          <div class="panel-header">
+            <h2>Mes demandes</h2>
+          </div>
+          <div class="panel-body">
+            <div class="request-list" id="client-requests"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="profil">
+          <div class="panel-header">
+            <h2>Mon profil</h2>
+          </div>
+          <div class="panel-body">
+            <div id="client-profile-card"></div>
+            <form id="client-photo-form" style="margin-top:22px">
+              <label>
+                <span class="field-label">Photo de profil</span>
+                <input class="form-control" id="client-photo-input" type="file" accept="image/jpeg,image/png,image/webp">
+              </label>
+              <div class="request-actions">
+                <button class="btn primary" type="submit">Mettre à jour</button>
+                <button class="btn outline" type="button" id="client-photo-delete">Supprimer</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div id="review-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Laisser un avis</h2>
+        <button class="modal-close" type="button" data-close-modal="review-modal">×</button>
+      </div>
+      <form class="modal-body" id="review-form">
+        <input type="hidden" id="review-demande-id">
+        <label>
+          <span class="field-label">Note</span>
+          <select class="form-select" id="review-note" required>
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Très bien</option>
+            <option value="3">3 - Correct</option>
+            <option value="2">2 - Insuffisant</option>
+            <option value="1">1 - Mauvais</option>
+          </select>
+        </label>
+        <label>
+          <span class="field-label">Commentaire</span>
+          <textarea class="form-textarea" id="review-comment" placeholder="Décrivez votre expérience"></textarea>
+        </label>
+        <button class="btn primary block" type="submit">Envoyer l'avis</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="report-modal" class="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Signaler un problème</h2>
+        <button class="modal-close" type="button" data-close-modal="report-modal">×</button>
+      </div>
+      <form class="modal-body" id="report-form">
+        <input type="hidden" id="report-demande-id">
+        <label>
+          <span class="field-label">Motif</span>
+          <select class="form-select" id="report-motif" required>
+            <option>Comportement non professionnel</option>
+            <option>Ne répond pas</option>
+            <option>Fausse information</option>
+            <option>Retard important</option>
+            <option>Problème avec la demande</option>
+            <option>Annulation abusive</option>
+            <option>Autre</option>
+          </select>
+        </label>
+        <label>
+          <span class="field-label">Description</span>
+          <textarea class="form-textarea" id="report-description" placeholder="Ajoutez des détails utiles"></textarea>
+        </label>
+        <button class="btn primary block" type="submit">Envoyer le signalement</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
