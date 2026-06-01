@@ -86,9 +86,6 @@ function construireFooter() {
             <a href="/contact.html">Support</a>
             <a href="/contact.html#suivi-message">Suivre un message</a>
             <a href="mailto:support@taskly.dz">support@taskly.dz</a>
-            <a href="tel:+213555000000">+213 555 000 000</a>
-            <span>Alger, Algérie</span>
-            <span>Samedi à jeudi, 9h00 - 18h00</span>
           </div>
         </div>
         <div>
@@ -102,10 +99,25 @@ function construireFooter() {
         <div>
           <h3>Nous suivre</h3>
           <div class="social-links" aria-label="Réseaux sociaux">
-            <a href="#" aria-label="Facebook">f</a>
-            <a href="#" aria-label="Instagram">◎</a>
-            <a href="#" aria-label="X / Twitter">x</a>
-            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Facebook">
+              <img src="/images/icons/facebook.png" alt="">
+              <span>Facebook</span>
+            </a>
+
+            <a href="#" aria-label="Instagram">
+              <img src="/images/icons/instagram.png" alt="">
+              <span>Instagram</span>
+            </a>
+
+            <a href="#" aria-label="X / Twitter">
+              <img src="/images/icons/twitter.png" alt="">
+              <span>Twitter</span>
+            </a>
+
+            <a href="#" aria-label="LinkedIn">
+              <img src="/images/icons/linkedin.png" alt="">
+              <span>LinkedIn</span>
+            </a>
           </div>
         </div>
       </div>
