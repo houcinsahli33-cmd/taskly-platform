@@ -1,6 +1,21 @@
 let servicesAccueil = [];
 let serviceChoisiAccueil = null;
 
+function placerSuggestionsAccueil() {
+  const form = document.getElementById("home-search-form");
+  const suggestions = document.getElementById("home-suggestions");
+
+  if (!form || !suggestions || !suggestions.classList.contains("show")) {
+    return;
+  }
+
+  const position = form.getBoundingClientRect();
+
+  suggestions.style.left = position.left + "px";
+  suggestions.style.top = position.bottom + 8 + "px";
+  suggestions.style.width = position.width + "px";
+}
+
 // Charger les services depuis le backend
 async function chargerServicesAccueil() {
   const piste = document.getElementById("services-carousel");
@@ -71,7 +86,9 @@ function afficherSuggestionsAccueil(texte) {
   cible.innerHTML = resultats.map((service) => (
     `<button type="button" data-suggestion-service="${service.id}">${echapperHTML(service.nom)}</button>`
   )).join("");
+
   cible.classList.add("show");
+  placerSuggestionsAccueil();
 }
 
 // Initialiser la recherche de la page d'accueil
@@ -120,10 +137,15 @@ function initialiserRechercheAccueil() {
   });
 
   document.addEventListener("click", (event) => {
-    if (!event.target.closest(".search-shell")) {
+    if (
+      !event.target.closest(".search-shell") &&
+      !event.target.closest("#home-suggestions")
+    ) {
       suggestions?.classList.remove("show");
     }
   });
+  window.addEventListener("resize", placerSuggestionsAccueil);
+  window.addEventListener("scroll", placerSuggestionsAccueil);
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
