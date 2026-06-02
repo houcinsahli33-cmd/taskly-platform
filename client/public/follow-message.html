@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi message support - Taskly</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/contact.js"></script>
+</head>
+<body class="support-auth-page" data-active="contact">
+  <div id="site-header"></div>
+  <main class="support-auth-main">
+    <section class="auth-card support-auth-card">
+      <section class="auth-aside support-auth-aside support-auth-aside-follow">
+        <a class="brand auth-logo" href="/index.html"><img src="/images/taskly-logo.svg" alt="Taskly"></a>
+        <p class="eyebrow">Suivi support</p>
+        <h1 style = "font-size: clamp(2.2rem, 4.5vw, 3.8rem);">Retrouvez l'état de votre message.</h1>
+        <p>Utilisez le numéro reçu après l'envoi de votre demande et l'adresse e-mail associée au message.</p>
+      </section>
+
+      <section class="auth-body">
+        <div class="auth-panel active">
+          <h2>Suivre un message</h2>
+          <p class="muted" style="margin-bottom:20px">Consultez le statut de votre demande support avec votre numéro de suivi.</p>
+
+          <form id="follow-form" class="grid" novalidate>
+            <label>
+              <span class="field-label">Numéro de suivi</span>
+              <input class="form-control" id="follow-id" required placeholder="Exemple : 12">
+            </label>
+
+            <label>
+              <span class="field-label">Email</span>
+              <input class="form-control" id="follow-email" type="email" required placeholder="Adresse e-mail">
+            </label>
+
+            <button class="btn primary block" type="submit">Consulter le statut</button>
+          </form>
+
+          <div id="follow-result" class="support-follow-result"></div>
+
+          <p class="auth-small-link">Vous souhaitez envoyer un nouveau message ? <a href="/contact.html">Contacter le support</a></p>
+        </div>
+      </section>
+    </section>
+  </main>
+  <div id="site-footer"></div>
+</body>
+</html>

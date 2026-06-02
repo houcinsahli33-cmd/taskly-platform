@@ -115,3 +115,87 @@
 .artisan-description-small {
   min-height: 60px;
 }
+
+.support-auth-page {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(6, 52, 43, 0.66), rgba(6, 52, 43, 0.76)),
+    url("/images/contact/support-bg.jpg") center / cover no-repeat fixed;
+}
+
+.support-auth-main {
+  min-height: calc(100vh - 96px);
+  display: grid;
+  place-items: center;
+  padding: 40px 18px;
+}
+
+.support-auth-card {
+  width: min(980px, 100%);
+}
+
+.support-auth-aside {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: auto;
+  padding: 118px 34px 34px;
+  background:
+    linear-gradient(180deg, rgba(6, 52, 43, 0.70) 0%, rgba(6, 52, 43, 0.92) 100%),
+    url("/images/contact/support-bg.jpg") center / cover no-repeat;
+}
+
+.support-auth-aside-follow {
+  background:
+    linear-gradient(180deg, rgba(6, 52, 43, 0.64) 0%, rgba(6, 52, 43, 0.92) 100%),
+    url("/images/contact/support-bg.jpg") center 38% / cover no-repeat;
+}
+
+.support-auth-aside .auth-logo {
+  position: absolute;
+  top: 34px;
+  left: 34px;
+  margin-bottom: 0;
+}
+
+.support-auth-aside .eyebrow {
+  margin-bottom: 18px;
+  color: #bfe1d9;
+}
+
+.support-auth-aside p {
+  color: #dcebe7;
+}
+
+.support-auth-aside h1 {
+  margin-bottom: 18px;
+}
+
+.support-auth-page .auth-body {
+  display: grid;
+  align-items: center;
+}
+
+.support-auth-page .form-textarea {
+  min-height: 72px;
+  max-height: 230px;
+  overflow-y: auto;
+  resize: none;
+}
+
+.support-follow-result {
+  margin-top: 18px;
+}
+
+@media (max-width: 780px) {
+  .support-auth-main {
+    padding: 28px 18px;
+  }
+
+  .support-auth-aside {
+    min-height: 320px;
+    padding-top: 118px;
+  }
+}

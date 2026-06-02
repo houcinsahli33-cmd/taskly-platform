@@ -84,7 +84,7 @@ function construireFooter() {
           <div class="footer-links">
             <a href="/help.html">Centre d'aide</a>
             <a href="/contact.html">Support</a>
-            <a href="/contact.html#suivi-message">Suivre un message</a>
+            <a href="/follow-message.html">Suivre un message</a>
             <a href="mailto:support@taskly.dz">support@taskly.dz</a>
           </div>
         </div>

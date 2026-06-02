@@ -9,81 +9,51 @@
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/contact.js"></script>
 </head>
-<body data-active="contact">
+<body class="support-auth-page" data-active="contact">
   <div id="site-header"></div>
-  <main class="page-main">
-    <section class="photo-hero">
-      <img src="/images/contact/support-bg.jpg" alt="Support Taskly et assistance client">
-      <div class="container">
-        <p class="eyebrow">Support</p>
-        <h1>Besoin d'aide ? Le support Taskly est là pour vous accompagner.</h1>
-        <p class="lead">Envoyez un message au support, recevez un numéro de suivi et consultez l'état de votre demande à tout moment.</p>
-      </div>
+  <main class="support-auth-main">
+    <section class="auth-card support-auth-card">
+      <section class="auth-aside support-auth-aside">
+        <p class="eyebrow">Support Taskly</p>
+        <a class="brand auth-logo" href="/index.html"><img src="/images/taskly-logo.svg" alt="Taskly"></a>
+        <h1 style = "font-size: clamp(2.2rem, 4.5vw, 3.8rem);">Une question, un blocage, un doute ?</h1>
+        <p>Envoyez un message au support. Vous recevrez un numéro de suivi pour retrouver l'état de votre demande à tout moment.</p>
+      </section>
+      <section class="auth-body">
+        <div class="auth-panel active">
+          <h2>Contacter le support</h2>
+          <p class="muted" style="margin-bottom:20px">Expliquez votre situation simplement. L'équipe Taskly vous répondra dès que possible.</p>
+
+          <div id="contact-alert" class="alert"></div>
+
+          <form id="contact-form" class="form-grid" novalidate>
+            <label>
+              <span class="field-label">Nom</span>
+              <input class="form-control" id="contact-name" required placeholder="Votre nom">
+            </label>
+
+            <label>
+              <span class="field-label">Email</span>
+              <input class="form-control" id="contact-email" type="email" required placeholder="Adresse e-mail">
+            </label>
+
+            <label class="full">
+              <span class="field-label">Sujet</span>
+              <select class="form-select" id="contact-subject" data-support-subjects required></select>
+            </label>
+
+            <label class="full">
+              <span class="field-label">Message</span>
+              <textarea class="form-textarea" id="contact-message" required placeholder="Expliquez votre situation"></textarea>
+            </label>
+
+            <button class="btn primary block full" type="submit">Envoyer le message</button>
+          </form>
+
+          <p class="auth-small-link">Vous avez déjà envoyé un message ? <a href="/follow-message.html">Suivre votre message</a></p>
+        </div>
+      </section>
     </section>
-    
-   <section class="section">
-  <div class="container contact-layout">
-
-    <section class="form-card">
-      <p class="eyebrow">Message support</p>
-      <h2>Contacter le support</h2>
-      <p class="muted" style="margin:10px 0 22px">
-        Expliquez votre situation simplement. Le support pourra retrouver votre message avec son numéro de suivi.
-      </p>
-
-      <div id="contact-alert" class="alert"></div>
-
-      <form id="contact-form" class="grid">
-        <label>
-          <span class="field-label">Nom</span>
-          <input class="form-control" id="contact-name" required placeholder="Votre nom">
-        </label>
-
-        <label>
-          <span class="field-label">Email</span>
-          <input class="form-control" id="contact-email" type="email" required placeholder="Adresse e-mail">
-        </label>
-
-        <label class="full">
-          <span class="field-label">Sujet</span>
-          <select class="form-select" id="contact-subject" data-support-subjects required></select>
-        </label>
-
-        <label class="full">
-          <span class="field-label">Message</span>
-          <textarea class="form-textarea" id="contact-message" required placeholder="Expliquez votre situation"></textarea>
-        </label>
-
-        <button class="btn primary block full" type="submit">Envoyer le message</button>
-      </form>
-    </section>
-
-    <section class="form-card" id="suivi-message">
-      <p class="eyebrow">Suivi</p>
-      <h2>Suivre un message</h2>
-      <p class="muted" style="margin:10px 0 22px">
-        Utilisez le numéro reçu après l'envoi de votre message.
-      </p>
-
-      <form id="follow-form" class="grid">
-        <label>
-          <span class="field-label">Numéro de suivi</span>
-          <input class="form-control" id="follow-id" required placeholder="Exemple : 12">
-        </label>
-
-        <label>
-          <span class="field-label">Email</span>
-          <input class="form-control" id="follow-email" type="email" required placeholder="Adresse e-mail">
-        </label>
-
-        <button class="btn outline block" type="submit">Consulter le statut</button>
-      </form>
-
-      <div id="follow-result" style="margin-top:18px"></div>
-    </section>
-
-  </div>
-</section>
   </main>
   <div id="site-footer"></div>
 </body>
