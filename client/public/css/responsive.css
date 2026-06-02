@@ -763,6 +763,25 @@
     width: 78px;
     height: 78px;
   }
+
+  body[data-active="services"] .photo-hero {
+    min-height: 500px;
+  }
+
+  body[data-active="services"] .photo-hero h1 {
+    font-size: 2.45rem;
+  }
+
+  /* Support page */
+body[data-active="contact"] .photo-hero {
+  min-height: 500px;
+}
+
+body[data-active="contact"] .photo-hero h1 {
+  font-size: 2.35rem;
+}
+
+
 }
 
 /* ---------- Écrans très étroits ---------- */
@@ -987,7 +1006,6 @@
     font-size: 0.9rem;
   }
 }
-
 /* Très petit mobile */
 @media (max-width: 390px) {
   .hero-content {
@@ -1014,5 +1032,92 @@
 
   .hero-search button {
     flex-basis: 56px;
+  }
+    /* ===== RESPONSIVE HERO SERVICES ===== */
+
+     body[data-active="services"] .photo-hero {
+    min-height: 540px;
+    text-align: center;
+  }
+
+  body[data-active="services"] .photo-hero img {
+    object-position: center top;
+  }
+
+  body[data-active="services"] .photo-hero::before {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(247, 251, 249, 0.86) 0%,
+        rgba(247, 251, 249, 0.80) 45%,
+        rgba(247, 251, 249, 0.94) 100%
+      );
+  }
+
+  body[data-active="services"] .photo-hero .container {
+    padding: 72px 18px;
+  }
+
+  body[data-active="services"] .photo-hero .eyebrow {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  body[data-active="services"] .photo-hero h1 {
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: clamp(2.6rem, 11vw, 4rem);
+    line-height: 0.96;
+  }
+
+  body[data-active="services"] .photo-hero .lead {
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1rem;
+  }
+
+body[data-active="services"] .services-filter-box {
+    grid-template-columns: 1fr;
+    margin: -42px auto 36px;
+    padding: 18px;
+  }
+
+  body[data-active="services"] .services-filter-box .filter-tabs {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  body[data-active="services"] .services-filter-box .filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  body[data-active="services"] .services-filter-box .filter-tabs button {
+    flex: 0 0 auto;
+  } 
+}
+
+
+
+@media (max-width: 520px) {
+  body[data-active="services"] .services-filter-box {
+    margin: -34px 0 30px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  body[data-active="services"] .services-filter-box .form-control {
+    min-height: 54px;
+    border-radius: 14px;
+  }
+
+  body[data-active="services"] .services-filter-box .filter-tabs button {
+    min-height: 50px;
+    padding: 0 16px;
+    border-radius: 14px;
+    font-size: 0.9rem;
   }
 }
