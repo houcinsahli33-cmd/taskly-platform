@@ -134,7 +134,9 @@ function initialiserInscriptionClient() {
 
       afficherAlerte(alerte, "Compte client créé avec succès. Vous pouvez vous connecter.", "success");
       form.reset();
-      document.querySelector("[data-auth-tab='login']")?.click();
+      window.setTimeout(() => {
+        window.location.href = "/login.html";
+      }, 1000);
     } catch (error) {
       afficherAlerte(alerte, echapperHTML(error.message), "error");
     } finally {

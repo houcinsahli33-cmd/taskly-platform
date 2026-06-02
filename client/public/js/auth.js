@@ -75,7 +75,7 @@ function construireFooter() {
           <div class="footer-links">
             <a href="/services.html">Services</a>
             <a href="/artisans.html">Artisans</a>
-            <a href="/login.html">Créer un compte</a>
+            <a href="/register.html">Créer un compte</a>
             <a href="/become-artisan.html">Devenir artisan</a>
           </div>
         </div>
