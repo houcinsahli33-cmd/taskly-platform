@@ -21,7 +21,21 @@ const wilayasAlgerie = [
   },
   {
     nom: "Béjaïa",
-    communes: ["Béjaïa", "Akbou", "Tichy", "El Kseur"]
+    communes: [
+      "Béjaïa", "Amizour", "Ferraoun", "Taourirt Ighil",
+      "Chellata", "Tamokra", "Timezrit", "Souk El Ténine",
+      "M'cisna", "Tinabdher", "Tichy", "Semaoun",
+      "Kendira", "Tifra", "Ighram", "Amalou",
+      "Ighil Ali", "Fenaïa Ilmaten", "Toudja", "Darguina",
+      "Sidi-Ayad", "Aokas", "Beni Djellil", "Adekar",
+      "Akbou", "Seddouk", "Tazmalt", "Aït-R'zine",
+      "Chemini", "Souk-Oufella", "Taskriout", "Tibane",
+      "Tala Hamza", "Barbacha", "Beni Ksila", "Ouzellaguen",
+      "Bouhamza", "Aït Mellikeche", "Sidi-Aïch", "El Kseur",
+      "Melbou", "Akfadou", "Leflaye", "Kherrata",
+      "Draâ El-Kaïd", "Tamridjet", "Aït-Smail", "Boukhelifa",
+      "Tizi N'Berber", "Aït Maouche", "Oued Ghir", "Boudjellil"
+    ]
   },
   {
     nom: "Biskra",
@@ -37,7 +51,20 @@ const wilayasAlgerie = [
   },
   {
     nom: "Bouira",
-    communes: ["Bouira", "Lakhdaria", "Sour El Ghozlane", "Aïn Bessem"]
+    communes: [
+      "Bouira", "Aïn El Turc", "Aït Laziz", "Haizer",
+      "Taghzout", "Bechloul", "El Asnam", "El Adjiba",
+      "Ahl El Ksar", "Ouled Rached", "M'Chedallah", "Saharidj",
+      "Chorfa", "Hanif", "Aghbalou", "Ath Mansour",
+      "Kadiria", "Aomar", "Djebahia", "Lakhdaria",
+      "Boukram", "Maala", "Bouderbala", "Zbarbar",
+      "Guerrouma", "Bir Ghbalou", "Raouraoua", "El Khabouzia",
+      "Aïn Bessem", "Aïn Laloui", "Aïn El Hadjar", "Souk El Khemis",
+      "El Mokrani", "El Hachimia", "Oued El Berdi", "Sour El Ghozlane",
+      "Maamora", "Ridane", "El Hakimia", "Dechmia",
+      "Dirrah", "Bordj Okhriss", "Mezdour", "Taguedit",
+      "Hadjera Zerga"
+    ]
   },
   {
     nom: "Tamanrasset",
@@ -57,11 +84,45 @@ const wilayasAlgerie = [
   },
   {
     nom: "Tizi Ouzou",
-    communes: ["Tizi Ouzou", "Azazga", "Draa Ben Khedda", "Larbaâ Nath Irathen"]
+    communes: [
+      "Abi Youcef", "Aghribs", "Agouni Gueghrane", "Aïn El Hammam",
+      "Aïn Zaouia", "Aït Aggouacha", "Aït Aïssa Mimoun", "Aït Bouaddou",
+      "Aït Boumahdi", "Aït Chafâa", "Aït Khellili", "Aït Mahmoud",
+      "Aït Ouacif", "Aït Oumalou", "Aït Toudert", "Aït Yahia",
+      "Aït Yahia Moussa", "Aït Yenni", "Aït Zmenzer", "Akbil",
+      "Akerrou", "Assi Youcef", "Ath Zikki", "Azazga",
+      "Azeffoun", "Beni Aïssi", "Beni Douala", "Boghni",
+      "Boudjima", "Bounouh", "Bouzeguène", "Draâ Ben Khedda",
+      "Draâ El Mizan", "Freha", "Frikat", "Iboudraren",
+      "Idjeur", "Iferhounène", "Ifigha", "Iflissen",
+      "Illilten", "Illoula Oumalou", "Imkiren", "Imsouhel",
+      "Irdjen", "Larbaâ Nath Irathen", "Mâatkas", "Makouda",
+      "Mechtras", "Mekla", "Mizrana", "Ouadhia",
+      "Ouaguenoun", "Sidi Namane", "Souamaâ", "Souk El Thenine",
+      "Tadmaït", "Tigzirt", "Timizart", "Tirmitine",
+      "Tizi Gheniff", "Tizi N'Tleta", "Tizi Ouzou", "Tizi Rached",
+      "Yakouren", "Yatafen", "Zekri"
+    ]
   },
   {
     nom: "Alger",
-    communes: ["Alger Centre", "Bab Ezzouar", "Bir Mourad Raïs", "El Harrach", "Hydra", "Kouba", "Rouiba", "Zéralda"]
+    communes: [
+      "Alger Centre", "Sidi M'Hamed", "El Madania", "Belouizdad",
+      "Bab El Oued", "Bologhine", "Casbah", "Oued Koriche",
+      "Bir Mourad Raïs", "El Biar", "Bouzareah", "Birkhadem",
+      "El Harrach", "Baraki", "Oued Smar", "Bachdjerrah",
+      "Hussein Dey", "Kouba", "Bourouba", "Dar El Beïda",
+      "Bab Ezzouar", "Ben Aknoun", "Dely Ibrahim", "Hammamet",
+      "Raïs Hamidou", "Djasr Kasentina", "El Mouradia", "Hydra",
+      "Mohammadia", "Bordj El Kiffan", "El Magharia", "Beni Messous",
+      "Les Eucalyptus", "Birtouta", "Tessala El Merdja", "Ouled Chebel",
+      "Sidi Moussa", "Aïn Taya", "Bordj El Bahri", "El Marsa",
+      "H'Raoua", "Rouïba", "Reghaïa", "Aïn Benian",
+      "Staoueli", "Zéralda", "Mahelma", "Rahmania",
+      "Souidania", "Chéraga", "Ouled Fayet", "El Achour",
+      "Draria", "Douera", "Baba Hassen", "Khraicia",
+      "Saoula"
+    ]
   },
   {
     nom: "Djelfa",
@@ -73,7 +134,23 @@ const wilayasAlgerie = [
   },
   {
     nom: "Sétif",
-    communes: ["Sétif", "El Eulma", "Aïn Oulmene", "Bougaa"]
+    communes: [
+      "Sétif", "Aïn El Kebira", "Beni Aziz", "Ouled Si Ahmed",
+      "Boutaleb", "Aïn Roua", "Draa Kebila", "Bir El Arch",
+      "Beni Chebana", "Ouled Tebben", "Hamma", "Maâouia",
+      "Aïn Legradj", "Aïn Abessa", "Dehamcha", "Babor",
+      "Guidjel", "Aïn Lahdjar", "Bousselam", "El Eulma",
+      "Djemila", "Beni Ourtilane", "Rosfa", "Ouled Addouane",
+      "Belaa", "Aïn Arnat", "Amoucha", "Aïn Oulmene",
+      "Beidha Bordj", "Bouandas", "Bazer Sakhra", "Oum Ladjoul",
+      "Mezloug", "Bir Haddada", "Serdj El Ghoul", "Harbil",
+      "El Ouricia", "Tizi N'Bechar", "Salah Bey", "Aïn Azel",
+      "Guenzet", "Talaifacene", "Bougaa", "Beni Mohli",
+      "Tachouda", "Beni Fouda", "Ouled Sabor", "Guellal",
+      "Aïn Sebt", "Hammam Guergour", "Aït Naoual Mezada", "Ksar El Abtal",
+      "Beni Oussine", "Aït Tizi", "Maoklane", "Guelta Zerka",
+      "Oued El Barad", "Taya", "El Ouldja", "Tella"
+    ]
   },
   {
     nom: "Saïda",
@@ -89,7 +166,11 @@ const wilayasAlgerie = [
   },
   {
     nom: "Annaba",
-    communes: ["Annaba", "El Bouni", "Seraïdi", "Berrahal"]
+    communes: [
+      "Annaba", "Berrahal", "El Hadjar", "Eulma",
+      "El Bouni", "Oued El Aneb", "Cheurfa", "Seraïdi",
+      "Aïn Berda", "Chetaïbi", "Sidi Amar", "Tréat"
+    ]
   },
   {
     nom: "Guelma",
@@ -97,7 +178,11 @@ const wilayasAlgerie = [
   },
   {
     nom: "Constantine",
-    communes: ["Constantine", "El Khroub", "Aïn Smara", "Hamma Bouziane"]
+    communes: [
+      "Constantine", "El Khroub", "Aïn Smara", "Hamma Bouziane",
+      "Didouche Mourad", "Zighoud Youcef", "Ibn Ziad", "Aïn Abid",
+      "Ibn Badis", "Ouled Rahmoune", "Beni Hamiden", "Messaoud Boudjriou"
+    ]
   },
   {
     nom: "Médéa",
@@ -121,7 +206,15 @@ const wilayasAlgerie = [
   },
   {
     nom: "Oran",
-    communes: ["Oran", "Bir El Djir", "Es Sénia", "Arzew", "Aïn El Turk"]
+    communes: [
+      "Oran", "Gdyel", "Bir El Djir", "Hassi Bounif",
+      "Es Sénia", "Arzew", "Bethioua", "Marsat El Hadjadj",
+      "Aïn El Turk", "El Ançor", "Oued Tlelat", "Tafraoui",
+      "Sidi Chami", "Boufatis", "Mers El Kébir", "Bousfer",
+      "El Kerma", "El Braya", "Hassi Ben Okba", "Ben Freha",
+      "Hassi Mefsoukh", "Sidi Benyebka", "Misserghin", "Boutlelis",
+      "Aïn El Kerma", "Aïn El Bia"
+    ]
   },
   {
     nom: "El Bayadh",

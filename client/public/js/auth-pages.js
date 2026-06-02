@@ -1,3 +1,75 @@
+// Affiche proprement une erreur sous un champ spécifique avec bordure rouge
+function afficherErreurChamp(input, message) {
+  if (!input) return;
+  
+  // Style rouge visuel sur le champ
+  input.style.borderColor = "#dc3545";
+  input.style.boxShadow = "0 0 0 0.2rem rgba(220, 53, 69, 0.25)";
+  
+  // Crée ou récupère le conteneur du sous-texte d'erreur
+  let errorMsg = document.getElementById(`${input.id}-error`);
+  if (!errorMsg) {
+    errorMsg = document.createElement("div");
+    errorMsg.id = `${input.id}-error`;
+    errorMsg.style.color = "#dc3545";
+    errorMsg.style.fontSize = "0.82rem";
+    errorMsg.style.marginTop = "5px";
+    
+    // Insère le message juste après le champ ciblé
+    input.parentNode.appendChild(errorMsg);
+  }
+  errorMsg.textContent = message;
+  errorMsg.style.display = "block";
+}
+
+// Nettoie les styles d'erreur d'un champ dès qu'il est modifié
+function effacerErreurChamp(input) {
+  if (!input) return;
+  input.style.borderColor = "";
+  input.style.boxShadow = "";
+  const errorMsg = document.getElementById(`${input.id}-error`);
+  if (errorMsg) {
+    errorMsg.style.display = "none";
+  }
+}
+
+// Branche des écouteurs sur tous les inputs d'un formulaire pour effacer le rouge à la frappe
+function attacherNettoyageErreurs(form) {
+  form.querySelectorAll(".form-control, .form-select, .form-textarea").forEach((input) => {
+    input.addEventListener("input", () => effacerErreurChamp(input));
+    input.addEventListener("change", () => effacerErreurChamp(input));
+  });
+}
+
+// Vérifie les champs obligatoires vides d'un formulaire
+function validerChampsObligatoires(form) {
+  let estValide = true;
+  const champsRequis = form.querySelectorAll("[required]");
+  champsRequis.forEach((input) => {
+    if (!input.value.trim()) {
+      afficherErreurChamp(input, "Ce champ est obligatoire.");
+      estValide = false;
+    }
+  });
+  return estValide;
+}
+
+// Vérifie la validité du format d'un e-mail
+function validerFormatEmail(inputEmail) {
+  if (!inputEmail || !inputEmail.value.trim()) return true;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(inputEmail.value.trim())) {
+    afficherErreurChamp(inputEmail, "Veuillez entrer une adresse email valide.");
+    return false;
+  }
+  return true;
+}
+
+
+// =========================================================================
+// LOGIQUE APPLICATIVE ET ENVOIS API
+// =========================================================================
+
 // Remplir les champs wilaya/commune des formulaires
 function initialiserLocalisationAuth() {
   const clientWilaya = document.getElementById("client-wilaya");
@@ -61,15 +133,26 @@ function initialiserOngletsAuth() {
   }
 }
 
-// Envoyer le formulaire de connexion
+// 1. Envoyer le formulaire de CONNEXION
 function initialiserConnexion() {
   const form = document.getElementById("login-form");
   if (!form) return;
 
   const alerte = document.getElementById("login-alert");
+  attacherNettoyageErreurs(form);
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     masquerAlerte(alerte);
+
+    const inputEmail = document.getElementById("login-email");
+    const inputPassword = document.getElementById("login-password");
+
+    let valide = validerChampsObligatoires(form);
+    if (valide) valide = validerFormatEmail(inputEmail);
+
+    // Si le formulaire n'est pas valide, on arrête tout simplement (pas de popup à droite)
+    if (!valide) return;
 
     const bouton = form.querySelector("button[type='submit']");
     bouton.disabled = true;
@@ -78,12 +161,12 @@ function initialiserConnexion() {
       const data = await requeteAPI("/api/auth/login", {
         method: "POST",
         body: JSON.stringify({
-          email: document.getElementById("login-email").value.trim(),
-          motDePasse: document.getElementById("login-password").value
+          email: inputEmail.value.trim(),
+          motDePasse: inputPassword.value
         })
       });
 
-      afficherToast("Connexion réussie.");
+      afficherToast("Connexion réussie.", "success");
       const redirect = obtenirParametre("redirect");
       window.location.href = redirect || lienDashboard(data.utilisateur.role);
     } catch (error) {
@@ -94,7 +177,9 @@ function initialiserConnexion() {
           "error"
         );
       } else {
-        afficherAlerte(alerte, echapperHTML(error.message), "error");
+        afficherErreurChamp(inputEmail, " ");
+        afficherErreurChamp(inputPassword, "Identifiants incorrects ou introuvables.");
+        afficherToast(error.message, "error");
       }
     } finally {
       bouton.disabled = false;
@@ -102,15 +187,25 @@ function initialiserConnexion() {
   });
 }
 
-// Inscrire un client
+// 2. Inscrire un CLIENT
 function initialiserInscriptionClient() {
   const form = document.getElementById("client-register-form");
   if (!form) return;
 
   const alerte = document.getElementById("client-register-alert");
+  attacherNettoyageErreurs(form);
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     masquerAlerte(alerte);
+
+    const inputEmail = document.getElementById("client-email");
+
+    let valide = validerChampsObligatoires(form);
+    if (valide) valide = validerFormatEmail(inputEmail);
+
+    // Si le formulaire n'est pas valide, on arrête tout simplement (pas de popup à droite)
+    if (!valide) return;
 
     const bouton = form.querySelector("button[type='submit']");
     bouton.disabled = true;
@@ -119,7 +214,7 @@ function initialiserInscriptionClient() {
       role: "client",
       nom: document.getElementById("client-nom").value.trim(),
       prenom: document.getElementById("client-prenom").value.trim(),
-      email: document.getElementById("client-email").value.trim(),
+      email: inputEmail.value.trim(),
       motDePasse: document.getElementById("client-password").value,
       telephone: document.getElementById("client-phone").value.trim(),
       ville: document.getElementById("client-commune").value,
@@ -132,34 +227,48 @@ function initialiserInscriptionClient() {
         body: JSON.stringify(payload)
       });
 
-      afficherAlerte(alerte, "Compte client créé avec succès. Vous pouvez vous connecter.", "success");
+      afficherToast("Compte client créé avec succès !", "success");
       form.reset();
-      window.setTimeout(() => {
-        window.location.href = "/login.html";
-      }, 1000);
+      document.querySelector("[data-auth-tab='login']")?.click();
     } catch (error) {
-      afficherAlerte(alerte, echapperHTML(error.message), "error");
+      if (error.message && error.message.toLowerCase().includes("email")) {
+        afficherErreurChamp(inputEmail, error.message);
+      } else {
+        afficherToast(error.message, "error");
+      }
     } finally {
       bouton.disabled = false;
     }
   });
 }
 
-// Inscrire un artisan
+// 3. Inscrire un ARTISAN
 function initialiserInscriptionArtisan() {
   const form = document.getElementById("artisan-register-form");
   if (!form) return;
 
   const alerte = document.getElementById("artisan-register-alert");
+  attacherNettoyageErreurs(form);
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     masquerAlerte(alerte);
 
-    const experience = Number(document.getElementById("artisan-experience").value || 0);
+    const inputEmail = document.getElementById("artisan-email");
+    const inputExp = document.getElementById("artisan-experience");
+
+    let valide = validerChampsObligatoires(form);
+    if (valide) valide = validerFormatEmail(inputEmail);
+
+    const experience = Number(inputExp.value || 0);
     if (experience < 0 || experience > 50) {
-      afficherAlerte(alerte, "L'expérience doit être comprise entre 0 et 50 ans.", "error");
-      return;
+      afficherErreurChamp(inputExp, "L'expérience doit être comprise entre 0 et 50 ans.");
+      inputExp.value = 0;
+      valide = false;
     }
+
+    // Si le formulaire n'est pas valide, on arrête tout simplement (pas de popup à droite)
+    if (!valide) return;
 
     const bouton = form.querySelector("button[type='submit']");
     bouton.disabled = true;
@@ -168,7 +277,7 @@ function initialiserInscriptionArtisan() {
       role: "artisan",
       nom: document.getElementById("artisan-nom").value.trim(),
       prenom: document.getElementById("artisan-prenom").value.trim(),
-      email: document.getElementById("artisan-email").value.trim(),
+      email: inputEmail.value.trim(),
       motDePasse: document.getElementById("artisan-password").value,
       telephone: document.getElementById("artisan-phone").value.trim(),
       serviceId: Number(document.getElementById("artisan-service").value),
@@ -183,19 +292,24 @@ function initialiserInscriptionArtisan() {
         body: JSON.stringify(payload)
       });
 
-      afficherAlerte(alerte, "Compte artisan créé avec succès. Vous pouvez maintenant vous connecter.", "success");
+      afficherToast("Compte artisan créé avec succès ! Direction connexion...", "success");
       form.reset();
       window.setTimeout(() => {
         window.location.href = "/login.html";
-      }, 1000);
+      }, 1200);
     } catch (error) {
-      afficherAlerte(alerte, echapperHTML(error.message), "error");
+      if (error.message && error.message.toLowerCase().includes("email")) {
+        afficherErreurChamp(inputEmail, error.message);
+      } else {
+        afficherToast(error.message, "error");
+      }
     } finally {
       bouton.disabled = false;
     }
   });
 }
 
+// Lancement au chargement du DOM
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   if (window.utilisateurCourant && document.body.dataset.authPage === "true") {

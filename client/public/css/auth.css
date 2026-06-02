@@ -5,7 +5,7 @@
   padding: 32px 18px;
   background:
     linear-gradient(rgba(9, 28, 23, 0.42), rgba(9, 28, 23, 0.52)),
-    url("/images/auth/auth-bg.jpg") center / cover no-repeat;
+    url("/images/auth/auth-bg.jpg") center / cover no-repeat fixed;
 }
 
 .auth-card {
