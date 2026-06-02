@@ -9,6 +9,7 @@ async function listerArtisans(req, res) {
         // on recupere les filtres, req.query contient les filtres envoyes dans l'URL apres le ?
         const filtres = {
             serviceId: req.query.serviceId,
+            wilaya: req.query.wilaya,
             ville: req.query.ville,
             recherche: req.query.recherche
         };

@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
+
+/* Variables globales */
 :root {
   --primary: #087f63;
   --primary-dark: #045c49;
@@ -22,6 +24,7 @@
   --font-title: Georgia, "Times New Roman", serif;
 }
 
+/* Base */
 * {
   box-sizing: border-box;
 }

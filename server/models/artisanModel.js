@@ -2,6 +2,7 @@
 // Il sera utilisé pour créer un profil artisan et récupérer les informations des artisans.
 
 const db = require("../config/db"); // on importe la connexion à la base de données depuis db.js
+const { obtenirCommunesWilaya } = require("../helpers/algeriaLocations");
 
 // création d'un profil artisan
 async function creerProfilArtisan(userId, serviceId, ville, telephone, description, experience) {
@@ -54,8 +55,14 @@ async function trouverTousLesArtisans(filtres = {}) {
         valeurs.push(filtres.serviceId);        // on ajoute la valeur correspondante dans le tableau, remplacera le "?" au moment de l'execution de la requete
     }
 
-    // Si une ville est fournie, on filtre les artisans par ville.
-    if (filtres.ville) {
+    // La recherche publique se fait au niveau Wilaya. La commune reste utile
+    // pour l'adresse, mais elle ne doit pas rendre les résultats trop étroits.
+    if (filtres.wilaya) {
+        const lieuxWilaya = obtenirCommunesWilaya(filtres.wilaya);
+        const lieux = lieuxWilaya.length ? lieuxWilaya : [filtres.wilaya];
+        sql += " AND (" + lieux.map(() => "artisans.ville LIKE ?").join(" OR ") + ")";
+        valeurs.push(...lieux.map((lieu) => "%" + lieu + "%"));
+    } else if (filtres.ville) {
         sql += " AND artisans.ville LIKE ?";
         valeurs.push("%" + filtres.ville + "%");
     }

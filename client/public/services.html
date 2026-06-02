@@ -15,22 +15,27 @@
     <section class="photo-hero">
       <img src="/images/hero/home-service.jpg" alt="Artisan en intervention chez un client">
       <div class="container">
-        <p class="eyebrow" style="font-weight: 800;">Catalogue</p>
+        <p class="eyebrow">Catalogue</p>
         <h1>Trouvez le service adapté à votre besoin</h1>
-        <p class="lead" style="font-weight:700">Explorez les services disponibles, comparez les artisans et choisissez le profil qui correspond à votre projet.</p>
+        <p class="lead font-700">Explorez les services disponibles, comparez les artisans et choisissez le profil qui correspond à votre projet.</p>
       </div>
     </section>
 
     <section class="section">
       <div class="container">
         <div class="filters services-filter-box">
-          <label>
-            <input class="form-control" id="service-search" type="search" placeholder="Rechercher un service">
-          </label>
-          <div class="filter-tabs" style="margin-bottom:0">
-            <button class="active" type="button" data-service-filter="tous">Tous</button>
-            <button type="button" data-service-filter="populaires">Services populaires</button>
-            <button type="button" data-service-filter="notes">Mieux notés</button>
+          <div class="search-shell services-search-shell">
+            <form class="hero-search services-search-form" id="services-search-form">
+              <input id="service-search" type="search" autocomplete="off" placeholder="Rechercher un service">
+              <button class="hero-search-button" type="submit" aria-label="Rechercher">
+                <img src="/images/icons/search_icon.svg" alt="">
+              </button>
+            </form>
+          </div>
+
+          <div class="filter-tabs mb-0">
+            <button class="btn outline" type="button" data-service-filter="populaires">Services populaires</button>
+            <button class="btn outline" type="button" data-service-filter="notes">Mieux notés</button>
           </div>
         </div>
         <div class="grid three" id="services-grid"></div>

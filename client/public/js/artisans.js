@@ -50,20 +50,19 @@ async function chargerFiltresArtisans() {
 // Remplir les filtres de localisation
 function initialiserLocalisationArtisans() {
   const wilaya = document.getElementById("filter-wilaya");
-  const commune = document.getElementById("filter-commune");
   if (typeof remplirWilayas === "function") {
-    remplirWilayas(wilaya, commune);
+    remplirWilayas(wilaya);
   }
 }
 
 function construireQueryArtisans() {
   const params = new URLSearchParams();
   const serviceId = document.getElementById("filter-service")?.value;
-  const ville = document.getElementById("filter-commune")?.value;
+  const wilaya = document.getElementById("filter-wilaya")?.value;
   const recherche = document.getElementById("filter-search")?.value.trim();
 
   if (serviceId) params.set("serviceId", serviceId);
-  if (ville) params.set("ville", ville);
+  if (wilaya) params.set("wilaya", wilaya);
   if (recherche) params.set("recherche", recherche);
   return params.toString();
 }
@@ -81,7 +80,7 @@ async function chargerArtisans() {
     if (!artisans.length) {
       grille.innerHTML = etatVideDeuxLignes(
         "Aucun artisan ne correspond à vos critères.",
-        "Essayez de changer le service, la wilaya ou la commune."
+        "Essayez de changer le service, la wilaya ou la recherche."
       );
       return;
     }
@@ -107,8 +106,6 @@ function initialiserFiltresArtisans() {
 
   document.getElementById("reset-filters")?.addEventListener("click", () => {
     form.reset();
-    const commune = document.getElementById("filter-commune");
-    if (commune) commune.innerHTML = `<option value="">Choisir une commune</option>`;
     chargerArtisans();
   });
 }
@@ -208,20 +205,20 @@ async function chargerProfilArtisan() {
           <p class="eyebrow">Profil artisan</p>
           <h1>${echapperHTML(nomComplet(artisan))}</h1>
           <p class="lead">${echapperHTML(artisan.service_nom)} à ${echapperHTML(artisan.ville)}</p>
-          <div class="meta-row" style="margin-top:16px">
+          <div class="meta-row mt-16">
             <span class="badge primary">${Number(artisan.experience || 0)} an(s) d'expérience</span>
             <span class="badge accent">${Number(moyenne) ? formatNombre(moyenne) + " / 5" : "Nouveau"} · ${total} avis</span>
           </div>
         </div>
         ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${artisan.id}">Envoyer une demande</button>` : `<a class="btn outline" href="/login.html">Se connecter pour demander</a>`}
       </div>
-      <div class="panel" style="margin-top:24px">
+      <div class="panel mt-24">
         <div class="panel-header">
           <h2>À propos de l'artisan</h2>
         </div>
         <div class="panel-body">
           <p>${echapperHTML(artisan.description || "Cet artisan n'a pas encore ajouté de description détaillée.")}</p>
-          <div class="meta-row" style="margin-top:18px">
+          <div class="meta-row mt-18">
             <span class="badge">Téléphone : ${echapperHTML(artisan.telephone || "Non précisé")}</span>
             <span class="badge">Email : ${echapperHTML(artisan.email || "Non précisé")}</span>
           </div>
@@ -234,16 +231,33 @@ async function chargerProfilArtisan() {
       return;
     }
 
-    avisCible.innerHTML = avisData.avis.map((avis) => `
-      <article class="card review-card">
-        <div class="card-body">
-          <div class="stars">${afficherEtoiles(avis.note)}</div>
-          <h3>${echapperHTML(nomComplet(avis, "client_"))}</h3>
-          <p class="muted">${echapperHTML(avis.commentaire || "Avis sans commentaire.")}</p>
-          <p class="text-small muted">${formatDate(avis.created_at)}</p>
-        </div>
-      </article>
-    `).join("");
+    avisCible.innerHTML = avisData.avis.map((avis) => {
+      const nomClient = nomComplet(avis, "client_");
+      const initiale = nomClient.trim().charAt(0).toUpperCase() || "C";
+
+      return `
+        <article class="profile-testimonial-card">
+          <div class="profile-testimonial-header">
+            <div class="profile-testimonial-avatar">${echapperHTML(initiale)}</div>
+            <div>
+              <h3>${echapperHTML(nomClient)}</h3>
+              <p>Client Taskly</p>
+            </div>
+          </div>
+
+          <div class="profile-testimonial-stars">${afficherEtoiles(avis.note)}</div>
+
+          <p class="profile-testimonial-text">
+            “${echapperHTML(avis.commentaire || "Avis sans commentaire.")}”
+          </p>
+
+          <div class="profile-testimonial-footer">
+            <span class="profile-testimonial-tag">${echapperHTML(artisan.service_nom || "Service")}</span>
+            <span class="profile-testimonial-date">${formatDate(avis.created_at)}</span>
+          </div>
+        </article>
+      `;
+    }).join("");
   } catch (error) {
     cible.innerHTML = etatVide(error.message);
     avisCible.innerHTML = "";

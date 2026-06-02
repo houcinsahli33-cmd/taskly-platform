@@ -15,13 +15,13 @@
     <section class="section compact">
       <div class="container" id="artisan-profile"></div>
     </section>
-    <section class="section alt">
+    <section class="section alt artisan-reviews-section">
       <div class="container">
         <div class="section-heading">
           <p class="eyebrow">Avis clients</p>
           <h2>Ce que les clients disent de cet artisan</h2>
         </div>
-        <div class="grid three" id="artisan-reviews"></div>
+        <div class="profile-testimonials-grid" id="artisan-reviews"></div>
       </div>
     </section>
   </main>
@@ -33,14 +33,14 @@
       </div>
       <form class="modal-body" id="request-form">
         <input type="hidden" id="request-artisan-id">
-        <p class="muted" style="margin-bottom:18px">Artisan : <strong id="request-artisan-name"></strong></p>
+        <p class="muted mb-18">Artisan : <strong id="request-artisan-name"></strong></p>
         <label class="field-label" for="request-message">Message</label>
         <textarea class="form-textarea" id="request-message" required placeholder="Décrivez votre besoin"></textarea>
         <label class="field-label" for="request-address">Adresse</label>
         <input class="form-control" id="request-address" required placeholder="Adresse de l'intervention">
         <label class="field-label" for="request-date">Date souhaitée</label>
         <input class="form-control" id="request-date" type="date">
-        <button class="btn primary block" type="submit" style="margin-top:18px">Envoyer</button>
+        <button class="btn primary block mt-18" type="submit">Envoyer</button>
       </form>
     </div>
   </div>

@@ -53,11 +53,27 @@ function afficherServicesCatalogue() {
   let services = servicesCatalogue.filter((service) => normaliserTexte(service.nom).includes(recherche));
 
   if (filtreServices === "populaires") {
-    services = services.filter((service) => Number(service.total_demandes || 0) > 0 || Number(service.total_artisans || 0) > 0);
+    services = services.sort((a, b) => {
+      const demandesA = Number(a.total_demandes || 0);
+      const demandesB = Number(b.total_demandes || 0);
+
+      const artisansA = Number(a.total_artisans || 0);
+      const artisansB = Number(b.total_artisans || 0);
+
+      return demandesB - demandesA || artisansB - artisansA;
+    });
   }
 
   if (filtreServices === "notes") {
-    services = services.filter((service) => Number(service.moyenne_notes || 0) >= 4);
+    services = services.sort((a, b) => {
+      const noteA = Number(a.moyenne_notes || 0);
+      const noteB = Number(b.moyenne_notes || 0);
+
+      const avisA = Number(a.total_avis || 0);
+      const avisB = Number(b.total_avis || 0);
+
+      return noteB - noteA || avisB - avisA;
+    });
   }
 
   if (!services.length) {
@@ -71,6 +87,32 @@ function afficherServicesCatalogue() {
   });
 }
 
+function appliquerRechercheDepuisURL() {
+  const champRecherche = document.getElementById("service-search");
+  if (!champRecherche) return;
+
+  const rechercheURL = obtenirParametre("search");
+  if (!rechercheURL) return;
+
+  champRecherche.value = rechercheURL;
+}
+
+function redirigerVersServiceDepuisURL() {
+  const rechercheURL = obtenirParametre("search");
+  if (!rechercheURL) return false;
+
+  const recherche = normaliserTexte(rechercheURL);
+
+  const serviceTrouve = servicesCatalogue.find((service) => {
+    return normaliserTexte(service.nom) === recherche;
+  });
+
+  if (!serviceTrouve) return false;
+
+  window.location.href = `/service.html?id=${encodeURIComponent(serviceTrouve.id)}`;
+  return true;
+}
+
 // Charger les services du catalogue
 async function chargerPageServices() {
   const grille = document.getElementById("services-grid");
@@ -80,6 +122,9 @@ async function chargerPageServices() {
   try {
     const { services } = await requeteAPI("/api/services");
     servicesCatalogue = services;
+
+    if (redirigerVersServiceDepuisURL()) return;
+
     afficherServicesCatalogue();
   } catch (error) {
     grille.innerHTML = etatVide(error.message);
@@ -89,13 +134,26 @@ async function chargerPageServices() {
 // Initialiser les filtres des services
 function initialiserFiltresServices() {
   document.getElementById("service-search")?.addEventListener("input", afficherServicesCatalogue);
+  document.getElementById("services-search-form")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    afficherServicesCatalogue();
+  });
 
+  
   document.querySelectorAll("[data-service-filter]").forEach((bouton) => {
     bouton.addEventListener("click", () => {
-      filtreServices = bouton.dataset.serviceFilter;
+      const dejaActif = bouton.classList.contains("active");
+
+      filtreServices = dejaActif ? "tous" : bouton.dataset.serviceFilter;
+
       document.querySelectorAll("[data-service-filter]").forEach((item) => {
-        item.classList.toggle("active", item === bouton);
+        const estActif = !dejaActif && item === bouton;
+
+        item.classList.toggle("active", estActif);
+        item.classList.toggle("primary", estActif);
+        item.classList.toggle("outline", !estActif);
       });
+
       afficherServicesCatalogue();
     });
   });
@@ -131,7 +189,7 @@ async function chargerDetailService() {
           <h1>${echapperHTML(service.nom)}</h1>
           <p class="lead">${echapperHTML(service.description || "Trouvez un artisan qualifié pour ce service.")}</p>
           ${statsService(service)}
-          <div class="request-actions" style="margin-top:22px">
+          <div class="request-actions mt-22">
             <a class="btn primary" href="/artisans.html?serviceId=${service.id}">Comparer les artisans</a>
             <a class="btn outline" href="/services.html">Tous les services</a>
           </div>
@@ -143,7 +201,7 @@ async function chargerDetailService() {
     if (!artisans.length) {
       artisansCible.innerHTML = etatVideDeuxLignes(
         "Aucun artisan ne correspond à vos critères.",
-        "Essayez de changer le service, la wilaya ou la commune."
+        "Essayez de changer le service, la wilaya ou la recherche."
       );
       return;
     }
@@ -157,6 +215,7 @@ async function chargerDetailService() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
+  appliquerRechercheDepuisURL();
   initialiserFiltresServices();
   chargerPageServices();
   chargerDetailService();

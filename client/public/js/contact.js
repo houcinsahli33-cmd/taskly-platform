@@ -82,7 +82,7 @@ function initialiserSuiviSupport() {
               ${badgeStatut(contact.statut)}
             </div>
             <p>${echapperHTML(contact.message)}</p>
-            ${contact.date_traitement ? `<p class="text-small muted" style="margin-top:14px">Traité le ${formatDateHeure(contact.date_traitement)}</p>` : ""}
+            ${contact.date_traitement ? `<p class="text-small muted mt-14">Traité le ${formatDateHeure(contact.date_traitement)}</p>` : ""}
           </div>
         </article>
       `;

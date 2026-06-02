@@ -13,11 +13,15 @@
 <body data-active="artisans">
   <div id="site-header"></div>
   <main class="page-main">
-    <section class="page-hero">
-      <div class="container section-heading">
-        <p class="eyebrow">Artisans Taskly</p>
-        <h1>Comparez les artisans disponibles</h1>
-        <p class="lead">Filtrez par service, wilaya, commune ou mot-clé pour trouver un profil adapté à votre demande.</p>
+    <section class="photo-hero">
+      <img src="/images/artisans/artisans-bg.jpg" alt="Artisans Taskly en intervention">
+
+      <div class="container">
+          <p class="eyebrow">Artisans Taskly</p>
+          <h1>Comparez les artisans disponibles</h1>
+          <p class="lead">
+            Filtrez par service, wilaya, commune ou mot-clé pour trouver un profil adapté à votre demande.
+          </p>
       </div>
     </section>
 
@@ -28,20 +32,17 @@
             <span class="field-label">Service</span>
             <select class="form-select" id="filter-service"></select>
           </label>
+
           <label>
             <span class="field-label">Wilaya</span>
             <select class="form-select" id="filter-wilaya"></select>
           </label>
-          <label>
-            <span class="field-label">Commune</span>
-            <select class="form-select" id="filter-commune">
-              <option value="">Choisir une commune</option>
-            </select>
-          </label>
+
           <label>
             <span class="field-label">Recherche</span>
             <input class="form-control" id="filter-search" placeholder="Nom, service, description">
           </label>
+
           <div class="request-actions">
             <button class="btn primary" type="submit" aria-label="Rechercher">Rechercher</button>
             <button class="btn outline" id="reset-filters" type="button" aria-label="Réinitialiser les filtres">Réinitialiser</button>
@@ -60,14 +61,14 @@
       </div>
       <form class="modal-body" id="request-form">
         <input type="hidden" id="request-artisan-id">
-        <p class="muted" style="margin-bottom:18px">Artisan : <strong id="request-artisan-name"></strong></p>
+        <p class="muted mb-18">Artisan : <strong id="request-artisan-name"></strong></p>
         <label class="field-label" for="request-message">Message</label>
         <textarea class="form-textarea" id="request-message" required placeholder="Décrivez votre besoin"></textarea>
         <label class="field-label" for="request-address">Adresse</label>
         <input class="form-control" id="request-address" required placeholder="Adresse de l'intervention">
         <label class="field-label" for="request-date">Date souhaitée</label>
         <input class="form-control" id="request-date" type="date">
-        <button class="btn primary block" type="submit" style="margin-top:18px">Envoyer</button>
+        <button class="btn primary block mt-18" type="submit">Envoyer</button>
       </form>
     </div>
   </div>

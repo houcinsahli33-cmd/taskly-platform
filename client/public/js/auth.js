@@ -21,11 +21,22 @@ function construireHeader() {
   const estDashboard = document.body.classList.contains("dashboard-page");
 
   const navigationPublique = `
-    <nav class="main-nav" aria-label="Navigation principale">
-      <a class="${pageActive === "home" ? "active" : ""}" href="/index.html">Accueil</a>
-      <a class="${pageActive === "services" ? "active" : ""}" href="/services.html">Services</a>
-      <a class="${pageActive === "artisans" ? "active" : ""}" href="/artisans.html">Artisans</a>
-      <a class="${pageActive === "about" ? "active" : ""}" href="/about.html">À propos</a>
+    <nav class="main-nav public-nav" aria-label="Navigation principale">
+      <a class="nav-link ${pageActive === "home" ? "active" : ""}" href="/index.html">Accueil</a>
+      <div class="nav-dropdown ${pageActive === "services" ? "active" : ""}">
+        <a class="nav-link nav-dropdown-trigger ${pageActive === "services" ? "active" : ""}" href="/services.html" aria-haspopup="true">
+          <span>Services</span>
+        </a>
+        <div class="nav-dropdown-menu">
+          <a href="/services.html">Tous les services</a>
+          <a href="/services.html?search=plomberie">Plomberie</a>
+          <a href="/services.html?search=electricite">&Eacute;lectricit&eacute;</a>
+          <a href="/services.html?search=nettoyage">Nettoyage</a>
+          <a href="/services.html?search=peinture">Peinture</a>
+        </div>
+      </div>
+      <a class="nav-link ${pageActive === "artisans" ? "active" : ""}" href="/artisans.html">Artisans</a>
+      <a class="nav-link ${pageActive === "about" ? "active" : ""}" href="/about.html">&Agrave; propos</a>
     </nav>
   `;
 
@@ -175,7 +186,7 @@ function afficherModaleDeconnexion() {
         </div>
         <div class="modal-body">
           <p>Voulez-vous vraiment vous déconnecter ?</p>
-          <div class="request-actions" style="margin-top:22px;justify-content:flex-end">
+          <div class="request-actions mt-22 justify-end">
             <button class="btn outline" type="button" data-close-modal="logout-modal">Annuler</button>
             <button class="btn primary" type="button" data-confirm-logout>Se déconnecter</button>
           </div>

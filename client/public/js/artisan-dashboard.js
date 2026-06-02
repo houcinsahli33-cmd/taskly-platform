@@ -38,12 +38,12 @@ function carteDemandeArtisan(demande) {
         ${badgeStatut(demande.statut)}
       </div>
       <p>${echapperHTML(demande.message || "Aucun message.")}</p>
-      <div class="meta-row" style="margin-top:14px">
+      <div class="meta-row mt-14">
         <span class="badge">Adresse : ${echapperHTML(demande.adresse || demande.client_adresse || "Non précisée")}</span>
         <span class="badge">Date souhaitée : ${formatDate(demande.date_souhaitee)}</span>
         <span class="badge">Créée le ${formatDate(demande.created_at)}</span>
       </div>
-      ${demande.motif_annulation ? `<p class="alert show warning" style="margin-top:14px">Motif d'annulation : ${echapperHTML(demande.motif_annulation)}</p>` : ""}
+      ${demande.motif_annulation ? `<p class="alert show warning mt-14">Motif d'annulation : ${echapperHTML(demande.motif_annulation)}</p>` : ""}
       <div class="request-actions">
         ${peutTraiter ? `<button class="btn primary" type="button" data-set-status="${demande.id}" data-status="acceptee">Accepter</button>` : ""}
         ${peutTraiter ? `<button class="btn outline" type="button" data-set-status="${demande.id}" data-status="refusee">Refuser</button>` : ""}
@@ -55,7 +55,7 @@ function carteDemandeArtisan(demande) {
   `;
 }
 
-// Afficher les demandes reçues
+// Afficher les demandes recues
 function afficherDemandesArtisan() {
   const cible = document.getElementById("artisan-requests");
   if (!cible) return;
@@ -204,7 +204,7 @@ async function chargerProfilArtisanDashboard() {
       <div>
         <h3>${echapperHTML(nomComplet(utilisateur))}</h3>
         <p class="muted">${echapperHTML(profilArtisanCourant?.service_nom || "Artisan Taskly")} · ${echapperHTML(profilArtisanCourant?.ville || "")}</p>
-        <div class="meta-row" style="margin-top:12px">
+        <div class="meta-row mt-12">
           <span class="badge primary">${Number(profilArtisanCourant?.experience || 0)} an(s) d'expérience</span>
           <span class="badge accent">${echapperHTML(noteArtisan(profilArtisanCourant || {}))}</span>
         </div>

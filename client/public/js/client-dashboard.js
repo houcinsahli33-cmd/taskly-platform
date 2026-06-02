@@ -38,13 +38,13 @@ function carteDemandeClient(demande) {
         ${badgeStatut(demande.statut)}
       </div>
       <p>${echapperHTML(demande.message || "Aucun message.")}</p>
-      <div class="meta-row" style="margin-top:14px">
+      <div class="meta-row mt-14">
         <span class="badge">Adresse : ${echapperHTML(demande.adresse || "Non précisée")}</span>
         <span class="badge">Date souhaitée : ${formatDate(demande.date_souhaitee)}</span>
         <span class="badge">Créée le ${formatDate(demande.created_at)}</span>
         ${dejaAvis ? `<span class="badge accent">Avis : ${demande.avis_note}/5</span>` : ""}
       </div>
-      ${demande.motif_annulation ? `<p class="alert show warning" style="margin-top:14px">Motif d'annulation : ${echapperHTML(demande.motif_annulation)}</p>` : ""}
+      ${demande.motif_annulation ? `<p class="alert show warning mt-14">Motif d'annulation : ${echapperHTML(demande.motif_annulation)}</p>` : ""}
       <div class="request-actions">
         ${peutAnnuler ? `<button class="btn outline" type="button" data-cancel-request="${demande.id}">Annuler</button>` : ""}
         ${peutAvis ? `<button class="btn primary" type="button" data-open-review="${demande.id}">Laisser un avis</button>` : ""}

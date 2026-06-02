@@ -1,39 +1,34 @@
-// Affiche proprement une erreur sous un champ spécifique avec bordure rouge
+// Afficher une erreur sous un champ
 function afficherErreurChamp(input, message) {
   if (!input) return;
   
-  // Style rouge visuel sur le champ
-  input.style.borderColor = "#dc3545";
-  input.style.boxShadow = "0 0 0 0.2rem rgba(220, 53, 69, 0.25)";
+  input.classList.add("field-error");
   
-  // Crée ou récupère le conteneur du sous-texte d'erreur
+  // Creer le message si besoin
   let errorMsg = document.getElementById(`${input.id}-error`);
   if (!errorMsg) {
     errorMsg = document.createElement("div");
     errorMsg.id = `${input.id}-error`;
-    errorMsg.style.color = "#dc3545";
-    errorMsg.style.fontSize = "0.82rem";
-    errorMsg.style.marginTop = "5px";
+    errorMsg.className = "field-error-message";
     
-    // Insère le message juste après le champ ciblé
+    // Placer le message apres le champ
     input.parentNode.appendChild(errorMsg);
   }
   errorMsg.textContent = message;
   errorMsg.style.display = "block";
 }
 
-// Nettoie les styles d'erreur d'un champ dès qu'il est modifié
+// Nettoyer l'erreur quand le champ change
 function effacerErreurChamp(input) {
   if (!input) return;
-  input.style.borderColor = "";
-  input.style.boxShadow = "";
+  input.classList.remove("field-error");
   const errorMsg = document.getElementById(`${input.id}-error`);
   if (errorMsg) {
     errorMsg.style.display = "none";
   }
 }
 
-// Branche des écouteurs sur tous les inputs d'un formulaire pour effacer le rouge à la frappe
+// Nettoyer les erreurs a la saisie
 function attacherNettoyageErreurs(form) {
   form.querySelectorAll(".form-control, .form-select, .form-textarea").forEach((input) => {
     input.addEventListener("input", () => effacerErreurChamp(input));
@@ -41,7 +36,7 @@ function attacherNettoyageErreurs(form) {
   });
 }
 
-// Vérifie les champs obligatoires vides d'un formulaire
+// Verifier les champs obligatoires
 function validerChampsObligatoires(form) {
   let estValide = true;
   const champsRequis = form.querySelectorAll("[required]");
@@ -54,7 +49,7 @@ function validerChampsObligatoires(form) {
   return estValide;
 }
 
-// Vérifie la validité du format d'un e-mail
+// Verifier le format email
 function validerFormatEmail(inputEmail) {
   if (!inputEmail || !inputEmail.value.trim()) return true;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,9 +61,7 @@ function validerFormatEmail(inputEmail) {
 }
 
 
-// =========================================================================
-// LOGIQUE APPLICATIVE ET ENVOIS API
-// =========================================================================
+// Logique applicative et envois API
 
 // Remplir les champs wilaya/commune des formulaires
 function initialiserLocalisationAuth() {
@@ -133,7 +126,7 @@ function initialiserOngletsAuth() {
   }
 }
 
-// 1. Envoyer le formulaire de CONNEXION
+// Envoyer le formulaire de connexion
 function initialiserConnexion() {
   const form = document.getElementById("login-form");
   if (!form) return;
@@ -151,7 +144,7 @@ function initialiserConnexion() {
     let valide = validerChampsObligatoires(form);
     if (valide) valide = validerFormatEmail(inputEmail);
 
-    // Si le formulaire n'est pas valide, on arrête tout simplement (pas de popup à droite)
+    // Arreter si le formulaire n'est pas valide
     if (!valide) return;
 
     const bouton = form.querySelector("button[type='submit']");
@@ -173,7 +166,7 @@ function initialiserConnexion() {
       if (error.status === 403 && error.data?.motif) {
         afficherAlerte(
           alerte,
-          `<strong>Votre compte a été bloqué.</strong><br>${echapperHTML(error.data.motif)}<br><a class="btn outline small" href="/contact.html" style="margin-top:12px">Contacter le support</a>`,
+          `<strong>Votre compte a été bloqué.</strong><br>${echapperHTML(error.data.motif)}<br><a class="btn outline small mt-12" href="/contact.html">Contacter le support</a>`,
           "error"
         );
       } else {
@@ -187,7 +180,7 @@ function initialiserConnexion() {
   });
 }
 
-// 2. Inscrire un CLIENT
+// Inscrire un client
 function initialiserInscriptionClient() {
   const form = document.getElementById("client-register-form");
   if (!form) return;
@@ -204,7 +197,7 @@ function initialiserInscriptionClient() {
     let valide = validerChampsObligatoires(form);
     if (valide) valide = validerFormatEmail(inputEmail);
 
-    // Si le formulaire n'est pas valide, on arrête tout simplement (pas de popup à droite)
+    // Arreter si le formulaire n'est pas valide
     if (!valide) return;
 
     const bouton = form.querySelector("button[type='submit']");
@@ -242,7 +235,7 @@ function initialiserInscriptionClient() {
   });
 }
 
-// 3. Inscrire un ARTISAN
+// Inscrire un artisan
 function initialiserInscriptionArtisan() {
   const form = document.getElementById("artisan-register-form");
   if (!form) return;
@@ -267,7 +260,7 @@ function initialiserInscriptionArtisan() {
       valide = false;
     }
 
-    // Si le formulaire n'est pas valide, on arrête tout simplement (pas de popup à droite)
+    // Arreter si le formulaire n'est pas valide
     if (!valide) return;
 
     const bouton = form.querySelector("button[type='submit']");
@@ -309,7 +302,7 @@ function initialiserInscriptionArtisan() {
   });
 }
 
-// Lancement au chargement du DOM
+// Lancer au chargement du DOM
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   if (window.utilisateurCourant && document.body.dataset.authPage === "true") {

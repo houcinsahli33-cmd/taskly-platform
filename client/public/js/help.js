@@ -118,7 +118,7 @@ function afficherFaq() {
   `).join("");
 }
 
-// Ouvrir et fermer les réponses FAQ
+// Ouvrir et fermer les reponses FAQ
 function initialiserFaq() {
   document.getElementById("faq-search")?.addEventListener("input", afficherFaq);
 

@@ -3,7 +3,7 @@
    Objectif : site propre sur PC, tablette, mobile et très petit écran
    ========================================================= */
 
-/* ---------- Grand écran / petit PC ---------- */
+/* ---------- Grand ecran / petit PC ---------- */
 @media (max-width: 1280px) {
   .container {
     width: min(100% - 44px, 1160px);
@@ -140,6 +140,10 @@
   .testimonials-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+body[data-active="artisans"] #artisans-filter-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 }
 
 /* ---------- Tablette verticale ---------- */
@@ -214,7 +218,7 @@
     align-items: start;
   }
 
-  /* Section Comment ça marche */
+  /* Section Comment ca marche */
   .how-section-bg {
     width: min(100% - 30px, 1280px);
     margin: 44px auto;
@@ -277,287 +281,118 @@
   .toolbar {
     display: grid;
   }
+
+  body[data-active="contact"] .contact-layout {
+  width: min(100% - 36px, 760px);
+  grid-template-columns: 1fr;
+  margin-top: -44px;
+  gap: 22px;
 }
 
-/* ---------- Mobile général ---------- */
-@media (max-width: 780px) {
-  h1 {
-    font-size: clamp(2rem, 10vw, 3.2rem);
-  }
-
-  h2 {
-    font-size: clamp(1.55rem, 7vw, 2.4rem);
-  }
-
-  h3 {
-    font-size: 1.05rem;
-  }
-
-  .lead {
-    font-size: 1rem;
-  }
-
-  .container {
-    width: 100%;
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .section {
-    padding: 52px 0;
-  }
-
-  .section.compact {
-    padding: 42px 0;
-  }
-
-  .section-heading {
-    margin-bottom: 26px;
-  }
-
-  /* Header */
-  .header-inner {
-    min-height: 68px;
-    gap: 14px;
-  }
-
-  .brand {
-    font-size: 1.5rem;
-  }
-
-  .brand img {
-    width: 138px;
-  }
-
-  .site-header.menu-open .main-nav {
-    top: 68px;
-    left: 16px;
-    right: 16px;
-  }
-
-  .site-header.menu-open .header-actions {
-    top: 245px;
-    left: 16px;
-    right: 16px;
-  }
-
-  .site-header.menu-open .header-actions .btn {
-    width: 100%;
-  }
-
-  /* Hero */
-  .hero {
-    padding: 48px 0 70px;
-  }
-
-  .hero-content {
-    width: min(100% - 32px, 1180px);
-    gap: 28px;
-  }
-
-  .hero-left-text h1 {
-    font-size: clamp(2.5rem, 13vw, 4rem);
-    line-height: 0.98;
-    letter-spacing: -1px;
-  }
-
-  .hero-left-text .lead {
-    font-size: 1rem;
-  }
-
-  .hero-search-zone,
-  .search-shell {
-    width: 100%;
-  }
-
-  .hero-search {
-    min-height: 58px;
-  }
-
-  .hero-search input {
-    height: 58px;
-    padding: 0 18px;
-    font-size: 0.98rem;
-  }
-
-  .hero-search button {
-    flex-basis: 60px;
-    font-size: 1.25rem;
-  }
-
-  .hero-mini-services {
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding-bottom: 6px;
-    flex-wrap: nowrap;
-    scrollbar-width: thin;
-  }
-
-  .hero-mini-services a {
-    padding: 9px 16px;
-    font-size: 0.9rem;
-  }
-
-  /* Grilles */
-  .grid.three,
-  .grid.four,
-  .grid.two,
-  .filters,
-  .form-grid,
-  .auth-card,
-  .footer-grid,
-  .stats-grid,
-  .trust-list,
-  .profile-fields {
-    grid-template-columns: 1fr;
-  }
-
-  .filters {
-    gap: 12px;
-    padding: 16px;
-  }
-
-  .service-detail-hero,
-  .profile-hero {
-    padding: 16px;
-  }
-
-  .service-detail-hero img {
-    height: 210px;
-  }
-
-  .carousel-track {
-    grid-auto-columns: min(86%, 330px);
-    gap: 14px;
-  }
-
-  .carousel-controls {
-    inset: auto 0 -20px 0;
-  }
-
-  .cta-band .request-actions {
-    width: 100%;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .cta-band .request-actions .btn {
-    flex: 1 1 180px;
-  }
-
-  .trust-panel,
-  .cta-band {
-    padding: 28px;
-  }
-
-  .dashboard-content,
-  .admin-content {
-    padding: 18px;
-  }
-
-  .side-nav {
-    grid-template-columns: 1fr;
-  }
-
-  .service-image {
-    height: 190px;
-  }
-
-  .service-card .card-body {
-    min-height: auto;
-  }
-
-  .service-stats .badge,
-  .meta-row .badge {
-    flex: 1 1 100%;
-  }
-
-  .request-actions {
-    width: 100%;
-  }
-
-  .request-actions .btn {
-    flex: 1 1 180px;
-  }
-
-  /* Comment ça marche */
-  .how-section-bg {
-    width: calc(100% - 24px);
-    margin: 40px auto;
-    padding: 52px 0;
-  }
-
-  .how-bg-text h2 {
-    font-size: clamp(2.4rem, 12vw, 3.4rem);
-  }
-
-  .how-bg-text p {
-    font-size: 1rem;
-  }
-
-  .how-bg-steps .step-row {
-    grid-template-columns: 42px 1fr;
-    padding: 15px;
-  }
-
-  .how-bg-steps .step-number {
-    width: 38px;
-    height: 38px;
-  }
-
-  .testimonials-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .testimonial-card-modern {
-    min-height: auto;
-  }
-
-  /* Modals */
-  .modal-backdrop {
-    padding: 16px;
-  }
-
-  .modal {
-    max-height: calc(100vh - 32px);
-  }
-
-  .modal-header,
-  .panel-header {
-    padding: 16px 18px;
-  }
-
-  .modal-body,
-  .panel-body {
-    padding: 18px;
-  }
-
-  /* Tables */
-  .table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  table {
-    min-width: 650px;
-  }
-
-  th,
-  td {
-    padding: 11px 10px;
-  }
-
-  /* Footer */
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 42px 0 30px;
-  }
-
-  .site-footer p {
-    max-width: 100%;
-  }
+body[data-active="contact"] .contact-layout #contact-form {
+  grid-template-columns: 1fr;
 }
+
+body[data-active="contact"] .contact-layout .form-card {
+  padding: 24px;
+}
+
+/* Hero about */
+body[data-active="about"] .photo-hero {
+  min-height: 620px;
+  text-align: left;
+}
+
+body[data-active="about"] .photo-hero img {
+  object-position: 68% 22%;
+}
+
+body[data-active="about"] .photo-hero::before {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(247, 251, 249, 0.76) 0%,
+      rgba(247, 251, 249, 0.64) 34%,
+      rgba(247, 251, 249, 0.38) 62%,
+      rgba(247, 251, 249, 0.18) 100%
+    );
+}
+
+body[data-active="about"] .photo-hero .container {
+  padding: 56px 18px 40px;
+}
+
+body[data-active="about"] .photo-hero .eyebrow {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+body[data-active="about"] .photo-hero h1 {
+  max-width: 300px;
+  font-size: clamp(2.3rem, 10vw, 3.4rem);
+  line-height: 0.98;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+body[data-active="about"] .photo-hero .lead {
+  max-width: 320px;
+  margin-left: 0;
+  margin-right: 0;
+  font-size: 0.98rem;
+}
+
+/* Page aide */
+body[data-active="help"] .photo-hero {
+  min-height: 540px;
+  text-align: center;
+}
+
+body[data-active="help"] .photo-hero img {
+  object-position: center top;
+}
+
+body[data-active="help"] .photo-hero::before {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(247, 251, 249, 0.86) 0%,
+      rgba(247, 251, 249, 0.80) 45%,
+      rgba(247, 251, 249, 0.94) 100%
+    );
+}
+
+body[data-active="help"] .photo-hero .container {
+  padding: 72px 18px;
+}
+
+body[data-active="help"] .photo-hero .eyebrow {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body[data-active="help"] .photo-hero h1 {
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: clamp(2.6rem, 11vw, 4rem);
+  line-height: 0.96;
+}
+
+body[data-active="help"] .photo-hero .lead {
+  max-width: 430px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1rem;
+}
+
+body[data-active="help"] .faq-tools {
+  margin: -42px auto 36px;
+  padding: 18px;
+}
+
+}
+
 
 /* ---------- Petit mobile ---------- */
 @media (max-width: 520px) {
@@ -682,9 +517,115 @@
     max-width: none;
     width: 100%;
   }
+
+ .hero {
+    min-height: 100vh;
+    padding: 54px 0 72px;
+  }
+
+  .hero-content {
+    width: calc(100% - 28px);
+    gap: 24px;
+  }
+
+  .hero-left-text .eyebrow {
+    font-size: 0.68rem;
+    padding: 7px 12px;
+  }
+
+  .hero-left-text h1 {
+    max-width: 330px;
+    font-size: clamp(2.45rem, 12vw, 3.45rem);
+    line-height: 0.95;
+  }
+
+  .hero-left-text .lead {
+    max-width: 320px;
+    font-size: 1.08rem;
+    line-height: 1.42;
+  }
+
+  .hero-search-zone {
+    width: min(100%, 380px);
+  }
+
+  .hero-search {
+    min-height: 62px;
+    border-radius: 20px;
+  }
+
+  .hero-search input {
+    height: 62px;
+    padding: 0 16px;
+  }
+
+  .hero-search button {
+    flex-basis: 60px;
+    border-radius: 0 20px 20px 0;
+  }
+
+  .hero-mini-services a {
+    padding: 9px 16px;
+    font-size: 0.9rem;
+  }
+
+  body[data-active="services"] .services-filter-box {
+    margin: -34px 0 30px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  body[data-active="services"] .services-filter-box .form-control {
+    min-height: 54px;
+    border-radius: 14px;
+  }
+
+  body[data-active="services"] .services-filter-box .filter-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  body[data-active="services"] .services-filter-box .filter-tabs .btn {
+    min-height: 56px;
+    padding: 0 22px;
+    white-space: nowrap;
+  }
+
+  body[data-active="contact"] .contact-layout {
+  width: calc(100% - 28px);
+  margin-top: -34px;
+  gap: 18px;
 }
 
-/* ---------- Très petit mobile ---------- */
+body[data-active="contact"] .contact-layout .form-card {
+  padding: 20px;
+  border-radius: 18px;
+}
+
+body[data-active="contact"] .contact-layout .form-control,
+body[data-active="contact"] .contact-layout .form-select,
+body[data-active="contact"] .contact-layout .form-textarea,
+body[data-active="contact"] .contact-layout .btn {
+  border-radius: 13px;
+}
+
+body[data-active="artisans"] #artisans-filter-form {
+  margin: -34px auto 30px;
+  padding: 16px;
+  border-radius: 18px;
+}
+
+body[data-active="artisans"] #artisans-filter-form .form-control,
+body[data-active="artisans"] #artisans-filter-form .form-select {
+  min-height: 54px;
+  border-radius: 14px;
+}
+
+}
+
+/* ---------- Tres petit mobile ---------- */
 @media (max-width: 430px) {
   h1 {
     font-size: 1.9rem;
@@ -781,10 +722,29 @@ body[data-active="contact"] .photo-hero h1 {
   font-size: 2.35rem;
 }
 
+/* Hero about */
+body[data-active="about"] .photo-hero {
+  min-height: 640px;
+}
+
+body[data-active="about"] .photo-hero img {
+  object-position: 72% 20%;
+}
+
+body[data-active="about"] .photo-hero h1 {
+  max-width: 260px;
+  font-size: 2.15rem;
+}
+
+body[data-active="about"] .photo-hero .lead {
+  max-width: 260px;
+  font-size: 0.95rem;
+}
+
 
 }
 
-/* ---------- Écrans très étroits ---------- */
+/* ---------- Ecrans tres etroits ---------- */
 @media (max-width: 360px) {
   .container {
     padding-left: 10px;
@@ -829,184 +789,8 @@ body[data-active="contact"] .photo-hero h1 {
     justify-content: center;
   }
 }
-/* CORRECTION HERO MOBILE */
 
-@media (max-width: 780px) {
-  .hero {
-    min-height: 100vh;
-    padding: 58px 0 80px;
-    align-items: flex-start;
-    overflow: hidden;
-  }
-
-  .hero-slide {
-    background-position: center top;
-  }
-
-  .hero-slide-1,
-  .hero-slide-2,
-  .hero-slide-3 {
-    background-image:
-      linear-gradient(
-        180deg,
-        rgba(247, 251, 249, 0.82) 0%,
-        rgba(247, 251, 249, 0.78) 45%,
-        rgba(247, 251, 249, 0.92) 100%
-      ),
-      url("/images/hero/slides/plomberie-bg.jpg");
-  }
-
-  .hero-content {
-    width: min(100% - 32px, 720px);
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "text"
-      "search";
-    gap: 28px;
-    text-align: center;
-  }
-
-  .hero-left-text {
-    max-width: 100%;
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .hero-left-text .eyebrow {
-    margin: 0 auto 18px;
-    padding: 8px 14px;
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-  }
-
-  .hero-left-text h1 {
-    max-width: 360px;
-    margin: 0 auto 22px;
-    font-size: clamp(2.7rem, 12vw, 4rem);
-    line-height: 0.95;
-    letter-spacing: -1.4px;
-  }
-
-  .hero-left-text .lead {
-    max-width: 340px;
-    margin: 0 auto;
-    color: var(--primary);
-    font-size: 1.15rem;
-    line-height: 1.45;
-    font-weight: 900;
-  }
-
-  .hero-search-zone {
-    width: min(100%, 430px);
-    margin: 0 auto;
-    gap: 14px;
-  }
-
-  .hero-search {
-    min-height: 66px;
-    border-radius: 22px;
-  }
-
-  .hero-search input {
-    height: 66px;
-    padding: 0 18px;
-    font-size: 0.96rem;
-  }
-
-  .hero-search button {
-    flex: 0 0 66px;
-    border-radius: 0 22px 22px 0;
-    font-size: 1.25rem;
-  }
-
-  .hero-mini-services {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding: 0 0 10px;
-    scrollbar-width: none;
-  }
-
-  .hero-mini-services::-webkit-scrollbar {
-    display: none;
-  }
-
-  .hero-mini-services a {
-    flex: 0 0 auto;
-    min-height: 44px;
-    padding: 10px 18px;
-    font-size: 0.95rem;
-    border-radius: 999px;
-  }
-
-  .hero-person {
-    display: none;
-  }
-
-  .hero::before {
-    left: -20%;
-    right: -20%;
-    bottom: -95px;
-    height: 190px;
-    border-radius: 50% 50% 0 0 / 32% 32% 0 0;
-  }
-}
-
-/* Petit mobile */
-@media (max-width: 520px) {
-  .hero {
-    min-height: 100vh;
-    padding: 54px 0 72px;
-  }
-
-  .hero-content {
-    width: calc(100% - 28px);
-    gap: 24px;
-  }
-
-  .hero-left-text .eyebrow {
-    font-size: 0.68rem;
-    padding: 7px 12px;
-  }
-
-  .hero-left-text h1 {
-    max-width: 330px;
-    font-size: clamp(2.45rem, 12vw, 3.45rem);
-    line-height: 0.95;
-  }
-
-  .hero-left-text .lead {
-    max-width: 320px;
-    font-size: 1.08rem;
-    line-height: 1.42;
-  }
-
-  .hero-search-zone {
-    width: min(100%, 380px);
-  }
-
-  .hero-search {
-    min-height: 62px;
-    border-radius: 20px;
-  }
-
-  .hero-search input {
-    height: 62px;
-    padding: 0 16px;
-  }
-
-  .hero-search button {
-    flex-basis: 60px;
-    border-radius: 0 20px 20px 0;
-  }
-
-  .hero-mini-services a {
-    padding: 9px 16px;
-    font-size: 0.9rem;
-  }
-}
-/* Très petit mobile */
+/* Tres petit mobile */
 @media (max-width: 390px) {
   .hero-content {
     width: calc(100% - 22px);
@@ -1094,30 +878,6 @@ body[data-active="services"] .services-filter-box {
   body[data-active="services"] .services-filter-box .filter-tabs::-webkit-scrollbar {
     display: none;
   }
-
-  body[data-active="services"] .services-filter-box .filter-tabs button {
-    flex: 0 0 auto;
-  } 
 }
 
 
-
-@media (max-width: 520px) {
-  body[data-active="services"] .services-filter-box {
-    margin: -34px 0 30px;
-    padding: 16px;
-    border-radius: 18px;
-  }
-
-  body[data-active="services"] .services-filter-box .form-control {
-    min-height: 54px;
-    border-radius: 14px;
-  }
-
-  body[data-active="services"] .services-filter-box .filter-tabs button {
-    min-height: 50px;
-    padding: 0 16px;
-    border-radius: 14px;
-    font-size: 0.9rem;
-  }
-}
