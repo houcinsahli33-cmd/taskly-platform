@@ -67,11 +67,19 @@
 .auth-small-link {
   margin-top: 18px;
   text-align: center;
+  color: var(--muted);
 }
 
 .auth-small-link a {
+  display: inline-block;
   color: var(--primary);
-  font-weight: 900;
+  font-weight: 700;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.auth-small-link a:hover {
+  color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 .become-hero {
@@ -91,8 +99,6 @@
   color: var(--primary);
   font-weight: 900;
 }
-/* Amélioration page inscription artisan */
-
 .auth-body .role-tabs {
   display: flex;
   gap: 10px;
