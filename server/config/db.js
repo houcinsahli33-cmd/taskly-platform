@@ -4,13 +4,22 @@
 const mysql = require("mysql2"); // on importe mysql2 pour pouvoir communiquer avec MySQL depuis Node.js
 require("dotenv").config(); // on importe le fichier .env pour lire les valeurs comme DB_HOST, DB_USER, DB_PASSWORD
 
-const pool = mysql.createPool({  // on cree un pool de connexion MySQL
+const config = {
   host: process.env.DB_HOST,    // on recupere l'adresse MySQL depuis le fichier .env
   port: process.env.DB_PORT,    // on recupere le port MySQL depuis le fichier .env
   user: process.env.DB_USER,    // on recupere l'utilisateur MySQL depuis le fichier .env
-  password: process.env.DB_PASSWORD,  // on recupere le mot de passe MySQL depuis le fichier .env
+  password: process.env.DB_PASSWORD,  // on recupere le mot de passe depuis le fichier .env
   database: process.env.DB_NAME    // on recupere le nom de la base de donnees MySQL depuis le fichier .env
-});
+};
+
+// Si DB_SSL=true, on active la connexion sécurisée pour TiDB Cloud. En local DB_SSL reste false ou vide.
+if (process.env.DB_SSL === "true") {
+  config.ssl = {
+    rejectUnauthorized: true
+  };
+}
+
+const pool = mysql.createPool(config);  // on cree un pool de connexion MySQL
 
 pool.getConnection((err, connection) => {   // on recupere une connexion de la base de donnees
   if (err) {
