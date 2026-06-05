@@ -257,9 +257,9 @@
     background:
       linear-gradient(
         180deg,
-        rgba(247, 251, 249, 0.68) 0%,
-        rgba(247, 251, 249, 0.52) 48%,
-        rgba(247, 251, 249, 0.78) 100%
+        rgba(247, 251, 249, 0.46) 0%,
+        rgba(247, 251, 249, 0.28) 48%,
+        rgba(247, 251, 249, 0.58) 100%
       );
     pointer-events: none;
   }
@@ -365,9 +365,9 @@
     background:
       linear-gradient(
         180deg,
-        rgba(247, 251, 249, 0.68) 0%,
-        rgba(247, 251, 249, 0.52) 46%,
-        rgba(247, 251, 249, 0.78) 100%
+        rgba(247, 251, 249, 0.46) 0%,
+        rgba(247, 251, 249, 0.28) 46%,
+        rgba(247, 251, 249, 0.58) 100%
       );
   }
 
@@ -1544,7 +1544,7 @@
   }
 
   .field-status-icon {
-    right: 14px;
+    right: 17px;
     width: 19px;
     height: 19px;
     font-size: 0.72rem;
