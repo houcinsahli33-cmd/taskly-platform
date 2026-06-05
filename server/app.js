@@ -42,8 +42,8 @@ app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
 app.use("/api/contact", contactRoutes); // routes liées au contact/support
 
-app.get("/", (req, res) => {    // on cree une route
-    res.send("Bienvenue sur Taskly!"); // on envoie une réponse
+app.get("/", (req, res) => {    // on cree une route pour la page d'accueil
+    res.sendFile(path.join(__dirname, "../client/public/index.html")); // on affiche la page d'accueil du site
 });
 
 // Middleware pour gérer les routes inexistantes
