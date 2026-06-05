@@ -343,6 +343,7 @@ body[data-active="artisans"] #artisans-filter-form .field-label {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 28px;
+  justify-content: center;
 }
 
 .filter-tabs button,
@@ -385,7 +386,7 @@ body[data-active="artisans"] #artisans-filter-form .field-label {
 
 .faq-tools {
   display: grid;
-  gap: 16px;
+  gap: 6px;
   margin-bottom: 28px;
 }
 
@@ -1583,8 +1584,8 @@ body[data-active="help"] .faq-tools {
   position: relative;
   z-index: 5;
   max-width: 1180px;
-  margin: -62px auto 42px;
-  padding: 24px;
+  margin: -32px auto 42px;
+  padding: 24px 24px 12px 24px;
   border: 1px solid rgba(8, 127, 99, 0.14);
   border-radius: 26px;
   background: rgba(255, 255, 255, 0.96);
@@ -1629,7 +1630,7 @@ body[data-active="help"] .faq-tools .filter-tabs button {
   background: #fff;
   color: #10241f;
   font-size: 0.95rem;
-  font-weight: 900;
+  font-weight: 700;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
@@ -1689,7 +1690,7 @@ body[data-active="help"] .faq-question {
   color: #10241f;
   text-align: left;
   font-size: 1.06rem;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* Masquer l'icone CSS en doublon */
@@ -1770,8 +1771,8 @@ body[data-active="help"] .cta-band .eyebrow {
 body[data-active="help"] .cta-band h2 {
   max-width: 650px;
   margin: 0;
-  color: #fff;
-  font-size: clamp(2rem, 3.6vw, 3.3rem);
+  color: #ffffffea;;
+  font-size: clamp(2rem, 3.2vw, 3.3rem);
   line-height: 1.05;
 }
 

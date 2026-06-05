@@ -780,9 +780,14 @@
   }
 
   body[data-active="help"] .faq-tools .filter-tabs {
+    width: 100%;
+    max-width: 100%;
+    justify-content: flex-start;
     overflow-x: auto;
+    overflow-y: hidden;
     flex-wrap: nowrap;
     padding-bottom: 4px;
+    margin-bottom: 0;
     scrollbar-width: none;
   }
 
