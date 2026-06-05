@@ -553,9 +553,12 @@
   body[data-active="services"] .services-filter-box .filter-tabs {
     width: 100%;
     min-width: 0;
+    justify-content: flex-start;
     overflow-x: auto;
+    overflow-y: hidden;
     flex-wrap: nowrap;
     padding-bottom: 4px;
+    margin-bottom: 0;
     scrollbar-width: none;
   }
 
@@ -1017,6 +1020,10 @@
   .form-grid,
   .grid {
     gap: 14px;
+  }
+
+  .load-more-artisans-wrap .btn {
+    width: 100%;
   }
 
   .filters,
