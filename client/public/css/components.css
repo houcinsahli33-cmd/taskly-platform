@@ -877,3 +877,137 @@ th {
 .justify-end {
   justify-content: flex-end;
 }
+
+/*  AUTH */
+
+.field-with-status {
+  position: relative;
+  width: 100%;
+}
+
+.field-with-status .form-control {
+  width: 100%;
+  padding-right: 52px;
+}
+
+.field-status-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.field-status-icon.valid {
+  display: flex;
+  color: #087f55e5;
+  border: 1px solid rgba(8, 127, 99, 0.45);
+  background: rgba(8, 127, 99, 0.08);
+}
+
+.field-status-icon.invalid {
+  display: flex;
+  color: #d9304fe4;
+  border: 1px solid rgba(217, 48, 79, 0.45);
+  background: rgba(217, 48, 79, 0.08);
+}
+
+.password-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.password-strength-text {
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+.password-strength-text.vulnerable {
+  color: var(--danger);
+}
+
+.password-strength-text.weak {
+  color: #d98600af;
+}
+
+.password-strength-text.strong {
+  color: #087f63;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 38px;
+  height: 38px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #0d2b24;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.password-toggle-btn::after {
+  content: "";
+  position: absolute;
+  width: 17px;
+  height: 1.3px;
+  background: currentColor;
+  border-radius: 999px;
+  transform: rotate(-35deg) scaleX(0);
+  transition: transform 0.18s ease;
+}
+
+.password-toggle-btn.is-visible::after {
+  transform: rotate(-35deg) scaleX(1);
+}
+
+.password-toggle-btn:hover,
+.password-toggle-btn:focus {
+  background: rgba(8, 127, 99, 0.08);
+  outline: none;
+}
+
+.password-strength-bars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.password-strength-bars span {
+  height: 1px;
+  border-radius: 999px;
+  background: rgba(13, 43, 36, 0.16);
+}
+
+.password-strength-bars.vulnerable span:nth-child(1) {
+  background: #d9304fac;
+}
+
+.password-strength-bars.weak span:nth-child(1),
+.password-strength-bars.weak span:nth-child(2) {
+  background: #d98600b1;
+}
+
+.password-strength-bars.strong span {
+  background: #038365d8;
+}
+
+.field-error-message {
+  margin-top: 8px;
+}

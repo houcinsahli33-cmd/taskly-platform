@@ -38,11 +38,25 @@
           </label>
           <label>
             <span class="field-label">Email</span>
-            <input class="form-control" id="artisan-email" type="email" required placeholder="Adresse e-mail">
+            <div class="field-with-status">
+              <input class="form-control" id="artisan-email" type="email" required placeholder="Adresse e-mail">
+              <span class="field-status-icon" id="artisan-email-status" aria-hidden="true"></span>
+            </div>
           </label>
           <label>
-            <span class="field-label">Mot de passe</span>
-            <input class="form-control" id="artisan-password" type="password" required placeholder="Mot de passe">
+            <span class="field-label password-label-row">
+              <span>Mot de passe</span>
+              <span class="password-strength-text" id="artisan-password-strength-text"></span>
+            </span>
+            <div class="field-with-status">
+              <input class="form-control" id="artisan-password" type="password" required placeholder="Mot de passe">
+              <button class="password-toggle-btn" type="button" data-password-toggle="artisan-password" aria-label="Afficher le mot de passe">👁</button>
+            </div>
+            <div class="password-strength-bars" data-password-strength="artisan-password">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
           </label>
           <label>
             <span class="field-label">T&eacute;l&eacute;phone</span>

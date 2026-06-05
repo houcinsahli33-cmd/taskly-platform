@@ -1530,3 +1530,66 @@
     font-size: 1.86rem;
   }
 }
+
+/* ===== AUTH RESPONSIVE - EMAIL STATUS + PASSWORD STRENGTH ===== */
+
+@media (max-width: 520px) {
+  .field-with-status {
+    width: 100%;
+  }
+
+  .field-with-status .form-control {
+    width: 100%;
+    padding-right: 48px;
+  }
+
+  .field-status-icon {
+    right: 14px;
+    width: 19px;
+    height: 19px;
+    font-size: 0.72rem;
+  }
+
+  .password-label-row {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .password-strength-text {
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  .password-toggle-btn {
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 0.92rem;
+  }
+
+  .password-toggle-btn::after {
+    width: 15px;
+    height: 1px;
+  }
+
+  .password-strength-bars {
+    gap: 5px;
+    margin-top: 8px;
+  }
+
+  .password-strength-bars span {
+    height: 3px;
+  }
+}
+
+@media (max-width: 390px) {
+  .password-label-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .password-strength-text {
+    font-size: 0.76rem;
+  }
+}

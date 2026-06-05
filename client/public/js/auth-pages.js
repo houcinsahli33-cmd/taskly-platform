@@ -60,6 +60,164 @@ function validerFormatEmail(inputEmail) {
   return true;
 }
 
+// Verifier la force du mot de passe
+function analyserMotDePasse(motDePasse) {
+  const longueur = motDePasse.length >= 8;
+  const minuscule = /[a-z]/.test(motDePasse);
+  const majuscule = /[A-Z]/.test(motDePasse);
+  const chiffre = /[0-9]/.test(motDePasse);
+
+  const estFort = longueur && minuscule && majuscule && chiffre;
+
+  let niveau = "";
+  let texte = "";
+
+  if (!motDePasse) {
+    niveau = "";
+    texte = "";
+  } else if (!longueur) {
+    niveau = "vulnerable";
+    texte = "Vulnérable";
+  } else if (!estFort) {
+    niveau = "weak";
+    texte = "Faible";
+  } else {
+    niveau = "strong";
+    texte = "Fort";
+  }
+
+  return {
+    longueur,
+    minuscule,
+    majuscule,
+    chiffre,
+    estFort,
+    niveau,
+    texte
+  };
+}
+
+// Mettre a jour les barres de force du mot de passe
+function mettreAJourForceMotDePasse(inputPassword) {
+  if (!inputPassword) return;
+
+  const analyse = analyserMotDePasse(inputPassword.value);
+  const texte = document.getElementById(`${inputPassword.id}-strength-text`);
+  const barres = document.querySelector(`[data-password-strength="${inputPassword.id}"]`);
+
+  if (texte) {
+    texte.textContent = analyse.texte;
+    texte.className = "password-strength-text";
+
+    if (analyse.niveau) {
+      texte.classList.add(analyse.niveau);
+    }
+  }
+
+  if (barres) {
+    barres.className = "password-strength-bars";
+
+    if (analyse.niveau) {
+      barres.classList.add(analyse.niveau);
+    }
+  }
+}
+
+// Valider le mot de passe avant inscription
+function validerMotDePasseInscription(inputPassword) {
+  if (!inputPassword || !inputPassword.value.trim()) {
+    return true; // le champ obligatoire est deja gere par validerChampsObligatoires
+  }
+
+  const analyse = analyserMotDePasse(inputPassword.value);
+
+  if (!analyse.estFort) {
+    afficherErreurChamp(inputPassword, "Choisissez un mot de passe plus fort.");
+    return false;
+  }
+
+  return true;
+}
+
+// Mettre a jour le petit indicateur email
+function mettreAJourStatutEmail(inputEmail) {
+  if (!inputEmail) return;
+
+  const icone = document.getElementById(`${inputEmail.id}-status`);
+  if (!icone) return;
+
+  const valeur = inputEmail.value.trim();
+
+  icone.textContent = "";
+  icone.className = "field-status-icon";
+
+  if (!valeur) return;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (emailRegex.test(valeur)) {
+    icone.textContent = "✓";
+    icone.classList.add("valid");
+  } else {
+    icone.textContent = "!";
+    icone.classList.add("invalid");
+  }
+}
+
+// Initialiser les indicateurs email + mot de passe
+function initialiserIndicateursAuth() {
+  const emails = [
+    document.getElementById("client-email"),
+    document.getElementById("artisan-email")
+  ];
+
+  emails.forEach((inputEmail) => {
+    if (!inputEmail) return;
+
+    inputEmail.addEventListener("input", () => {
+      mettreAJourStatutEmail(inputEmail);
+    });
+
+    inputEmail.addEventListener("blur", () => {
+      mettreAJourStatutEmail(inputEmail);
+    });
+  });
+
+  const motsDePasse = [
+    document.getElementById("client-password"),
+    document.getElementById("artisan-password")
+  ];
+
+  motsDePasse.forEach((inputPassword) => {
+    if (!inputPassword) return;
+
+    mettreAJourForceMotDePasse(inputPassword);
+
+    inputPassword.addEventListener("input", () => {
+      mettreAJourForceMotDePasse(inputPassword);
+    });
+  });
+
+  document.querySelectorAll("[data-password-toggle]").forEach((bouton) => {
+    bouton.addEventListener("click", () => {
+      const input = document.getElementById(bouton.dataset.passwordToggle);
+      if (!input) return;
+
+      if (input.type === "password") {
+        input.type = "text";
+        bouton.textContent = "👁";
+        bouton.classList.add("is-visible");
+        bouton.setAttribute("aria-label", "Masquer le mot de passe");
+      } else {
+        input.type = "password";
+        bouton.textContent = "👁";
+        bouton.classList.remove("is-visible");
+        bouton.setAttribute("aria-label", "Afficher le mot de passe");
+      }
+    });
+  });
+}
+
 
 // Logique applicative et envois API
 
@@ -249,10 +407,14 @@ function initialiserInscriptionArtisan() {
     masquerAlerte(alerte);
 
     const inputEmail = document.getElementById("artisan-email");
+    const inputPassword = document.getElementById("artisan-password");
     const inputExp = document.getElementById("artisan-experience");
 
     let valide = validerChampsObligatoires(form);
-    if (valide) valide = validerFormatEmail(inputEmail);
+    const emailValide = validerFormatEmail(inputEmail);
+    const motDePasseValide = validerMotDePasseInscription(inputPassword);
+
+    valide = valide && emailValide && motDePasseValide;
 
     const experience = Number(inputExp.value || 0);
     if (experience < 0 || experience > 50) {
@@ -313,6 +475,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initialiserLocalisationAuth();
   initialiserOngletsAuth();
+  initialiserIndicateursAuth();
   initialiserConnexion();
   initialiserInscriptionClient();
   initialiserInscriptionArtisan();
