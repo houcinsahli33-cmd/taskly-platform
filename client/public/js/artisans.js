@@ -1,6 +1,4 @@
-let tousLesServicesArtisans = [];
-let artisanSelectionne = null;
-
+// Construire une carte artisan
 function carteArtisan(artisan) {
   return `
     <article class="card artisan-card">
@@ -35,7 +33,6 @@ async function chargerFiltresArtisans() {
 
   try {
     const { services } = await requeteAPI("/api/services");
-    tousLesServicesArtisans = services;
     serviceSelect.innerHTML = `<option value="">Tous les services</option>` + services
       .map((service) => `<option value="${service.id}">${echapperHTML(service.nom)}</option>`)
       .join("");
@@ -55,6 +52,7 @@ function initialiserLocalisationArtisans() {
   }
 }
 
+// Construire les parametres de recherche artisans
 function construireQueryArtisans() {
   const params = new URLSearchParams();
   const serviceId = document.getElementById("filter-service")?.value;
@@ -124,7 +122,6 @@ async function ouvrirDemandeArtisan(id) {
 
   try {
     const { artisan } = await requeteAPI(`/api/artisans/${encodeURIComponent(id)}`);
-    artisanSelectionne = artisan;
     document.getElementById("request-artisan-name").textContent = nomComplet(artisan);
     document.getElementById("request-artisan-id").value = artisan.id;
     ouvrirModale("request-modal");

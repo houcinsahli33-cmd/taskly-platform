@@ -1,6 +1,7 @@
 let demandesArtisan = [];
 let profilArtisanCourant = null;
 
+// Calculer les compteurs artisan
 function statsDemandesArtisan(demandes) {
   return {
     total: demandes.length,
@@ -24,6 +25,7 @@ function afficherStatsArtisan() {
   `;
 }
 
+// Construire une carte demande artisan
 function carteDemandeArtisan(demande) {
   const peutTraiter = demande.statut === "en_attente";
   const peutTerminer = demande.statut === "acceptee";
@@ -83,6 +85,7 @@ async function chargerDemandesArtisan() {
   }
 }
 
+// Changer le statut d'une demande
 async function changerStatutDemande(id, statut) {
   try {
     await requeteAPI(`/api/demandes/${id}/statut`, {
@@ -96,6 +99,7 @@ async function changerStatutDemande(id, statut) {
   }
 }
 
+// Marquer une demande comme terminee
 async function terminerDemandeArtisan(id) {
   try {
     await requeteAPI(`/api/demandes/${id}/terminer`, { method: "PUT" });
@@ -106,11 +110,13 @@ async function terminerDemandeArtisan(id) {
   }
 }
 
+// Ouvrir la modale d'annulation artisan
 function ouvrirAnnulationArtisan(id) {
   document.getElementById("cancel-artisan-demande-id").value = id;
   ouvrirModale("cancel-artisan-modal");
 }
 
+// Ouvrir la modale de signalement artisan
 function ouvrirSignalementArtisan(id) {
   document.getElementById("artisan-report-demande-id").value = id;
   ouvrirModale("artisan-report-modal");

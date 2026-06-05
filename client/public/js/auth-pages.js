@@ -92,6 +92,7 @@ async function chargerServicesInscriptionArtisan() {
   }
 }
 
+// Afficher le panneau auth demande
 function afficherOngletAuth(nomOnglet) {
   const boutonActif = document.querySelector(`[data-auth-tab="${nomOnglet}"]`);
   if (!boutonActif) return;

@@ -1,6 +1,7 @@
 let servicesAccueil = [];
 let serviceChoisiAccueil = null;
 
+// Placer la liste de suggestions sous la recherche
 function placerSuggestionsAccueil() {
   const form = document.getElementById("home-search-form");
   const suggestions = document.getElementById("home-suggestions");

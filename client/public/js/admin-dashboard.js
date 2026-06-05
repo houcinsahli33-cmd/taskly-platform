@@ -1,9 +1,9 @@
 let adminUtilisateurs = [];
 let adminSignalements = [];
-let adminContacts = [];
 let adminServices = [];
 let filtreContacts = "";
 
+// Activer une section du dashboard admin
 function activerOngletAdmin(onglet) {
   document.querySelectorAll("[data-admin-tab]").forEach((bouton) => {
     bouton.classList.toggle("active", bouton.dataset.adminTab === onglet);
@@ -20,6 +20,7 @@ function initialiserNavigationAdmin() {
   });
 }
 
+// Construire un tableau simple de resume
 function tableSimple(entetes, lignes, mapper) {
   if (!lignes || !lignes.length) return etatVide("Aucune donnée à afficher.");
   return `
@@ -193,7 +194,6 @@ async function chargerContactsAdmin() {
   try {
     const query = filtreContacts ? `?statut=${filtreContacts}` : "";
     const { contacts } = await requeteAPI(`/api/admin/contacts${query}`);
-    adminContacts = contacts;
 
     if (!contacts.length) {
       cible.innerHTML = etatVide("Aucun message support pour ce filtre.");
@@ -272,6 +272,7 @@ async function chargerServicesAdmin() {
   }
 }
 
+// Ouvrir la modale de blocage
 function ouvrirBlocage(id) {
   const utilisateur = adminUtilisateurs.find((u) => String(u.id) === String(id))
     || adminSignalements.find((s) => String(s.signale_user_id) === String(id));
@@ -282,6 +283,7 @@ function ouvrirBlocage(id) {
   ouvrirModale("block-modal");
 }
 
+// Ouvrir la modale service
 function ouvrirServiceModal(service = null) {
   document.getElementById("service-form").reset();
   document.getElementById("service-id").value = service?.id || "";

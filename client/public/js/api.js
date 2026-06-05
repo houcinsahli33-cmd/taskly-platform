@@ -1,10 +1,12 @@
 const API_BASE = "";
-const DEFAULT_AVATAR = "/images/uploads/avatar.png";
+const DEFAULT_AVATAR = "/images/defaults/avatar.png";
 
+// Verifier si le corps est un FormData
 function estFormData(valeur) {
   return typeof FormData !== "undefined" && valeur instanceof FormData;
 }
 
+// Envoyer une requete API
 async function requeteAPI(url, options = {}) {
   const configuration = {
     credentials: "include",
@@ -33,10 +35,12 @@ async function requeteAPI(url, options = {}) {
   return data;
 }
 
+// Lire un parametre dans l'URL
 function obtenirParametre(nom) {
   return new URLSearchParams(window.location.search).get(nom);
 }
 
+// Echaper le HTML injecte dans les templates
 function echapperHTML(valeur) {
   return String(valeur ?? "")
     .replaceAll("&", "&amp;")
@@ -46,6 +50,7 @@ function echapperHTML(valeur) {
     .replaceAll("'", "&#039;");
 }
 
+// Normaliser un texte pour la recherche
 function normaliserTexte(valeur) {
   return String(valeur || "")
     .normalize("NFD")
@@ -54,10 +59,12 @@ function normaliserTexte(valeur) {
     .trim();
 }
 
+// Retourner une image de profil valide
 function imageProfil(chemin) {
   return chemin || DEFAULT_AVATAR;
 }
 
+// Choisir une image par defaut pour un service
 function imageServiceFallback(nom) {
   const cle = normaliserTexte(nom);
   const images = {
@@ -78,6 +85,7 @@ function imageServiceFallback(nom) {
   return images[cle] || "/images/services/default.jpg";
 }
 
+// Choisir l'image affichee pour un service
 function imageService(service) {
   if (service?.image && !service.image.endsWith(".svg")) {
     return service.image;
@@ -86,6 +94,7 @@ function imageService(service) {
   return imageServiceFallback(service?.nom);
 }
 
+// Remplacer une image de service cassee
 function gererImageService(img, nom) {
   img.onerror = () => {
     img.onerror = null;
@@ -93,6 +102,7 @@ function gererImageService(img, nom) {
   };
 }
 
+// Formater une date courte
 function formatDate(valeur) {
   if (!valeur) return "Non précisée";
   const date = new Date(valeur);
@@ -104,6 +114,7 @@ function formatDate(valeur) {
   });
 }
 
+// Formater une date avec l'heure
 function formatDateHeure(valeur) {
   if (!valeur) return "Non précisée";
   const date = new Date(valeur);
@@ -117,11 +128,13 @@ function formatDateHeure(valeur) {
   });
 }
 
+// Formater un nombre d'avis ou de notes
 function formatNombre(valeur) {
   const nombre = Number(valeur || 0);
   return Number.isInteger(nombre) ? String(nombre) : nombre.toFixed(1);
 }
 
+// Convertir un statut technique en libelle
 function libelleStatut(statut) {
   const libelles = {
     en_attente: "En attente",
@@ -137,28 +150,33 @@ function libelleStatut(statut) {
   return libelles[statut] || statut || "Inconnu";
 }
 
+// Construire un badge de statut
 function badgeStatut(statut) {
   return `<span class="status-pill ${echapperHTML(statut)}">${echapperHTML(libelleStatut(statut))}</span>`;
 }
 
+// Construire le nom complet d'un utilisateur
 function nomComplet(objet, prefixe = "") {
   const nom = objet?.[`${prefixe}nom`] || objet?.nom || "";
   const prenom = objet?.[`${prefixe}prenom`] || objet?.prenom || "";
   return `${prenom} ${nom}`.trim() || "Utilisateur Taskly";
 }
 
+// Raccourcir un texte long
 function tronquer(texte, longueur = 130) {
   const valeur = String(texte || "");
   if (valeur.length <= longueur) return valeur;
   return `${valeur.slice(0, longueur).trim()}...`;
 }
 
+// Afficher les etoiles d'une note
 function afficherEtoiles(note) {
   const valeur = Math.round(Number(note || 0));
   if (!valeur) return "Nouveau";
   return "★".repeat(valeur) + "☆".repeat(5 - valeur);
 }
 
+// Construire le resume de note d'un artisan
 function noteArtisan(artisan) {
   const note = artisan.moyenne_notes || artisan.moyenne_note || 0;
   const total = artisan.total_avis || 0;
@@ -170,18 +188,21 @@ function noteArtisan(artisan) {
   return `${formatNombre(note)}/5 · ${total} avis`;
 }
 
+// Afficher une alerte dans un bloc
 function afficherAlerte(element, message, type = "success") {
   if (!element) return;
   element.className = `alert show ${type}`;
   element.innerHTML = message;
 }
 
+// Masquer une alerte
 function masquerAlerte(element) {
   if (!element) return;
   element.className = "alert";
   element.innerHTML = "";
 }
 
+// Afficher une notification courte
 function afficherToast(message, type = "success") {
   let conteneur = document.querySelector(".toast-container");
   if (!conteneur) {
@@ -200,10 +221,12 @@ function afficherToast(message, type = "success") {
   }, 4200);
 }
 
+// Afficher un etat vide
 function etatVide(message) {
   return `<div class="empty-state">${echapperHTML(message)}</div>`;
 }
 
+// Afficher un etat vide avec titre et texte
 function etatVideDeuxLignes(titre, texte) {
   return `
     <div class="empty-state">
@@ -213,10 +236,12 @@ function etatVideDeuxLignes(titre, texte) {
   `;
 }
 
+// Afficher un etat de chargement
 function etatChargement(message = "Chargement en cours...") {
   return `<div class="loading-state">${echapperHTML(message)}</div>`;
 }
 
+// Ouvrir une modale
 function ouvrirModale(id) {
   const modale = document.getElementById(id);
   if (!modale) return;
@@ -224,6 +249,7 @@ function ouvrirModale(id) {
   document.body.classList.add("no-scroll");
 }
 
+// Fermer une modale
 function fermerModale(id) {
   const modale = document.getElementById(id);
   if (!modale) return;
@@ -231,6 +257,7 @@ function fermerModale(id) {
   document.body.classList.remove("no-scroll");
 }
 
+// Fermer les modales depuis les boutons ou le fond
 document.addEventListener("click", (event) => {
   const boutonFermeture = event.target.closest("[data-close-modal]");
   if (boutonFermeture) {

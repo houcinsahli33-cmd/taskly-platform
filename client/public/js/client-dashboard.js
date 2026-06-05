@@ -1,5 +1,6 @@
 let demandesClient = [];
 
+// Calculer les compteurs du client
 function statsDemandes(demandes) {
   return {
     total: demandes.length,
@@ -23,6 +24,7 @@ function afficherStatsClient() {
   `;
 }
 
+// Construire une carte demande client
 function carteDemandeClient(demande) {
   const peutAnnuler = demande.statut === "en_attente";
   const peutAvis = demande.statut === "terminee" && !demande.avis_id;
@@ -82,6 +84,7 @@ async function chargerDemandesClient() {
   }
 }
 
+// Annuler une demande en attente
 async function annulerDemandeClient(id) {
   try {
     await requeteAPI(`/api/demandes/${id}/annuler`, { method: "PUT" });
@@ -92,11 +95,13 @@ async function annulerDemandeClient(id) {
   }
 }
 
+// Ouvrir la modale d'avis
 function ouvrirAvisClient(id) {
   document.getElementById("review-demande-id").value = id;
   ouvrirModale("review-modal");
 }
 
+// Ouvrir la modale de signalement
 function ouvrirSignalementClient(id) {
   document.getElementById("report-demande-id").value = id;
   ouvrirModale("report-modal");

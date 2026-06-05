@@ -1,20 +1,6 @@
 let servicesCatalogue = [];
 let filtreServices = "tous";
 
-async function remplirSelectServices(selecteur) {
-  const elements = document.querySelectorAll(selecteur);
-  if (!elements.length) return [];
-
-  const { services } = await requeteAPI("/api/services");
-  elements.forEach((select) => {
-    const placeholder = select.dataset.placeholder || "Tous les services";
-    select.innerHTML = `<option value="">${echapperHTML(placeholder)}</option>` + services
-      .map((service) => `<option value="${service.id}">${echapperHTML(service.nom)}</option>`)
-      .join("");
-  });
-  return services;
-}
-
 // Construire les statistiques d'un service
 function statsService(service) {
   const moyenne = Number(service.moyenne_notes || 0);
@@ -28,6 +14,7 @@ function statsService(service) {
   `;
 }
 
+// Construire une carte de service
 function carteService(service) {
   return `
     <article class="card service-card">
@@ -87,6 +74,7 @@ function afficherServicesCatalogue() {
   });
 }
 
+// Appliquer la recherche venue de l'accueil
 function appliquerRechercheDepuisURL() {
   const champRecherche = document.getElementById("service-search");
   if (!champRecherche) return;
@@ -97,6 +85,7 @@ function appliquerRechercheDepuisURL() {
   champRecherche.value = rechercheURL;
 }
 
+// Rediriger vers le service exact quand la recherche correspond
 function redirigerVersServiceDepuisURL() {
   const rechercheURL = obtenirParametre("search");
   if (!rechercheURL) return false;
@@ -139,7 +128,6 @@ function initialiserFiltresServices() {
     afficherServicesCatalogue();
   });
 
-  
   document.querySelectorAll("[data-service-filter]").forEach((bouton) => {
     bouton.addEventListener("click", () => {
       const dejaActif = bouton.classList.contains("active");

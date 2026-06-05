@@ -1,14 +1,16 @@
 window.utilisateurCourant = null;
 window.tasklyAuthReady = null;
 
+// Choisir le dashboard selon le role
 function lienDashboard(role) {
   if (role === "admin") return "/admin-dashboard.html";
   if (role === "artisan") return "/artisan-dashboard.html";
   return "/client-dashboard.html";
 }
 
+// Construire le logo Taskly
 function logoTaskly() {
-  return `<img src="/images/taskly-logo.svg" alt="Taskly">`;
+  return `<img src="/images/logo/taskly-logo.svg" alt="Taskly">`;
 }
 
 // Construire le header public ou connecte
@@ -151,6 +153,7 @@ async function chargerUtilisateurConnecte() {
   return window.utilisateurCourant;
 }
 
+// Rediriger vers l'espace du role connecte
 function redirigerSelonRole(utilisateur) {
   window.location.href = lienDashboard(utilisateur.role);
 }
@@ -238,6 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.tasklyAuthReady = initialiserTaskly();
 });
 
+// Attendre que la session soit chargee
 function attendreSession() {
   return window.tasklyAuthReady || Promise.resolve(window.utilisateurCourant);
 }
