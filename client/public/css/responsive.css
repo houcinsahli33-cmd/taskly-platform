@@ -257,9 +257,9 @@
     background:
       linear-gradient(
         180deg,
-        rgba(247, 251, 249, 0.88) 0%,
-        rgba(247, 251, 249, 0.80) 48%,
-        rgba(247, 251, 249, 0.94) 100%
+        rgba(247, 251, 249, 0.68) 0%,
+        rgba(247, 251, 249, 0.52) 48%,
+        rgba(247, 251, 249, 0.78) 100%
       );
     pointer-events: none;
   }
@@ -365,9 +365,9 @@
     background:
       linear-gradient(
         180deg,
-        rgba(247, 251, 249, 0.86) 0%,
-        rgba(247, 251, 249, 0.76) 46%,
-        rgba(247, 251, 249, 0.92) 100%
+        rgba(247, 251, 249, 0.68) 0%,
+        rgba(247, 251, 249, 0.52) 46%,
+        rgba(247, 251, 249, 0.78) 100%
       );
   }
 
@@ -694,9 +694,22 @@
     min-width: 0;
   }
 
+  .artisan-card .request-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
   .artisan-card .request-actions .btn {
     width: 100%;
-    flex-basis: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex: none;
+    justify-self: stretch;
+    white-space: normal;
   }
 
   .profile-hero,
@@ -1038,12 +1051,28 @@
     align-items: stretch;
   }
 
+  .artisan-card .request-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+  }
+
   .request-actions .btn,
   .service-card .btn,
   .artisan-card .btn,
   .filters .btn {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     flex-basis: auto;
+  }
+
+  .artisan-card .request-actions .btn {
+    justify-self: stretch;
+    white-space: normal;
   }
 
   .profile-hero,
