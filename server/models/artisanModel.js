@@ -7,6 +7,7 @@ const { obtenirCommunesWilaya } = require("../helpers/algeriaLocations");
 // création d'un profil artisan
 async function creerProfilArtisan(userId, serviceId, ville, telephone, description, experience) {
     const sql = "INSERT INTO artisans (user_id, service_id, ville, telephone, description, experience) VALUES (?, ?, ?, ?, ?, ?)"; // requete SQL pour créer un profil artisan
+
     const [resultat] = await db.promise().query(sql, [
         userId,
         serviceId,
@@ -51,8 +52,8 @@ async function trouverTousLesArtisans(filtres = {}) {
 
     // Si un serviceId est fourni, on filtre les artisans par service
     if (filtres.serviceId) {
-        sql += " AND artisans.service_id = ?";  // garder seulement les artisans du service demande
-        valeurs.push(filtres.serviceId);        // on ajoute la valeur correspondante dans le tableau, remplacera le "?" au moment de l'execution de la requete
+        sql += " AND artisans.service_id = ?"; // garder seulement les artisans du service demande
+        valeurs.push(filtres.serviceId); // on ajoute la valeur correspondante dans le tableau, remplacera le "?" au moment de l'execution de la requete
     }
 
     // La recherche publique se fait au niveau Wilaya. La commune reste utile
@@ -60,8 +61,10 @@ async function trouverTousLesArtisans(filtres = {}) {
     if (filtres.wilaya) {
         const lieuxWilaya = obtenirCommunesWilaya(filtres.wilaya);
         const lieux = lieuxWilaya.length ? lieuxWilaya : [filtres.wilaya];
+
         sql += " AND (" + lieux.map(() => "artisans.ville LIKE ?").join(" OR ") + ")";
         valeurs.push(...lieux.map((lieu) => "%" + lieu + "%"));
+
     } else if (filtres.ville) {
         sql += " AND artisans.ville LIKE ?";
         valeurs.push("%" + filtres.ville + "%");
@@ -80,16 +83,29 @@ async function trouverTousLesArtisans(filtres = {}) {
         `;
 
         const recherche = "%" + filtres.recherche + "%";
-        valeurs.push(recherche, recherche, recherche, recherche, recherche);    // on ajoute les valeurs de recherche dans le tableau
+        valeurs.push(recherche, recherche, recherche, recherche, recherche); // on ajoute les valeurs de recherche dans le tableau
     }
 
     sql += `
-        GROUP BY artisans.id
+        GROUP BY 
+            artisans.id,
+            artisans.user_id,
+            artisans.service_id,
+            artisans.ville,
+            artisans.telephone,
+            artisans.description,
+            artisans.experience,
+            users.photo_profil,
+            users.nom,
+            users.prenom,
+            users.email,
+            services.nom
         ORDER BY artisans.created_at DESC
-    `;    // on ajoute la condition de tri
+    `; // on ajoute la condition de tri
 
     const [resultats] = await db.promise().query(sql, valeurs); // on execute la requete et on attends et on recupere le resultat
-    return resultats;    // on retourne tous les artisans trouves
+
+    return resultats; // on retourne tous les artisans trouves
 }
 
 // Recuperer un artisan par son id avec son utilisateur et son service
@@ -117,8 +133,20 @@ async function trouverArtisanParId(id) {
         LEFT JOIN avis ON avis.artisan_id = artisans.id
         LEFT JOIN demandes ON demandes.artisan_id = artisans.id
         WHERE artisans.id = ?
-        GROUP BY artisans.id
-    `; 
+        GROUP BY 
+            artisans.id,
+            artisans.user_id,
+            artisans.service_id,
+            artisans.ville,
+            artisans.telephone,
+            artisans.description,
+            artisans.experience,
+            users.photo_profil,
+            users.nom,
+            users.prenom,
+            users.email,
+            services.nom
+    `;
 
     const [resultats] = await db.promise().query(sql, [id]); // on execute la requete
     return resultats[0]; // on retourne l'artisan
@@ -133,7 +161,7 @@ async function trouverArtisanParUserId(userId) {
     return resultats[0];
 }
 
-module.exports = {  // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
+module.exports = { // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
     creerProfilArtisan,
     trouverTousLesArtisans,
     trouverArtisanParId,
