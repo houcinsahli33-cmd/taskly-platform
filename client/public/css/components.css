@@ -892,31 +892,58 @@ th {
 
 .field-status-icon {
   position: absolute;
-  right: 15px;
+  right: 18px;
   top: 50%;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   transform: translateY(-50%);
   display: none;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 700;
+}
+
+.field-status-icon.valid,
+.field-status-icon.invalid {
+  display: flex;
 }
 
 .field-status-icon.valid {
-  display: flex;
-  color: #087f55e5;
-  border: 1px solid rgba(8, 127, 99, 0.45);
+  border: 1px solid rgba(8, 127, 99, 0.5);
   background: rgba(8, 127, 99, 0.08);
 }
 
+.field-status-icon.valid::before {
+  content: "";
+  width: 8px;
+  height: 4px;
+  border-left: 2px solid #087f63;
+  border-bottom: 2px solid #087f63;
+  transform: rotate(-45deg) translateY(-1px);
+}
+
 .field-status-icon.invalid {
-  display: flex;
-  color: #d9304fe4;
-  border: 1px solid rgba(217, 48, 79, 0.45);
+  border: 1px solid rgba(217, 48, 79, 0.5);
   background: rgba(217, 48, 79, 0.08);
+}
+
+.field-status-icon.invalid::before {
+  content: "";
+  width: 2px;
+  height: 9px;
+  border-radius: 999px;
+  background: #d9304f;
+  transform: translateY(-2px);
+}
+
+.field-status-icon.invalid::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  width: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: #d9304f;
 }
 
 .password-label-row {
@@ -957,23 +984,17 @@ th {
   border-radius: 999px;
   background: transparent;
   color: #0d2b24;
-  font-size: 1rem;
   cursor: pointer;
 }
 
-.password-toggle-btn::after {
-  content: "";
-  position: absolute;
-  width: 17px;
-  height: 1.3px;
-  background: currentColor;
-  border-radius: 999px;
-  transform: rotate(-35deg) scaleX(0);
-  transition: transform 0.18s ease;
-}
-
-.password-toggle-btn.is-visible::after {
-  transform: rotate(-35deg) scaleX(1);
+.password-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .password-toggle-btn:hover,

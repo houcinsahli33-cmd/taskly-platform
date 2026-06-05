@@ -1567,11 +1567,6 @@
     font-size: 0.92rem;
   }
 
-  .password-toggle-btn::after {
-    width: 15px;
-    height: 1px;
-  }
-
   .password-strength-bars {
     gap: 5px;
     margin-top: 8px;

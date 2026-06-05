@@ -148,7 +148,6 @@ function mettreAJourStatutEmail(inputEmail) {
 
   const valeur = inputEmail.value.trim();
 
-  icone.textContent = "";
   icone.className = "field-status-icon";
 
   if (!valeur) return;
@@ -156,12 +155,30 @@ function mettreAJourStatutEmail(inputEmail) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (emailRegex.test(valeur)) {
-    icone.textContent = "✓";
     icone.classList.add("valid");
   } else {
-    icone.textContent = "!";
     icone.classList.add("invalid");
   }
+}
+
+
+function iconeOeil() {
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>
+  `;
+}
+
+function iconeOeilBarre() {
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+      <line x1="4" y1="20" x2="20" y2="4"></line>
+    </svg>
+  `;
 }
 
 // Initialiser les indicateurs email + mot de passe
@@ -199,18 +216,20 @@ function initialiserIndicateursAuth() {
   });
 
   document.querySelectorAll("[data-password-toggle]").forEach((bouton) => {
+    bouton.innerHTML = iconeOeil();
+
     bouton.addEventListener("click", () => {
       const input = document.getElementById(bouton.dataset.passwordToggle);
       if (!input) return;
 
       if (input.type === "password") {
         input.type = "text";
-        bouton.textContent = "👁";
+        bouton.innerHTML = iconeOeilBarre();
         bouton.classList.add("is-visible");
         bouton.setAttribute("aria-label", "Masquer le mot de passe");
       } else {
         input.type = "password";
-        bouton.textContent = "👁";
+        bouton.innerHTML = iconeOeil();
         bouton.classList.remove("is-visible");
         bouton.setAttribute("aria-label", "Afficher le mot de passe");
       }
