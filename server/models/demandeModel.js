@@ -105,7 +105,7 @@ async function modifierStatutDemande(id, artisanId, statut) {
     const sql = `
         UPDATE demandes
         SET statut = ?,
-            date_traitement = NOW()
+        date_traitement = NOW()
         WHERE id = ?
         AND artisan_id = ?
         AND statut = 'en_attente'
