@@ -193,7 +193,7 @@ async function bloquerUtilisateur(req, res) {
     try {
         const { motifBlocage } = req.body;
 
-        if (!motifBlocage || motifBlocage.trim().length < 5) {
+        if (typeof motifBlocage !== 'string' || motifBlocage.trim().length < 5 || motifBlocage.length > 500) {
             return res.status(400).json({
                 message: "Le motif du blocage est obligatoire."
             });
@@ -210,6 +210,12 @@ async function bloquerUtilisateur(req, res) {
         if (utilisateur.role === "admin") {
             return res.status(400).json({
                 message: "Impossible de bloquer un administrateur."
+            });
+        }
+
+        if (utilisateur.role === 'artisan') {
+            return res.status(409).json({
+                message: "Pour bloquer un artisan, ouvrez Examiner le dossier : la décision, son motif et l'e-mail doivent être enregistrés ensemble."
             });
         }
 
@@ -251,6 +257,12 @@ async function debloquerUtilisateur(req, res) {
         if (utilisateur.role === "admin") {
             return res.status(400).json({
                 message: "Impossible de dÃ©bloquer un administrateur."
+            });
+        }
+
+        if (utilisateur.role === 'artisan') {
+            return res.status(409).json({
+                message: "Pour activer un artisan, ouvrez Examiner le dossier afin de vérifier les justificatifs et de notifier la décision."
             });
         }
 

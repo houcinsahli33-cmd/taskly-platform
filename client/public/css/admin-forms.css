@@ -20,3 +20,57 @@
 #admin-decision-info{font-size:.85rem;line-height:1.5;color:#126448}.admin-form-hint{color:#617d6e;font-size:.8rem;margin:0 0 12px}
 @media(max-width:1000px){.admin-review-layout{grid-template-columns:minmax(0,1fr)}.admin-review-decision{position:static}}
 @media(max-width:600px){.admin-content .admin-settings-panel{padding:18px}.admin-review-layout .review-document{align-items:flex-start;flex-direction:column}}
+
+/* Historique de moderation : formulaire interne uniquement. */
+.admin-review-layout .review-audit{display:grid;gap:5px;margin:0 0 10px;padding:12px 14px;border-left:3px solid #167859;background:#f5faf7;border-radius:0 10px 10px 0}
+.admin-review-layout .review-audit strong{color:#124f37;font-size:.9rem}
+.admin-review-layout .review-audit span,.admin-review-layout .review-audit small{color:#587568;font-size:.79rem}
+.admin-review-layout .review-audit p{margin:4px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* Refonte ciblée : liste, filtres et formulaire d'examen (sans toucher à la connexion admin) */
+.review-controls{display:grid;grid-template-columns:minmax(220px,1.4fr) minmax(185px,1fr) auto;gap:12px;align-items:end;margin:20px 0 14px}
+.review-controls label{display:grid;gap:7px;font-weight:700;font-size:.84rem;color:#345b4d}
+.review-controls input,.review-controls select{min-width:0;width:100%;height:44px;box-sizing:border-box;padding:9px 12px;font:inherit;border-radius:10px;border:1px solid #d2e2d9;background:#fff;color:#203f32}
+.review-controls input:focus-visible,.review-controls select:focus-visible{outline:2px solid #128767;outline-offset:2px}
+.review-controls button{height:44px}
+.review-summary{display:flex;flex-wrap:wrap;gap:8px 16px;margin:8px 0 18px;font-size:.82rem;color:#557163}
+.review-summary span{border-radius:9px;background:#f3f8f5;padding:8px 11px}
+.review-summary strong{font-variant-numeric:tabular-nums;color:#174e36}
+.review-summary .review-result-count{margin-left:auto;background:#e7f2ed}
+.review-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.review-account{border:1px solid #dce9e1;border-radius:14px;background:white;display:flex;gap:14px;align-items:start;justify-content:space-between;padding:16px}
+.review-account.selected{border-color:#1c936e;box-shadow:0 0 0 2px #12876720}
+.review-account-info{min-width:0;overflow-wrap:anywhere}
+.review-account-info h3{font-size:1rem;line-height:1.4;color:#173b2d;margin:0 0 5px}
+.review-account-info p{font-size:.82rem;line-height:1.4;margin:3px 0}
+.review-account-email{color:#5f796b}
+.review-account-actions{display:grid;gap:8px;justify-items:end;flex-shrink:0}
+.review-account-actions small{color:#617d6e}
+.review-status{display:inline-block;width:max-content;max-width:100%;font-size:.76rem;font-weight:700;border-radius:99px;padding:5px 9px}
+.review-status--pending{color:#7e580a;background:#fff1cd}
+.review-status--complement{color:#7c4813;background:#ffe8d1}
+.review-status--approved{color:#146342;background:#dbf6e8}
+.review-status--blocked{color:#a62d36;background:#ffeaeb}
+.review-dossier{margin-top:18px;scroll-margin-top:20px;overflow:hidden}
+.review-dossier-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.review-dossier-header h3{margin:4px 0 10px;color:#143d2d}
+.review-eyebrow{font-size:.74rem;font-weight:800;letter-spacing:.07em;color:#607d70;margin:0}
+.review-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.review-facts div{background:#f6faf7;border:1px solid #e4eee7;padding:11px;border-radius:10px;min-width:0}
+.review-facts dt{font-size:.72rem;color:#617b6c;margin-bottom:5px}
+.review-facts dd{margin:0;color:#204b39;font-size:.9rem;font-weight:700;overflow-wrap:anywhere}
+.review-description{white-space:pre-wrap;overflow-wrap:anywhere;color:#345b4d}
+.review-last-reason,.review-warning{background:#fff4e5;border:1px solid #f1d2a8;border-radius:10px;padding:12px;color:#825016;line-height:1.5}
+.review-history{padding:0;margin:0;list-style:none;display:grid;gap:10px}
+.review-history-item{padding:12px;border:1px solid #e2eae4;border-left:3px solid #159573;background:#fbfdfb;border-radius:8px;display:grid;gap:5px;font-size:.84rem;overflow-wrap:anywhere}
+.review-history-item strong{color:#1c4e39}.review-history-item p{margin:4px 0 0;white-space:pre-wrap}
+.review-history-date{font-size:.75rem;color:#5d796d}
+.review-empty{background:#f7faf8;padding:14px;border:1px dashed #c8dbce;border-radius:10px;color:#658073}
+.review-confirm{display:flex!important;flex-direction:row;gap:10px;align-items:flex-start;color:#355c4a;font-size:.81rem;line-height:1.5}
+.review-confirm input{accent-color:#178365;margin-top:3px;flex:0 0 auto}
+.review-notification{display:flex;gap:8px;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #dae7de;font-size:.8rem}
+.review-notification strong{color:#385d4b}
+.review-document small{display:block;color:#60786d;margin-top:5px}
+.review-support p{white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:1150px){.review-list{grid-template-columns:1fr}}
+@media(max-width:720px){.review-controls{grid-template-columns:1fr}.review-controls button{width:100%}.review-facts{grid-template-columns:1fr}.review-account{flex-direction:column}.review-account-actions{display:flex;flex-wrap:wrap;justify-items:start;align-items:center;gap:10px}.review-summary .review-result-count{margin-left:0}}

@@ -122,7 +122,8 @@ async function chargerUtilisateursAdmin() {
                 <td>${badgeStatut(u.statut_compte)}</td>
                 <td>${formatDate(u.created_at)}</td>
                 <td>
-                  ${u.role === "admin" ? `<span class="muted">Protégé</span>` : u.statut_compte === "bloque"
+                  ${u.role === "admin" ? `<span class="muted">Protégé</span>` : u.role === "artisan"
+                    ? `<button class="btn small outline" type="button" data-review-user="${Number(u.id)}">Examiner</button>` : u.statut_compte === "bloque"
                     ? `<button class="btn small outline" type="button" data-unblock-user="${u.id}">Débloquer</button>`
                     : `<button class="btn small danger" type="button" data-open-block="${u.id}">Bloquer</button>`}
                 </td>
@@ -173,7 +174,9 @@ async function chargerSignalementsAdmin() {
                 <td>${echapperHTML(nomComplet(s, "signale_"))}<br><span class="text-small muted">${echapperHTML(s.signale_email)} · ${echapperHTML(s.signale_role)}</span><br>${badgeStatut(s.signale_statut_compte)}</td>
                 <td>Demande #${s.demande_id}</td>
                 <td>${formatDateHeure(s.created_at)}</td>
-                <td>${s.signale_role === "admin" || s.signale_statut_compte === "bloque" ? `<span class="muted">Aucune</span>` : `<button class="btn small danger" type="button" data-open-block="${s.signale_user_id}">Bloquer</button>`}</td>
+                <td>${s.signale_role === "admin" ? `<span class="muted">Protégé</span>` : s.signale_role === "artisan"
+                  ? `<button class="btn small outline" type="button" data-review-user="${Number(s.signale_user_id)}">Examiner</button>`
+                  : s.signale_statut_compte === "bloque" ? `<span class="muted">Déjà bloqué</span>` : `<button class="btn small danger" type="button" data-open-block="${Number(s.signale_user_id)}">Bloquer</button>`}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -219,7 +222,8 @@ async function chargerContactsAdmin() {
                 <td>${echapperHTML(c.nom)}<br><span class="text-small muted">${echapperHTML(c.email)}</span></td>
                 <td>${badgeStatut(c.statut)}</td>
                 <td>Envoyé : ${formatDateHeure(c.created_at)}${c.date_traitement ? `<br>Traité : ${formatDateHeure(c.date_traitement)}` : ""}</td>
-                <td>${c.statut === "nouveau" ? `<button class="btn small outline" type="button" data-mark-contact="${c.id}">Marquer comme traité</button>` : `<span class="muted">Traité</span>`}</td>
+                <td>${c.contexte === 'artisan_activation' && c.user_id ? `<button class="btn small outline" type="button" data-review-user="${Number(c.user_id)}">Voir dossier</button> ` : ''}
+                  ${c.statut === "nouveau" ? `<button class="btn small outline" type="button" data-mark-contact="${c.id}">Marquer comme traité</button>` : `<span class="muted">Traité</span>`}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -296,6 +300,15 @@ function ouvrirServiceModal(service = null) {
 // Initialiser les actions admin
 function initialiserActionsAdmin() {
   document.addEventListener("click", async (event) => {
+    const examiner = event.target.closest("[data-review-user]");
+    if (examiner) {
+      try {
+        await ouvrirDossierParUtilisateur(examiner.dataset.reviewUser);
+      } catch (error) {
+        afficherToast(error.message, "error");
+      }
+      return;
+    }
     const blocage = event.target.closest("[data-open-block]");
     const debloquer = event.target.closest("[data-unblock-user]");
     const marquerContact = event.target.closest("[data-mark-contact]");

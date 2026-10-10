@@ -11,7 +11,12 @@ router.get('/artisans',async(req,res)=>{
 router.get('/artisans/:id/documents',async(req,res)=>{
   try{const [rows]=await db.query('SELECT id,type_document,original_name,created_at FROM artisan_documents WHERE artisan_id=?',[req.params.id]);const [support]=await db.query("SELECT id,message,statut,created_at FROM contacts_support WHERE user_id=(SELECT user_id FROM artisans WHERE id=?) AND contexte='artisan_activation' ORDER BY id DESC LIMIT 30",[req.params.id]);
     const [notifications]=await db.query('SELECT id,statut,created_at,sent_at FROM account_notifications WHERE user_id=(SELECT user_id FROM artisans WHERE id=?) ORDER BY id DESC LIMIT 5',[req.params.id]);
-    res.json({documents:rows,support,notifications});}
+    const [historique]=await db.query(`SELECT va.id,va.ancien_statut,va.nouveau_statut,va.commentaire,va.created_at,
+      au.nom AS admin_nom,au.prenom AS admin_prenom
+      FROM verification_audit va LEFT JOIN users au ON au.id=va.admin_user_id
+      WHERE va.artisan_id=? ORDER BY va.created_at DESC,va.id DESC LIMIT 30`,[req.params.id]);
+    res.set('Cache-Control','no-store');
+    res.json({documents:rows,support,notifications,historique});}
   catch(e){console.error(e.message);res.status(500).json({message:'Erreur serveur.'});}
 });
 router.get('/documents/:id',async(req,res)=>{

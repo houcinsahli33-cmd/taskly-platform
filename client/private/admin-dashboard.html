@@ -295,12 +295,25 @@
               n'est pas une certification officielle.
             </p>
 
-            <div id="admin-verification-list"></div>
-
-            <div
-              id="admin-verification-details"
-              class="mt-22">
+            <div class="review-controls" role="search" aria-label="Rechercher un dossier artisan">
+              <label for="admin-verification-search">Rechercher un artisan
+                <input id="admin-verification-search" type="search" placeholder="Nom, e-mail, métier ou ville" autocomplete="off">
+              </label>
+              <label for="admin-verification-filter">Statut du dossier
+                <select id="admin-verification-filter">
+                  <option value="tous">Tous les dossiers</option>
+                  <option value="en_attente">En attente</option>
+                  <option value="a_completer">Complément demandé</option>
+                  <option value="approuve">Activés</option>
+                  <option value="refuse">Bloqués / refusés</option>
+                </select>
+              </label>
+              <button class="btn outline" id="admin-verification-refresh" type="button">Actualiser</button>
             </div>
+            <div id="admin-verification-summary" class="review-summary" aria-live="polite"></div>
+            <div id="admin-verification-list" class="review-list" aria-live="polite"></div>
+
+            <div id="admin-verification-details" class="mt-22" aria-live="polite"></div>
 
           </div>
 

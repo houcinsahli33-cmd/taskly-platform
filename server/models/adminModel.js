@@ -150,7 +150,7 @@ async function bloquerUtilisateur(id, motifBlocage) {
             motif_blocage = ?,
             date_blocage = NOW()
         WHERE id = ?
-        AND role <> 'admin'
+        AND role = 'client'
     `;
 
     const [resultat] = await db.promise().query(sql, [
@@ -169,7 +169,7 @@ async function debloquerUtilisateur(id) {
             motif_blocage = NULL,
             date_blocage = NULL
         WHERE id = ?
-        AND role <> 'admin'
+        AND role = 'client'
     `;
 
     const [resultat] = await db.promise().query(sql, [id]);
