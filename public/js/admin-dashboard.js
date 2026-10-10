@@ -381,16 +381,16 @@ function initialiserActionsAdmin() {
     bouton.disabled = true;
     const serviceActuel = adminServices.find((service) => String(service.id) === String(id));
 
-    const payload = {
-      nom: document.getElementById("service-name").value.trim(),
-      description: document.getElementById("service-description").value.trim(),
-      image: serviceActuel?.image || null
-    };
+    const payload = new FormData();
+    payload.append('nom',document.getElementById('service-name').value.trim());
+    payload.append('description',document.getElementById('service-description').value.trim());
+    const photo=document.getElementById('service-photo').files[0];
+    if(photo)payload.append('photo',photo);
 
     try {
       await requeteAPI(id ? `/api/admin/services/${id}` : "/api/admin/services", {
         method: id ? "PUT" : "POST",
-        body: JSON.stringify(payload)
+        body: payload
       });
       afficherToast(id ? "Service modifié." : "Service ajouté.");
       fermerModale("service-modal");

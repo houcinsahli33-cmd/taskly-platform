@@ -1,0 +1,11 @@
+require('dotenv').config({path:require('path').join(__dirname,'../server/.env')});
+const pool=require('../server/config/db');
+(async()=>{const email=String(process.argv[2]||'').trim().toLowerCase();if(!email)throw Error('Adresse du compte admin existant requise.');
+const conn=await pool.promise().getConnection();try{await conn.beginTransaction();
+const [rows]=await conn.query("SELECT id FROM users WHERE email=? AND role='admin' AND statut_compte='actif' FOR UPDATE",[email]);
+if(rows.length!==1)throw Error('Compte admin actif introuvable.');
+const [principaux]=await conn.query("SELECT user_id FROM admin_roles WHERE niveau='principal' FOR UPDATE");
+if(principaux.some(x=>x.user_id!==rows[0].id))throw Error('Un autre principal existe déjà. Aucune modification.');
+await conn.query("INSERT INTO admin_roles(user_id,niveau) VALUES (?,'principal') ON DUPLICATE KEY UPDATE niveau='principal'",[rows[0].id]);
+await conn.commit();console.log('Rôle principal attribué au compte choisi.');
+}catch(e){await conn.rollback();throw e;}finally{conn.release();await pool.promise().end();}})().catch(e=>{console.error(e.code||e.message);process.exitCode=1;});

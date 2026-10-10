@@ -401,7 +401,7 @@ function initialiserInscriptionArtisan() {
     };
 
     try {
-      await requeteAPI("/api/auth/register", { method: "POST", body: JSON.stringify(payload) });
+      await requeteAPI("/api/auth/register", { method: "POST", body: (()=>{const data=new FormData();Object.entries(payload).forEach(([k,v])=>data.append(k,v));const file=document.getElementById('artisan-document').files[0];if(!file)throw new Error('Diplôme ou certificat obligatoire.');data.append('document',file);data.append('type_document',document.getElementById('artisan-document-type').value);return data;})() });
       afficherToast("Un code de validation vous a été envoyé par e-mail.", "success");
       window.location.href = `/verify-email.html`;
     } catch (error) {

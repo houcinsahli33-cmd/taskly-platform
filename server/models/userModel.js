@@ -21,7 +21,7 @@ async function creerUtilisateur(nom, prenom, email, motDePasse, role) {
 // Trouver un utilisateur par son id
 async function trouverUtilisateurParId(id) {
     const sql = `
-        SELECT id, nom, prenom, email, role, photo_profil, statut_compte, motif_blocage
+        SELECT id, nom, prenom, email, role, photo_profil, statut_compte, motif_blocage, email_verified, admin_session_version
         FROM users
         WHERE id = ?
     `;

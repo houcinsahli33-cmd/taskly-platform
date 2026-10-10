@@ -1,34 +1,53 @@
-// Ce fichier contient les routes liées à l'authentification. Il définit les chemins pour l'inscription, la connexion et la déconnexion. Chaque route appelle une fonction du controller correspondant.
 
-const express = require("express"); // on importe express pour créer les routes
-const authController = require("../controllers/authController"); // on importe le controller d'authentification qui contient les fonctions liées à l'authentification
-const { verifierConnexion } = require("../middleware/authMiddleware"); // on importe le middleware pour verifier la connexion
-const { uploadPhotoProfil } = require("../middleware/uploadMiddleware"); // on importe le middleware pour l'upload des photos de profil
+const express = require("express");
 
-const {limiter,csrfToken}=require('../middleware/securityMiddleware');
+const authController = require("../controllers/authController");
+
+const { verifierConnexion } = require("../middleware/authMiddleware");
+
+const { uploadPhotoProfil } = require("../middleware/uploadMiddleware");
+
+const { limiter, csrfToken } = require("../middleware/securityMiddleware");
+
+// Creation du routeur
 const router = express.Router();
-router.get('/csrf',csrfToken);
-const protection=limiter({max:12}); // on cree un routeur express pour definir les routes
 
-// route pour inscrire un nouvel utilisateur
-router.post("/register",protection, authController.inscription);
+// Protection contre les tentatives excessives
+const protection = limiter({ max: 12 });
 
-// route pour connecter un utilisateur
-router.post("/login",protection, authController.connexion);
+// Recuperer le jeton de securite CSRF
+router.get("/csrf", csrfToken);
 
-// route pour deconnecter un utilisateur
-router.get('/pending',protection,authController.etatVerification);
-router.post('/verify-email',protection,authController.confirmerEmail);
-router.post('/resend-email',protection,authController.renvoyerCodeEmail);
+// Inscription
+router.post("/register", protection, require('../middleware/documentUpload').upload.single('document'), authController.inscription);
+
+// Connexion
+router.post("/login", protection, authController.connexion);
+
+// Verification de l'adresse e-mail
+router.get("/pending", protection, authController.etatVerification);
+router.post("/verify-email", protection, authController.confirmerEmail);
+router.post("/resend-email", protection, authController.renvoyerCodeEmail);
+
+// Deconnexion
 router.post("/logout", authController.deconnexion);
 
-// route pour recuperer l'utilisateur connecte
-router.get("/me", authController.utilisateurConnecte);
+// Utilisateur connecte
+router.get("/me", verifierConnexion, authController.utilisateurConnecte);
 
 // Modifier la photo de profil
-router.put("/photo", verifierConnexion, uploadPhotoProfil.single("photo"), authController.modifierPhotoProfil);
+router.put(
+    "/photo",
+    verifierConnexion,
+    uploadPhotoProfil.single("photo"),
+    authController.modifierPhotoProfil
+);
 
 // Supprimer la photo de profil
-router.delete("/photo", verifierConnexion, authController.supprimerPhotoProfil);
+router.delete(
+    "/photo",
+    verifierConnexion,
+    authController.supprimerPhotoProfil
+);
 
-module.exports = router; // on exporte le routeur
+module.exports = router;

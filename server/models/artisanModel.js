@@ -1,12 +1,12 @@
-// Ce fichier contient les requêtes SQL liées à la table artisans.
-// Il sera utilisé pour créer un profil artisan et récupérer les informations des artisans.
+// Ce fichier contient les requÃªtes SQL liÃ©es Ã  la table artisans.
+// Il sera utilisÃ© pour crÃ©er un profil artisan et rÃ©cupÃ©rer les informations des artisans.
 
-const db = require("../config/db"); // on importe la connexion à la base de données depuis db.js
+const db = require("../config/db"); // on importe la connexion Ã  la base de donnÃ©es depuis db.js
 const { obtenirCommunesWilaya } = require("../helpers/algeriaLocations");
 
-// création d'un profil artisan
+// crÃ©ation d'un profil artisan
 async function creerProfilArtisan(userId, serviceId, ville, telephone, description, experience) {
-    const sql = "INSERT INTO artisans (user_id, service_id, ville, telephone, description, experience) VALUES (?, ?, ?, ?, ?, ?)"; // requete SQL pour créer un profil artisan
+    const sql = "INSERT INTO artisans (user_id, service_id, ville, telephone, description, experience) VALUES (?, ?, ?, ?, ?, ?)"; // requete SQL pour crÃ©er un profil artisan
 
     const [resultat] = await db.promise().query(sql, [
         userId,
@@ -45,7 +45,7 @@ async function trouverTousLesArtisans(filtres = {}) {
         LEFT JOIN avis ON avis.artisan_id = artisans.id
         LEFT JOIN demandes ON demandes.artisan_id = artisans.id
         -- Condition toujours vraie qui permet d'ajouter facilement d'autres conditions avec AND
-        WHERE artisans.verification_statut = 'approuve' AND users.statut_compte = 'actif'
+        WHERE artisans.verification_statut = 'approuve' AND users.statut_compte = 'actif' AND users.email_verified = 1
     `;
 
     const valeurs = []; // on cree un tableau pour stocker les valeurs de filtres qui vont remplacer les ?
@@ -57,7 +57,7 @@ async function trouverTousLesArtisans(filtres = {}) {
     }
 
     // La recherche publique se fait au niveau Wilaya. La commune reste utile
-    // pour l'adresse, mais elle ne doit pas rendre les résultats trop étroits.
+    // pour l'adresse, mais elle ne doit pas rendre les rÃ©sultats trop Ã©troits.
     if (filtres.wilaya) {
         const lieuxWilaya = obtenirCommunesWilaya(filtres.wilaya);
         const lieux = lieuxWilaya.length ? lieuxWilaya : [filtres.wilaya];
@@ -132,7 +132,7 @@ async function trouverArtisanParId(id) {
         JOIN services ON artisans.service_id = services.id
         LEFT JOIN avis ON avis.artisan_id = artisans.id
         LEFT JOIN demandes ON demandes.artisan_id = artisans.id
-        WHERE artisans.id = ? AND artisans.verification_statut = 'approuve' AND users.statut_compte = 'actif'
+        WHERE artisans.id = ? AND artisans.verification_statut = 'approuve' AND users.statut_compte = 'actif' AND users.email_verified = 1
         GROUP BY 
             artisans.id,
             artisans.user_id,
