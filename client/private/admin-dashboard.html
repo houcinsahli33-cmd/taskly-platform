@@ -47,6 +47,97 @@
         <div class="panel-body"><p class="muted">Identité et qualifications : examen manuel des justificatifs. Une vérification documentaire n'est pas une certification officielle.</p><div id="admin-verification-list"></div><div id="admin-verification-details" class="mt-22"></div></div>
       </div></section>
       <section class="admin-section active" id="admin-overview">
+        
+<!-- Gestion du compte administrateur -->
+<section class="admin-section" id="admin-account">
+
+  <div class="admin-settings-heading">
+    <div>
+      <h2>Mon compte administrateur</h2>
+      <p>Modifier mes informations et mes identifiants.</p>
+    </div>
+    <span id="admin-account-role">Administrateur</span>
+  </div>
+
+  <div class="admin-settings-grid">
+
+    <!-- Informations personnelles -->
+    <section class="admin-settings-panel">
+      <h3>Informations personnelles</h3>
+
+      <form id="admin-profile-form" class="admin-settings-form">
+
+        <label for="admin-profile-nom">Nom</label>
+        <input id="admin-profile-nom" maxlength="100" required>
+
+        <label for="admin-profile-prenom">Prénom</label>
+        <input id="admin-profile-prenom" maxlength="100" required>
+
+        <label for="admin-profile-email">E-mail actuel</label>
+        <input id="admin-profile-email" type="email" readonly>
+
+        <button type="submit">Enregistrer les informations</button>
+        <p id="admin-profile-status" role="status"></p>
+
+      </form>
+    </section>
+
+    <!-- Changer le mot de passe -->
+    <section class="admin-settings-panel">
+      <h3>Changer mon mot de passe</h3>
+
+      <form id="admin-password-form" class="admin-settings-form">
+
+        <label for="admin-password-old">Mot de passe actuel</label>
+        <input id="admin-password-old" type="password" required>
+
+        <label for="admin-password-new">Nouveau mot de passe</label>
+        <input id="admin-password-new" type="password"
+               minlength="12" maxlength="128" required>
+
+        <label for="admin-password-repeat">Confirmer le mot de passe</label>
+        <input id="admin-password-repeat" type="password"
+               minlength="12" maxlength="128" required>
+
+        <button type="submit">Changer mon mot de passe</button>
+        <p id="admin-password-status" role="status"></p>
+
+      </form>
+    </section>
+
+    <!-- Changer l'adresse e-mail -->
+    <section class="admin-settings-panel admin-settings-wide">
+      <h3>Changer mon adresse e-mail</h3>
+
+      <form id="admin-email-request-form" class="admin-settings-form">
+
+        <label for="admin-email-new">Nouvelle adresse e-mail</label>
+        <input id="admin-email-new" type="email" required>
+
+        <label for="admin-email-password">Mot de passe actuel</label>
+        <input id="admin-email-password" type="password" required>
+
+        <button type="submit">Envoyer le code de confirmation</button>
+
+      </form>
+
+      <form id="admin-email-verify-form"
+            class="admin-settings-form" hidden>
+
+        <label for="admin-email-code">Code de vérification</label>
+        <input id="admin-email-code" type="text"
+               maxlength="6" pattern="[0-9]{6}" required>
+
+        <button type="submit">Confirmer la nouvelle adresse</button>
+
+      </form>
+
+      <p id="admin-email-status" role="status"></p>
+    </section>
+
+  </div>
+</section>
+
         <div class="stats-grid" id="admin-stats-grid"></div>
         <div class="admin-overview-grid">
           <div class="panel"><div class="panel-header"><h2>Derniers utilisateurs</h2></div><div class="panel-body" id="admin-latest-users"></div></div>
