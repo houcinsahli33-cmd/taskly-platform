@@ -215,7 +215,7 @@ async function chargerContactsAdmin() {
           <tbody>
             ${contacts.map((c) => `
               <tr>
-                <td><strong>${echapperHTML(c.sujet)}</strong><br><span class="muted">${echapperHTML(tronquer(c.message, 120))}</span></td>
+                <td><strong>${echapperHTML(c.sujet)}</strong>${c.contexte==='artisan_activation'?`<br><span class="badge primary">Artisan #${Number(c.user_id)} · Identité vérifiée</span>`:''}<br><span class="muted">${echapperHTML(tronquer(c.message, 120))}</span></td>
                 <td>${echapperHTML(c.nom)}<br><span class="text-small muted">${echapperHTML(c.email)}</span></td>
                 <td>${badgeStatut(c.statut)}</td>
                 <td>Envoyé : ${formatDateHeure(c.created_at)}${c.date_traitement ? `<br>Traité : ${formatDateHeure(c.date_traitement)}` : ""}</td>

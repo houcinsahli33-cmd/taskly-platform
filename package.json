@@ -11,7 +11,10 @@
     "db:migrate": "node scripts/migrate.js",
     "test": "node --test tests/*.test.js",
     "admin:principal": "node scripts/set-principal.js",
-    "documents:import": "node scripts/import-documents.js"
+    "documents:import": "node scripts/import-documents.js",
+    "db:migrate:accounts": "node scripts/migrate.js migration_comptes_support.sql",
+    "demo:prepare": "node scripts/prepare-pfe-demo.js --prepare",
+    "demo:apply": "node scripts/prepare-pfe-demo.js --apply"
   },
   "keywords": [],
   "author": "",

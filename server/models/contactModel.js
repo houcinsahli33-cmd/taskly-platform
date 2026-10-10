@@ -24,10 +24,11 @@ async function trouverMessageContactParIdEtEmail(id, email) {
             message,
             statut,
             created_at,
-            date_traitement
+            date_traitement, user_id, contexte, login_verified_at
         FROM contacts_support
         WHERE id = ?
         AND email = ?
+        AND contexte = 'public'
     `;
 
     const [resultats] = await db.promise().query(sql, [id, email]);
@@ -45,7 +46,7 @@ async function listerMessagesContact(statut) {
             message,
             statut,
             created_at,
-            date_traitement
+            date_traitement, user_id, contexte, login_verified_at
         FROM contacts_support
     `;
 
@@ -87,7 +88,7 @@ async function derniersMessagesContact() {
             message,
             statut,
             created_at,
-            date_traitement
+            date_traitement, user_id, contexte, login_verified_at
         FROM contacts_support
         ORDER BY created_at DESC
         LIMIT 8

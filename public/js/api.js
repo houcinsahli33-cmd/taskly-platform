@@ -50,7 +50,7 @@ async function requeteAPI(url, options = {}) {
     throw erreur;
   }
 
-  if (url==='/api/auth/login' || /\/auth\/(login|verify)$/.test(url) || url==='/api/auth/logout') reinitialiserCsrf();
+  if (url==='/api/auth/verify-email' || url==='/api/auth/login' || /\/auth\/(login|verify)$/.test(url) || url==='/api/auth/logout') reinitialiserCsrf();
   return data;
 }
 

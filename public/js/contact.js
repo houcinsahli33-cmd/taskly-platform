@@ -44,7 +44,7 @@ function initialiserContactSupport() {
 
       afficherAlerte(
         alerte,
-        `Votre message a été envoyé. Numéro de suivi : <strong>${data.contactId}</strong>`,
+        `Votre message a été envoyé. Numéro de suivi : ${data.contactId}`,
         "success"
       );
       form.reset();

@@ -1,35 +1,16 @@
 let artisansVerification=[];
-async function chargerArtisansVerification(){
-  const cible=document.getElementById('admin-verification-list');if(!cible)return;
-  try{const d=await requeteAPI('/api/admin-verification/artisans');artisansVerification=d.artisans;
-    cible.innerHTML=d.artisans.map(a=>`<div class="card mb-16" style="padding:16px">
-      <h3>${echapperHTML(a.nom)} ${echapperHTML(a.prenom)}</h3>
-      <p class="muted">${echapperHTML(a.service_nom)} Â· ${echapperHTML(a.ville)} Â· ${echapperHTML(({en_attente:"En attente",a_completer:"À compléter",approuve:"Approuvé",refuse:"Refusé"})[a.verification_statut]||a.verification_statut)} Â· ${Number(a.documents_count)} fichier(s)</p>
-      <button class="btn outline small" type="button" data-examine-artisan="${Number(a.id)}">Examiner les justificatifs</button>
-      </div>`).join('')||'<p>Aucun artisan.</p>';
-  }catch(e){cible.textContent=e.message;}
-}
-async function ouvrirDossierArtisan(id){
-  const zone=document.getElementById('admin-verification-details');
-  const a=artisansVerification.find(x=>Number(x.id)===Number(id));if(!a)return;
-  try{const d=await requeteAPI(`/api/admin-verification/artisans/${id}/documents`);
-    zone.innerHTML=`<div class="panel"><div class="panel-header"><h3>Dossier de ${echapperHTML(a.nom)} ${echapperHTML(a.prenom)}</h3></div><div class="panel-body">
-    ${d.documents.map(x=>`<p>${echapperHTML(x.type_document)} â€” <a class="btn outline small" href="/api/admin-verification/documents/${Number(x.id)}">TÃ©lÃ©charger le document</a></p>`).join('')||'<p>Aucun justificatif fourni.</p>'}
-    <form id="admin-decision-form" class="grid"><input type="hidden" name="id" value="${Number(id)}">
-      <label><span class="field-label">DÃ©cision</span><select class="form-select" name="statut"><option value="a_completer">Demander un complÃ©ment</option><option value="approuve">Approuver</option><option value="refuse">Refuser</option></select></label>
-      <label><span class="field-label">Motif (obligatoire en cas de refus ou complÃ©ment)</span><textarea class="form-textarea" name="commentaire" placeholder="DÃ©crivez ce qui a Ã©tÃ© contrÃ´lÃ©"></textarea></label>
-      <button class="btn primary" type="submit">Enregistrer la dÃ©cision</button></form><p id="admin-decision-info" role="status"></p></div></div>`;
-    zone.querySelector('form').addEventListener('submit',async(e)=>{
-      e.preventDefault();const f=new FormData(e.currentTarget);try{const r=await requeteAPI(`/api/admin-verification/artisans/${id}/decision`,{method:'PUT',body:JSON.stringify({statut:f.get('statut'),commentaire:f.get('commentaire')})});
-        zone.querySelector('#admin-decision-info').textContent=r.message;await chargerArtisansVerification();}
-      catch(err){zone.querySelector('#admin-decision-info').textContent=err.message;}
-    });
-  }catch(e){zone.textContent=e.message;}
-}
-document.addEventListener('DOMContentLoaded',async()=>{
-  await (window.tasklyAuthReady||Promise.resolve());if(window.utilisateurCourant?.role!=='admin')return;
-  await chargerArtisansVerification();
-  document.getElementById('admin-verification-list')?.addEventListener('click',e=>{
-    const b=e.target.closest('[data-examine-artisan]');if(b)ouvrirDossierArtisan(b.dataset.examineArtisan);
-  });
-});
+const verificationLabel=s=>({en_attente:'En attente',a_completer:'Complément demandé',approuve:'Activé',refuse:'Bloqué / refusé'})[s]||s;
+async function chargerArtisansVerification(){const target=document.getElementById('admin-verification-list');if(!target)return;try{const {artisans}=await requeteAPI('/api/admin-verification/artisans');artisansVerification=artisans;target.innerHTML=artisans.map(a=>`<article class="card mb-16" style="padding:16px"><h3>${echapperHTML(nomComplet(a))}</h3><p class="muted">${echapperHTML(a.service_nom)} · ${echapperHTML(a.ville)} · ${echapperHTML(verificationLabel(a.verification_statut))} · ${Number(a.documents_count)} pièce(s)</p><button class="btn outline small" type="button" data-examine-artisan="${Number(a.id)}">Examiner le dossier</button></article>`).join('')||'<p>Aucun artisan.</p>';}catch(e){target.textContent=e.message;}}
+async function ouvrirDossierArtisan(id){const zone=document.getElementById('admin-verification-details'),a=artisansVerification.find(x=>Number(x.id)===Number(id));if(!a)return;
+try{const d=await requeteAPI(`/api/admin-verification/artisans/${Number(id)}/documents`),safe=echapperHTML;
+zone.innerHTML=`<section class="panel"><div class="panel-header"><h3>Dossier de ${safe(nomComplet(a))}</h3></div><div class="panel-body"><p>${safe(a.email)} · ${safe(a.telephone)} · ${safe(a.ville)}</p><p>${safe(a.service_nom)} · ${Number(a.experience)} an(s) d’expérience</p><p>${safe(a.description||'')}</p><p>Compte : ${safe(a.statut_compte)} · Dossier : ${safe(verificationLabel(a.verification_statut))}</p><p>${safe(a.verification_commentaire||'')}</p><h4>Diplômes et certificats</h4>${d.documents.map(x=>`<div class="review-document"><span>${safe(x.type_document)} — ${safe(x.original_name)}</span><a class="btn outline small" href="/api/admin-verification/documents/${Number(x.id)}">Télécharger</a></div>`).join('')||'<p>Aucun document : activation impossible sans diplôme ou certificat.</p>'}<h4>Demandes au support liées au compte</h4>${d.support.map(m=>`<article class="mb-16 review-support"><strong>Demande #${Number(m.id)} · ${safe(formatDateHeure(m.created_at))}</strong><p style="white-space:pre-wrap">${safe(m.message)}</p><small>${safe(m.statut)}</small></article>`).join('')||'<p>Aucune demande liée.</p>'}<form id="admin-decision-form" class="grid"><label><span class="field-label">Décision</span><select class="form-select" name="statut"><option value="a_completer">Demander un complément</option><option value="approuve">Activer le compte</option><option value="refuse">Bloquer le compte</option></select></label><label><span class="field-label">Motif envoyé par e-mail (obligatoire pour blocage ou complément)</span><textarea class="form-textarea" name="commentaire" maxlength="500"></textarea></label><button class="btn primary" type="submit">Confirmer la décision</button></form><p id="admin-decision-info" role="status"></p><h4>Notifications e-mail</h4>${d.notifications.map(n=>`<p>${safe(formatDateHeure(n.created_at))} — ${safe(({sent:'Envoyé',pending:'En attente',sending:'En cours',failed:'Échec à réessayer'})[n.statut]||n.statut)} ${n.statut!=='sent'?`<button class="btn outline small" type="button" data-notification-retry="${Number(n.id)}">Réessayer</button>`:''}</p>`).join('')||'<p>Aucune notification.</p>'}</div></section>`;
+const body=zone.querySelector('.panel-body'),form=zone.querySelector('form');
+const layout=document.createElement('div'),evidence=document.createElement('div'),decision=document.createElement('div');
+layout.className='admin-review-layout';decision.className='admin-review-decision';
+const heading=document.createElement('h4');heading.textContent='Décision administrative';decision.appendChild(heading);
+let afterForm=false;for(const child of [...body.childNodes]){if(child===form)afterForm=true;(afterForm?decision:evidence).appendChild(child);}
+layout.append(evidence,decision);body.appendChild(layout);
+zone.querySelector('form').addEventListener('submit',async e=>{e.preventDefault();const b=e.currentTarget.querySelector('button'),f=new FormData(e.currentTarget);if(f.get('statut')!=='approuve' && String(f.get('commentaire')).trim().length<5){document.getElementById('admin-decision-info').textContent='Motif de cinq caractères minimum requis.';return;}b.disabled=true;try{const result=await requeteAPI(`/api/admin-verification/artisans/${Number(id)}/decision`,{method:'PUT',body:JSON.stringify({statut:f.get('statut'),commentaire:f.get('commentaire')})});afficherToast(result.message);await chargerArtisansVerification();await ouvrirDossierArtisan(id);}catch(err){document.getElementById('admin-decision-info').textContent=err.message;}finally{b.disabled=false;}});
+zone.querySelectorAll('[data-notification-retry]').forEach(b=>b.addEventListener('click',async()=>{b.disabled=true;try{const result=await requeteAPI(`/api/admin-verification/notifications/${b.dataset.notificationRetry}/retry`,{method:'POST',body:'{}'});afficherToast(result.message);await ouvrirDossierArtisan(id);}catch(e){afficherToast(e.message,'error');b.disabled=false;}}));
+}catch(e){zone.textContent=e.message;}}
+document.addEventListener('DOMContentLoaded',async()=>{await attendreSession();if(window.utilisateurCourant?.role!=='admin')return;await chargerArtisansVerification();document.getElementById('admin-verification-list')?.addEventListener('click',e=>{const b=e.target.closest('[data-examine-artisan]');if(b)ouvrirDossierArtisan(b.dataset.examineArtisan);});});

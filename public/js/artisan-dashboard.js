@@ -192,8 +192,8 @@ async function chargerProfilArtisanDashboard() {
   if (!cible || !window.utilisateurCourant) return;
 
   try {
-    const { artisans } = await requeteAPI("/api/artisans");
-    profilArtisanCourant = artisans.find((artisan) => artisan.user_id === window.utilisateurCourant.id);
+    const {compte}=await requeteAPI('/api/account');
+    profilArtisanCourant={...compte,id:compte.artisan_id,user_id:compte.id};
   } catch (error) {
     profilArtisanCourant = null;
   }

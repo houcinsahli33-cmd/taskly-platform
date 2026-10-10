@@ -6,7 +6,7 @@ const contactController = require("../controllers/contactController");
 const router = express.Router();
 
 // Envoyer un message au support
-router.post("/",contactController.envoyerMessageContact);
+router.post("/",require('../middleware/securityMiddleware').limiter({max:8}),contactController.envoyerMessageContact);
 
 // Consulter l'état d'un message de contact avec id + email
 router.get("/suivi",contactController.consulterMessageContact);

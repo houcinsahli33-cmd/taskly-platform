@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       actif = false;
       clearInterval(timer);
+      if(data.supportSeulement){window.location.replace(data.supportUrl);return;}
       notification('Code validé ! Ouverture de votre espace…');
       const role = data.utilisateur?.role;
       window.location.replace(role === 'artisan' ? '/artisan-dashboard.html' : '/client-dashboard.html');

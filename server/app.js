@@ -71,6 +71,11 @@ app.get(adminEntryPath + '/dashboard', headersAdminPrive, require('./middleware/
     return res.redirect(302, adminEntryPath);
   res.sendFile(path.join(__dirname, '../client/private/admin-dashboard.html'), {dotfiles:'allow'});
 });
+app.get(['/artisan-dashboard.html','/client-dashboard.html'],require('./middleware/authMiddleware').verifierConnexion,(req,res)=>{
+ const role=req.path.startsWith('/artisan-')?'artisan':'client';
+ if(req.session.utilisateur.role!==role)return res.status(403).send('Accès refusé.');
+ res.sendFile(path.join(__dirname,'../client/public',role+'-dashboard.html'),{dotfiles:'allow'});
+});
 app.use(express.static(path.join(__dirname,'../client/public'),{index:false}));
 app.get('/api/media/:id',async(req,res)=>{
   try {
@@ -87,6 +92,8 @@ app.use('/api/admin-verification',adminVerificationRoutes);
   app.use('/api/admin-settings', adminSettingsRoutes);
 
 // routes
+app.use('/api/account',require('./routes/accountRoutes'));
+app.use('/api/artisan-support',require('./routes/artisanSupportRoutes'));
 app.use("/api/auth", authRoutes); // routes liees a l'authentification
 app.use("/api/services", serviceRoutes); // routes liees aux services
 app.use("/api/artisans", artisanRoutes); // routes liees aux artisans
@@ -106,7 +113,8 @@ app.use((req, res) => {
 });
 
 app.use((err,req,res,next)=>{
-  console.error('Erreur requete :',err.message);
+  console.error('Erreur requête :',err.code||err.name);
+  if(req.path.startsWith('/api/') && !err.code?.startsWith('LIMIT_') && !err.status) return res.status(500).json({message:'Opération indisponible. Vérifiez les migrations de la base.'});
   res.status(err.code==='LIMIT_FILE_SIZE'?413:400).json({message:err.code==='LIMIT_FILE_SIZE'?'Fichier trop volumineux (3 Mo maximum).': 'Requete ou fichier invalide.'});
 });
 return app;

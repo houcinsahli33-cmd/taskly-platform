@@ -290,13 +290,11 @@ function initialiserConnexion() {
         window.location.href = lienDashboard(data.utilisateur.role);
       }
     } catch (error) {
-      if (error.status === 403 && error.data?.motif) {
-        afficherAlerte(alerte, `<strong>Votre compte a été bloqué.</strong><br>${echapperHTML(error.data.motif)}<br><a class="btn outline small mt-12" href="/contact.html">Contacter le support</a>`, "error");
-      } else {
-        afficherErreurChamp(inputEmail, " ");
-        afficherErreurChamp(inputPassword, "Identifiants incorrects ou introuvables.");
-        afficherToast(error.message, "error");
-      }
+      if(error.status===403){
+        afficherAlerte(alerte,error.message,'error');
+        const link=document.createElement('a');link.href='/contact.html';link.className='btn outline small mt-12';link.textContent='Contacter le support';alerte.appendChild(document.createElement('br'));alerte.appendChild(link);
+      }else{afficherAlerte(alerte,error.message,'error');}
+
     } finally {
       bouton.disabled = false;
     }

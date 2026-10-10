@@ -10,7 +10,7 @@
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/artisan-dashboard.js"></script>
   <script defer src="/js/artisan-verification.js"></script>
-</head>
+<link rel="stylesheet" href="/css/account-profile.css"><script defer src="/js/account-profile.js"></script></head>
 <body class="dashboard-page" data-require-role="artisan">
   <div id="site-header"></div>
   <main class="dashboard-shell">
@@ -78,13 +78,13 @@
             <form id="artisan-photo-form" class="mt-22">
               <label>
                 <span class="field-label">Photo de profil</span>
-                <input class="form-control" id="artisan-photo-input" type="file" accept="image/jpeg,image/png,image/webp">
+                <input class="form-control" id="artisan-photo-input" type="file" accept="image/jpeg,image/png">
               </label>
               <div class="request-actions">
                 <button class="btn primary" type="submit">Mettre à jour</button>
                 <button class="btn danger outline" type="button" id="artisan-photo-delete">Supprimer</button>
               </div>
-            </form>
+            </form><div id="account-profile-editor" class="mt-22"></div>
           </div>
         </section>
       </div>

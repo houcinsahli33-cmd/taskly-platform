@@ -7,7 +7,7 @@ async function envoyerMessageContact(req, res) {
     try {
         const { nom, email, sujet, message } = req.body;
 
-        if (!nom || !email || !sujet || !message) {
+        if (typeof nom!=='string' || nom.trim().length<2 || nom.length>100 || typeof email!=='string' || email.length>255 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || typeof sujet!=='string' || !sujet.trim() || sujet.length>255 || typeof message!=='string' || message.trim().length<10 || message.length>5000) {
             return res.status(400).json({
                 message: "Tous les champs sont obligatoires."
             });

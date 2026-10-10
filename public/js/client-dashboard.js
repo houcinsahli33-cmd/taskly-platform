@@ -172,10 +172,12 @@ function initialiserActionsClient() {
 }
 
 // Afficher le profil client
-function afficherProfilClient() {
+async function afficherProfilClient() {
   const cible = document.getElementById("client-profile-card");
   if (!cible || !window.utilisateurCourant) return;
-  const utilisateur = window.utilisateurCourant;
+  let utilisateur = window.utilisateurCourant;
+  try { const {compte}=await requeteAPI('/api/account');utilisateur={...utilisateur,...compte}; }
+  catch(e) {cible.textContent=e.message;return;}
 
   const bienvenue = document.getElementById("client-welcome");
   if (bienvenue) {
@@ -195,9 +197,9 @@ function afficherProfilClient() {
       <div><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></div>
       <div><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></div>
       <div><strong>Email</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></div>
-      <div><strong>Téléphone</strong><br><span class="muted">Non disponible dans cette session</span></div>
-      <div><strong>Commune</strong><br><span class="muted">Non disponible dans cette session</span></div>
-      <div><strong>Adresse</strong><br><span class="muted">Non disponible dans cette session</span></div>
+      <div><strong>Téléphone</strong><br><span class="muted">${echapperHTML(utilisateur.telephone || "Non précisé")}</span></div>
+      <div><strong>Commune</strong><br><span class="muted">${echapperHTML(utilisateur.ville || "Non précisé")}</span></div>
+      <div><strong>Adresse</strong><br><span class="muted">${echapperHTML(utilisateur.adresse || "Non précisé")}</span></div>
     </div>
   `;
 }

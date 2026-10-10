@@ -1,0 +1,22 @@
+/* Formulaires internes uniquement. Navigation et connexion admin conservées. */
+.admin-content .admin-settings-panel{background:#fff;border:1px solid #dfeae5;border-radius:16px;padding:24px;box-shadow:0 5px 20px rgba(15,62,47,.035)}
+.admin-content .admin-settings-panel h3{font-size:1.08rem;letter-spacing:-.015em;color:#153a2e;margin-bottom:16px}
+.admin-content .admin-settings-form{display:grid;gap:10px}
+.admin-content .admin-settings-form label,.admin-content .modal-card .field-label,#admin-decision-form .field-label{font-size:.84rem;font-weight:700;color:#345b4d;display:block;margin:0 0 6px}
+.admin-content .admin-settings-form input,.admin-content .admin-settings-form select,.admin-content .admin-settings-form textarea,.dashboard-page[data-require-role=admin] .modal-card .form-control,.dashboard-page[data-require-role=admin] .modal-card .form-select,#admin-decision-form .form-select{box-sizing:border-box;width:100%;min-height:44px;border:1px solid #d2e2d9;border-radius:10px;background:#fcfefc;padding:10px 12px;font:inherit;font-size:.9rem;color:#203f32}
+.admin-content .admin-settings-form input:focus-visible,.dashboard-page[data-require-role=admin] .modal-card input:focus-visible,.dashboard-page[data-require-role=admin] .modal-card textarea:focus-visible,#admin-decision-form select:focus-visible,#admin-decision-form textarea:focus-visible{outline:0;border-color:#128767;box-shadow:0 0 0 3px #12876718}
+.admin-content .admin-settings-form button[type=submit]{margin-top:8px;border-radius:10px;min-height:44px}
+.admin-content .admin-settings-form small{font-size:.78rem;line-height:1.5;color:#647d70}
+.admin-content .admin-settings-form [readonly]{background:#f1f6f3;color:#60786d}
+.dashboard-page[data-require-role=admin] .modal-card{border-radius:18px;border:1px solid #dce8e1;box-shadow:0 24px 70px #093e3024}
+.dashboard-page[data-require-role=admin] .modal-body form{display:grid;gap:16px}
+.dashboard-page[data-require-role=admin] .modal-card .form-textarea,#admin-decision-form .form-textarea{width:100%;min-height:110px;border:1px solid #d2e2d9;border-radius:10px;padding:12px;background:#fcfefc;font:inherit;resize:vertical}
+.admin-review-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,1fr);gap:24px;align-items:start}
+.admin-review-layout>div{min-width:0}.admin-review-decision{position:sticky;top:20px;background:#f3f9f5;border:1px solid #dceae1;border-radius:14px;padding:20px}
+.admin-review-layout h4{font-size:.92rem;color:#184d38;margin:22px 0 12px;padding-bottom:8px;border-bottom:1px solid #e2ebe5}
+.admin-review-decision #admin-decision-form{display:grid;gap:16px}.admin-review-decision #admin-decision-form .btn{width:100%;min-height:44px;border-radius:10px}
+.admin-review-layout .review-document{display:flex;gap:12px;justify-content:space-between;align-items:center;border:1px solid #dce9e1;border-radius:10px;background:#fafdfb;padding:12px;margin-bottom:10px}
+.admin-review-layout .review-document span{min-width:0;overflow-wrap:anywhere}.admin-review-layout .review-support{border-left:3px solid #159573;background:#f5faf7;border-radius:0 10px 10px 0;padding:12px 14px}
+#admin-decision-info{font-size:.85rem;line-height:1.5;color:#126448}.admin-form-hint{color:#617d6e;font-size:.8rem;margin:0 0 12px}
+@media(max-width:1000px){.admin-review-layout{grid-template-columns:minmax(0,1fr)}.admin-review-decision{position:static}}
+@media(max-width:600px){.admin-content .admin-settings-panel{padding:18px}.admin-review-layout .review-document{align-items:flex-start;flex-direction:column}}

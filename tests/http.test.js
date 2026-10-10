@@ -16,6 +16,9 @@ test('HTTP : CSRF, pages privées, médias et inscription sans pièce',async()=>
   assert.equal((await fetch(base+'/admin-dashboard.html')).status,404);
   assert.equal((await fetch(base+process.env.ADMIN_ENTRY_PATH+'/dashboard')).status,401);
   assert.equal((await fetch(base+'/api/admin/users')).status,401);
+  assert.equal((await fetch(base+'/api/account')).status,401);
+  assert.equal((await fetch(base+'/api/artisan-support/context')).status,401);
+  assert.equal((await fetch(base+'/artisan-dashboard.html')).status,401);
   assert.equal((await fetch(base+'/api/media/'+'a'.repeat(64))).status,404);
   assert.equal((await fetch(base+'/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,403);
   const csrf=await fetch(base+'/api/auth/csrf');const cookie=csrf.headers.get('set-cookie').split(';')[0];const {csrfToken}=await csrf.json();

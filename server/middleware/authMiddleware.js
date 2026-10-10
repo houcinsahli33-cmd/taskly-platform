@@ -11,6 +11,15 @@ async function verifierConnexion(req,res,next) {
       req.session.destroy(()=>{});
       return res.status(403).json({message:'Votre compte est bloqué ou votre session a expiré. Contactez le support.'});
     }
+    if(user.role!=='admin' && Number(user.admin_session_version||0)!==Number(req.session.accountSessionVersion||0)) {
+      req.session.destroy(()=>{});return res.status(401).json({message:'Session expirée. Reconnectez-vous.'});
+    }
+    if(user.role==='artisan') {
+      const artisan=await require('../models/artisanModel').trouverArtisanParUserId(user.id);
+      if(!require('../services/accountAccess').autoriserEspace(user,artisan)) {
+        req.session.destroy(()=>{});return res.status(403).json({message:'Votre compte artisan doit être activé. Reconnectez-vous pour contacter le support.'});
+      }
+    }
     next();
   } catch(e) {res.status(503).json({message:'Vérification de session indisponible.'});}
 }
