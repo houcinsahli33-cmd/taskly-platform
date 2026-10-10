@@ -63,20 +63,20 @@ function headersAdminPrive(req, res, next) {
 app.get(adminEntryPath, headersAdminPrive, (req, res) => {
   if (req.session.utilisateur?.role === 'admin' && req.session.adminVerified === true)
     return res.redirect(302, adminEntryPath + '/dashboard');
-  res.sendFile(path.join(__dirname, '../private/admin-login.html'), {dotfiles:'allow'});
+  res.sendFile(path.join(__dirname, '../client/private/admin-login.html'), {dotfiles:'allow'});
 });
 
 app.get(adminEntryPath + '/dashboard', headersAdminPrive, require('./middleware/authMiddleware').verifierConnexion, require('./middleware/authMiddleware').verifierAdmin, (req, res) => {
   if (req.session.utilisateur?.role !== 'admin' || req.session.adminVerified !== true)
     return res.redirect(302, adminEntryPath);
-  res.sendFile(path.join(__dirname, '../private/admin-dashboard.html'), {dotfiles:'allow'});
+  res.sendFile(path.join(__dirname, '../client/private/admin-dashboard.html'), {dotfiles:'allow'});
 });
 app.get(['/artisan-dashboard.html','/client-dashboard.html'],require('./middleware/authMiddleware').verifierConnexion,(req,res)=>{
  const role=req.path.startsWith('/artisan-')?'artisan':'client';
  if(req.session.utilisateur.role!==role)return res.status(403).send('Accès refusé.');
- res.sendFile(path.join(__dirname,'../client/public',role+'-dashboard.html'),{dotfiles:'allow'});
+ res.sendFile(path.join(__dirname,'../client/private',role+'-dashboard.html'),{dotfiles:'allow'});
 });
-app.use(express.static(path.join(__dirname,'../client/public'),{index:false}));
+app.use(require('./middleware/publicFiles').publicFiles);
 app.get('/api/media/:id',async(req,res)=>{
   try {
     const file=await require('./services/fileStorage').lire(req.params.id,false);

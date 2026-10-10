@@ -213,82 +213,21 @@ async function utilisateurConnecte(req, res) {
 }
 
 // Modifier la photo de profil de l'utilisateur connecte
-async function modifierPhotoProfil(req, res) {
-    try {
-        if (!req.file) {
-            return res.status(400).json({
-                message: "Veuillez choisir une image."
-            });
-        }
-
-        const utilisateur = await userModel.trouverUtilisateurParId(req.session.utilisateur.id);
-
-        if (!utilisateur) {
-            return res.status(404).json({
-                message: "Utilisateur introuvable."
-            });
-        }
-
-        const identifiant = await require('../services/fileStorage').enregistrer(req.file,false);
-        const cheminPhoto = '/api/media/' + identifiant;
-
-        await userModel.modifierPhotoProfil(
-            req.session.utilisateur.id,
-            cheminPhoto
-        );
-
-        req.session.utilisateur.photo_profil = cheminPhoto;
-
-        res.status(200).json({
-            message: "Photo de profil mise à jour avec succès.",
-            photo_profil: cheminPhoto
-        });
-
-    } catch (error) {
-        console.error("Erreur modification photo :", error.message);
-
-        res.status(500).json({
-            message: "Erreur serveur."
-        });
-    }
+async function modifierPhotoProfil(req,res){
+ try{
+  if(!req.file)return res.status(400).json({message:'Veuillez choisir une image.'});
+  const photo=await require('../services/profilePhoto').changer(req.session.utilisateur.id,req.file);
+  req.session.utilisateur.photo_profil=photo;
+  res.json({message:'Photo de profil mise à jour.',photo_profil:photo});
+ }catch(error){console.error('Modification photo :',error.code||'erreur');res.status(error.status||500).json({message:error.status?error.message:'Modification de la photo indisponible.'});}
 }
-
-// Supprimer la photo de profil de l'utilisateur connecte
-async function supprimerPhotoProfil(req, res) {
-    try {
-        const utilisateur = await userModel.trouverUtilisateurParId(req.session.utilisateur.id);
-
-        if (!utilisateur) {
-            return res.status(404).json({
-                message: "Utilisateur introuvable."
-            });
-        }
-
-        if (utilisateur.photo_profil && /^\/uploads\/profiles\/[a-zA-Z0-9._-]+$/.test(utilisateur.photo_profil)) {
-            const cheminPhoto = path.join(__dirname, "../../client/public", utilisateur.photo_profil);
-
-            if (fs.existsSync(cheminPhoto)) {
-                fs.unlinkSync(cheminPhoto);
-            }
-        }
-
-        await userModel.supprimerPhotoProfil(req.session.utilisateur.id);
-
-        req.session.utilisateur.photo_profil = null;
-
-        res.status(200).json({
-            message: "Photo de profil supprimée avec succès."
-        });
-
-    } catch (error) {
-        console.error("Erreur suppression photo :", error.message);
-
-        res.status(500).json({
-            message: "Erreur serveur."
-        });
-    }
+async function supprimerPhotoProfil(req,res){
+ try{
+  await require('../services/profilePhoto').changer(req.session.utilisateur.id);
+  req.session.utilisateur.photo_profil=null;
+  res.json({message:'Photo de profil supprimée.'});
+ }catch(error){console.error('Suppression photo :',error.code||'erreur');res.status(error.status||500).json({message:error.status?error.message:'Suppression de la photo indisponible.'});}
 }
-
 
 async function etatVerification(req,res) {
     try {
@@ -333,7 +272,7 @@ async function confirmerEmail(req,res) {
         if (utilisateur.role==='artisan') {
           const artisan=await artisanModel.trouverArtisanParUserId(utilisateur.id);
           if (!require('../services/accountAccess').autoriserEspace({...utilisateur,email_verified:1},artisan)) {
-            req.session.supportIdentity={userId:utilisateur.id,verifiedAt:Date.now(),expiresAt:Date.now()+30*60*1000};
+            req.session.supportIdentity={userId:utilisateur.id,version:Number(utilisateur.admin_session_version||0),verifiedAt:Date.now(),expiresAt:Date.now()+30*60*1000};
             await sauvegarderSession(req);
             return res.json({supportSeulement:true,supportUrl:'/artisan-pending.html',message:require('../services/accountAccess').messageDossier(artisan,utilisateur)});
           }

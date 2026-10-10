@@ -6,8 +6,12 @@ router.use(async(req,res,next)=>{
  const identity=req.session.supportIdentity;
  if(!identity || identity.expiresAt<=Date.now())return res.status(401).json({message:'Vérifiez vos identifiants et le code e-mail pour contacter le support lié à votre compte.'});
  try {
-  const [rows]=await db.query("SELECT u.id,u.nom,u.prenom,u.email,u.statut_compte,a.id AS artisan_id,a.verification_statut,a.verification_commentaire FROM users u JOIN artisans a ON a.user_id=u.id WHERE u.id=? AND u.role='artisan'",[identity.userId]);
+  const [rows]=await db.query("SELECT u.id,u.nom,u.prenom,u.email,u.statut_compte,u.email_verified,u.admin_session_version,a.id AS artisan_id,a.verification_statut,a.verification_commentaire FROM users u JOIN artisans a ON a.user_id=u.id WHERE u.id=? AND u.role='artisan'",[identity.userId]);
   if(!rows[0])return res.status(401).json({message:'Compte introuvable.'});
+  if(!rows[0].email_verified || identity.version===undefined || Number(rows[0].admin_session_version||0)!==Number(identity.version)){
+   delete req.session.supportIdentity;
+   return res.status(401).json({message:'Votre compte a changé. Reconnectez-vous et confirmez le code e-mail pour accéder au suivi.'});
+  }
   req.supportAccount=rows[0];next();
  }catch(e){res.status(503).json({message:'Support de compte indisponible.'});}
 });

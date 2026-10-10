@@ -1,3 +1,5 @@
+> Rapport actuel : RAPPORT_LIVRAISON.md. Ce document conserve les instructions SQL et de démonstration de la livraison précédente.
+
 # Corrections du 11 octobre
 
 Base : la dernière archive taskly-platform-main.zip fournie. Aucun commit ni déploiement effectué. Copier les fichiers corrigés dans le dépôt correspondant à cette base ; conserver les variables privées déjà configurées.

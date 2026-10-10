@@ -1,4 +1,6 @@
-> **Note 10/10/2026 :** les instructions historiques ci-dessous ont été adaptées aux routes privées de la version corrigée. La référence principale pour une base existante est `DEPLOIEMENT.md` et le nouveau `GUIDE_APPLICATION_TASKLY.md`.
+ > Référence actuelle : README.md et INSTALLATION_FINALE.md. Les instructions historiques ci-dessous restent fournies pour contexte.
+
+> **Note 10/10/2026 :** les instructions historiques ci-dessous ont été adaptées aux routes privées de la version corrigée. La référence principale pour une base existante est `DEPLOIEMENT.md` et `INSTALLATION_FINALE.md`.
 
 # Taskly — PFE artisans-clients · amélioration de sécurité (version de travail)
 
@@ -8,7 +10,7 @@
 
 - Pages admin privées : entrée configurable dans `ADMIN_ENTRY_PATH` (dans `server/.env`), tableau de bord sur `${ADMIN_ENTRY_PATH}/dashboard`. Les URL historiques `/admin` et `/admin-dashboard.html` répondent 404.
 - Authentification administrateur distincte : e-mail, mot de passe bcrypt, puis code à six chiffres envoyé par SMTP ; contrôle des droits côté serveur.
-- Inscription client/artisan suivie d'un code e-mail (10 minutes, cinq essais au plus) ; limitation simple des tentatives.
+- Inscription client/artisan suivie d'un code e-mail (3 minutes, trois essais au plus) ; limitation simple des tentatives.
 - Protection CSRF sur les actions API, régénération de session après connexion, cookie HttpOnly et SameSite, déconnexion correcte.
 - Artisans en **attente de vérification** et non visibles publiquement avant l'approbation ; dépôt privé de pièces PDF/JPG/PNG de 3 Mio maximum, consultation via admin, historique des décisions.
 - Pool MySQL configurable, index pour les recherches et les statistiques, sessions Redis obligatoires en production.
@@ -75,7 +77,7 @@ Si le dossier est lié à un dépôt Git :
 ```powershell
 git status
 git switch -c securite-verification-artisans
-git add -- private/ client/public/ public/ server/ scripts/ tests/ package.json package-lock.json .gitignore DEPLOIEMENT.md
+git add -- private/ public/ public/ server/ scripts/ tests/ package.json package-lock.json .gitignore DEPLOIEMENT.md
 git status
 git diff --cached --stat
 git commit -m "feat: verification artisans et acces admin prive"

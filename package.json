@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
-    "dev": "nodemon server/server.js",
+    "dev": "node --watch server/server.js",
     "check": "node scripts/check-syntax.js",
     "admin:create": "node scripts/create-admin.js",
     "db:migrate": "node scripts/migrate.js",
@@ -32,5 +32,8 @@
     "mysql2": "^3.22.3",
     "nodemailer": "10.1.0",
     "redis": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

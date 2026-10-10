@@ -1,6 +1,10 @@
 node_modules/
 .env
+.env.*
 server/.env
+server/.env.*
+!.env.example
+!server/.env.example
 server/private_uploads/
 *.log
 .DS_Store

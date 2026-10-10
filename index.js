@@ -3,6 +3,8 @@ const express = require("express");
 const { creerSessionStore } = require("./server/config/sessionStore");
 
 const app = express();
+// Les ressources publiques ne dépendent pas du démarrage Redis/TiDB.
+app.use(require('./server/middleware/publicFiles').publicFiles);
 let initialisation;
 
 app.use(async (req, res) => {

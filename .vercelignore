@@ -1,0 +1,5 @@
+.taskly-private/
+.env
+.env.*
+server/.env
+server/.env.*

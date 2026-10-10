@@ -5,8 +5,8 @@ Ce dossier contient le **projet de PFE**, pas une mise en production. L'espace e
 ## Ajouts réalisés dans cette reprise
 
 - `private/admin-dashboard.html` : recherche d'artisans, filtre par état et conteneurs de synthèse.
-- `client/public/js/admin-verification.js` : liste lisible et filtrable, compteur de dossiers, examen complet, formulaire explicite de décision, affichage du support et des notifications, historique des décisions.
-- `client/public/css/admin-forms.css` : styles responsives du formulaire d'examen et des listes, sans changer la page de connexion.
+- `public/js/admin-verification.js` : liste lisible et filtrable, compteur de dossiers, examen complet, formulaire explicite de décision, affichage du support et des notifications, historique des décisions.
+- `public/css/admin-forms.css` : styles responsives du formulaire d'examen et des listes, sans changer la page de connexion.
 - `server/routes/adminVerificationRoutes.js` : historique des décisions (`verification_audit`) et identité de l'admin ayant statué, avec `Cache-Control: no-store`. L'API existante reste compatible.
 - `tests/admin-review-ui.test.js` : recherche, filtres, protection d'affichage contre l'injection HTML et lecture de l'historique administrateur.
 

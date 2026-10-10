@@ -3,20 +3,24 @@
 require('dotenv').config({path:require('path').join(__dirname,'../server/.env')});
 const pool=require('../server/config/db').promise();
 const attendus={
-  users:['id','role','statut_compte','email_verified','admin_session_version'],
-  artisans:['id','user_id','service_id','verification_statut','verification_commentaire'],
-  services:['id','nom'],
+  users:['id','nom','prenom','email','mot_de_passe','photo_profil','role','statut_compte','motif_blocage','date_blocage','email_verified','admin_session_version'],
+  clients:['id','user_id','telephone','ville','adresse'],
+  artisans:['id','user_id','service_id','telephone','ville','description','experience','created_at','verification_statut','verification_commentaire'],
+  services:['id','nom','description','image'],
+  demandes:['id','client_id','artisan_id','statut'],
+  avis:['id','demande_id','client_id','artisan_id'],
+  signalements:['id','demande_id','signaleur_user_id','signale_user_id'],
   artisan_documents:['id','artisan_id','type_document','stored_name','original_name'],
   verification_audit:['id','artisan_id','admin_user_id','ancien_statut','nouveau_statut','commentaire'],
   contacts_support:['id','user_id','contexte','login_verified_at','message','statut'],
-  account_notifications:['id','user_id','statut','destinataire'],
-  stored_files:['id','prive','contenu'],
+  account_notifications:['id','user_id','statut','destinataire','sujet','corps','attempts','attempted_at','sent_at','created_at'],
+  stored_files:['id','media_type','prive','contenu'],
   admin_roles:['user_id','niveau'],
   account_email_changes:['user_id','nouveau_email','code_hash','expires_at','attempts'],
   admin_invitations:['id','email','token_hash','created_by','expires_at','accepted_at','revoked_at'],
   admin_email_changes:['user_id','nouveau_email','code_hash','expires_at','attempts'],
   admin_audit_logs:['id','admin_user_id','action','cible_id','detail'],
-  verification_codes:['user_id','code_hash','expires_at','attempts']
+  verification_codes:['user_id','purpose','code_hash','expires_at','attempts','issued_at']
 };
 (async()=>{
  try {

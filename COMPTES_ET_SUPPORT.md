@@ -33,3 +33,6 @@ Styles réservés aux formulaires internes : Mon compte, invitations, services, 
 Exécuter npm test et npm run check. Tests locaux : autorisation des artisans selon leur statut, code e-mail sans session complète pour les comptes non validés, exclusion des admins lors de suppression, fichiers privés, contrôle CSRF et routes HTTP. Base simulée ; SMTP, TiDB, Upstash et déploiement Vercel ne sont pas validés par ces tests.
 
 Avant démonstration : vérifier migration complète, instantané de démo, inscription client, inscription artisan avec pièce, tentative de connexion en attente, support lié et support visiteur distincts, complément, activation/blocage avec motif et e-mail, accès après activation, modification profil/photo, changement d’e-mail et de mot de passe, suppression sur un compte jetable, et refus des API privées avec un accès support. Pour tester l’échec e-mail, utiliser des identifiants SMTP invalides uniquement en préproduction ; vérifier décision conservée et Réessayer après restauration SMTP.
+
+Une modification de version de compte (décision admin, changement de mot de passe/e-mail) ferme aussi l’accès support limité. Reconnectez-vous avec les identifiants et le code e-mail.
+Les photos TiDB sont modifiées ou supprimées dans la transaction du profil.

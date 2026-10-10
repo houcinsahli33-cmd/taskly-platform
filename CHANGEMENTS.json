@@ -1,405 +1,155 @@
 {
-  "archive_source_sha256": "f946494ba0f57a864894157047c6fbcf52766176c55aa72b561180bf8ed2ecb1",
-  "fichiers": [
+  "baseCommit": "bf71a9c",
+  "date": "2026-10-11",
+  "architecture": {
+    "public": "client/public",
+    "private": "client/private"
+  },
+  "deplacements": [
     {
-      "fichier": "AUDIT.md",
-      "statut": "ajouté",
-      "sha256": "f5366479ea53d6a638814eecc451535c9f06b6c82a3ebd84f75f7f9243c03a72"
+      "avant": "client/public/artisan-dashboard.html",
+      "apres": "client/private/artisan-dashboard.html"
     },
     {
-      "fichier": "client/private/admin-dashboard.html",
-      "statut": "modifié",
-      "sha256": "582afc82e3af14687c743305ffcb6513ff75ad3dd5c801611f7450d655de405e"
+      "avant": "client/public/client-dashboard.html",
+      "apres": "client/private/client-dashboard.html"
     },
     {
-      "fichier": "client/public/404.html",
-      "statut": "modifié",
-      "sha256": "58bf2222315655a9fc5c615b1d7d1dfdfa91840eab4206a4b544aa2d40964808"
+      "avant": "private/admin-dashboard.html",
+      "apres": "client/private/admin-dashboard.html"
     },
     {
-      "fichier": "client/public/about.html",
-      "statut": "modifié",
-      "sha256": "0098aade44c46b06c13f3183343c832f217c4076b06749ad22ed59ecbb0478c2"
+      "avant": "private/admin-login.html",
+      "apres": "client/private/admin-login.html"
+    }
+  ],
+  "modifications": [
+    {
+      "fichier": ".gitignore",
+      "etat": "modifie"
     },
     {
-      "fichier": "client/public/admin-invitation.html",
-      "statut": "ajouté",
-      "sha256": "e9d606529568a70f6968952c7d343f45e56d13dd62c46eca1bd3aec268160fba"
+      "fichier": "client/public/css/account-profile.css",
+      "etat": "modifie"
     },
     {
-      "fichier": "client/public/artisan-dashboard.html",
-      "statut": "modifié",
-      "sha256": "61d6eb665f10c14e4af8acd7882f7df780c26c1f0accaa3853268768fa8acd17"
+      "fichier": "client/public/js/account-profile.js",
+      "etat": "modifie"
     },
     {
-      "fichier": "client/public/artisan-profile.html",
-      "statut": "modifié",
-      "sha256": "6b9f200c1471e35a7cadc02dffdbf843555440a86fa4006014b0c98fa963980a"
+      "fichier": "COMPTES_ET_SUPPORT.md",
+      "etat": "modifie"
     },
     {
-      "fichier": "client/public/artisans.html",
-      "statut": "modifié",
-      "sha256": "93d42e014efcc2c6a756b554e2e7373e1b5e7bab08cdb7332aeffeb4510f7afc"
-    },
-    {
-      "fichier": "client/public/become-artisan.html",
-      "statut": "modifié",
-      "sha256": "075918d535ddd4f5dc9d973a74919d54192c5db71e16cda7f5d36cbb6117dda0"
-    },
-    {
-      "fichier": "client/public/client-dashboard.html",
-      "statut": "modifié",
-      "sha256": "9d608a64cf902680981bfe7c6f55709e99f063480662c3d9adf3e5698304d9bb"
-    },
-    {
-      "fichier": "client/public/contact.html",
-      "statut": "modifié",
-      "sha256": "65772a7a13c0e10b5b7a9e296efa62b8f83ec62f86300550ca0106f477bd8fcb"
-    },
-    {
-      "fichier": "client/public/css/admin-integrated.css",
-      "statut": "ajouté",
-      "sha256": "6c8209b3bee321be5e2dfcd384f2480784777d4f81bce2283ab4500395844323"
-    },
-    {
-      "fichier": "client/public/follow-message.html",
-      "statut": "modifié",
-      "sha256": "c33697245c339c6974d81a15931b1add316adfbfc50612c34bebc412d3c8eefc"
-    },
-    {
-      "fichier": "client/public/help.html",
-      "statut": "modifié",
-      "sha256": "48916c4aaab2210dbe3bda85b3276fc288d4b3d0de97689b2316db72af501e71"
-    },
-    {
-      "fichier": "client/public/index.html",
-      "statut": "modifié",
-      "sha256": "86694d4aec1312265a45044fdfd16431e07d43697d59adf2b1a8cafb3a3514bf"
-    },
-    {
-      "fichier": "client/public/js/admin-dashboard.js",
-      "statut": "modifié",
-      "sha256": "2dbdb753f4c960b1d7f86c8f8bd315875cb5c201c896f4fe58c6a7cc23789988"
-    },
-    {
-      "fichier": "client/public/js/admin-invitation.js",
-      "statut": "ajouté",
-      "sha256": "558f10028af9370b06f3084b945186031af589ea9757a0ab422771bee3188b45"
-    },
-    {
-      "fichier": "client/public/js/admin-verification.js",
-      "statut": "modifié",
-      "sha256": "5737dd780e36ec6ceed25c625c5678c06acc649a67a3dd6ad146dc1bfccb026c"
-    },
-    {
-      "fichier": "client/public/js/api.js",
-      "statut": "modifié",
-      "sha256": "0ba2865d3b06b42dfad1a9c20213887f6f79aeab2eb368905315dbe4638864c3"
-    },
-    {
-      "fichier": "client/public/js/auth-pages.js",
-      "statut": "modifié",
-      "sha256": "08efaa21cbeca1e17cd598e49c603d4251baabc9e1508bb5a903e13962d79d2d"
-    },
-    {
-      "fichier": "client/public/login.html",
-      "statut": "modifié",
-      "sha256": "a7da9b728d6b492878ceea3bb7c713164b144c709305dddb8acbb8167c52f2ff"
-    },
-    {
-      "fichier": "client/public/privacy.html",
-      "statut": "modifié",
-      "sha256": "412b72aefcef455aad0e885e929c0be7a0b72553eee0f7eab55c4aba70f75151"
-    },
-    {
-      "fichier": "client/public/register.html",
-      "statut": "modifié",
-      "sha256": "9577c527d78a8de6150f800ec8b172c0b9377b05725637fc34788b488a250737"
-    },
-    {
-      "fichier": "client/public/service.html",
-      "statut": "modifié",
-      "sha256": "a876880ca81e8c68da15b572756f8bc6959396ec1f1f74ba3d535ec090521891"
-    },
-    {
-      "fichier": "client/public/services.html",
-      "statut": "modifié",
-      "sha256": "e0a4332c293e97df8794ba80a9ab4db985fad19289e0847ade3c3853ead3f550"
-    },
-    {
-      "fichier": "client/public/terms.html",
-      "statut": "modifié",
-      "sha256": "5c6d55c92b5482b6050273a159d474936f3453a11c013e8484f5687e815abc38"
-    },
-    {
-      "fichier": "client/public/verify-email.html",
-      "statut": "modifié",
-      "sha256": "04d966db96b6a4144ac7e32cc66bd4c21cb836389240c852ae5d99d30732c318"
-    },
-    {
-      "fichier": "database/migration_taskly_integrated.sql",
-      "statut": "ajouté",
-      "sha256": "8732b5991d27bc8fa485ff85dd03e327aaa0c023ed6b7ebed0db70b1f5f3f6fa"
+      "fichier": "CORRECTIONS_11_OCTOBRE.md",
+      "etat": "modifie"
     },
     {
       "fichier": "DEPLOIEMENT.md",
-      "statut": "ajouté",
-      "sha256": "a475b69ea57e9ff19b796e83a8c3a2be90889534deff236b9adcfcfb193bcc20"
+      "etat": "modifie"
+    },
+    {
+      "fichier": "index.js",
+      "etat": "modifie"
+    },
+    {
+      "fichier": "LIVRAISON_PFE_2026-10-10.md",
+      "etat": "modifie"
     },
     {
       "fichier": "package-lock.json",
-      "statut": "modifié",
-      "sha256": "0a114f9865ea03fff94ff052f557d6ac146fd74ce53ceef58d51a30a60ec1e8d"
+      "etat": "modifie"
     },
     {
       "fichier": "package.json",
-      "statut": "modifié",
-      "sha256": "b2a2d1e9eccdaaa9413739a8e57966cc21da97f3665cf0997f7b78b342bfcad0"
+      "etat": "modifie"
     },
     {
-      "fichier": "public/404.html",
-      "statut": "modifié",
-      "sha256": "58bf2222315655a9fc5c615b1d7d1dfdfa91840eab4206a4b544aa2d40964808"
+      "fichier": "README_SECURITE.md",
+      "etat": "modifie"
     },
     {
-      "fichier": "public/about.html",
-      "statut": "modifié",
-      "sha256": "0098aade44c46b06c13f3183343c832f217c4076b06749ad22ed59ecbb0478c2"
+      "fichier": "REPRISE_ADMIN_PFE.md",
+      "etat": "modifie"
     },
     {
-      "fichier": "public/admin-invitation.html",
-      "statut": "ajouté",
-      "sha256": "e9d606529568a70f6968952c7d343f45e56d13dd62c46eca1bd3aec268160fba"
+      "fichier": "scripts/check-syntax.js",
+      "etat": "modifie"
     },
     {
-      "fichier": "public/artisan-dashboard.html",
-      "statut": "modifié",
-      "sha256": "61d6eb665f10c14e4af8acd7882f7df780c26c1f0accaa3853268768fa8acd17"
-    },
-    {
-      "fichier": "public/artisan-profile.html",
-      "statut": "modifié",
-      "sha256": "6b9f200c1471e35a7cadc02dffdbf843555440a86fa4006014b0c98fa963980a"
-    },
-    {
-      "fichier": "public/artisans.html",
-      "statut": "modifié",
-      "sha256": "93d42e014efcc2c6a756b554e2e7373e1b5e7bab08cdb7332aeffeb4510f7afc"
-    },
-    {
-      "fichier": "public/become-artisan.html",
-      "statut": "modifié",
-      "sha256": "075918d535ddd4f5dc9d973a74919d54192c5db71e16cda7f5d36cbb6117dda0"
-    },
-    {
-      "fichier": "public/client-dashboard.html",
-      "statut": "modifié",
-      "sha256": "9d608a64cf902680981bfe7c6f55709e99f063480662c3d9adf3e5698304d9bb"
-    },
-    {
-      "fichier": "public/contact.html",
-      "statut": "modifié",
-      "sha256": "65772a7a13c0e10b5b7a9e296efa62b8f83ec62f86300550ca0106f477bd8fcb"
-    },
-    {
-      "fichier": "public/css/admin-integrated.css",
-      "statut": "ajouté",
-      "sha256": "6c8209b3bee321be5e2dfcd384f2480784777d4f81bce2283ab4500395844323"
-    },
-    {
-      "fichier": "public/css/admin-settings.css",
-      "statut": "ajouté",
-      "sha256": "9581603e332b66ca343513351e31442938219e0691d609236bc6c0a78f827f79"
-    },
-    {
-      "fichier": "public/follow-message.html",
-      "statut": "modifié",
-      "sha256": "c33697245c339c6974d81a15931b1add316adfbfc50612c34bebc412d3c8eefc"
-    },
-    {
-      "fichier": "public/help.html",
-      "statut": "modifié",
-      "sha256": "48916c4aaab2210dbe3bda85b3276fc288d4b3d0de97689b2316db72af501e71"
-    },
-    {
-      "fichier": "public/index.html",
-      "statut": "modifié",
-      "sha256": "86694d4aec1312265a45044fdfd16431e07d43697d59adf2b1a8cafb3a3514bf"
-    },
-    {
-      "fichier": "public/js/admin-dashboard.js",
-      "statut": "modifié",
-      "sha256": "2dbdb753f4c960b1d7f86c8f8bd315875cb5c201c896f4fe58c6a7cc23789988"
-    },
-    {
-      "fichier": "public/js/admin-invitation.js",
-      "statut": "ajouté",
-      "sha256": "558f10028af9370b06f3084b945186031af589ea9757a0ab422771bee3188b45"
-    },
-    {
-      "fichier": "public/js/admin-settings.js",
-      "statut": "ajouté",
-      "sha256": "9cd55b0267b0d1d87da3c199b78aa628acb7c3ebd7a369f18112f279574e3622"
-    },
-    {
-      "fichier": "public/js/admin-verification.js",
-      "statut": "modifié",
-      "sha256": "5737dd780e36ec6ceed25c625c5678c06acc649a67a3dd6ad146dc1bfccb026c"
-    },
-    {
-      "fichier": "public/js/api.js",
-      "statut": "modifié",
-      "sha256": "0ba2865d3b06b42dfad1a9c20213887f6f79aeab2eb368905315dbe4638864c3"
-    },
-    {
-      "fichier": "public/js/auth-pages.js",
-      "statut": "modifié",
-      "sha256": "08efaa21cbeca1e17cd598e49c603d4251baabc9e1508bb5a903e13962d79d2d"
-    },
-    {
-      "fichier": "public/login.html",
-      "statut": "modifié",
-      "sha256": "a7da9b728d6b492878ceea3bb7c713164b144c709305dddb8acbb8167c52f2ff"
-    },
-    {
-      "fichier": "public/privacy.html",
-      "statut": "modifié",
-      "sha256": "412b72aefcef455aad0e885e929c0be7a0b72553eee0f7eab55c4aba70f75151"
-    },
-    {
-      "fichier": "public/register.html",
-      "statut": "modifié",
-      "sha256": "9577c527d78a8de6150f800ec8b172c0b9377b05725637fc34788b488a250737"
-    },
-    {
-      "fichier": "public/service.html",
-      "statut": "modifié",
-      "sha256": "a876880ca81e8c68da15b572756f8bc6959396ec1f1f74ba3d535ec090521891"
-    },
-    {
-      "fichier": "public/services.html",
-      "statut": "modifié",
-      "sha256": "e0a4332c293e97df8794ba80a9ab4db985fad19289e0847ade3c3853ead3f550"
-    },
-    {
-      "fichier": "public/terms.html",
-      "statut": "modifié",
-      "sha256": "5c6d55c92b5482b6050273a159d474936f3453a11c013e8484f5687e815abc38"
-    },
-    {
-      "fichier": "public/verify-email.html",
-      "statut": "modifié",
-      "sha256": "04d966db96b6a4144ac7e32cc66bd4c21cb836389240c852ae5d99d30732c318"
-    },
-    {
-      "fichier": "scripts/create-admin.js",
-      "statut": "modifié",
-      "sha256": "7f561e057c16c28a1d640f66e6df290e1dd974f2862c023b459a7cd2b0521622"
-    },
-    {
-      "fichier": "scripts/import-documents.js",
-      "statut": "ajouté",
-      "sha256": "2c9d2f5efeb63114c931d0afafe4fc0878e020a3179d5b60be5c0ee3c71e9005"
+      "fichier": "scripts/diagnostic-pfe-db.js",
+      "etat": "modifie"
     },
     {
       "fichier": "scripts/migrate.js",
-      "statut": "ajouté",
-      "sha256": "649436eb2f64d7250a05cd5fb06e950d298bf108f3bea5278c8d43ad4a1f9b97"
+      "etat": "modifie"
     },
     {
-      "fichier": "scripts/set-principal.js",
-      "statut": "ajouté",
-      "sha256": "072cef579e72f28a414a9f50f9caf0d6ace87136ba66ff0adc114b2f206bdbfa"
+      "fichier": "scripts/prepare-pfe-demo.js",
+      "etat": "modifie"
     },
     {
       "fichier": "server/app.js",
-      "statut": "modifié",
-      "sha256": "ea3b57f8d629990873ce14a177a8be1b9d7407bb55760ca94739e0e75c3c7e82"
-    },
-    {
-      "fichier": "server/controllers/adminController.js",
-      "statut": "modifié",
-      "sha256": "a8e9e0b98f380fbc205d56e059f07e2d2e60cd5832604d061be4478804964a27"
+      "etat": "modifie"
     },
     {
       "fichier": "server/controllers/authController.js",
-      "statut": "modifié",
-      "sha256": "d3f775b64edd8c445eedab193349a26d4fb5e418a6041c4425f2970285e31ede"
+      "etat": "modifie"
     },
     {
-      "fichier": "server/middleware/authMiddleware.js",
-      "statut": "modifié",
-      "sha256": "6663d622f9b53402ccd92c559d879fc01ac91ad276d862be272eceb37121a402"
+      "fichier": "server/routes/artisanSupportRoutes.js",
+      "etat": "modifie"
     },
     {
-      "fichier": "server/middleware/documentUpload.js",
-      "statut": "modifié",
-      "sha256": "924ab362fb4476c30f27b7d67c8d05ebd7e49f836997ddabd4f4564483da6e43"
+      "fichier": "server/services/accountNotifications.js",
+      "etat": "modifie"
     },
     {
-      "fichier": "server/middleware/uploadMiddleware.js",
-      "statut": "modifié",
-      "sha256": "fa3d381da03323165eb823220941972984729f6def0165e2ae1315f3c7a5590b"
+      "fichier": "tests/account-profile.test.js",
+      "etat": "modifie"
     },
     {
-      "fichier": "server/models/artisanModel.js",
-      "statut": "modifié",
-      "sha256": "a240ad4e72661b81ea00ecd6f4a563f5bcb399ab8687d320f02c4f13f8fb0a3e"
+      "fichier": "tests/admin-decision.test.js",
+      "etat": "modifie"
     },
     {
-      "fichier": "server/models/userModel.js",
-      "statut": "modifié",
-      "sha256": "d9be7317a4c6b632aa5d4932021cfac06dc77af1a3fbe7be94c7feac2a0e1ad8"
-    },
-    {
-      "fichier": "server/routes/adminAuthRoutes.js",
-      "statut": "modifié",
-      "sha256": "75b118937f283bebfd62ff802a98e14c57188ece7dfc1810e1161af40ea6b0e7"
-    },
-    {
-      "fichier": "server/routes/adminRoutes.js",
-      "statut": "modifié",
-      "sha256": "9face4609afdf6b655e06c574d8aeedcf3a86cca104e6f741e420accbf7875ef"
-    },
-    {
-      "fichier": "server/routes/adminSettingsRoutes.js",
-      "statut": "modifié",
-      "sha256": "1b3ca56e6bd744dee130c71384721e8de1d4b7915b10e5a0dd9f3a05f5a0d653"
-    },
-    {
-      "fichier": "server/routes/adminVerificationRoutes.js",
-      "statut": "modifié",
-      "sha256": "2265bbae3cd0a08a123edbacc2b76d21614bfd1c6ff57e30459386978a1180e1"
-    },
-    {
-      "fichier": "server/routes/authRoutes.js",
-      "statut": "modifié",
-      "sha256": "81c2bca2673779321e5ba3c90f4e5132d2eacec77b4c3fa806dd7bc6c1424ed4"
-    },
-    {
-      "fichier": "server/routes/demandeRoutes.js",
-      "statut": "modifié",
-      "sha256": "8a285e496d71e81511dd19928ea65da8a08184c0204ff2c24fe56705c1e95457"
-    },
-    {
-      "fichier": "server/routes/verificationRoutes.js",
-      "statut": "modifié",
-      "sha256": "db0300946650d15585c5eeff63e6f354b6004b20d0b4e767212c105cefee8d4a"
-    },
-    {
-      "fichier": "server/services/fileStorage.js",
-      "statut": "ajouté",
-      "sha256": "c970cf9e902b0b6298e9d87ae6f490ec1dd91283873157bc3975ad32a9f22d36"
+      "fichier": "tests/admin-examiner-click.test.js",
+      "etat": "modifie"
     },
     {
       "fichier": "tests/http.test.js",
-      "statut": "ajouté",
-      "sha256": "6038c7d7e8b56cba5b7ae8b8e108b04ff14e612f0fc81374e16ea9dfb52ba0ad"
+      "etat": "modifie"
     },
     {
-      "fichier": "tests/security.test.js",
-      "statut": "ajouté",
-      "sha256": "481d9beee432b04a45add7385a1697cc7641ae4d7f9485e6d38812b26bdd8266"
+      "fichier": "tests/pfe-admin-annuaire-robustesse.test.js",
+      "etat": "modifie"
+    },
+    {
+      "fichier": "vercel.json",
+      "etat": "modifie"
     }
-  ]
+  ],
+  "nouveauxFichiers": [
+    "README.md",
+    "INSTALLATION_FINALE.md",
+    "RAPPORT_LIVRAISON.md",
+    "UN_SEUL_PUBLIC.md",
+    ".vercelignore",
+    "server/middleware/publicFiles.js",
+    "server/services/profilePhoto.js",
+    "scripts/finaliser-architecture.ps1",
+    "tests/helpers/request.js",
+    "tests/profile-service-failure.test.js",
+    "tests/public-layout.test.js",
+    "tests/support-session.test.js",
+    "tests/profile-photo.test.js"
+  ],
+  "verification": {
+    "tests": 76,
+    "reussis": 76,
+    "syntaxJs": 98,
+    "dependancesConcordantes": 104,
+    "servicesDistants": "Non validés"
+  },
+  "donnees": "Aucune donnée ni variable privée incluse. Aucune migration ou suppression déclenchée automatiquement."
 }

@@ -1,7 +1,7 @@
 require('dotenv').config({path:require('path').join(__dirname,'../server/.env')});
 const pool=require('../server/config/db');
 const {candidat}=require('./pfe-cleanup-rules');
-(async()=>{const conn=await pool.promise().getConnection();try{
+(async()=>{let conn;try{conn=await pool.promise().getConnection();
  if(process.argv.includes('--prepare')){
   await conn.query('CREATE TABLE IF NOT EXISTS pfe_demo_snapshot (user_id INT PRIMARY KEY, action VARCHAR(20) NOT NULL, email VARCHAR(255) NOT NULL)');
   await conn.query('CREATE TABLE IF NOT EXISTS pfe_demo_state (id INT PRIMARY KEY, prepared_at DATETIME NOT NULL, applied_at DATETIME NULL)');
@@ -36,4 +36,4 @@ const {candidat}=require('./pfe-cleanup-rules');
   }
  }
  if(!process.argv.includes('--restore'))await conn.query('UPDATE pfe_demo_state SET applied_at=NOW() WHERE id=1');await conn.commit();console.log('Instantané appliqué. Les comptes administrateurs et les inscriptions ultérieures sont exclus.');
- }catch(e){await conn.rollback().catch(()=>{});throw e;}finally{conn.release();await pool.promise().end();}})().catch(e=>{console.error(e.code||e.message);process.exitCode=1;});
+ }catch(e){if(conn)await conn.rollback().catch(()=>{});throw e;}finally{conn?.release();await pool.promise().end();}})().catch(e=>{console.error(e.code||e.message);process.exitCode=1;});

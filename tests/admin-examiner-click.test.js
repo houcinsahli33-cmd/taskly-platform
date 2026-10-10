@@ -71,16 +71,16 @@ test('Examiner ouvre immédiatement une vraie fenêtre avant la réponse du serv
   assert.ok(!m.contenu.innerHTML.includes('<script>'));
 });
 
-test('les pages privées ne restent ni dans client/private ni dans le répertoire public',()=>{
+test('les pages privées sont dans client/private et absentes du public',()=>{
   for(const nom of ['admin-login.html','admin-dashboard.html']){
-    assert.equal(fs.existsSync(path.join(root,'client/private',nom)),false);
+    assert.equal(fs.existsSync(path.join(root,'client/private',nom)),true);
     assert.equal(fs.existsSync(path.join(root,'client/public',nom)),false);
     assert.equal(fs.existsSync(path.join(root,'public',nom)),false);
-    assert.equal(fs.existsSync(path.join(root,'private',nom)),true);
+    assert.equal(fs.existsSync(path.join(root,'private',nom)),false);
   }
   const app=fs.readFileSync(path.join(root,'server/app.js'),'utf8');
-  assert.match(app,/\.\.\/private\/admin-login\.html/);
-  assert.match(app,/\.\.\/private\/admin-dashboard\.html/);
+  assert.ok(app.includes('../client/private/admin-login.html'));
+  assert.ok(app.includes('../client/private/admin-dashboard.html'));
   assert.match(app,/verifierConnexion/);
   assert.match(app,/verifierAdmin/);
 });
