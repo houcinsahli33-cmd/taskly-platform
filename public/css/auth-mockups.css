@@ -91,3 +91,22 @@ body.taskly-verify-screen{padding:22px 12px}
 .taskly-verify-links a:hover{color:#05795c;text-decoration:underline}
 @media(max-width:850px){.taskly-signup{grid-template-columns:1fr;width:min(600px,100%)}.taskly-brand-panel{padding:24px 27px}.taskly-brand-panel h1{font-size:2rem}.taskly-brand-lead{margin-bottom:14px}.taskly-benefits{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}.taskly-brand-bottom{padding-top:12px}.taskly-form-side{padding:22px 27px}}
 @media(max-width:540px){body.auth-page.taskly-rework{padding:12px 9px;background-attachment:scroll}.taskly-signup{border-radius:16px}.taskly-brand-panel{padding:20px}.taskly-real-logo{width:125px;margin-bottom:14px}.taskly-brand-panel h1{font-size:1.8rem;margin-bottom:10px}.taskly-brand-lead{font-size:.86rem;margin-bottom:10px}.taskly-benefits{display:none}.taskly-brand-bottom{font-size:.8rem}.taskly-form-side{padding:22px 18px}.taskly-form-head h2{font-size:1.63rem}.taskly-compact-grid{grid-template-columns:1fr;gap:12px}.taskly-code-card{padding:24px 19px 19px;border-radius:18px}.taskly-code-card h1{font-size:1.44rem}.taskly-otp-meta span{font-size:.74rem;padding:8px 5px}.taskly-verify-links{gap:12px}}
+
+/* Alignement du formulaire artisan, palette et dimensions Taskly conservées. */
+#artisan-register-form{align-items:start;row-gap:16px}
+#artisan-register-form>.taskly-field>.taskly-field-label{min-height:20px;line-height:20px;margin-bottom:6px}
+#artisan-register-form .taskly-input{box-sizing:border-box;margin:0;height:44px;min-height:44px}
+#artisan-register-form .taskly-textarea{height:78px;min-height:78px}
+#artisan-register-form .taskly-field-wrap{margin:0}
+#artisan-register-form .taskly-proof-picker{position:relative;display:flex;align-items:center;gap:9px;box-sizing:border-box;width:100%;height:44px;margin:0;padding:0 12px;border:1px solid #d5e2dc;border-radius:11px;background:#fff;color:#20332d;font-size:.9rem;cursor:pointer;overflow:hidden}
+#artisan-register-form .taskly-proof-picker>svg{width:17px;height:17px;flex:none;fill:none;stroke:#466158;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#artisan-register-form #artisan-document-name{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#artisan-register-form .taskly-proof-plus{display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:50%;background:#eaf6f0;color:#078263;font-size:21px;line-height:1}
+#artisan-register-form .taskly-proof-picker input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0;padding:0}
+#artisan-register-form .taskly-proof-picker:hover{border-color:#148c6d;background:#fbfefc}
+#artisan-register-form .taskly-proof-picker:focus-within{outline:none;border-color:#148c6d;box-shadow:0 0 0 3px rgba(20,140,109,.12)}
+#artisan-register-form .taskly-proof-meta{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin-top:5px}
+#artisan-register-form .taskly-proof-meta select{box-sizing:border-box;width:auto;min-height:24px;height:24px;margin:0;padding:0 5px;border:1px solid #d5e2dc;border-radius:6px;background:#fff;color:#527367;font-family:inherit;font-size:.74rem}
+#artisan-register-form .taskly-proof-meta .taskly-help{margin:0}
+.taskly-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+@media(max-width:540px){#artisan-register-form{grid-template-columns:minmax(0,1fr);row-gap:14px}}
