@@ -46,6 +46,60 @@
         <div class="panel-header"><h2>Contrôle des artisans</h2></div>
         <div class="panel-body"><p class="muted">Identité et qualifications : examen manuel des justificatifs. Une vérification documentaire n'est pas une certification officielle.</p><div id="admin-verification-list"></div><div id="admin-verification-details" class="mt-22"></div></div>
       </div></section>
+
+      
+<!-- Gestion des administrateurs -->
+<section class="admin-section" id="admin-admins">
+
+  <div class="admin-settings-heading">
+    <div>
+      <h2>Gestion des administrateurs</h2>
+      <p>Ajouter et gérer les comptes administrateurs.</p>
+    </div>
+  </div>
+
+  <div class="admin-settings-panel">
+    <h3>Inviter un nouvel administrateur</h3>
+
+    <form id="admin-invite-form" class="admin-settings-form">
+
+      <label for="admin-invite-nom">Nom</label>
+      <input id="admin-invite-nom" maxlength="100" required>
+
+      <label for="admin-invite-prenom">Prénom</label>
+      <input id="admin-invite-prenom" maxlength="100" required>
+
+      <label for="admin-invite-email">Adresse e-mail</label>
+      <input id="admin-invite-email" type="email" required>
+
+      <label for="admin-invite-password">Votre mot de passe administrateur</label>
+      <input id="admin-invite-password" type="password" required>
+
+      <button type="submit" class="admin-settings-action">
+        Envoyer une invitation sécurisée
+      </button>
+    </form>
+
+    <p id="admin-invite-status" role="status"></p>
+  </div>
+
+  <div class="admin-settings-panel">
+    <h3>Comptes administrateurs</h3>
+    <div id="admin-admins-list"></div>
+  </div>
+
+  <div class="admin-settings-panel">
+    <h3>Invitations en attente</h3>
+    <div id="admin-invites-list"></div>
+  </div>
+
+  <div class="admin-settings-panel">
+    <h3>Historique des actions</h3>
+    <div id="admin-audit-list"></div>
+  </div>
+
+</section>
+
       <section class="admin-section active" id="admin-overview">
         
 <!-- Gestion du compte administrateur -->
