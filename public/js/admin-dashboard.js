@@ -1,6 +1,4 @@
 let adminUtilisateurs = [];
-let adminUsersPage = 1;
-let adminUsersVersion = 0;
 let adminSignalements = [];
 let adminServices = [];
 let filtreContacts = "";
@@ -12,6 +10,10 @@ function activerOngletAdmin(onglet) {
   });
   document.querySelectorAll(".admin-section").forEach((section) => {
     section.classList.toggle("active", section.id === `admin-${onglet}`);
+  });
+  document.querySelectorAll("[data-admin-tab]").forEach((bouton) => {
+    if (bouton.dataset.adminTab === onglet) bouton.setAttribute('aria-current', 'page');
+    else bouton.removeAttribute('aria-current');
   });
 }
 
@@ -51,67 +53,61 @@ async function chargerStatsAdmin() {
   try {
     const data = await requeteAPI("/api/admin/stats");
     const s = data.statistiques;
+    const statistique = (libelle, cle) => `<div class="stat-card${s[cle] == null ? ' is-unavailable' : ''}"><span>${libelle}</span><strong>${s[cle] == null ? 'Indisponible' : echapperHTML(s[cle])}</strong></div>`;
     statsCible.innerHTML = `
-      <div class="stat-card"><span>Utilisateurs</span><strong>${s.totalUsers}</strong></div>
-      <div class="stat-card"><span>Clients</span><strong>${s.totalClients}</strong></div>
-      <div class="stat-card"><span>Artisans</span><strong>${s.totalArtisans}</strong></div>
-      <div class="stat-card"><span>Services</span><strong>${s.totalServices}</strong></div>
-      <div class="stat-card"><span>Demandes</span><strong>${s.totalDemandes}</strong></div>
-      <div class="stat-card"><span>Avis</span><strong>${s.totalAvis}</strong></div>
-      <div class="stat-card"><span>Signalements</span><strong>${s.totalSignalements}</strong></div>
-      <div class="stat-card"><span>Support</span><strong>${s.totalContactsSupport}</strong></div>
-      <div class="stat-card"><span>Dossiers en attente</span><strong>${Number(s.enAttente || 0)}</strong></div>
-      <div class="stat-card"><span>À compléter</span><strong>${Number(s.aCompleter || 0)}</strong></div>
-      <div class="stat-card"><span>Dossiers approuvés</span><strong>${Number(s.approuves || 0)}</strong></div>
-      <div class="stat-card"><span>Artisans bloqués</span><strong>${Number(s.bloques || 0)}</strong></div>
+      ${statistique('Utilisateurs', 'totalUsers')}
+      ${statistique('Clients', 'totalClients')}
+      ${statistique('Artisans', 'totalArtisans')}
+      ${statistique('Services', 'totalServices')}
+      ${statistique('Demandes', 'totalDemandes')}
+      ${statistique('Avis', 'totalAvis')}
+      ${statistique('Signalements', 'totalSignalements')}
+      ${statistique('Support', 'totalContactsSupport')}
     `;
 
-    latestUsers.innerHTML = tableSimple(
+    const modulesEnErreur = new Set(data.modulesIndisponibles || []);
+    function derniereListe(cible, cle, colonnes, lignes, mapper) {
+      cible.innerHTML = modulesEnErreur.has(cle)
+        ? etatVide('Cette rubrique est indisponible. Vérifiez le serveur et les migrations MySQL.')
+        : tableSimple(colonnes, lignes, mapper);
+    }
+    derniereListe(latestUsers, 'derniersUtilisateurs',
       ["Nom", "Email", "Rôle", "Date"],
       data.derniersUtilisateurs,
       (u) => [nomComplet(u), u.email, u.role, formatDate(u.created_at)]
     );
-    latestRequests.innerHTML = tableSimple(
+    derniereListe(latestRequests, 'dernieresDemandes',
       ["Service", "Client", "Artisan", "Statut"],
       data.dernieresDemandes,
       (d) => [d.service_nom, nomComplet(d, "client_"), nomComplet(d, "artisan_"), libelleStatut(d.statut)]
     );
-    latestReviews.innerHTML = tableSimple(
+    derniereListe(latestReviews, 'derniersAvis',
       ["Client", "Artisan", "Note", "Commentaire"],
       data.derniersAvis,
       (a) => [nomComplet(a, "client_"), nomComplet(a, "artisan_"), `${a.note}/5`, tronquer(a.commentaire, 60)]
     );
-    latestContacts.innerHTML = tableSimple(
+    derniereListe(latestContacts, 'derniersContactsSupport',
       ["Sujet", "Email", "Statut", "Date"],
       data.derniersContactsSupport,
       (c) => [c.sujet, c.email, libelleStatut(c.statut), formatDate(c.created_at)]
     );
   } catch (error) {
     statsCible.innerHTML = etatVide(error.message);
+    [latestUsers, latestRequests, latestReviews, latestContacts].forEach((cible) => {
+      if (cible) cible.innerHTML = etatVide('Données indisponibles pour le moment.');
+    });
   }
 }
 
 // Charger les utilisateurs
-async function chargerUtilisateursAdmin(page = adminUsersPage) {
+async function chargerUtilisateursAdmin() {
   const cible = document.getElementById("admin-users-table");
   if (!cible) return;
-  const version = ++adminUsersVersion;
   cible.innerHTML = etatChargement("Chargement des utilisateurs...");
 
   try {
-    const params = new URLSearchParams({page:String(page),limite:'25',
-      recherche:document.getElementById('admin-users-search')?.value.trim() || '',
-      role:document.getElementById('admin-users-role')?.value || '',
-      statut:document.getElementById('admin-users-status')?.value || ''});
-    const {utilisateurs,total,pages} = await requeteAPI('/api/admin/users?' + params.toString());
-    if(version!==adminUsersVersion)return;
-    adminUsersPage=page;
+    const { utilisateurs } = await requeteAPI("/api/admin/users");
     adminUtilisateurs = utilisateurs;
-    document.getElementById('admin-users-count').textContent = `${Number(total)} compte(s) correspondant aux filtres.`;
-    document.getElementById('admin-users-pagination').innerHTML = pages>1 ? `
-      <button class="btn outline small" type="button" data-admin-users-page="${page-1}" ${page<=1?'disabled':''}>Précédent</button>
-      <span>Page ${page} / ${pages}</span>
-      <button class="btn outline small" type="button" data-admin-users-page="${page+1}" ${page>=pages?'disabled':''}>Suivant</button>` : '';
 
     if (!utilisateurs.length) {
       cible.innerHTML = etatVide("Aucun utilisateur.");
@@ -151,7 +147,7 @@ async function chargerUtilisateursAdmin(page = adminUsersPage) {
       </div>
     `;
   } catch (error) {
-    if(version===adminUsersVersion)cible.innerHTML = etatVide(error.message);
+    cible.innerHTML = etatVide(error.message);
   }
 }
 
@@ -422,14 +418,6 @@ function initialiserActionsAdmin() {
     }
   });
 
-  document.getElementById('admin-users-filters')?.addEventListener('submit',event=>{
-    event.preventDefault();chargerUtilisateursAdmin(1);
-  });
-  document.getElementById('admin-users-pagination')?.addEventListener('click',event=>{
-    const bouton=event.target.closest('[data-admin-users-page]');
-    if(bouton && !bouton.disabled)chargerUtilisateursAdmin(Number(bouton.dataset.adminUsersPage));
-  });
-
   document.getElementById("add-service-btn")?.addEventListener("click", () => ouvrirServiceModal());
 
   document.querySelectorAll("[data-contact-filter]").forEach((bouton) => {
@@ -447,6 +435,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   if (!window.utilisateurCourant || window.utilisateurCourant.role !== "admin") return;
   initialiserNavigationAdmin();
+  activerOngletAdmin('overview');
   initialiserActionsAdmin();
   chargerStatsAdmin();
   chargerUtilisateursAdmin();

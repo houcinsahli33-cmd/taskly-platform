@@ -5,64 +5,51 @@ const serviceModel = require("../models/serviceModel");
 
 // Stats generales de l'application
 async function statistiques(req, res) {
-    try {
-        const [
-            totalUsers,
-            totalClients,
-            totalArtisans,
-            totalServices,
-            totalDemandes,
-            totalAvis,
-            totalSignalements,
-            totalContactsSupport,
-            demandesParStatut,
-            derniersUtilisateurs,
-            dernieresDemandes,
-            derniersAvis,
-            derniersContactsSupport,
-            statistiquesVerification
-        ] = await Promise.all([
-            adminModel.compter("users"),
-            adminModel.compter("clients"),
-            adminModel.compter("artisans"),
-            adminModel.compter("services"),
-            adminModel.compter("demandes"),
-            adminModel.compter("avis"),
-            adminModel.compter("signalements"),
-            adminModel.compter("contacts_support"),
-            adminModel.demandesParStatut(),
-            adminModel.derniersUtilisateurs(),
-            adminModel.dernieresDemandes(),
-            adminModel.derniersAvis(),
-            adminModel.derniersMessagesContact(),
-            adminModel.statistiquesVerification()
-        ]);
-
-        res.status(200).json({
-            statistiques: {
-                totalUsers,
-                totalClients,
-                totalArtisans,
-                totalServices,
-                totalDemandes,
-                totalAvis,
-                totalSignalements,
-                totalContactsSupport,
-                ...statistiquesVerification
-            },
-            demandesParStatut,
-            derniersUtilisateurs,
-            dernieresDemandes,
-            derniersAvis,
-            derniersContactsSupport
-        });
-    } catch (error) {
-        console.error("Erreur statistiques admin :", error.message);
-
-        res.status(error.status || 500).json({
-            message: error.status ? error.message : "Erreur serveur."
-        });
+    // Un défaut du support ne doit pas vider l'ensemble de la page d'accueil admin.
+    const taches = {
+        totalUsers: () => adminModel.compter('users'),
+        totalClients: () => adminModel.compter('clients'),
+        totalArtisans: () => adminModel.compter('artisans'),
+        totalServices: () => adminModel.compter('services'),
+        totalDemandes: () => adminModel.compter('demandes'),
+        totalAvis: () => adminModel.compter('avis'),
+        totalSignalements: () => adminModel.compter('signalements'),
+        totalContactsSupport: () => adminModel.compter('contacts_support'),
+        demandesParStatut: () => adminModel.demandesParStatut(),
+        derniersUtilisateurs: () => adminModel.derniersUtilisateurs(),
+        dernieresDemandes: () => adminModel.dernieresDemandes(),
+        derniersAvis: () => adminModel.derniersAvis(),
+        derniersContactsSupport: () => adminModel.derniersMessagesContact()
+    };
+    const noms = Object.keys(taches);
+    const resultats = await Promise.allSettled(noms.map(nom => taches[nom]()));
+    const valeurs = {}, erreurs = [];
+    resultats.forEach((resultat, index) => {
+        const nom = noms[index];
+        if (resultat.status === 'fulfilled') {
+            valeurs[nom] = resultat.value;
+        } else {
+            // Identifiants de rubriques uniquement : ne pas envoyer les erreurs SQL au navigateur.
+            erreurs.push(nom);
+            valeurs[nom] = nom.startsWith('total') ? null : [];
+            console.error('Erreur module statistiques admin [' + nom + '] :',
+                resultat.reason?.code || resultat.reason?.message || 'indisponible');
+        }
+    });
+    if (erreurs.length === noms.length) {
+        return res.status(503).json({message: 'Statistiques indisponibles. Vérifiez la connexion MySQL et les migrations.'});
     }
+    const statistiques = Object.fromEntries(noms.filter(nom => nom.startsWith('total'))
+        .map(nom => [nom, valeurs[nom]]));
+    res.status(200).json({
+        statistiques,
+        demandesParStatut: valeurs.demandesParStatut,
+        derniersUtilisateurs: valeurs.derniersUtilisateurs,
+        dernieresDemandes: valeurs.dernieresDemandes,
+        derniersAvis: valeurs.derniersAvis,
+        derniersContactsSupport: valeurs.derniersContactsSupport,
+        modulesIndisponibles: erreurs
+    });
 }
 
 // Creer un service
@@ -158,9 +145,11 @@ async function supprimerService(req, res) {
 // Lister les utilisateurs
 async function listerUtilisateurs(req, res) {
     try {
-        const resultat = await adminModel.listerUtilisateurs(req.query);
+        const utilisateurs = await adminModel.listerUtilisateurs();
 
-        res.status(200).json(resultat);
+        res.status(200).json({
+            utilisateurs
+        });
 
     } catch (error) {
         console.error("Erreur liste utilisateurs admin :", error.message);
@@ -214,9 +203,8 @@ async function bloquerUtilisateur(req, res) {
             });
         }
 
-        // L'activation et le blocage d'un artisan se décident uniquement dans son dossier de vérification.
-        if (utilisateur.role === "artisan") {
-            return res.status(409).json({ message: "Examiner le dossier de l'artisan pour prendre cette décision." });
+        if (utilisateur.role === 'artisan') {
+            return res.status(409).json({ message: 'Examiner le dossier artisan pour prendre cette décision.' });
         }
 
         const resultat = await adminModel.bloquerUtilisateur(
@@ -260,9 +248,8 @@ async function debloquerUtilisateur(req, res) {
             });
         }
 
-        // L'activation et le blocage d'un artisan se décident uniquement dans son dossier de vérification.
-        if (utilisateur.role === "artisan") {
-            return res.status(409).json({ message: "Examiner le dossier de l'artisan pour prendre cette décision." });
+        if (utilisateur.role === 'artisan') {
+            return res.status(409).json({ message: 'Examiner le dossier artisan pour prendre cette décision.' });
         }
 
         const resultat = await adminModel.debloquerUtilisateur(req.params.id);
@@ -304,10 +291,11 @@ async function listerMessagesContact(req, res) {
         });
 
     } catch (error) {
-        console.error("Erreur liste contacts support :", error.message);
-
-        res.status(error.status || 500).json({
-            message: error.status ? error.message : "Erreur serveur."
+        console.error("Erreur liste contacts support :", error.code || error.message);
+        res.status(error.code === 'ER_NO_SUCH_TABLE' ? 503 : (error.status || 500)).json({
+            message: error.code === 'ER_NO_SUCH_TABLE'
+                ? 'Module support non installé dans MySQL. Vérifiez la table contacts_support.'
+                : (error.status ? error.message : 'Messages support indisponibles. Consultez les logs du serveur.')
         });
     }
 }

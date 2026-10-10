@@ -18,6 +18,7 @@
   <script defer src="/js/admin-settings.js"></script>
   <link rel="stylesheet" href="/css/admin-integrated.css">
   <link rel="stylesheet" href="/css/admin-forms.css">
+  <link rel="stylesheet" href="/css/admin-workspace.css">
 </head>
 
 <body class="dashboard-page" data-require-role="admin">
@@ -30,9 +31,10 @@
 
     <aside class="admin-sidebar">
 
-      <p class="sidebar-title">Administration</p>
+      <p class="sidebar-title">Taskly · Administration</p>
+      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
 
-      <nav class="side-nav admin-nav">
+      <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
 
         <button
           class="active"
@@ -176,16 +178,9 @@
             <h2>Gestion des utilisateurs</h2>
           </div>
 
-          <div class="panel-body">
-            <form id="admin-users-filters" class="admin-verification-filters" aria-label="Filtrer les utilisateurs">
-              <label><span class="field-label">Rechercher</span><input class="form-control" id="admin-users-search" type="search" maxlength="100" placeholder="Nom ou e-mail"></label>
-              <label><span class="field-label">Rôle</span><select class="form-select" id="admin-users-role"><option value="">Tous les rôles</option><option value="client">Clients</option><option value="artisan">Artisans</option><option value="admin">Administrateurs</option></select></label>
-              <label><span class="field-label">Compte</span><select class="form-select" id="admin-users-status"><option value="">Tous les statuts</option><option value="actif">Actifs</option><option value="bloque">Bloqués</option></select></label>
-              <button class="btn primary" type="submit">Rechercher</button>
-            </form>
-            <p id="admin-users-count" class="muted" role="status"></p>
-            <div id="admin-users-table"></div>
-            <div id="admin-users-pagination" class="admin-verification-pagination"></div>
+          <div
+            class="panel-body"
+            id="admin-users-table">
           </div>
 
         </div>
@@ -302,22 +297,24 @@
               n'est pas une certification officielle.
             </p>
 
-            <form id="admin-verification-filters" class="admin-verification-filters" aria-label="Recherche dans les dossiers artisans">
-              <label><span class="field-label">Rechercher</span><input id="admin-verification-search" class="form-control" type="search" maxlength="100" placeholder="Nom, e-mail, métier ou ville"></label>
-              <label><span class="field-label">Statut du dossier</span><select id="admin-verification-status" class="form-select">
-                <option value="tous">Tous les artisans</option>
-                <option value="en_attente">En attente</option>
-                <option value="a_completer">À compléter</option>
-                <option value="approuve">Approuvés</option>
-                <option value="refuse">Refusés</option>
-                <option value="bloque">Comptes bloqués</option>
-              </select></label>
-              <button class="btn primary" type="submit">Rechercher</button>
-            </form>
-            <p id="admin-verification-counts" class="muted" role="status" aria-live="polite"></p>
-            <button class="btn outline small" id="admin-verification-export" type="button">Exporter cette page en CSV</button>
+            <div class="admin-review-toolbar" role="search" aria-label="Filtres des artisans">
+              <label>Rechercher un artisan
+                <input id="admin-verification-search" type="search" placeholder="Nom, e-mail, métier ou ville" autocomplete="off">
+              </label>
+              <label>Statut du dossier
+                <select id="admin-verification-status">
+                  <option value="tous">Tous les artisans</option>
+                  <option value="en_attente">En attente</option>
+                  <option value="a_completer">À compléter</option>
+                  <option value="approuve">Approuvés</option>
+                  <option value="refuse">Refusés</option>
+                  <option value="bloque">Comptes bloqués</option>
+                </select>
+              </label>
+            </div>
+            <p id="admin-verification-counts" role="status" aria-live="polite"></p>
             <div id="admin-verification-list"></div>
-            <div id="admin-verification-pagination" class="admin-verification-pagination"></div>
+            <nav id="admin-verification-pagination" aria-label="Pagination des dossiers artisans"></nav>
 
             <div
               id="admin-verification-details"

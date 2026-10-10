@@ -19,51 +19,78 @@ async function creerProfilArtisan(userId, serviceId, ville, telephone, descripti
     return resultat; // on retourne le resultat qui est l'id de l'artisan
 }
 
-// Annuaire public : ne publier que les artisans actives et approuves.
-// Pagination cote serveur : aucune limite silencieuse sur le nombre total.
-function construireRecherchePublique(filtres = {}) {
-    const conditions = ["artisans.verification_statut = 'approuve'", "users.statut_compte = 'actif'", "users.email_verified = 1"];
+// L'annuaire public exclut les comptes non approuvés, bloqués ou non vérifiés.
+// Les valeurs de recherche et les bornes de pagination passent par des paramètres MySQL.
+function construireFiltresAnnuaire(filtres = {}) {
+    const conditions = [
+        "a.verification_statut = 'approuve'",
+        "u.statut_compte = 'actif'",
+        'u.email_verified = 1'
+    ];
     const valeurs = [];
     if (filtres.serviceId) {
-        conditions.push('artisans.service_id = ?');
+        conditions.push('a.service_id = ?');
         valeurs.push(filtres.serviceId);
     }
     if (filtres.wilaya) {
         const communes = obtenirCommunesWilaya(filtres.wilaya);
         const lieux = communes.length ? communes : [filtres.wilaya];
-        conditions.push('(' + lieux.map(() => 'artisans.ville LIKE ?').join(' OR ') + ')');
-        valeurs.push(...lieux.map(v => '%' + v + '%'));
+        conditions.push('(' + lieux.map(() => 'a.ville LIKE ?').join(' OR ') + ')');
+        valeurs.push(...lieux.map(lieu => '%' + lieu + '%'));
     } else if (filtres.ville) {
-        conditions.push('artisans.ville LIKE ?');
+        conditions.push('a.ville LIKE ?');
         valeurs.push('%' + filtres.ville + '%');
     }
     if (filtres.recherche) {
-        conditions.push('(users.nom LIKE ? OR users.prenom LIKE ? OR services.nom LIKE ? OR artisans.ville LIKE ? OR artisans.description LIKE ?)');
+        conditions.push('(u.nom LIKE ? OR u.prenom LIKE ? OR s.nom LIKE ? OR a.ville LIKE ? OR a.description LIKE ?)');
         valeurs.push(...Array(5).fill('%' + filtres.recherche + '%'));
     }
-    return { where: conditions.join(' AND '), valeurs };
+    return {where: conditions.join(' AND '), valeurs};
 }
 
-async function trouverTousLesArtisans(filtres = {}) {
-    const {where, valeurs} = construireRecherchePublique(filtres);
-    const page = Number.isSafeInteger(Number(filtres.page)) && Number(filtres.page)>0 ? Math.min(Number(filtres.page), 1000000) : 1;
-    const limite = Number.isSafeInteger(Number(filtres.limite)) && Number(filtres.limite)>0 ? Math.min(Number(filtres.limite), 48) : 12;
-    const offset = (page - 1) * limite;
-    const jointures = `FROM artisans JOIN users ON artisans.user_id=users.id JOIN services ON artisans.service_id=services.id`;
-    const [[nombre]] = await db.promise().query(`SELECT COUNT(*) AS total ${jointures} WHERE ${where}`, valeurs);
-    const [artisans] = await db.promise().query(`
-        SELECT artisans.id, artisans.user_id, artisans.service_id, artisans.ville,
-            artisans.telephone, artisans.description, artisans.experience,
-            users.photo_profil, users.nom, users.prenom, users.email,
-            services.nom AS service_nom,
-            (SELECT COALESCE(ROUND(AVG(note),1),0) FROM avis WHERE artisan_id=artisans.id) AS moyenne_notes,
-            (SELECT COUNT(*) FROM avis WHERE artisan_id=artisans.id) AS total_avis,
-            (SELECT COUNT(*) FROM demandes WHERE artisan_id=artisans.id) AS total_demandes
-        ${jointures} WHERE ${where}
-        ORDER BY artisans.created_at DESC, artisans.id DESC LIMIT ? OFFSET ?
-    `, [...valeurs,limite,offset]);
-    const total = Number(nombre.total) || 0;
-    return {artisans,total,page,limite,pages:Math.ceil(total/limite)};
+async function trouverTousLesArtisans(filtres = {}, pagination = null) {
+    const {where, valeurs} = construireFiltresAnnuaire(filtres);
+    // Pré-agrégation : évite de multiplier les avis par les demandes au moment des jointures.
+    let sql = `
+        SELECT a.id, a.user_id, a.service_id, a.ville, a.telephone,
+               a.description, a.experience, u.photo_profil, u.nom, u.prenom,
+               u.email, s.nom AS service_nom,
+               COALESCE(notes.moyenne_notes, 0) AS moyenne_notes,
+               COALESCE(notes.total_avis, 0) AS total_avis,
+               COALESCE(missions.total_demandes, 0) AS total_demandes
+        FROM artisans a
+        JOIN users u ON a.user_id = u.id
+        JOIN services s ON a.service_id = s.id
+        LEFT JOIN (
+            SELECT artisan_id, ROUND(AVG(note), 1) moyenne_notes,
+                   COUNT(*) total_avis FROM avis GROUP BY artisan_id
+        ) notes ON notes.artisan_id = a.id
+        LEFT JOIN (
+            SELECT artisan_id, COUNT(*) total_demandes
+            FROM demandes GROUP BY artisan_id
+        ) missions ON missions.artisan_id = a.id
+        WHERE ${where}
+        ORDER BY a.created_at DESC, a.id DESC
+    `;
+    const params = [...valeurs];
+    if (pagination) {
+        sql += ' LIMIT ? OFFSET ?';
+        params.push(pagination.limit, (pagination.page - 1) * pagination.limit);
+    }
+    const [artisans] = await db.promise().query(sql, params);
+    if (!pagination) return artisans; // Compatibilité avec les autres pages du PFE.
+    const [comptages] = await db.promise().query(`
+        SELECT COUNT(*) AS total FROM artisans a
+        JOIN users u ON a.user_id = u.id
+        JOIN services s ON a.service_id = s.id
+        WHERE ${where}
+    `, valeurs);
+    const total = Number(comptages[0]?.total || 0);
+    return {
+        artisans, total, page: pagination.page, limit: pagination.limit,
+        totalPages: Math.ceil(total / pagination.limit),
+        hasMore: pagination.page * pagination.limit < total
+    };
 }
 
 // Recuperer un artisan par son id avec son utilisateur et son service

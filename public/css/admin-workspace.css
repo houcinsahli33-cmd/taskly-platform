@@ -1,0 +1,76 @@
+/* Espace admin uniquement : le design public Taskly reste inchangé. */
+body[data-require-role="admin"] .admin-layout {
+  display: grid;
+  grid-template-columns: 255px minmax(0, 1fr);
+  align-items: start;
+  min-height: 100vh;
+}
+body[data-require-role="admin"] .admin-sidebar {
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 30px 16px 24px;
+  z-index: 8;
+  scrollbar-width: thin;
+}
+body[data-require-role="admin"] .admin-content { min-width: 0; }
+body[data-require-role="admin"] .admin-sidebar-subtitle {
+  margin: -12px 0 26px;
+  font-size: .76rem;
+  color: #a5d6c9;
+}
+body[data-require-role="admin"] .side-nav { display: grid; grid-template-columns: minmax(0,1fr); gap: 7px; }
+body[data-require-role="admin"] .admin-nav button { justify-content: flex-start; text-align: left; transition: background-color .15s; cursor: pointer; }
+body[data-require-role="admin"] .admin-nav button.active {
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.55);
+  box-shadow: inset 3px 0 0 #99e8d0;
+}
+body[data-require-role="admin"] .admin-nav button:focus-visible { outline: 3px solid #d7fff0; outline-offset: 2px; }
+body[data-require-role="admin"] .admin-nav button[data-admin-tab="verification"],
+body[data-require-role="admin"] .admin-nav button[data-admin-tab="account"] { margin-top: 12px; }
+body[data-require-role="admin"] .admin-nav button[data-logout] {
+  margin-top: 22px;
+  border-top: 1px solid rgba(255,255,255,.2);
+  border-radius: 0 0 10px 10px;
+}
+body[data-require-role="admin"] .admin-overview-grid .panel { min-width: 0; }
+body[data-require-role="admin"] .stats-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+body[data-require-role="admin"] .stat-card.is-unavailable strong { font-size: 1.1rem; }
+@media(max-width: 1200px) {
+  body[data-require-role="admin"] .stats-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  body[data-require-role="admin"] .admin-content { padding: 24px; }
+}
+@media(max-width: 800px) {
+  body[data-require-role="admin"] .admin-layout { display: block; }
+  body[data-require-role="admin"] .admin-sidebar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: auto;
+    padding: 10px 14px;
+    background: #0b3a31;
+    box-shadow: 0 5px 18px rgba(2,30,22,.16);
+  }
+  body[data-require-role="admin"] .admin-sidebar .sidebar-title,
+  body[data-require-role="admin"] .admin-sidebar-subtitle { display: none; }
+  body[data-require-role="admin"] .side-nav { display: flex; flex-wrap: nowrap; gap: 8px; overflow-x: auto; }
+  body[data-require-role="admin"] .admin-nav button {
+    flex: 0 0 auto;
+    width: auto;
+    white-space: nowrap;
+    min-height: 42px;
+    padding: 8px 13px;
+  }
+  body[data-require-role="admin"] .admin-nav button[data-admin-tab="verification"],
+  body[data-require-role="admin"] .admin-nav button[data-admin-tab="account"],
+  body[data-require-role="admin"] .admin-nav button[data-logout] { margin-top: 0; border-top: 0; }
+  body[data-require-role="admin"] .admin-content { padding: 18px; }
+}
+@media(max-width: 520px) {
+  body[data-require-role="admin"] .stats-grid { grid-template-columns: 1fr; }
+  body[data-require-role="admin"] .admin-content { padding: 14px; }
+}

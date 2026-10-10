@@ -7,15 +7,12 @@ Sauvegarder la base avant toute migration ou suppression. Depuis le terminal du 
 
 La base doit déjà avoir la migration intégrée précédente, notamment users.email_verified, users.admin_session_version et les tables de rôles, justificatifs et historique. La nouvelle migration ajoute les liens support/compte, account_email_changes et account_notifications. Aucun compte n’est automatiquement approuvé par la migration. Alternative : sélectionner la bonne base dans TiDB et exécuter toutes les instructions de database/migration_comptes_support.sql ; l’éditeur peut exécuter seulement la requête courante, vérifier chaque résultat.
 
-## Démonstration PFE et nettoyage contrôlé des comptes
+## Démonstration PFE et comptes existants
+Avant de déployer cette nouvelle version et pendant une pause des inscriptions, exécuter `npm run demo:prepare`. Cela crée un instantané des IDs/e-mails des comptes existants : les artisans actuellement actifs à conserver et les clients/artisans dont la partie avant @ est exactement houcinsahli33, sahliredha03 ou houcinshl03 à supprimer. Les comptes administrateurs sont toujours exclus, même avec ces adresses.
 
-**Aucune suppression automatique.** La règle demandée concerne uniquement les comptes de rôle `client` ou `artisan` dont l'adresse e-mail contient `sahli` ou `shl`, **en tout endroit et sans distinction de casse**. Les comptes de rôle `admin` sont systématiquement exclus, même s'ils correspondent.
+Lire l’aperçu avant suppression. Après sauvegarde et vérification, `npm run demo:apply` applique cet instantané une seule fois. Il approuve uniquement les artisans actifs présents dans l’instantané, sans supprimer les utilisateurs apparus ensuite. Les comptes en statut bloqué restent bloqués. Il ne marque aucun e-mail non confirmé comme confirmé : un artisan non confirmé doit toujours valider son code pour accéder au compte et apparaître publiquement. Les confirmations existantes sont conservées. La suppression des comptes ciblés est définitive et cascade sur leurs demandes/avis/signalements ; les justificatifs privés et demandes liées au support sont supprimés. L’instantané ne contient aucun compte admin.
 
-1. `npm run demo:preview` : lecture seule de la base ; affiche les comptes candidats et les administrateurs protégés. Aucun fichier d'instantané, aucune suppression.
-2. Après identification des comptes et sauvegarde complète de la base, `npm run demo:prepare` : crée une liste figée dans `.taskly-private/nettoyage-pfe.json` (ignorée par Git) et affiche son empreinte. Vérifier le tableau des candidats ; la liste expire après 24 h.
-3. **Uniquement après validation humaine de la liste**, `npm run demo:apply -- --confirm=<empreinte exacte>` applique la suppression sur les seuls IDs/e-mails/rôles figés, avec contrôle de chaque compte sous transaction. Un changement intervenu depuis l'aperçu annule toute l'opération. Les comptes créés après l'instantané sont exclus.
-
-L'opération est irréversible : demandes, avis, signalements, pièces privées et messages liés peuvent être supprimés en cascade. Les administrateurs existants ne sont pas supprimés. Aucun artisan n'est approuvé automatiquement pendant ce nettoyage. **Ne pas appliquer sur une base distante sans sauvegarde vérifiée et contrôle des candidats**.
+Les scripts n’ont pas été exécutés sur votre TiDB dans cette tâche. Fournir leurs résultats permet de vérifier les candidats sans divulguer les mots de passe ou les variables privées.
 
 ## Comportement
 Client : confirmation e-mail puis accès sans validation administrative.

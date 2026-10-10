@@ -3,32 +3,32 @@
 
 const artisanModel = require("../models/artisanModel"); // on importe les fonctions du fichier artisanModel.js pour interagir avec la table artisans
 
-// recuperer tous les artisans
+// La page Artisans utilise la pagination côté serveur. Les anciennes pages
+// restent compatibles lorsqu'aucun paramètre "page" n'est donné.
 async function listerArtisans(req, res) {
     try {
-        // on recupere les filtres, req.query contient les filtres envoyes dans l'URL apres le ?
         const filtres = {
             serviceId: req.query.serviceId,
             wilaya: req.query.wilaya,
             ville: req.query.ville,
-            recherche: req.query.recherche,
-            page: req.query.page,
-            limite: req.query.limite
+            recherche: req.query.recherche
         };
-
-        const resultat = await artisanModel.trouverTousLesArtisans(filtres);   // on recupere tous les artisans
-
-        res.status(200).json({  // la requete a ete acceptee, on renvoie les artisans
-            ...resultat
-        });
-
+        const pageDemandee = req.query.page !== undefined || req.query.limit !== undefined;
+        let pagination = null;
+        if (pageDemandee) {
+            const brutPage = String(req.query.page || '1');
+            const brutLimite = String(req.query.limit || '12');
+            if (!/^[1-9]\d*$/.test(brutPage) || !/^[1-9]\d*$/.test(brutLimite)
+                || Number(brutPage) > 10000 || Number(brutLimite) > 36) {
+                return res.status(400).json({message:'Pagination invalide (page de 1 à 10000, limite de 1 à 36).'});
+            }
+            pagination = {page:Number(brutPage), limit:Number(brutLimite)};
+        }
+        const resultat = await artisanModel.trouverTousLesArtisans(filtres, pagination);
+        res.status(200).json(pagination ? resultat : {artisans:resultat});
     } catch (error) {
-        // si une erreur arrive dans le try, on l'affiche dans la console (terminal)
-        console.error("Erreur récupération artisans :", error.message);
-
-        res.status(500).json({
-            message: "Erreur serveur."
-        });
+        console.error('Erreur récupération artisans :', error.code || error.message);
+        res.status(500).json({message:'Annuaire indisponible. Réessayez plus tard.'});
     }
 }
 

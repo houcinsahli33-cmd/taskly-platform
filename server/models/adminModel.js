@@ -18,17 +18,6 @@ async function compter(table) {
     return resultats[0].total;
 }
 
-// Sous-ensemble des statistiques de modération : les rôles restent strictement côté serveur.
-async function statistiquesVerification() {
-    const [rows] = await db.promise().query(`SELECT
-        COALESCE(SUM(a.verification_statut='en_attente'),0) AS enAttente,
-        COALESCE(SUM(a.verification_statut='a_completer'),0) AS aCompleter,
-        COALESCE(SUM(a.verification_statut='approuve'),0) AS approuves,
-        COALESCE(SUM(u.statut_compte='bloque'),0) AS bloques
-        FROM artisans a JOIN users u ON u.id=a.user_id WHERE u.role='artisan'`);
-    return rows[0];
-}
-
 // Compter les demandes selon leur statut : en_attente, acceptee, annulee ou terminee
 async function demandesParStatut() {
     const sql = `
@@ -110,25 +99,26 @@ async function derniersAvis() {
     return resultats;
 }
 
-// Gestion des utilisateurs : consultation complète via pages et filtres.
-async function listerUtilisateurs(filtres = {}) {
-    const page = Math.min(Number.isSafeInteger(Number(filtres.page)) && Number(filtres.page)>0 ? Number(filtres.page) : 1,1000000);
-    const limite = Math.min(Number.isSafeInteger(Number(filtres.limite)) && Number(filtres.limite)>0 ? Number(filtres.limite) : 25,50);
-    const recherche=String(filtres.recherche || '').trim().slice(0,100);
-    const role=['client','artisan','admin'].includes(filtres.role) ? filtres.role : '';
-    const statut=['actif','bloque'].includes(filtres.statut) ? filtres.statut : '';
-    const clauses=[];const args=[];
-    if(role) {clauses.push('role=?');args.push(role);}
-    if(statut) {clauses.push('statut_compte=?');args.push(statut);}
-    if(recherche) {
-        clauses.push('(nom LIKE ? OR prenom LIKE ? OR email LIKE ?)');
-        args.push(...Array(3).fill('%'+recherche+'%'));
-    }
-    const where=clauses.length ? 'WHERE '+clauses.join(' AND ') : '';
-    const [[n]]=await db.promise().query(`SELECT COUNT(*) AS total FROM users ${where}`,args);
-    const [utilisateurs]=await db.promise().query(`SELECT id,nom,prenom,email,role,statut_compte,motif_blocage,date_blocage,created_at FROM users ${where} ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?`,[...args,limite,(page-1)*limite]);
-    const total=Number(n.total)||0;
-    return {utilisateurs,total,page,limite,pages:Math.ceil(total/limite)};
+// Lister les utilisateurs
+async function listerUtilisateurs() {
+    const sql = `
+        SELECT
+            id,
+            nom,
+            prenom,
+            email,
+            role,
+            statut_compte,
+            motif_blocage,
+            date_blocage,
+            created_at
+        FROM users
+        ORDER BY created_at DESC
+    `;
+
+    const [resultats] = await db.promise().query(sql);
+
+    return resultats;
 }
 
 // Trouver un utilisateur par son id
@@ -188,7 +178,6 @@ async function debloquerUtilisateur(id) {
 }
 
 module.exports = {
-    statistiquesVerification,
     compter,
     demandesParStatut,
     derniersUtilisateurs,

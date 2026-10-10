@@ -26,11 +26,14 @@ function carteArtisan(artisan) {
   `;
 }
 
+// La page ne conserve qu'une page de profils par requête, mais permet de
+// parcourir tous les résultats approuvés sans plafond artificiel à 6 profils.
 const TAILLE_PAGE_ARTISANS = 12;
 let artisansCharges = [];
-let totalArtisans = 0;
 let pageArtisans = 0;
-let requeteArtisansVersion = 0;
+let totalArtisans = 0;
+let chargementPageArtisans = false;
+let versionRechercheArtisans = 0;
 
 function obtenirBoutonAfficherPlusArtisans() {
   const grille = document.getElementById('artisans-grid');
@@ -39,66 +42,66 @@ function obtenirBoutonAfficherPlusArtisans() {
   if (!bouton) {
     const conteneur = document.createElement('div');
     conteneur.className = 'load-more-artisans-wrap';
-    conteneur.innerHTML = `<button class="btn load-more-artisans-btn" id="load-more-artisans" type="button">Afficher les artisans suivants</button><p class="artisans-results-count" id="artisans-results-count" role="status" aria-live="polite"></p>`;
+    conteneur.hidden = true;
+    conteneur.innerHTML = `
+      <button class="btn load-more-artisans-btn" id="load-more-artisans" type="button">
+        Afficher plus d’artisans
+      </button>
+      <p class="artisans-results-count" id="artisans-results-count" role="status" aria-live="polite"></p>`;
     grille.insertAdjacentElement('afterend', conteneur);
     bouton = conteneur.querySelector('button');
-    bouton.addEventListener('click', () => chargerPageArtisans(false));
+    bouton.addEventListener('click', () => chargerPageArtisans());
   }
   return bouton;
 }
 
-function afficherArtisansLimites() {
-  const grille = document.getElementById('artisans-grid');
-  if (!grille) return;
-  grille.innerHTML = artisansCharges.map(carteArtisan).join('');
+function mettreAJourCompteurArtisans() {
   const bouton = obtenirBoutonAfficherPlusArtisans();
+  if (!bouton) return;
   const conteneur = bouton.closest('.load-more-artisans-wrap');
   const compteur = document.getElementById('artisans-results-count');
-  if (compteur) compteur.textContent = `${artisansCharges.length} artisan(s) affiché(s) sur ${totalArtisans} résultat(s).`;
-  bouton.hidden = artisansCharges.length >= totalArtisans;
+  const vus = artisansCharges.length;
+  compteur.textContent = `${vus} artisan${vus > 1 ? 's' : ''} affiché${vus > 1 ? 's' : ''} sur ${totalArtisans} résultat${totalArtisans > 1 ? 's' : ''}`;
   conteneur.hidden = totalArtisans === 0;
+  bouton.hidden = vus >= totalArtisans;
+  bouton.disabled = chargementPageArtisans;
+  bouton.textContent = chargementPageArtisans ? 'Chargement…' : 'Afficher plus d’artisans';
 }
 
-async function chargerPageArtisans(reinitialiser = true) {
+async function chargerPageArtisans() {
+  if (chargementPageArtisans) return;
   const grille = document.getElementById('artisans-grid');
   if (!grille) return;
-  if (reinitialiser) {
-    ++requeteArtisansVersion;
-    artisansCharges = [];
-    pageArtisans = 0;
-    totalArtisans = 0;
-    grille.innerHTML = etatChargement('Chargement des artisans...');
-  }
-  const version = requeteArtisansVersion;
-  const bouton = obtenirBoutonAfficherPlusArtisans();
-  bouton.disabled = true;
-  bouton.textContent = 'Chargement...';
-  if (reinitialiser) bouton.closest('.load-more-artisans-wrap').hidden = true;
-  const params = new URLSearchParams(construireQueryArtisans());
-  params.set('page', String(pageArtisans + 1));
-  params.set('limite', String(TAILLE_PAGE_ARTISANS));
+  const version = versionRechercheArtisans;
+  const prochainePage = pageArtisans + 1;
+  chargementPageArtisans = true;
+  mettreAJourCompteurArtisans();
   try {
-    const result = await requeteAPI(`/api/artisans?${params.toString()}`);
-    if (version !== requeteArtisansVersion) return; // Ignorer l'ancienne recherche.
-    const nouveautes = Array.isArray(result.artisans) ? result.artisans : [];
-    pageArtisans += 1;
-    totalArtisans = Number(result.total ?? nouveautes.length);
-    artisansCharges.push(...nouveautes.filter(a => !artisansCharges.some(b => String(b.id) === String(a.id))));
-    if (!artisansCharges.length) {
-      grille.innerHTML = etatVideDeuxLignes('Aucun artisan ne correspond à vos critères.', 'Essayez de changer le service, la wilaya ou la recherche.');
-      bouton.closest('.load-more-artisans-wrap').hidden = true;
+    const params = new URLSearchParams(construireQueryArtisans());
+    params.set('page', prochainePage);
+    params.set('limit', TAILLE_PAGE_ARTISANS);
+    const resultat = await requeteAPI(`/api/artisans?${params}`);
+    if (version !== versionRechercheArtisans) return;
+    const nouveaux = Array.isArray(resultat.artisans) ? resultat.artisans : [];
+    artisansCharges.push(...nouveaux);
+    pageArtisans = prochainePage;
+    totalArtisans = Number(resultat.total || 0);
+    if (pageArtisans === 1 && !nouveaux.length) {
+      grille.innerHTML = etatVideDeuxLignes(
+        'Aucun artisan ne correspond à vos critères.',
+        'Essayez de changer le service, la wilaya ou la recherche.'
+      );
     } else {
-      afficherArtisansLimites();
+      grille.insertAdjacentHTML('beforeend', nouveaux.map(carteArtisan).join(''));
     }
   } catch (error) {
-    if (version !== requeteArtisansVersion) return;
+    if (version !== versionRechercheArtisans) return;
     if (!artisansCharges.length) grille.innerHTML = etatVide(error.message);
-    else afficherToast(error.message, 'error');
-    bouton.closest('.load-more-artisans-wrap').hidden = !artisansCharges.length;
+    else afficherToast('Impossible de charger la suite : ' + error.message, 'error');
   } finally {
-    if (version === requeteArtisansVersion) {
-      bouton.disabled = false;
-      bouton.textContent = 'Afficher les artisans suivants';
+    if (version === versionRechercheArtisans) {
+      chargementPageArtisans = false;
+      mettreAJourCompteurArtisans();
     }
   }
 }
@@ -142,8 +145,22 @@ function construireQueryArtisans() {
   return params.toString();
 }
 
-// Chaque recherche repart de la première page et peut parcourir tous les profils autorisés.
-function chargerArtisans() { return chargerPageArtisans(true); }
+// Relancer la recherche avec la première page et ignorer les réponses obsolètes.
+function chargerArtisans() {
+  const grille = document.getElementById('artisans-grid');
+  if (!grille) return;
+  versionRechercheArtisans += 1;
+  artisansCharges = [];
+  pageArtisans = 0;
+  totalArtisans = 0;
+  chargementPageArtisans = false;
+  grille.innerHTML = etatChargement('Chargement des artisans...');
+  const bouton = obtenirBoutonAfficherPlusArtisans();
+  if (bouton) bouton.closest('.load-more-artisans-wrap').hidden = true;
+  // Efface uniquement le message de chargement avant l'insertion de cartes.
+  grille.innerHTML = '';
+  return chargerPageArtisans();
+}
 
 // Initialiser les filtres de la page artisans
 function initialiserFiltresArtisans() {
