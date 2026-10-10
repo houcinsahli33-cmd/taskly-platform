@@ -9,6 +9,7 @@ const {verifierCsrf} = require('./middleware/securityMiddleware');
 const adminAuthRoutes=require('./routes/adminAuthRoutes');
 const verificationRoutes=require('./routes/verificationRoutes');
 const adminVerificationRoutes=require('./routes/adminVerificationRoutes');
+const adminSettingsRoutes = require('./routes/adminSettingsRoutes');
 const path = require("path");
 require("./config/db");
 
@@ -76,6 +77,7 @@ app.use('/api',verifierCsrf);
 app.use('/api' + adminEntryPath + '/auth', headersAdminPrive, adminAuthRoutes);
 app.use('/api/artisan-verification',verificationRoutes);
 app.use('/api/admin-verification',adminVerificationRoutes);
+  app.use('/api/admin-settings', adminSettingsRoutes);
 
 // routes
 app.use("/api/auth", authRoutes); // routes liees a l'authentification
