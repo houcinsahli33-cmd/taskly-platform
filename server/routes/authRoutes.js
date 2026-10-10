@@ -1,6 +1,7 @@
 // Ce fichier contient les routes liées à l'authentification. Il définit les chemins pour l'inscription, la connexion et la déconnexion. Chaque route appelle une fonction du controller correspondant.
-
-const express = require("express"); // on importe express pour créer les routes
+const { csrfToken } = require("../middleware/securityMiddleware");
+const express = require("express"); // on importe express pour créer les route
+router.get("/csrf", csrfToken);
 const authController = require("../controllers/authController"); // on importe le controller d'authentification qui contient les fonctions liées à l'authentification
 const { verifierConnexion } = require("../middleware/authMiddleware"); // on importe le middleware pour verifier la connexion
 const { uploadPhotoProfil } = require("../middleware/uploadMiddleware"); // on importe le middleware pour l'upload des photos de profil
