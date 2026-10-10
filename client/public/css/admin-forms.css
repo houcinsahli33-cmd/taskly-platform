@@ -49,3 +49,17 @@ body.admin-review-open { overflow:hidden; }
  .admin-review-window-header, .admin-review-window-body {padding:14px;}
  .admin-review-window-header {flex-wrap:wrap;}
 }
+
+/* Alignement des formulaires internes et pièces jointes. */
+.admin-settings-form > label{min-width:0}
+.admin-settings-form input,.admin-settings-form select,.admin-settings-form textarea{max-width:100%}
+.admin-settings-form input[type=file],.modal-card input[type=file]{padding:8px;border:1px dashed #a4c9b8;border-radius:10px;background:#f5faf7;width:100%;box-sizing:border-box}
+.admin-settings-form input[type=file]::file-selector-button,.modal-card input[type=file]::file-selector-button{border:0;border-radius:7px;padding:9px 12px;margin-right:12px;background:#087f65;color:#fff;font:inherit;cursor:pointer}
+.admin-settings-panel form + form{border-top:1px solid #e0ebe5;margin-top:20px;padding-top:20px}
+.admin-review-window-body form label{min-width:0;display:block}
+.admin-review-window-body textarea{box-sizing:border-box}
+.admin-content .admin-settings-form button:disabled,.modal-card button:disabled{opacity:.6;cursor:wait}
+@media(min-width:760px){.admin-content .admin-settings-form{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-content .admin-settings-form>button,.admin-content .admin-settings-form>p,.admin-content .admin-settings-form>small{grid-column:1/-1}}
+
+.admin-field-group{min-width:0;display:flex;flex-direction:column;gap:6px}.admin-field-group label{margin:0!important}.admin-field-group input{margin:0}.admin-settings-form>[hidden]{display:none!important}
+.admin-content .admin-settings-form[hidden]{display:none!important}

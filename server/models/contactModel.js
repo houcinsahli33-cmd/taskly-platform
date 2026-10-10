@@ -38,7 +38,7 @@ async function trouverMessageContactParIdEtEmail(id, email) {
     const sql = `SELECT ${champsSupport} FROM contacts_support
         WHERE id = ? AND email = ? AND contexte = 'public'`;
     const ancien = `SELECT ${champsSupportAncien} FROM contacts_support
-        WHERE id = ? AND email = ?`;
+        WHERE id = ? AND email = ? AND contexte = 'public'`;
     const resultats = await lireContacts(sql, [id, email], ancien);
     return resultats[0];
 }

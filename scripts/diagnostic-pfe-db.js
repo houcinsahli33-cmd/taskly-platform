@@ -8,10 +8,15 @@ const attendus={
   services:['id','nom'],
   artisan_documents:['id','artisan_id','type_document','stored_name','original_name'],
   verification_audit:['id','artisan_id','admin_user_id','ancien_statut','nouveau_statut','commentaire'],
-  contacts_support:['id','user_id','contexte','message','statut'],
+  contacts_support:['id','user_id','contexte','login_verified_at','message','statut'],
   account_notifications:['id','user_id','statut','destinataire'],
   stored_files:['id','prive','contenu'],
-  admin_roles:['user_id','niveau']
+  admin_roles:['user_id','niveau'],
+  account_email_changes:['user_id','nouveau_email','code_hash','expires_at','attempts'],
+  admin_invitations:['id','email','token_hash','created_by','expires_at','accepted_at','revoked_at'],
+  admin_email_changes:['user_id','nouveau_email','code_hash','expires_at','attempts'],
+  admin_audit_logs:['id','admin_user_id','action','cible_id','detail'],
+  verification_codes:['user_id','code_hash','expires_at','attempts']
 };
 (async()=>{
  try {

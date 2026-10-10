@@ -298,7 +298,7 @@
             </p>
 
             <div class="admin-review-toolbar">
-              <label for="admin-verification-search">Rechercher un artisan
+              <div class="admin-field-group"><label for="admin-verification-search">Rechercher un artisan
                 <input class="form-input" id="admin-verification-search" type="search" placeholder="Nom, e-mail, ville ou métier" autocomplete="off">
               </label>
               <label for="admin-verification-status">Statut du dossier
@@ -362,34 +362,28 @@
 
               <label for="admin-profile-nom">
                 Nom
-              </label>
-
-              <input
+              </label><input
                 id="admin-profile-nom"
                 type="text"
                 maxlength="100"
                 autocomplete="family-name"
-                required>
+                required></div>
 
-              <label for="admin-profile-prenom">
+              <div class="admin-field-group"><label for="admin-profile-prenom">
                 Prénom
-              </label>
-
-              <input
+              </label><input
                 id="admin-profile-prenom"
                 type="text"
                 maxlength="100"
                 autocomplete="given-name"
-                required>
+                required></div>
 
-              <label for="admin-profile-email">
+              <div class="admin-field-group"><label for="admin-profile-email">
                 Adresse e-mail actuelle
-              </label>
-
-              <input
+              </label><input
                 id="admin-profile-email"
                 type="email"
-                readonly>
+                readonly></div>
 
               <button type="submit">
                 Enregistrer les informations
@@ -414,39 +408,33 @@
               id="admin-password-form"
               class="admin-settings-form">
 
-              <label for="admin-password-old">
+              <div class="admin-field-group"><label for="admin-password-old">
                 Mot de passe actuel
-              </label>
-
-              <input
+              </label><input
                 id="admin-password-old"
                 type="password"
                 autocomplete="current-password"
-                required>
+                required></div>
 
-              <label for="admin-password-new">
+              <div class="admin-field-group"><label for="admin-password-new">
                 Nouveau mot de passe
-              </label>
-
-              <input
+              </label><input
                 id="admin-password-new"
                 type="password"
                 minlength="12"
                 maxlength="128"
                 autocomplete="new-password"
-                required>
+                required></div>
 
-              <label for="admin-password-repeat">
+              <div class="admin-field-group"><label for="admin-password-repeat">
                 Confirmer le nouveau mot de passe
-              </label>
-
-              <input
+              </label><input
                 id="admin-password-repeat"
                 type="password"
                 minlength="12"
                 maxlength="128"
                 autocomplete="new-password"
-                required>
+                required></div>
 
               <button type="submit">
                 Changer mon mot de passe
@@ -477,25 +465,21 @@
               id="admin-email-request-form"
               class="admin-settings-form">
 
-              <label for="admin-email-new">
+              <div class="admin-field-group"><label for="admin-email-new">
                 Nouvelle adresse e-mail
-              </label>
-
-              <input
+              </label><input
                 id="admin-email-new"
                 type="email"
                 autocomplete="email"
-                required>
+                required></div>
 
-              <label for="admin-email-password">
+              <div class="admin-field-group"><label for="admin-email-password">
                 Mot de passe actuel
-              </label>
-
-              <input
+              </label><input
                 id="admin-email-password"
                 type="password"
                 autocomplete="current-password"
-                required>
+                required></div>
 
               <button type="submit">
                 Envoyer le code de confirmation
@@ -508,18 +492,16 @@
               class="admin-settings-form"
               hidden>
 
-              <label for="admin-email-code">
+              <div class="admin-field-group"><label for="admin-email-code">
                 Code de vérification
-              </label>
-
-              <input
+              </label><input
                 id="admin-email-code"
                 type="text"
                 inputmode="numeric"
                 maxlength="6"
                 pattern="[0-9]{6}"
                 autocomplete="one-time-code"
-                required>
+                required></div>
 
               <button type="submit">
                 Confirmer la nouvelle adresse
@@ -568,44 +550,36 @@
             id="admin-invite-form"
             class="admin-settings-form">
 
-            <label for="admin-invite-nom">
+            <div class="admin-field-group"><label for="admin-invite-nom">
               Nom
-            </label>
-
-            <input
+            </label><input
               id="admin-invite-nom"
               type="text"
               maxlength="100"
-              required>
+              required></div>
 
-            <label for="admin-invite-prenom">
+            <div class="admin-field-group"><label for="admin-invite-prenom">
               Prénom
-            </label>
-
-            <input
+            </label><input
               id="admin-invite-prenom"
               type="text"
               maxlength="100"
-              required>
+              required></div>
 
-            <label for="admin-invite-email">
+            <div class="admin-field-group"><label for="admin-invite-email">
               Adresse e-mail
-            </label>
-
-            <input
+            </label><input
               id="admin-invite-email"
               type="email"
-              required>
+              required></div>
 
-            <label for="admin-invite-password">
+            <div class="admin-field-group"><label for="admin-invite-password">
               Votre mot de passe administrateur
-            </label>
-
-            <input
+            </label><input
               id="admin-invite-password"
               type="password"
               autocomplete="current-password"
-              required>
+              required></div>
 
             <button
               type="submit"
