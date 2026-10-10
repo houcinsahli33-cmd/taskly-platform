@@ -1,0 +1,30 @@
+'use strict';
+// Audit lecture seule, sans afficher les identifiants, mots de passe ou contenus.
+require('dotenv').config({path:require('path').join(__dirname,'../server/.env')});
+const pool=require('../server/config/db').promise();
+const attendus={
+  users:['id','role','statut_compte','email_verified','admin_session_version'],
+  artisans:['id','user_id','service_id','verification_statut','verification_commentaire'],
+  services:['id','nom'],
+  artisan_documents:['id','artisan_id','type_document','stored_name','original_name'],
+  verification_audit:['id','artisan_id','admin_user_id','ancien_statut','nouveau_statut','commentaire'],
+  contacts_support:['id','user_id','contexte','message','statut'],
+  account_notifications:['id','user_id','statut','destinataire'],
+  stored_files:['id','prive','contenu'],
+  admin_roles:['user_id','niveau']
+};
+(async()=>{
+ try {
+   const [rows]=await pool.query('SELECT TABLE_NAME,COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE()');
+   const present=new Map();
+   for(const row of rows){const nom=row.TABLE_NAME;if(!present.has(nom))present.set(nom,new Set());present.get(nom).add(row.COLUMN_NAME);}
+   let erreurs=0;
+   for(const [table,colonnes] of Object.entries(attendus)){
+     if(!present.has(table)) {console.log(`MANQUANTE : table ${table}`);erreurs++;continue;}
+     for(const col of colonnes) if(!present.get(table).has(col)){console.log(`MANQUANTE : ${table}.${col}`);erreurs++;}
+   }
+   if(erreurs){console.log(`Diagnostic : ${erreurs} élément(s) de schéma manquant(s). Faire une sauvegarde et lire DEPLOIEMENT.md avant toute migration.`);process.exitCode=1;}
+   else console.log('Diagnostic lecture seule : colonnes principales présentes. Vérifier ensuite les droits et les scénarios réels dans le navigateur.');
+ }catch(error){console.error('Diagnostic MySQL impossible :', error.code || 'erreur de connexion');process.exitCode=1;}
+ finally {await pool.end();}
+})();

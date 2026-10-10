@@ -1,6 +1,6 @@
 # Taskly — migration et déploiement
 
-Cette version part de l’archive fournie. Le serveur sert client/public et client/private ; public est un miroir de compatibilité. Le logo, les images et les couleurs Taskly sont conservés. Ne pas fusionner des modifications de production sans comparer le manifeste CHANGEMENTS.json.
+Cette version part de l’archive fournie. Le serveur sert uniquement les fichiers statiques depuis `client/public`. Les pages HTML d’administration sont dans `private/`, servies exclusivement par les routes sécurisées. Le dossier `public/` sert de miroir des ressources pour compatibilité de déploiement. Le logo, les images et les couleurs Taskly sont conservés. Ne pas fusionner des modifications de production sans comparer le manifeste CHANGEMENTS.json.
 
 ## 1. Sauvegarde et préproduction
 Sauvegarder la base complète, les variables privées Vercel et les dossiers historiques server/private_uploads et client/public/uploads. Tester la restauration. Copier la base dans une préproduction et utiliser des identifiants distincts. Les migrations DDL ne sont pas atomiques ; une interruption peut être reprise, mais un retour arrière exige la sauvegarde.

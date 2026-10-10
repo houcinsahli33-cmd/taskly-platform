@@ -49,18 +49,24 @@ function construireFiltresAnnuaire(filtres = {}) {
 }
 
 async function trouverTousLesArtisans(filtres = {}, pagination = null) {
+    // Compatibilité : l'annuaire ancien utilise (filtres, {page,limit}),
+    // les nouveaux consommateurs peuvent utiliser ({...filtres,page,limite}).
+    const paginationIntegree = !pagination && (filtres.page !== undefined || filtres.limite !== undefined || filtres.limit !== undefined);
+    const options = paginationIntegree ? {
+        page: Number(filtres.page) || 1,
+        limit: Math.min(48, Math.max(1, Number(filtres.limite ?? filtres.limit) || 12))
+    } : pagination;
     const {where, valeurs} = construireFiltresAnnuaire(filtres);
-    // Pré-agrégation : évite de multiplier les avis par les demandes au moment des jointures.
-    let sql = `
-        SELECT a.id, a.user_id, a.service_id, a.ville, a.telephone,
+    const base = `FROM artisans a
+        JOIN users u ON a.user_id = u.id
+        JOIN services s ON a.service_id = s.id`;
+    const select = `SELECT a.id, a.user_id, a.service_id, a.ville, a.telephone,
                a.description, a.experience, u.photo_profil, u.nom, u.prenom,
                u.email, s.nom AS service_nom,
                COALESCE(notes.moyenne_notes, 0) AS moyenne_notes,
                COALESCE(notes.total_avis, 0) AS total_avis,
                COALESCE(missions.total_demandes, 0) AS total_demandes
-        FROM artisans a
-        JOIN users u ON a.user_id = u.id
-        JOIN services s ON a.service_id = s.id
+        ${base}
         LEFT JOIN (
             SELECT artisan_id, ROUND(AVG(note), 1) moyenne_notes,
                    COUNT(*) total_avis FROM avis GROUP BY artisan_id
@@ -70,26 +76,31 @@ async function trouverTousLesArtisans(filtres = {}, pagination = null) {
             FROM demandes GROUP BY artisan_id
         ) missions ON missions.artisan_id = a.id
         WHERE ${where}
-        ORDER BY a.created_at DESC, a.id DESC
-    `;
-    const params = [...valeurs];
-    if (pagination) {
-        sql += ' LIMIT ? OFFSET ?';
-        params.push(pagination.limit, (pagination.page - 1) * pagination.limit);
-    }
+        ORDER BY a.created_at DESC, a.id DESC`;
+    const compteurStandard = `SELECT COUNT(*) AS total ${base} WHERE ${where}`;
+    // Pour l'appel intégré, utiliser la forme complète "artisans" du SQL
+    // afin de permettre aux filtres de rester valides sans alias implicite.
+    const compteurIntegre = `SELECT COUNT(*) AS total FROM artisans JOIN users u ON artisans.user_id = u.id
+        JOIN services s ON artisans.service_id = s.id
+        WHERE ${where.replace(/\ba\./g, 'artisans.')}`;
+    const compter = async () => {
+        const [lignes] = await db.promise().query(paginationIntegree ? compteurIntegre : compteurStandard, valeurs);
+        return Number(lignes[0]?.total || 0);
+    };
+    // Ancien contrat : requête liste d'abord, puis comptage.
+    // Nouveau contrat : comptage d'abord, puis page demandée.
+    const totalInitial = paginationIntegree ? await compter() : null;
+    const page = Math.max(1, Math.floor(Number(options?.page) || 1));
+    const limite = Math.min(48, Math.max(1, Math.floor(Number(options?.limit) || 12)));
+    const sql = options ? select + ' LIMIT ? OFFSET ?' : select;
+    const params = options ? [...valeurs, limite, (page-1)*limite] : valeurs;
     const [artisans] = await db.promise().query(sql, params);
-    if (!pagination) return artisans; // Compatibilité avec les autres pages du PFE.
-    const [comptages] = await db.promise().query(`
-        SELECT COUNT(*) AS total FROM artisans a
-        JOIN users u ON a.user_id = u.id
-        JOIN services s ON a.service_id = s.id
-        WHERE ${where}
-    `, valeurs);
-    const total = Number(comptages[0]?.total || 0);
+    if (!options) return artisans;
+    const total = totalInitial === null ? await compter() : totalInitial;
     return {
-        artisans, total, page: pagination.page, limit: pagination.limit,
-        totalPages: Math.ceil(total / pagination.limit),
-        hasMore: pagination.page * pagination.limit < total
+        artisans, total, page, limite, pages: Math.ceil(total / limite),
+        limit: limite, totalPages: Math.ceil(total / limite),
+        hasMore: page * limite < total
     };
 }
 

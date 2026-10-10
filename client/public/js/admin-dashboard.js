@@ -136,7 +136,7 @@ async function chargerUtilisateursAdmin() {
                 <td>${badgeStatut(u.statut_compte)}</td>
                 <td>${formatDate(u.created_at)}</td>
                 <td>
-                  ${u.role === "admin" ? `<span class="muted">Protégé</span>` : u.statut_compte === "bloque"
+                  ${u.role === "admin" ? `<span class="muted">Protégé</span>` : u.role === "artisan" ? `<button class="btn small outline" type="button" data-examine-user="${u.id}">Examiner le dossier</button>` : u.statut_compte === "bloque"
                     ? `<button class="btn small outline" type="button" data-unblock-user="${u.id}">Débloquer</button>`
                     : `<button class="btn small danger" type="button" data-open-block="${u.id}">Bloquer</button>`}
                 </td>
@@ -187,7 +187,7 @@ async function chargerSignalementsAdmin() {
                 <td>${echapperHTML(nomComplet(s, "signale_"))}<br><span class="text-small muted">${echapperHTML(s.signale_email)} · ${echapperHTML(s.signale_role)}</span><br>${badgeStatut(s.signale_statut_compte)}</td>
                 <td>Demande #${s.demande_id}</td>
                 <td>${formatDateHeure(s.created_at)}</td>
-                <td>${s.signale_role === "admin" || s.signale_statut_compte === "bloque" ? `<span class="muted">Aucune</span>` : `<button class="btn small danger" type="button" data-open-block="${s.signale_user_id}">Bloquer</button>`}</td>
+                <td>${s.signale_role === "admin" ? `<span class="muted">Aucune</span>` : s.signale_role === "artisan" ? `<button class="btn small outline" type="button" data-examine-user="${s.signale_user_id}">Examiner le dossier</button>` : s.signale_statut_compte === "bloque" ? `<span class="muted">Déjà bloqué</span>` : `<button class="btn small danger" type="button" data-open-block="${s.signale_user_id}">Bloquer</button>`}</td>
               </tr>
             `).join("")}
           </tbody>

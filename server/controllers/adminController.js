@@ -204,7 +204,7 @@ async function bloquerUtilisateur(req, res) {
         }
 
         if (utilisateur.role === 'artisan') {
-            return res.status(409).json({ message: 'Examiner le dossier artisan pour prendre cette décision.' });
+            return res.status(409).json({message:'Pour un artisan, utilisez « Examiner le dossier » dans la vérification des artisans.'});
         }
 
         const resultat = await adminModel.bloquerUtilisateur(
@@ -249,7 +249,7 @@ async function debloquerUtilisateur(req, res) {
         }
 
         if (utilisateur.role === 'artisan') {
-            return res.status(409).json({ message: 'Examiner le dossier artisan pour prendre cette décision.' });
+            return res.status(409).json({message:'Pour un artisan, utilisez « Examiner le dossier » dans la vérification des artisans.'});
         }
 
         const resultat = await adminModel.debloquerUtilisateur(req.params.id);

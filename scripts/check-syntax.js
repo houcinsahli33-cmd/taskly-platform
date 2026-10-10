@@ -11,6 +11,6 @@ function parcourir(d){for(const e of fs.readdirSync(d,{withFileTypes:true})){
 }}
 parcourir(root);
 // Risque du dashboard expose directement : il DOIT etre hors /public.
-if(fs.existsSync(path.join(root,'client/public/admin-dashboard.html'))){erreurs++;console.error('Dashboard admin encore public !');}
+if(fs.existsSync(path.join(root,'client/public/admin-dashboard.html')) || fs.existsSync(path.join(root,'client/private'))){erreurs++;console.error('Dashboard admin encore public !');}
 console.log(`Syntaxe JS : ${fichiers} fichiers verifies, ${erreurs} erreur(s).`);
 process.exit(erreurs?1:0);

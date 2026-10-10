@@ -7,7 +7,7 @@ function simulerModele() {
   const requetes=[];
   const db={promise:()=>({query:async(sql,params=[])=>{
     requetes.push({sql,params});
-    if(sql.includes('COUNT(*) AS total') && /FROM artisans a\s+JOIN/.test(sql))return [[{total:37}]];
+    if(sql.includes('COUNT(*) AS total') && sql.includes('FROM artisans JOIN'))return [[{total:37}]];
     return [[{id:10,prenom:'Nadia',nom:'Ben',service_nom:'Peinture'}]];
   }})};
   const module={exports:{}};
@@ -21,22 +21,22 @@ function simulerModele() {
 }
 test('annuaire public paginé : 37 artisans accessibles, jamais limités aux six premières cartes',async()=>{
   const {modele,requetes}=simulerModele();
-  const res=await modele.trouverTousLesArtisans({}, {page:2,limit:12});
+  const res=await modele.trouverTousLesArtisans({page:2,limite:12});
   assert.equal(res.total,37);
-  assert.equal(res.totalPages,4);
+  assert.equal(res.pages,4);
   assert.equal(res.page,2);
-  assert.equal(res.limit,12);
+  assert.equal(res.limite,12);
   assert.equal(requetes.length,2);
-  assert.equal(requetes[0].params.at(-2),12);
-  assert.equal(requetes[0].params.at(-1),12);
-  assert.match(requetes[0].sql,/verification_statut = 'approuve'/);
-  assert.match(requetes[0].sql,/email_verified = 1/);
-  assert.match(requetes[0].sql,/statut_compte = 'actif'/);
+  assert.equal(requetes[1].params.at(-2),12);
+  assert.equal(requetes[1].params.at(-1),12);
+  assert.match(requetes[1].sql,/verification_statut = 'approuve'/);
+  assert.match(requetes[1].sql,/email_verified = 1/);
+  assert.match(requetes[1].sql,/statut_compte = 'actif'/);
 });
 test('filtres envoyés avec paramètres SQL sans interpolation directe',async()=>{
   const {modele,requetes}=simulerModele();
-  await modele.trouverTousLesArtisans({recherche:"%' OR 1=1 --",serviceId:4}, {page:1,limit:36});
-  assert.equal(requetes[0].params.at(-2),36);
+  await modele.trouverTousLesArtisans({recherche:"%' OR 1=1 --",serviceId:4,page:1,limite:5000});
+  assert.equal(requetes[1].params.at(-2),48);
   assert.ok(requetes[0].params.includes(4));
   assert.ok(requetes[0].params.some(v=>String(v).includes('OR 1=1')));
   assert.ok(!requetes[0].sql.includes('OR 1=1'));

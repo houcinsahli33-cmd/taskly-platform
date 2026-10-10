@@ -10,5 +10,8 @@ client/public/uploads/
 /database/taskly_demo.sql
 /database/taskly_demo2.sql
 
-# Sauvegardes et instantanés sensibles du nettoyage PFE
+# Sauvegardes et diagnostics locaux privés (ne jamais publier)
 .taskly-private/
+*.patch
+*_Diagnostic.zip
+server/private_uploads/

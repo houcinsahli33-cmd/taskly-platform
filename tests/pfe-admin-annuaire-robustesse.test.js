@@ -61,7 +61,7 @@ test('sidebar : position stable sur ordinateur, barre horizontale sur petit écr
   assert.match(css,/top:\s*0/);
   assert.match(css,/height:\s*100vh/);
   assert.match(css,/@media\(max-width:\s*800px\)/);
-  const html=fs.readFileSync(path.join(__dirname,'../client/private/admin-dashboard.html'),'utf8');
+  const html=fs.readFileSync(path.join(__dirname,'../private/admin-dashboard.html'),'utf8');
   assert.match(html,/\/css\/admin-workspace.css/);
   assert.match(html,/data-require-role="admin"/);
 });

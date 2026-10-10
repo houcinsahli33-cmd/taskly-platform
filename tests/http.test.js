@@ -14,6 +14,9 @@ test('HTTP : CSRF, pages privées, médias et inscription sans pièce',async()=>
  try {
   assert.equal((await fetch(base+'/')).status,200);
   assert.equal((await fetch(base+'/admin-dashboard.html')).status,404);
+  assert.equal((await fetch(base+'/private/admin-dashboard.html')).status,404);
+  assert.equal((await fetch(base+'/client/private/admin-dashboard.html')).status,404);
+  assert.equal((await fetch(base+'/api/admin-verification/artisans')).status,401);
   assert.equal((await fetch(base+process.env.ADMIN_ENTRY_PATH+'/dashboard')).status,401);
   assert.equal((await fetch(base+'/api/admin/users')).status,401);
   assert.equal((await fetch(base+'/api/account')).status,401);
