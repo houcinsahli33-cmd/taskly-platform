@@ -7,7 +7,7 @@ const fs = require("fs");
 const dossierUpload = path.join(__dirname, "../../client/public/uploads/profiles");
 
 // Creer le dossier si il n'existe pas
-if (!fs.existsSync(dossierUpload)) {
+if (process.env.VERCEL !== '1' && !fs.existsSync(dossierUpload)) {
     fs.mkdirSync(dossierUpload, { recursive: true });
 }
 
