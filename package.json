@@ -13,6 +13,7 @@
     "admin:principal": "node scripts/set-principal.js",
     "documents:import": "node scripts/import-documents.js",
     "db:migrate:accounts": "node scripts/migrate.js migration_comptes_support.sql",
+    "demo:preview": "node scripts/prepare-pfe-demo.js",
     "demo:prepare": "node scripts/prepare-pfe-demo.js --prepare",
     "demo:apply": "node scripts/prepare-pfe-demo.js --apply"
   },

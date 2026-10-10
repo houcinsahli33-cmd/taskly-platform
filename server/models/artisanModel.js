@@ -19,93 +19,51 @@ async function creerProfilArtisan(userId, serviceId, ville, telephone, descripti
     return resultat; // on retourne le resultat qui est l'id de l'artisan
 }
 
-// recuperer tous les artisans avec possibilite de filtrer
-async function trouverTousLesArtisans(filtres = {}) {
-    // requete qui peut changer en fonction des filtres
-    let sql = `
-        SELECT 
-            artisans.id,
-            artisans.user_id,
-            artisans.service_id,
-            artisans.ville,
-            artisans.telephone,
-            artisans.description,
-            artisans.experience,
-            users.photo_profil,
-            users.nom,
-            users.prenom,
-            users.email,
-            services.nom AS service_nom,
-            COALESCE(ROUND(AVG(avis.note), 1), 0) AS moyenne_notes,
-            COUNT(DISTINCT avis.id) AS total_avis,
-            COUNT(DISTINCT demandes.id) AS total_demandes
-        FROM artisans
-        JOIN users ON artisans.user_id = users.id
-        JOIN services ON artisans.service_id = services.id
-        LEFT JOIN avis ON avis.artisan_id = artisans.id
-        LEFT JOIN demandes ON demandes.artisan_id = artisans.id
-        -- Condition toujours vraie qui permet d'ajouter facilement d'autres conditions avec AND
-        WHERE artisans.verification_statut = 'approuve' AND users.statut_compte = 'actif' AND users.email_verified = 1
-    `;
-
-    const valeurs = []; // on cree un tableau pour stocker les valeurs de filtres qui vont remplacer les ?
-
-    // Si un serviceId est fourni, on filtre les artisans par service
+// Annuaire public : ne publier que les artisans actives et approuves.
+// Pagination cote serveur : aucune limite silencieuse sur le nombre total.
+function construireRecherchePublique(filtres = {}) {
+    const conditions = ["artisans.verification_statut = 'approuve'", "users.statut_compte = 'actif'", "users.email_verified = 1"];
+    const valeurs = [];
     if (filtres.serviceId) {
-        sql += " AND artisans.service_id = ?"; // garder seulement les artisans du service demande
-        valeurs.push(filtres.serviceId); // on ajoute la valeur correspondante dans le tableau, remplacera le "?" au moment de l'execution de la requete
+        conditions.push('artisans.service_id = ?');
+        valeurs.push(filtres.serviceId);
     }
-
-    // La recherche publique se fait au niveau Wilaya. La commune reste utile
-    // pour l'adresse, mais elle ne doit pas rendre les rÃ©sultats trop Ã©troits.
     if (filtres.wilaya) {
-        const lieuxWilaya = obtenirCommunesWilaya(filtres.wilaya);
-        const lieux = lieuxWilaya.length ? lieuxWilaya : [filtres.wilaya];
-
-        sql += " AND (" + lieux.map(() => "artisans.ville LIKE ?").join(" OR ") + ")";
-        valeurs.push(...lieux.map((lieu) => "%" + lieu + "%"));
-
+        const communes = obtenirCommunesWilaya(filtres.wilaya);
+        const lieux = communes.length ? communes : [filtres.wilaya];
+        conditions.push('(' + lieux.map(() => 'artisans.ville LIKE ?').join(' OR ') + ')');
+        valeurs.push(...lieux.map(v => '%' + v + '%'));
     } else if (filtres.ville) {
-        sql += " AND artisans.ville LIKE ?";
-        valeurs.push("%" + filtres.ville + "%");
+        conditions.push('artisans.ville LIKE ?');
+        valeurs.push('%' + filtres.ville + '%');
     }
-
-    // Si un mot-cle de recherche est fourni, on cherche dans plusieurs colonnes.
     if (filtres.recherche) {
-        sql += `
-            AND (
-                users.nom LIKE ?
-                OR users.prenom LIKE ?
-                OR services.nom LIKE ?
-                OR artisans.ville LIKE ?
-                OR artisans.description LIKE ?
-            )
-        `;
-
-        const recherche = "%" + filtres.recherche + "%";
-        valeurs.push(recherche, recherche, recherche, recherche, recherche); // on ajoute les valeurs de recherche dans le tableau
+        conditions.push('(users.nom LIKE ? OR users.prenom LIKE ? OR services.nom LIKE ? OR artisans.ville LIKE ? OR artisans.description LIKE ?)');
+        valeurs.push(...Array(5).fill('%' + filtres.recherche + '%'));
     }
+    return { where: conditions.join(' AND '), valeurs };
+}
 
-    sql += `
-        GROUP BY 
-            artisans.id,
-            artisans.user_id,
-            artisans.service_id,
-            artisans.ville,
-            artisans.telephone,
-            artisans.description,
-            artisans.experience,
-            users.photo_profil,
-            users.nom,
-            users.prenom,
-            users.email,
-            services.nom
-        ORDER BY artisans.created_at DESC
-    `; // on ajoute la condition de tri
-
-    const [resultats] = await db.promise().query(sql, valeurs); // on execute la requete et on attends et on recupere le resultat
-
-    return resultats; // on retourne tous les artisans trouves
+async function trouverTousLesArtisans(filtres = {}) {
+    const {where, valeurs} = construireRecherchePublique(filtres);
+    const page = Number.isSafeInteger(Number(filtres.page)) && Number(filtres.page)>0 ? Math.min(Number(filtres.page), 1000000) : 1;
+    const limite = Number.isSafeInteger(Number(filtres.limite)) && Number(filtres.limite)>0 ? Math.min(Number(filtres.limite), 48) : 12;
+    const offset = (page - 1) * limite;
+    const jointures = `FROM artisans JOIN users ON artisans.user_id=users.id JOIN services ON artisans.service_id=services.id`;
+    const [[nombre]] = await db.promise().query(`SELECT COUNT(*) AS total ${jointures} WHERE ${where}`, valeurs);
+    const [artisans] = await db.promise().query(`
+        SELECT artisans.id, artisans.user_id, artisans.service_id, artisans.ville,
+            artisans.telephone, artisans.description, artisans.experience,
+            users.photo_profil, users.nom, users.prenom, users.email,
+            services.nom AS service_nom,
+            (SELECT COALESCE(ROUND(AVG(note),1),0) FROM avis WHERE artisan_id=artisans.id) AS moyenne_notes,
+            (SELECT COUNT(*) FROM avis WHERE artisan_id=artisans.id) AS total_avis,
+            (SELECT COUNT(*) FROM demandes WHERE artisan_id=artisans.id) AS total_demandes
+        ${jointures} WHERE ${where}
+        ORDER BY artisans.created_at DESC, artisans.id DESC LIMIT ? OFFSET ?
+    `, [...valeurs,limite,offset]);
+    const total = Number(nombre.total) || 0;
+    return {artisans,total,page,limite,pages:Math.ceil(total/limite)};
 }
 
 // Recuperer un artisan par son id avec son utilisateur et son service

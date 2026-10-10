@@ -79,6 +79,7 @@ test('Dossier de vérification : l’historique des décisions est retourné de 
   };
   const db = { query: async (sql, params) => {
     queries.push([sql, params]);
+    if (sql.includes('SELECT id FROM artisans WHERE id=')) return [[{ id: 4 }]];
     if (sql.includes('FROM verification_audit')) return [[{ id: 14, ancien_statut: 'en_attente', nouveau_statut: 'approuve', admin_nom: 'Démo' }]];
     return [[]];
   }};
@@ -101,7 +102,7 @@ test('Dossier de vérification : l’historique des décisions est retourné de 
   assert.equal(res.statusCode, 200);
   assert.equal(res.headers['Cache-Control'], 'no-store');
   assert.equal(res.data.historique[0].nouveau_statut, 'approuve');
-  assert.ok(queries.some(([sql, params]) => sql.includes('FROM verification_audit') && params[0] === '4'));
+  assert.ok(queries.some(([sql, params]) => sql.includes('FROM verification_audit') && params[0] === 4));
 });
 
 test('Le formulaire support artisan n’ajoute pas plusieurs écouteurs de suppression', async () => {

@@ -11,13 +11,15 @@ async function listerArtisans(req, res) {
             serviceId: req.query.serviceId,
             wilaya: req.query.wilaya,
             ville: req.query.ville,
-            recherche: req.query.recherche
+            recherche: req.query.recherche,
+            page: req.query.page,
+            limite: req.query.limite
         };
 
-        const artisans = await artisanModel.trouverTousLesArtisans(filtres);   // on recupere tous les artisans
+        const resultat = await artisanModel.trouverTousLesArtisans(filtres);   // on recupere tous les artisans
 
         res.status(200).json({  // la requete a ete acceptee, on renvoie les artisans
-            artisans: artisans 
+            ...resultat
         });
 
     } catch (error) {

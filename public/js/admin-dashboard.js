@@ -1,4 +1,6 @@
 let adminUtilisateurs = [];
+let adminUsersPage = 1;
+let adminUsersVersion = 0;
 let adminSignalements = [];
 let adminServices = [];
 let filtreContacts = "";
@@ -58,6 +60,10 @@ async function chargerStatsAdmin() {
       <div class="stat-card"><span>Avis</span><strong>${s.totalAvis}</strong></div>
       <div class="stat-card"><span>Signalements</span><strong>${s.totalSignalements}</strong></div>
       <div class="stat-card"><span>Support</span><strong>${s.totalContactsSupport}</strong></div>
+      <div class="stat-card"><span>Dossiers en attente</span><strong>${Number(s.enAttente || 0)}</strong></div>
+      <div class="stat-card"><span>À compléter</span><strong>${Number(s.aCompleter || 0)}</strong></div>
+      <div class="stat-card"><span>Dossiers approuvés</span><strong>${Number(s.approuves || 0)}</strong></div>
+      <div class="stat-card"><span>Artisans bloqués</span><strong>${Number(s.bloques || 0)}</strong></div>
     `;
 
     latestUsers.innerHTML = tableSimple(
@@ -86,14 +92,26 @@ async function chargerStatsAdmin() {
 }
 
 // Charger les utilisateurs
-async function chargerUtilisateursAdmin() {
+async function chargerUtilisateursAdmin(page = adminUsersPage) {
   const cible = document.getElementById("admin-users-table");
   if (!cible) return;
+  const version = ++adminUsersVersion;
   cible.innerHTML = etatChargement("Chargement des utilisateurs...");
 
   try {
-    const { utilisateurs } = await requeteAPI("/api/admin/users");
+    const params = new URLSearchParams({page:String(page),limite:'25',
+      recherche:document.getElementById('admin-users-search')?.value.trim() || '',
+      role:document.getElementById('admin-users-role')?.value || '',
+      statut:document.getElementById('admin-users-status')?.value || ''});
+    const {utilisateurs,total,pages} = await requeteAPI('/api/admin/users?' + params.toString());
+    if(version!==adminUsersVersion)return;
+    adminUsersPage=page;
     adminUtilisateurs = utilisateurs;
+    document.getElementById('admin-users-count').textContent = `${Number(total)} compte(s) correspondant aux filtres.`;
+    document.getElementById('admin-users-pagination').innerHTML = pages>1 ? `
+      <button class="btn outline small" type="button" data-admin-users-page="${page-1}" ${page<=1?'disabled':''}>Précédent</button>
+      <span>Page ${page} / ${pages}</span>
+      <button class="btn outline small" type="button" data-admin-users-page="${page+1}" ${page>=pages?'disabled':''}>Suivant</button>` : '';
 
     if (!utilisateurs.length) {
       cible.innerHTML = etatVide("Aucun utilisateur.");
@@ -133,7 +151,7 @@ async function chargerUtilisateursAdmin() {
       </div>
     `;
   } catch (error) {
-    cible.innerHTML = etatVide(error.message);
+    if(version===adminUsersVersion)cible.innerHTML = etatVide(error.message);
   }
 }
 
@@ -402,6 +420,14 @@ function initialiserActionsAdmin() {
     } finally {
       bouton.disabled = false;
     }
+  });
+
+  document.getElementById('admin-users-filters')?.addEventListener('submit',event=>{
+    event.preventDefault();chargerUtilisateursAdmin(1);
+  });
+  document.getElementById('admin-users-pagination')?.addEventListener('click',event=>{
+    const bouton=event.target.closest('[data-admin-users-page]');
+    if(bouton && !bouton.disabled)chargerUtilisateursAdmin(Number(bouton.dataset.adminUsersPage));
   });
 
   document.getElementById("add-service-btn")?.addEventListener("click", () => ouvrirServiceModal());

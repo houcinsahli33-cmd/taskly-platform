@@ -4,54 +4,70 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const path=require('node:path');
 
-// Tests du rendu statique sans connexion à la base ni dépendances supplémentaires.
+// Ces tests couvrent la nouvelle liste avec pagination et filtres côté serveur.
 function preparerVue() {
   const elements=new Map();
-  for(const id of ['admin-verification-list','admin-verification-summary','admin-verification-search','admin-verification-filter']) {
-    elements.set(id,{innerHTML:'',value:id==='admin-verification-filter'?'tous':''});
+  for(const id of ['admin-verification-list','admin-verification-counts','admin-verification-search','admin-verification-status','admin-verification-pagination']) {
+    elements.set(id,{
+      innerHTML:'',textContent:'',value:id==='admin-verification-status'?'tous':'',
+      replaceChildren(){this.innerHTML='';this.textContent='';}
+    });
   }
+  const fiche=[
+    {id:1,prenom:'Nadia',nom:'Benali',email:'nadia@test.local',ville:'Oran',service_nom:'Plomberie',verification_statut:'en_attente',documents_count:1,statut_compte:'actif'},
+    {id:2,prenom:'Alice',nom:'Durand',email:'alice@test.local',ville:'Paris',service_nom:'Électricité',verification_statut:'approuve',documents_count:2,statut_compte:'actif'},
+    {id:3,prenom:'Eve',nom:'<img src=x onerror=alert(1)>',email:'eve@test.local',ville:'Lyon',service_nom:'Menuiserie',verification_statut:'refuse',documents_count:0,statut_compte:'bloque'},
+  ];
+  const appels=[];
   const echapperHTML=valeur=>String(valeur??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
   const contexte=vm.createContext({
     document:{getElementById:id=>elements.get(id),addEventListener:()=>{}},
-    normaliserTexte:valeur=>String(valeur||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim(),
-    echapperHTML,
-    nomComplet:objet=>[objet.prenom,objet.nom].join(' '),
+    URLSearchParams,
+    etatChargement:()=>'<p>Chargement...</p>',
+    requeteAPI:async url=>{
+      appels.push(url);
+      const params=new URLSearchParams(url.split('?')[1]);
+      const filtre=params.get('statut');
+      const terme=(params.get('recherche')||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+      const items=fiche.filter(a=>(filtre==='tous'||filtre===a.verification_statut) &&
+        `${a.prenom} ${a.nom} ${a.service_nom} ${a.ville}`.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().includes(terme));
+      return {artisans:items,total:items.length,page:1,pages:1,comptes:{total:3,en_attente:1,approuve:1,refuse:1}};
+    },
+    echapperHTML,nomComplet:objet=>[objet.prenom,objet.nom].join(' '),
     formatDateHeure:()=> '10 octobre 2026',
   });
-  const chemin=path.join(__dirname,'../client/public/js/admin-verification.js');
-  vm.runInContext(fs.readFileSync(chemin,'utf8'),contexte);
-  vm.runInContext(`artisansVerification=[
-    {id:1,prenom:'Nadia',nom:'Benali',email:'nadia@test.local',ville:'Oran',service_nom:'Plomberie',verification_statut:'en_attente',documents_count:1},
-    {id:2,prenom:'Alice',nom:'Durand',email:'alice@test.local',ville:'Paris',service_nom:'Electricité',verification_statut:'approuve',documents_count:2},
-    {id:3,prenom:'Eve',nom:'<img src=x onerror=alert(1)>',email:'eve@test.local',ville:'Lyon',service_nom:'Menuiserie',verification_statut:'refuse',documents_count:0}];`,contexte);
-  return {contexte,elements};
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../client/public/js/admin-verification.js'),'utf8'),contexte);
+  return {contexte,elements,appels};
 }
 
-test('filtre des dossiers par statut et recherche sans altérer le tableau',()=>{
-  const {contexte,elements}=preparerVue();
-  elements.get('admin-verification-filter').value='en_attente';
-  vm.runInContext('afficherListeVerification()',contexte);
-  const liste=elements.get('admin-verification-list').innerHTML;
+test('filtre des dossiers par statut et recherche via API sans altérer le tableau',async()=>{
+  const {contexte,elements,appels}=preparerVue();
+  elements.get('admin-verification-status').value='en_attente';
+  await vm.runInContext('chargerArtisansVerification()',contexte);
+  let liste=elements.get('admin-verification-list').innerHTML;
   assert.match(liste,/Nadia Benali/);
   assert.doesNotMatch(liste,/Alice Durand/);
-  assert.match(elements.get('admin-verification-summary').innerHTML,/1 affiché\(s\)/);
-  elements.get('admin-verification-filter').value='tous';
+  assert.match(elements.get('admin-verification-counts').textContent,/1 résultat\(s\)/);
+  assert.match(appels.at(-1),/statut=en_attente/);
+  elements.get('admin-verification-status').value='tous';
   elements.get('admin-verification-search').value='electricite';
-  vm.runInContext('afficherListeVerification()',contexte);
-  assert.match(elements.get('admin-verification-list').innerHTML,/Alice Durand/);
-  assert.doesNotMatch(elements.get('admin-verification-list').innerHTML,/Nadia Benali/);
+  await vm.runInContext('chargerArtisansVerification()',contexte);
+  liste=elements.get('admin-verification-list').innerHTML;
+  assert.match(liste,/Alice Durand/);
+  assert.doesNotMatch(liste,/Nadia Benali/);
+  assert.match(appels.at(-1),/recherche=electricite/);
 });
 
-test('échappe les champs de dossier, les motifs et les noms des admins',()=>{
+test('échappe les champs de dossier, les motifs et les noms des admins',async()=>{
   const {contexte,elements}=preparerVue();
-  vm.runInContext('afficherListeVerification()',contexte);
+  await vm.runInContext('chargerArtisansVerification()',contexte);
   const liste=elements.get('admin-verification-list').innerHTML;
   assert.ok(!liste.includes('<img src=x'));
   assert.ok(liste.includes('&lt;img'));
   const ligne=vm.runInContext(`ligneHistorique({ancien_statut:'en_attente',nouveau_statut:'refuse',created_at:'2026-10-10',admin_prenom:'<script>',admin_nom:'Admin',commentaire:'<b>motif</b>'})`,contexte);
   assert.ok(!ligne.includes('<script>'));
   assert.ok(!ligne.includes('<b>motif</b>'));
-  assert.match(ligne,/Bloqué \/ refusé/);
+  assert.match(ligne,/Refusé/);
 });
 
 test('API admin : les pièces, le support et les décisions sont liés au bon dossier',async()=>{
@@ -65,6 +81,7 @@ test('API admin : les pièces, le support et les décisions sont liés au bon do
   const requetes=[];
   const db={query:async(sql,params)=>{
     requetes.push({sql,params});
+    if(sql.includes('SELECT id FROM artisans WHERE id='))return [[{id:7}]];
     if(sql.includes('FROM artisan_documents'))return [[{id:1,type_document:'diplome'}]];
     if(sql.includes('FROM contacts_support'))return [[{id:22,message:'Activation en attente'}]];
     if(sql.includes('FROM account_notifications'))return [[{id:31,statut:'sent'}]];
@@ -94,6 +111,6 @@ test('API admin : les pièces, le support et les décisions sont liés au bon do
   assert.equal(cache,'no-store');
   assert.equal(corps.historique[0].nouveau_statut,'approuve');
   assert.equal(corps.support[0].id,22);
-  assert.equal(requetes.length,4);
-  for (const requete of requetes) assert.deepEqual(Array.from(requete.params),['7']);
+  assert.equal(requetes.length,5);
+  for (const requete of requetes) assert.deepEqual(Array.from(requete.params),[7]);
 });

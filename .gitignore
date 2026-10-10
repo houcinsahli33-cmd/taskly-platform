@@ -9,3 +9,6 @@ client/public/uploads/
 
 /database/taskly_demo.sql
 /database/taskly_demo2.sql
+
+# Sauvegardes et instantanés sensibles du nettoyage PFE
+.taskly-private/

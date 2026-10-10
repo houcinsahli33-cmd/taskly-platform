@@ -19,7 +19,8 @@ async function statistiques(req, res) {
             derniersUtilisateurs,
             dernieresDemandes,
             derniersAvis,
-            derniersContactsSupport
+            derniersContactsSupport,
+            statistiquesVerification
         ] = await Promise.all([
             adminModel.compter("users"),
             adminModel.compter("clients"),
@@ -33,7 +34,8 @@ async function statistiques(req, res) {
             adminModel.derniersUtilisateurs(),
             adminModel.dernieresDemandes(),
             adminModel.derniersAvis(),
-            adminModel.derniersMessagesContact()
+            adminModel.derniersMessagesContact(),
+            adminModel.statistiquesVerification()
         ]);
 
         res.status(200).json({
@@ -45,7 +47,8 @@ async function statistiques(req, res) {
                 totalDemandes,
                 totalAvis,
                 totalSignalements,
-                totalContactsSupport
+                totalContactsSupport,
+                ...statistiquesVerification
             },
             demandesParStatut,
             derniersUtilisateurs,
@@ -155,11 +158,9 @@ async function supprimerService(req, res) {
 // Lister les utilisateurs
 async function listerUtilisateurs(req, res) {
     try {
-        const utilisateurs = await adminModel.listerUtilisateurs();
+        const resultat = await adminModel.listerUtilisateurs(req.query);
 
-        res.status(200).json({
-            utilisateurs
-        });
+        res.status(200).json(resultat);
 
     } catch (error) {
         console.error("Erreur liste utilisateurs admin :", error.message);
@@ -193,7 +194,7 @@ async function bloquerUtilisateur(req, res) {
     try {
         const { motifBlocage } = req.body;
 
-        if (typeof motifBlocage !== 'string' || motifBlocage.trim().length < 5 || motifBlocage.length > 500) {
+        if (typeof motifBlocage !== "string" || motifBlocage.trim().length < 5 || motifBlocage.trim().length > 500) {
             return res.status(400).json({
                 message: "Le motif du blocage est obligatoire."
             });
@@ -213,10 +214,9 @@ async function bloquerUtilisateur(req, res) {
             });
         }
 
-        if (utilisateur.role === 'artisan') {
-            return res.status(409).json({
-                message: "Pour bloquer un artisan, ouvrez Examiner le dossier : la décision, son motif et l'e-mail doivent être enregistrés ensemble."
-            });
+        // L'activation et le blocage d'un artisan se décident uniquement dans son dossier de vérification.
+        if (utilisateur.role === "artisan") {
+            return res.status(409).json({ message: "Examiner le dossier de l'artisan pour prendre cette décision." });
         }
 
         const resultat = await adminModel.bloquerUtilisateur(
@@ -260,10 +260,9 @@ async function debloquerUtilisateur(req, res) {
             });
         }
 
-        if (utilisateur.role === 'artisan') {
-            return res.status(409).json({
-                message: "Pour activer un artisan, ouvrez Examiner le dossier afin de vérifier les justificatifs et de notifier la décision."
-            });
+        // L'activation et le blocage d'un artisan se décident uniquement dans son dossier de vérification.
+        if (utilisateur.role === "artisan") {
+            return res.status(409).json({ message: "Examiner le dossier de l'artisan pour prendre cette décision." });
         }
 
         const resultat = await adminModel.debloquerUtilisateur(req.params.id);

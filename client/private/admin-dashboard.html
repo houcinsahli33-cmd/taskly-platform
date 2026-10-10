@@ -176,9 +176,16 @@
             <h2>Gestion des utilisateurs</h2>
           </div>
 
-          <div
-            class="panel-body"
-            id="admin-users-table">
+          <div class="panel-body">
+            <form id="admin-users-filters" class="admin-verification-filters" aria-label="Filtrer les utilisateurs">
+              <label><span class="field-label">Rechercher</span><input class="form-control" id="admin-users-search" type="search" maxlength="100" placeholder="Nom ou e-mail"></label>
+              <label><span class="field-label">Rôle</span><select class="form-select" id="admin-users-role"><option value="">Tous les rôles</option><option value="client">Clients</option><option value="artisan">Artisans</option><option value="admin">Administrateurs</option></select></label>
+              <label><span class="field-label">Compte</span><select class="form-select" id="admin-users-status"><option value="">Tous les statuts</option><option value="actif">Actifs</option><option value="bloque">Bloqués</option></select></label>
+              <button class="btn primary" type="submit">Rechercher</button>
+            </form>
+            <p id="admin-users-count" class="muted" role="status"></p>
+            <div id="admin-users-table"></div>
+            <div id="admin-users-pagination" class="admin-verification-pagination"></div>
           </div>
 
         </div>
@@ -295,25 +302,27 @@
               n'est pas une certification officielle.
             </p>
 
-            <div class="review-controls" role="search" aria-label="Rechercher un dossier artisan">
-              <label for="admin-verification-search">Rechercher un artisan
-                <input id="admin-verification-search" type="search" placeholder="Nom, e-mail, métier ou ville" autocomplete="off">
-              </label>
-              <label for="admin-verification-filter">Statut du dossier
-                <select id="admin-verification-filter">
-                  <option value="tous">Tous les dossiers</option>
-                  <option value="en_attente">En attente</option>
-                  <option value="a_completer">Complément demandé</option>
-                  <option value="approuve">Activés</option>
-                  <option value="refuse">Bloqués / refusés</option>
-                </select>
-              </label>
-              <button class="btn outline" id="admin-verification-refresh" type="button">Actualiser</button>
-            </div>
-            <div id="admin-verification-summary" class="review-summary" aria-live="polite"></div>
-            <div id="admin-verification-list" class="review-list" aria-live="polite"></div>
+            <form id="admin-verification-filters" class="admin-verification-filters" aria-label="Recherche dans les dossiers artisans">
+              <label><span class="field-label">Rechercher</span><input id="admin-verification-search" class="form-control" type="search" maxlength="100" placeholder="Nom, e-mail, métier ou ville"></label>
+              <label><span class="field-label">Statut du dossier</span><select id="admin-verification-status" class="form-select">
+                <option value="tous">Tous les artisans</option>
+                <option value="en_attente">En attente</option>
+                <option value="a_completer">À compléter</option>
+                <option value="approuve">Approuvés</option>
+                <option value="refuse">Refusés</option>
+                <option value="bloque">Comptes bloqués</option>
+              </select></label>
+              <button class="btn primary" type="submit">Rechercher</button>
+            </form>
+            <p id="admin-verification-counts" class="muted" role="status" aria-live="polite"></p>
+            <button class="btn outline small" id="admin-verification-export" type="button">Exporter cette page en CSV</button>
+            <div id="admin-verification-list"></div>
+            <div id="admin-verification-pagination" class="admin-verification-pagination"></div>
 
-            <div id="admin-verification-details" class="mt-22" aria-live="polite"></div>
+            <div
+              id="admin-verification-details"
+              class="mt-22">
+            </div>
 
           </div>
 

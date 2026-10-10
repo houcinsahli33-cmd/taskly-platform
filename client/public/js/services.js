@@ -164,7 +164,7 @@ async function chargerDetailService() {
   artisansCible.innerHTML = etatChargement("Chargement des artisans...");
 
   try {
-    const [{ service }, { artisans }] = await Promise.all([
+    const [{ service }, { artisans, total }] = await Promise.all([
       requeteAPI(`/api/services/${encodeURIComponent(id)}`),
       requeteAPI(`/api/artisans?serviceId=${encodeURIComponent(id)}`)
     ]);
@@ -194,7 +194,7 @@ async function chargerDetailService() {
       return;
     }
 
-    artisansCible.innerHTML = artisans.map(carteArtisan).join("");
+    artisansCible.innerHTML = artisans.map(carteArtisan).join("") + (Number(total)>artisans.length ? `<p class="muted">${artisans.length} artisans sur ${Number(total)} affichés ici. <a href="/artisans.html?serviceId=${encodeURIComponent(id)}">Voir tous les artisans de ce service</a></p>` : "");
   } catch (error) {
     cible.innerHTML = etatVide(error.message);
     artisansCible.innerHTML = "";
