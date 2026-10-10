@@ -1,0 +1,7 @@
+/* Palette et logo Taskly conservés. */
+.admin-settings-panel,.dashboard-card{border:1px solid #e4e9f0;border-radius:18px;box-shadow:0 5px 22px #18334f08}
+.admin-settings-heading{padding:20px 0}.admin-settings-list-entry{padding:16px;gap:16px;flex-wrap:wrap}
+.admin-settings-form input:focus-visible,input[type=file]:focus-visible{outline:3px solid #2787de66;outline-offset:3px}
+input[type=file]{display:block;max-width:100%;padding:12px;border:1px dashed #98b8d2;border-radius:12px;background:#f6faff}
+.status-pill{white-space:nowrap}.table-wrap{overflow-x:auto}
+@media(max-width:700px){.admin-settings-grid{grid-template-columns:1fr}.admin-settings-panel{padding:16px}.admin-settings-list-entry{align-items:flex-start}}

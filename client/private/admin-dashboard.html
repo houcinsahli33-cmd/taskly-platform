@@ -16,6 +16,7 @@
   <script defer src="/js/admin-dashboard.js"></script>
   <script defer src="/js/admin-verification.js"></script>
   <script defer src="/js/admin-settings.js"></script>
+  <link rel="stylesheet" href="/css/admin-integrated.css">
 </head>
 
 <body class="dashboard-page" data-require-role="admin">
@@ -748,6 +749,10 @@
             required
             placeholder="Description du service"></textarea>
         </label>
+          <label for="service-photo">Photo du service</label>
+          <input id="service-photo" type="file" accept=".jpg,.jpeg,.png">
+          <small>JPEG ou PNG, 3 Mo maximum. Sans nouvelle photo, l’image existante est conservée.</small>
+
 
         <button
           class="btn primary block"

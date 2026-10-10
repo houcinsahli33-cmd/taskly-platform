@@ -13,10 +13,10 @@ router.use(verifierConnexion, verifierAdmin);
 router.get("/stats", adminController.statistiques);
 
 // Creer un service
-router.post("/services", adminController.creerService);
+router.post("/services", require('../middleware/documentUpload').upload.single('photo'), adminController.creerService);
 
 // Modifier un service
-router.put("/services/:id",adminController.modifierService);
+router.put("/services/:id",require('../middleware/documentUpload').upload.single('photo'),adminController.modifierService);
 
 // Supprimer un service
 router.delete("/services/:id",adminController.supprimerService);

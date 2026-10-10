@@ -211,7 +211,7 @@ function noteArtisan(artisan) {
 function afficherAlerte(element, message, type = "success") {
   if (!element) return;
   element.className = `alert show ${type}`;
-  element.innerHTML = message;
+  element.textContent = message;
 }
 
 // Masquer une alerte

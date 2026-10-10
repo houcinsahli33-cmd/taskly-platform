@@ -1,5 +1,5 @@
-// Ce fichier prépare l'application Express. Il contient la configuration principale du serveur : routes, middlewares, fichiers statiques, sessions et gestion des erreurs.
-// Le serveur est lancé séparément dans server.js.
+// Ce fichier prÃƒÂ©pare l'application Express. Il contient la configuration principale du serveur : routes, middlewares, fichiers statiques, sessions et gestion des erreurs.
+// Le serveur est lancÃƒÂ© sÃƒÂ©parÃƒÂ©ment dans server.js.
 
 // imports
 const express = require("express");
@@ -63,15 +63,22 @@ function headersAdminPrive(req, res, next) {
 app.get(adminEntryPath, headersAdminPrive, (req, res) => {
   if (req.session.utilisateur?.role === 'admin' && req.session.adminVerified === true)
     return res.redirect(302, adminEntryPath + '/dashboard');
-  res.sendFile(path.join(__dirname, '../client/private/admin-login.html'));
+  res.sendFile(path.join(__dirname, '../client/private/admin-login.html'), {dotfiles:'allow'});
 });
 
-app.get(adminEntryPath + '/dashboard', headersAdminPrive, (req, res) => {
+app.get(adminEntryPath + '/dashboard', headersAdminPrive, require('./middleware/authMiddleware').verifierConnexion, require('./middleware/authMiddleware').verifierAdmin, (req, res) => {
   if (req.session.utilisateur?.role !== 'admin' || req.session.adminVerified !== true)
     return res.redirect(302, adminEntryPath);
-  res.sendFile(path.join(__dirname, '../client/private/admin-dashboard.html'));
+  res.sendFile(path.join(__dirname, '../client/private/admin-dashboard.html'), {dotfiles:'allow'});
 });
 app.use(express.static(path.join(__dirname,'../client/public'),{index:false}));
+app.get('/api/media/:id',async(req,res)=>{
+  try {
+    const file=await require('./services/fileStorage').lire(req.params.id,false);
+    if(!file)return res.status(404).end();
+    res.set('Content-Type',file.media_type);res.set('Cache-Control','public,max-age=86400');res.send(file.contenu);
+  } catch(e) {res.status(503).end();}
+});
 app.use('/api',verifierCsrf);
 // L'API de connexion admin partage le meme chemin prive aleatoire.
 app.use('/api' + adminEntryPath + '/auth', headersAdminPrive, adminAuthRoutes);
@@ -87,21 +94,22 @@ app.use("/api/demandes", demandeRoutes); // routes liees aux demandes
 app.use("/api/avis", avisRoutes); // routes liees aux avis
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
-app.use("/api/contact", contactRoutes); // routes liées au contact/support
+app.use("/api/contact", contactRoutes); // routes liÃƒÂ©es au contact/support
 
 app.get("/", (req, res) => {    // on cree une route pour la page d'accueil
-    res.sendFile(path.join(__dirname, "../client/public/index.html")); // on affiche la page d'accueil du site
+    res.sendFile(path.join(__dirname, "../client/public/index.html"), {dotfiles:"allow"}); // on affiche la page d'accueil du site
 });
 
-// Middleware pour gérer les routes inexistantes
+// Middleware pour gÃƒÂ©rer les routes inexistantes
 app.use((req, res) => {
   res.status(404).json({ message: "Route introuvable." });
 });
 
 app.use((err,req,res,next)=>{
   console.error('Erreur requete :',err.message);
-  res.status(err.code==='LIMIT_FILE_SIZE'?413:400).json({message:err.code==='LIMIT_FILE_SIZE'?'Fichier trop volumineux (5 Mo maximum).': 'Requete ou fichier invalide.'});
+  res.status(err.code==='LIMIT_FILE_SIZE'?413:400).json({message:err.code==='LIMIT_FILE_SIZE'?'Fichier trop volumineux (3 Mo maximum).': 'Requete ou fichier invalide.'});
 });
 return app;
 }
 module.exports = preparerApp; // on exporte l'application vers un autre fichier
+

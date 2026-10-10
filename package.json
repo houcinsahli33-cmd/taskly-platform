@@ -7,7 +7,11 @@
     "start": "node server/server.js",
     "dev": "nodemon server/server.js",
     "check": "node scripts/check-syntax.js",
-    "admin:create": "node scripts/create-admin.js"
+    "admin:create": "node scripts/create-admin.js",
+    "db:migrate": "node scripts/migrate.js",
+    "test": "node --test tests/*.test.js",
+    "admin:principal": "node scripts/set-principal.js",
+    "documents:import": "node scripts/import-documents.js"
   },
   "keywords": [],
   "author": "",
@@ -15,13 +19,13 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "connect-redis": "^9.0.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "multer": "^2.1.1",
     "mysql2": "^3.22.3",
-    "nodemailer": "^7.0.0",
-    "redis": "^5.0.0",
-    "connect-redis": "^9.0.0"
+    "nodemailer": "10.1.0",
+    "redis": "^5.0.0"
   }
 }

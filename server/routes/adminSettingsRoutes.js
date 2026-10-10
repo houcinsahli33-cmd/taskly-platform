@@ -28,7 +28,7 @@ const nomValide = valeur =>
 const motDePasseFort = valeur =>
   typeof valeur === 'string' &&
   valeur.length >= 12 &&
-  valeur.length <= 128 &&
+  Buffer.byteLength(valeur, 'utf8') <= 72 &&
   /[a-z]/.test(valeur) &&
   /[A-Z]/.test(valeur) &&
   /\d/.test(valeur) &&
@@ -55,7 +55,10 @@ function erreurServeur(res, erreur, message) {
     });
   }
 
-  console.error('Administration :', erreur.message);
+  if (erreur.code === 'ER_NO_SUCH_TABLE' || erreur.code === 'ER_BAD_FIELD_ERROR') {
+    return res.status(503).json({message:'Migration de la base requise. Appliquez npm run db:migrate après sauvegarde ; les autorisations restent verrouillées.'});
+  }
+  console.error('Administration :', erreur.code || 'erreur');
 
   return res.status(erreur.status || 500).json({
     message: erreur.status ? erreur.message : message

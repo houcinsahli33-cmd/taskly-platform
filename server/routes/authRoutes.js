@@ -19,7 +19,7 @@ const protection = limiter({ max: 12 });
 router.get("/csrf", csrfToken);
 
 // Inscription
-router.post("/register", protection, authController.inscription);
+router.post("/register", protection, require('../middleware/documentUpload').upload.single('document'), authController.inscription);
 
 // Connexion
 router.post("/login", protection, authController.connexion);
@@ -33,7 +33,7 @@ router.post("/resend-email", protection, authController.renvoyerCodeEmail);
 router.post("/logout", authController.deconnexion);
 
 // Utilisateur connecte
-router.get("/me", authController.utilisateurConnecte);
+router.get("/me", verifierConnexion, authController.utilisateurConnecte);
 
 // Modifier la photo de profil
 router.put(

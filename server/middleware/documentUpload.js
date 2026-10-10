@@ -6,30 +6,11 @@ const crypto = require("crypto");
 
 const dossier = path.join(__dirname, "../private_uploads");
 
-const stockage = multer.diskStorage({
-  destination(req, file, cb) {
-    if (process.env.VERCEL) {
-      return cb(new Error(
-        "Envoi de documents temporairement indisponible."
-      ));
-    }
-
-    fs.mkdir(dossier, { recursive: true }, (err) => {
-      if (err) return cb(err);
-      cb(null, dossier);
-    });
-  },
-
-  filename(req, file, cb) {
-    cb(null, crypto.randomBytes(32).toString("hex"));
-  }
-});
-
 const upload = multer({
-  storage: stockage,
+  storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024,
-    files: 1
+    fileSize: 3 * 1024 * 1024,
+    files: 1, fields: 25, fieldSize: 16384, parts: 26
   },
   fileFilter(req, file, cb) {
     if (![

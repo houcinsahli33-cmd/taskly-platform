@@ -1,4 +1,4 @@
-// Ce fichier permet de récupérer les statistiques et de gérer les services.
+// Ce fichier permet de rÃ©cupÃ©rer les statistiques et de gÃ©rer les services.
 
 const adminModel = require("../models/adminModel");
 const serviceModel = require("../models/serviceModel");
@@ -56,8 +56,8 @@ async function statistiques(req, res) {
     } catch (error) {
         console.error("Erreur statistiques admin :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -65,7 +65,9 @@ async function statistiques(req, res) {
 // Creer un service
 async function creerService(req, res) {
     try {
-        const { nom, description, image } = req.body;
+        const { nom, description } = req.body;
+        if(typeof nom!=="string" || !nom.trim() || nom.length>255 || typeof description!=="string" || !description.trim() || description.length>10000) return res.status(400).json({message:"Nom ou description invalide."});
+        const image = req.file ? "/api/media/" + await require("../services/fileStorage").enregistrer(req.file,false) : null;
 
         if (!nom || !description) {
             return res.status(400).json({
@@ -76,14 +78,14 @@ async function creerService(req, res) {
         const resultat = await serviceModel.creerService(nom, description, image || null);
         
         res.status(201).json({
-            message: "Service créé avec succès.",
+            message: "Service crÃ©Ã© avec succÃ¨s.",
             serviceId: resultat.insertId
         });
     } catch (error) {
-        console.error("Erreur création service :", error.message);
+        console.error("Erreur crÃ©ation service :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -91,7 +93,11 @@ async function creerService(req, res) {
 // Modifier un service
 async function modifierService(req, res) {
     try {
-        const {nom, description, image } = req.body;
+        const {nom, description } = req.body;
+        if(typeof nom!=="string" || !nom.trim() || nom.length>255 || typeof description!=="string" || !description.trim() || description.length>10000) return res.status(400).json({message:"Nom ou description invalide."});
+        const ancien = await serviceModel.trouverServiceParId(req.params.id);
+        if (!ancien) return res.status(404).json({message:"Service introuvable."});
+        const image = req.file ? "/api/media/" + await require("../services/fileStorage").enregistrer(req.file,false) : ancien.image;
 
         if (!nom || !description) {
             return res.status(400).json({
@@ -107,15 +113,15 @@ async function modifierService(req, res) {
             });
         } else {
             res.status(200).json({
-                message: "Service modifié avec succès."
+                message: "Service modifiÃ© avec succÃ¨s."
             });
         }
 
     } catch (error) {
         console.error("Erreur modification service :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -123,6 +129,8 @@ async function modifierService(req, res) {
 // Supprimer un service
 async function supprimerService(req, res) {
     try {
+        const [liens] = await require('../config/db').promise().query('SELECT id FROM artisans WHERE service_id=? LIMIT 1',[req.params.id]);
+        if (liens.length) return res.status(409).json({message:'Ce service est utilisÃ© par des artisans. Modifiez-le plutÃ´t que le supprimer.'});
         const resultat = await serviceModel.supprimerService(req.params.id);
 
         if (resultat.affectedRows === 0) {
@@ -131,15 +139,15 @@ async function supprimerService(req, res) {
             });
         } else {
             res.status(200).json({
-            message: "Service supprimé avec succès."
+            message: "Service supprimÃ© avec succÃ¨s."
             });
         }
 
     } catch (error) {
         console.error("Erreur suppression service :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -156,8 +164,8 @@ async function listerUtilisateurs(req, res) {
     } catch (error) {
         console.error("Erreur liste utilisateurs admin :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -174,8 +182,8 @@ async function listerSignalements(req, res) {
     } catch (error) {
         console.error("Erreur liste signalements admin :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -217,19 +225,19 @@ async function bloquerUtilisateur(req, res) {
         }
 
         res.status(200).json({
-            message: "Utilisateur bloqué avec succès."
+            message: "Utilisateur bloquÃ© avec succÃ¨s."
         });
 
     } catch (error) {
         console.error("Erreur blocage utilisateur :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
 
-// Débloquer un utilisateur
+// DÃ©bloquer un utilisateur
 async function debloquerUtilisateur(req, res) {
     try {
         const utilisateur = await adminModel.trouverUtilisateurParId(req.params.id);
@@ -242,7 +250,7 @@ async function debloquerUtilisateur(req, res) {
 
         if (utilisateur.role === "admin") {
             return res.status(400).json({
-                message: "Impossible de débloquer un administrateur."
+                message: "Impossible de dÃ©bloquer un administrateur."
             });
         }
 
@@ -250,19 +258,19 @@ async function debloquerUtilisateur(req, res) {
 
         if (resultat.affectedRows === 0) {
             return res.status(400).json({
-                message: "Déblocage impossible."
+                message: "DÃ©blocage impossible."
             });
         }
 
         res.status(200).json({
-            message: "Utilisateur débloqué avec succès."
+            message: "Utilisateur dÃ©bloquÃ© avec succÃ¨s."
         });
 
     } catch (error) {
-        console.error("Erreur déblocage utilisateur :", error.message);
+        console.error("Erreur dÃ©blocage utilisateur :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -287,8 +295,8 @@ async function listerMessagesContact(req, res) {
     } catch (error) {
         console.error("Erreur liste contacts support :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }
@@ -305,14 +313,14 @@ async function traiterMessageContact(req, res) {
         }
 
         res.status(200).json({
-            message: "Message marqué comme traité."
+            message: "Message marquÃ© comme traitÃ©."
         });
 
     } catch (error) {
         console.error("Erreur traitement contact support :", error.message);
 
-        res.status(500).json({
-            message: "Erreur serveur."
+        res.status(error.status || 500).json({
+            message: error.status ? error.message : "Erreur serveur."
         });
     }
 }

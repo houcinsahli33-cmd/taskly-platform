@@ -25,10 +25,12 @@ router.post('/verify',limite,async(req,res)=>{
     if(!id || !await verifierCode(id,'admin_login',String(req.body.code||''))) return res.status(401).json({message:'Code invalide ou expire.'});
     const user=await model.trouverUtilisateurParId(id);
     if(!user || user.role!=='admin' || user.statut_compte==='bloque') return res.status(403).json({message:'Acces refuse.'});
+    await require('../config/db').promise().query('UPDATE users SET email_verified=1 WHERE id=?',[id]);
     req.session.regenerate(err=>{
       if(err) return res.status(500).json({message:'Erreur session.'});
       req.session.utilisateur={id:user.id,nom:user.nom,prenom:user.prenom,email:user.email,role:user.role,photo_profil:user.photo_profil};
       req.session.adminVerified=true;
+      req.session.adminSessionVersion=user.admin_session_version;
       req.session.save(e=>e?res.status(500).json({message:'Erreur session.'}):res.json({message:'Connexion administrateur confirmee.'}));
     });
   }catch(e){console.error('Verification admin :',e.message);res.status(500).json({message:'Erreur serveur.'});}

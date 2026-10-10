@@ -11,16 +11,17 @@ router.get('/status',async(req,res)=>{
 });
 router.post('/documents',upload.single('document'),async(req,res)=>{
   if(!req.file)return res.status(400).json({message:'Document requis.'});
-  const nettoyer=()=>fs.unlink(req.file.path).catch(()=>{});
+  const nettoyer=async()=>{};
   try{
     const type=String(req.body.type_document||'');
     if(!['identite','diplome','certificat','qualification'].includes(type)) {await nettoyer();return res.status(400).json({message:'Type invalide.'});}
-    const contenu=await fs.readFile(req.file.path);
+    const contenu=req.file.buffer;
     if(!formatValide(contenu,req.file.mimetype)){await nettoyer();return res.status(400).json({message:'Fichier invalide.'});}
     const [rows]=await db.query('SELECT id,verification_statut FROM artisans WHERE user_id=?',[req.session.utilisateur.id]);
     if(!rows[0] || rows[0].verification_statut==='approuve'){await nettoyer();return res.status(403).json({message:'Depot non autorise.'});}
+    const stored = await require('../services/fileStorage').enregistrer(req.file,true);
     await db.query(`INSERT INTO artisan_documents (artisan_id,type_document,stored_name,original_name,media_type,taille) VALUES (?,?,?,?,?,?)`,
-      [rows[0].id,type,req.file.filename,path.basename(req.file.originalname).slice(0,255),req.file.mimetype,req.file.size]);
+      [rows[0].id,type,stored,path.basename(req.file.originalname).slice(0,255),req.file.mimetype,req.file.size]);
     await db.query("UPDATE artisans SET verification_statut='en_attente',verification_commentaire=NULL WHERE id=?",[rows[0].id]);
     res.status(201).json({message:'Document depose. Examen administratif en attente.'});
   }catch(e){await nettoyer();console.error(e.message);res.status(500).json({message:'Erreur serveur.'});}

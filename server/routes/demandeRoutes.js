@@ -4,7 +4,7 @@
 const express = require("express");
 const demandeController = require("../controllers/demandeController");
 
-const { verifierConnexion, verifierClient, verifierArtisan } = require("../middleware/authMiddleware");
+const { verifierConnexion, verifierClient, verifierArtisan, verifierArtisanActif } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Routes côté client
@@ -19,15 +19,15 @@ router.put("/:id/annuler", verifierConnexion, verifierClient, demandeController.
 
 // Routes côté artisan
 // Lister les demandes reçues par l'artisan connecté
-router.get("/artisan", verifierConnexion, verifierArtisan, demandeController.listerDemandesArtisan);
+router.get("/artisan", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.listerDemandesArtisan);
 
 // Accepter ou refuser une demande
-router.put("/:id/statut", verifierConnexion, verifierArtisan, demandeController.modifierStatutDemande);
+router.put("/:id/statut", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.modifierStatutDemande);
 
 // Annuler une demande acceptée avec un motif
-router.put("/:id/annuler-artisan", verifierConnexion, verifierArtisan, demandeController.annulerDemandeArtisan);
+router.put("/:id/annuler-artisan", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.annulerDemandeArtisan);
 
 // Marquer une demande acceptée comme terminée
-router.put("/:id/terminer", verifierConnexion, verifierArtisan, demandeController.terminerDemande);
+router.put("/:id/terminer", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.terminerDemande);
 
 module.exports = router;

@@ -1,0 +1,11 @@
+# Résultat de l’audit
+
+Base réelle : taskly-platform-main (1).zip. Express 5, MySQL2/TiDB, sessions Express avec Redis/connect-redis, Multer, bcrypt, codes transactionnels par e-mail. Entrée privée aléatoire conservée. Aucun secret inclus dans la livraison.
+
+Défauts identifiés et corrigés : inscription artisan sans justificatif ; dépôt de pièces impossible sur Vercel ; photo de profil écrite sur disque ; formulaire service sans upload ; tables de rôles/invitations/profil admin manquantes ; page d’acceptation d’invitation absente ; version de session admin non vérifiée ; sessions clients bloqués restant utilisables ; email_verified absent de la lecture utilisateur par identifiant ; suppression de service pouvant cascader sur les artisans ; affichage d’alertes utilisant du HTML ; vulnérabilités de la dépendance Nodemailer.
+
+Corrections : inscription utilisateur/profil/pièce dans une transaction ; dépôt professionnel obligatoire ; statut de validation séparé du blocage de compte ; contrôle serveur des opérations artisan ; stockage TiDB privé/public ; service avec nom/description/photo et conservation de l’image en modification ; import des pièces historiques ; migration réexécutable et attribution explicite du principal ; formulaire invitation ; contrôles de sessions à jour ; ajustements visuels, mobile et focus clavier dans l’administration. Les fonctions existantes de statistiques, support et signalements sont conservées.
+
+Validation locale : 14 tests réussis, contrôle de syntaxe sans erreur, installation npm ci réussie, npm audit sans vulnérabilité après correction Nodemailer. HTTP testés sur un serveur Express local avec requêtes réelles et base simulée. Composition Nodemailer testée sans envoi externe. Vérification visuelle complète et exécution SQL réelle non effectuées ; suivre DEPLOIEMENT.md.
+
+Limites : les signatures de fichiers ne remplacent pas un antivirus ; anciens fichiers privés à importer avant Vercel ; pas de nettoyage automatique des BLOB devenus orphelins lors de changements de photos ; absence de test de charge ; limiteur en mémoire existant. Une migration ne modifie pas rétroactivement les schémas déjà présents avec des types incompatibles : vérifier le schéma réel en préproduction.

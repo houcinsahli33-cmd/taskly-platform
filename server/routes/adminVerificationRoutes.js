@@ -15,8 +15,13 @@ router.get('/artisans/:id/documents',async(req,res)=>{
 router.get('/documents/:id',async(req,res)=>{
   try{const [rows]=await db.query('SELECT stored_name,original_name,media_type FROM artisan_documents WHERE id=?',[req.params.id]);
    const doc=rows[0];if(!doc)return res.status(404).end();
-   const file=path.join(dossier,doc.stored_name);if(!/^[a-f0-9]{64}$/.test(doc.stored_name))return res.status(400).end();
-   res.set('Cache-Control','no-store');res.set('Content-Type',doc.media_type);res.set('Content-Disposition',`attachment; filename="justificatif-${req.params.id}"`);res.sendFile(file);
+   if(!/^[a-f0-9]{64}$/.test(doc.stored_name))return res.status(400).end();
+   const stored=await require('../services/fileStorage').lire(doc.stored_name,true);
+   res.set('Cache-Control','no-store');res.set('Content-Type',doc.media_type);
+   res.set('Content-Disposition',`attachment; filename="justificatif-${Number(req.params.id)}"`);
+   if(stored) return res.send(stored.contenu);
+   res.sendFile(path.join(dossier,doc.stored_name)); // Compatibilité avec les anciens dépôts locaux.
+
   }catch(e){console.error(e.message);res.status(500).json({message:'Erreur serveur.'});}
 });
 router.put('/artisans/:id/decision',async(req,res)=>{
@@ -30,7 +35,7 @@ router.put('/artisans/:id/decision',async(req,res)=>{
     if(statut==='approuve'){
       const [types]=await conn.query('SELECT DISTINCT type_document FROM artisan_documents WHERE artisan_id=?',[req.params.id]);
       const connus=new Set(types.map(x=>x.type_document));
-      if(!connus.has('identite') || !['diplome','certificat','qualification'].some(t=>connus.has(t))){await conn.rollback();return res.status(400).json({message:'Identite et justificatif de qualification requis.'});}
+      if(!['diplome','certificat'].some(t=>connus.has(t))){await conn.rollback();return res.status(400).json({message:'Diplôme ou certificat requis.'});}
     }
     await conn.query('UPDATE artisans SET verification_statut=?,verification_commentaire=? WHERE id=?',[statut,commentaire||null,req.params.id]);
     await conn.query('INSERT INTO verification_audit (artisan_id,admin_user_id,ancien_statut,nouveau_statut,commentaire) VALUES (?,?,?,?,?)',
