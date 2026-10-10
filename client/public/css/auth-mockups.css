@@ -91,3 +91,13 @@ body.taskly-verify-screen{padding:22px 12px}
 .taskly-verify-links a:hover{color:#05795c;text-decoration:underline}
 @media(max-width:850px){.taskly-signup{grid-template-columns:1fr;width:min(600px,100%)}.taskly-brand-panel{padding:24px 27px}.taskly-brand-panel h1{font-size:2rem}.taskly-brand-lead{margin-bottom:14px}.taskly-benefits{grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}.taskly-brand-bottom{padding-top:12px}.taskly-form-side{padding:22px 27px}}
 @media(max-width:540px){body.auth-page.taskly-rework{padding:12px 9px;background-attachment:scroll}.taskly-signup{border-radius:16px}.taskly-brand-panel{padding:20px}.taskly-real-logo{width:125px;margin-bottom:14px}.taskly-brand-panel h1{font-size:1.8rem;margin-bottom:10px}.taskly-brand-lead{font-size:.86rem;margin-bottom:10px}.taskly-benefits{display:none}.taskly-brand-bottom{font-size:.8rem}.taskly-form-side{padding:22px 18px}.taskly-form-head h2{font-size:1.63rem}.taskly-compact-grid{grid-template-columns:1fr;gap:12px}.taskly-code-card{padding:24px 19px 19px;border-radius:18px}.taskly-code-card h1{font-size:1.44rem}.taskly-otp-meta span{font-size:.74rem;padding:8px 5px}.taskly-verify-links{gap:12px}}
+
+/* Justificatif compact, sur la même ligne que l’expérience. */
+.taskly-document-controls{display:flex;gap:6px;height:44px;min-width:0}
+.taskly-document-controls select{flex:1;min-width:0;width:0;height:44px;border:1px solid #d5e2dc;border-radius:11px;padding:0 9px;background:#fff;color:#20332d;font:inherit;font-size:.83rem}
+.taskly-document-picker{position:relative;display:flex;align-items:center;justify-content:center;gap:5px;flex:0 0 88px;height:44px;border:1px solid #b7dacc;border-radius:11px;background:#edf8f2;color:#087e63;font-size:.82rem;font-weight:750;overflow:hidden;cursor:pointer}
+.taskly-document-picker svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.taskly-document-picker input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0;padding:0}
+.taskly-document-picker:focus-within,.taskly-document-controls select:focus-visible{outline:2px solid #148c6d;outline-offset:2px}
+.taskly-document-picker:hover{background:#def2e7}
+.taskly-document-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
