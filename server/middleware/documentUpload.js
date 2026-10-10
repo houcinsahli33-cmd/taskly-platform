@@ -1,5 +1,8 @@
 const multer=require('multer');const fs=require('fs');const path=require('path');const crypto=require('crypto');
-const dossier=path.join(__dirname,'../private_uploads');fs.mkdirSync(dossier,{recursive:true});
+const dossier = path.join(__dirname, '../private_uploads');
+if (process.env.VERCEL !== '1') {
+  fs.mkdirSync(dossier, { recursive: true });
+}
 const upload=multer({storage:multer.diskStorage({destination:dossier,filename(req,file,cb){cb(null,crypto.randomBytes(32).toString('hex'));}}),limits:{fileSize:5*1024*1024,files:1},fileFilter(req,file,cb){
   if (!['application/pdf','image/jpeg','image/png'].includes(file.mimetype)) return cb(new Error('Format non autorise : PDF, JPG ou PNG uniquement.'));
   cb(null,true);
