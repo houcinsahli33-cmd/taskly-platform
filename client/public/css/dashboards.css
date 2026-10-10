@@ -1,0 +1,168 @@
+.dashboard-page {
+  background: #f4f7f5;
+}
+
+.dashboard-shell,
+.admin-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 76px);
+}
+
+.sidebar,
+.admin-sidebar {
+  position: sticky;
+  top: 76px;
+  height: calc(100vh - 76px);
+  padding: 28px 18px;
+  background: #0b3a31;
+  color: #dcebe7;
+}
+
+.sidebar-title {
+  margin: 0 0 18px;
+  color: #fff;
+  font-weight: 900;
+}
+
+.side-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.side-nav a,
+.side-nav button {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: #dcebe7;
+  text-align: left;
+  font-weight: 800;
+}
+
+.side-nav a:hover,
+.side-nav button:hover,
+.side-nav .active {
+  background: rgba(255, 255, 255, 0.11);
+  color: #fff;
+}
+
+.dashboard-content,
+.admin-content {
+  padding: 30px;
+}
+
+.dashboard-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 26px;
+  padding: 30px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #087f63, #0a4f43);
+  color: #e7f7f2;
+}
+
+.dashboard-hero h1 {
+  margin-bottom: 8px;
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(19, 35, 31, 0.05);
+}
+
+.stat-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: 2rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.dashboard-two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
+.request-list {
+  display: grid;
+  gap: 16px;
+}
+
+.request-card {
+  padding: 20px;
+}
+
+.admin-section {
+  display: none;
+}
+
+.admin-section.active {
+  display: grid;
+  gap: 22px;
+}
+
+.admin-overview-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.profile-panel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.profile-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.profile-fields div {
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--soft);
+}

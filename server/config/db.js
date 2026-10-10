@@ -1,0 +1,38 @@
+// Ce fichier prépare la connexion entre Node.js et MySQL.
+// Il utilise les informations du fichier .env pour se connecter à la base.
+
+const mysql = require("mysql2"); // on importe mysql2 pour pouvoir communiquer avec MySQL depuis Node.js
+require("dotenv").config(); // on importe le fichier .env pour lire les valeurs comme DB_HOST, DB_USER, DB_PASSWORD
+
+const config = {
+  host: process.env.DB_HOST,    // on recupere l'adresse MySQL depuis le fichier .env
+  port: process.env.DB_PORT,    // on recupere le port MySQL depuis le fichier .env
+  user: process.env.DB_USER,    // on recupere l'utilisateur MySQL depuis le fichier .env
+  password: process.env.DB_PASSWORD,  // on recupere le mot de passe depuis le fichier .env
+  waitForConnections: true,
+  connectionLimit: Number(process.env.DB_POOL_LIMIT || 10),
+  queueLimit: 200,
+  database: process.env.DB_NAME    // on recupere le nom de la base de donnees MySQL depuis le fichier .env
+};
+
+// Si DB_SSL=true, on active la connexion sécurisée pour TiDB Cloud. En local DB_SSL reste false ou vide.
+if (process.env.DB_SSL === "true") {
+  config.ssl = {
+    rejectUnauthorized: true
+  };
+}
+
+const pool = mysql.createPool(config);  // on cree un pool de connexion MySQL
+
+pool.getConnection((err, connection) => {   // on recupere une connexion de la base de donnees
+  if (err) {
+    console.error("Erreur de connexion à la base de données !");    // on affiche un message d'erreur si la connexion a echoue
+    console.error(err.message);
+    return;
+  }
+
+  console.log("Connexion à la base de données réussie !");  // sinon on affiche un message de reussite
+  connection.release(); // on libere la connexion, c'est a dire : on la rend disponible pour d'autres requetes
+});
+
+module.exports = pool;  // on exporte le pool de connexion pour l'utiliser dans les models
