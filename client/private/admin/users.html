@@ -19,9 +19,9 @@
   <link rel="stylesheet" href="/css/admin-integrated.css">
   <link rel="stylesheet" href="/css/admin-forms.css">
   <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><link rel="stylesheet" href="/css/admin-users-page.css"><script defer src="/js/workspace-dialogs.js"></script><script defer src="/js/admin-users-page.js"></script></head>
 
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="users">
+<body class="dashboard-page admin-users-page" data-require-role="admin" data-workspace-page="users">
 
   <main class="admin-layout">
 
@@ -29,55 +29,34 @@
     <!-- MENU LATERAL ADMINISTRATEUR -->
     <!-- =============================== -->
 
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+    <aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a class="active" aria-current="page" data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a class="active" aria-current="page" data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
 
     <!-- =============================== -->
@@ -101,20 +80,29 @@
       <!-- =============================== -->
 
       <section class="admin-section active" id="admin-users">
-
-        <div class="panel">
-
-          <div class="panel-header">
-            <h2>Gestion des utilisateurs</h2>
+        <div class="panel admin-users-panel">
+          <div class="panel-header admin-users-panel-header">
+            <div><h2>Gestion des utilisateurs</h2><p>Consultez, filtrez et gérez les comptes utilisateurs de la plateforme Taskly.</p></div>
+            <span id="admin-users-count" class="admin-users-count" aria-live="polite">Chargement…</span>
           </div>
-
-          <div
-            class="panel-body"
-            id="admin-users-table">
+          <div class="panel-body admin-users-panel-body">
+            <div class="admin-users-toolbar" role="search" aria-label="Rechercher et filtrer les utilisateurs">
+              <label class="admin-users-search-field" for="admin-users-search"><span class="admin-users-field-label">Rechercher</span><span class="admin-users-search-input"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 5 5"></path></svg><input id="admin-users-search" type="search" placeholder="Rechercher un utilisateur…" maxlength="100" autocomplete="off"></span></label>
+              <div class="admin-users-status-field"><span class="admin-users-field-label" id="admin-users-status-label">Statut / suivi</span><div class="admin-users-status-options" role="group" aria-labelledby="admin-users-status-label">
+                <button type="button" data-users-status="tous" class="is-selected" aria-pressed="true">Tous</button>
+                <button type="button" data-users-status="actif" aria-pressed="false">Actif</button>
+                <button type="button" data-users-status="bloque" aria-pressed="false">Bloqué</button>
+                <button type="button" data-users-status="non_traite" aria-pressed="false" title="Artisans dont le dossier est en attente de vérification">Non traité</button>
+                <button type="button" data-users-status="nouveau" aria-pressed="false" title="Inscrits au cours des 7 derniers jours">Nouveau</button>
+              </div></div>
+              <label class="admin-users-select-field" for="admin-users-role"><span class="admin-users-field-label">Rôle</span><select id="admin-users-role"><option value="tous">Tous les rôles</option><option value="artisan">Artisans</option><option value="client">Clients</option><option value="admin">Administrateurs</option></select></label>
+              <label class="admin-users-select-field" for="admin-users-sort"><span class="admin-users-field-label">Trier par</span><select id="admin-users-sort"><option value="recent">Inscription (plus récent)</option><option value="ancien">Inscription (plus ancien)</option><option value="nom">Nom (A–Z)</option></select></label>
+            </div>
+            <p class="admin-users-filter-note">« Non traité » : dossiers artisans en attente. « Nouveau » : comptes inscrits depuis 7 jours.</p>
+            <div id="admin-users-table" aria-live="polite" aria-busy="true"></div>
+            <div id="admin-users-pagination" class="admin-users-pagination" hidden><span id="admin-users-page-info"></span><div><button type="button" id="admin-users-previous" class="admin-users-page-button">← Précédent</button><button type="button" id="admin-users-next" class="admin-users-page-button">Suivant →</button></div></div>
           </div>
-
         </div>
-
       </section>
 
       <!-- =============================== -->

@@ -142,21 +142,42 @@ async function supprimerService(req, res) {
     }
 }
 
-// Lister les utilisateurs
+// Lister les utilisateurs, avec pagination et filtres sur la page dédiée.
 async function listerUtilisateurs(req, res) {
     try {
-        const utilisateurs = await adminModel.listerUtilisateurs();
-
-        res.status(200).json({
-            utilisateurs
+        const q = req.query || {};
+        const champs = ['page', 'limite', 'recherche', 'statut', 'role', 'tri'];
+        const pagine = champs.some(cle => q[cle] !== undefined);
+        if (!pagine) {
+            return res.status(200).json({utilisateurs: await adminModel.listerUtilisateurs()});
+        }
+        const entier = (valeur, defaut, maximum) => {
+            if (valeur === undefined) return defaut;
+            if (typeof valeur !== 'string' || !/^[1-9]\d*$/.test(valeur)) return null;
+            const nombre = Number(valeur);
+            return Number.isSafeInteger(nombre) && nombre <= maximum ? nombre : null;
+        };
+        const page = entier(q.page, 1, 1000000);
+        const limite = entier(q.limite, 12, 50);
+        const statut = q.statut ?? 'tous';
+        const role = q.role ?? 'tous';
+        const tri = q.tri ?? 'recent';
+        const recherche = q.recherche ?? '';
+        if (page === null || limite === null ||
+            !['tous','actif','bloque','non_traite','nouveau'].includes(statut) ||
+            !['tous','artisan','client','admin'].includes(role) ||
+            !['recent','ancien','nom'].includes(tri) ||
+            typeof recherche !== 'string' || recherche.length > 100) {
+            return res.status(400).json({message:'Paramètres du filtre utilisateurs invalides.'});
+        }
+        const resultat = await adminModel.listerUtilisateurs({
+            pagine:true, page, limite, statut, role, tri, recherche:recherche.trim()
         });
-
+        res.set('Cache-Control', 'no-store');
+        return res.status(200).json(resultat);
     } catch (error) {
-        console.error("Erreur liste utilisateurs admin :", error.message);
-
-        res.status(error.status || 500).json({
-            message: error.status ? error.message : "Erreur serveur."
-        });
+        console.error('Erreur liste utilisateurs admin :', error.code || error.message);
+        return res.status(error.status || 500).json({message: error.status ? error.message : 'Liste des utilisateurs indisponible.'});
     }
 }
 

@@ -99,26 +99,56 @@ async function derniersAvis() {
     return resultats;
 }
 
-// Lister les utilisateurs
-async function listerUtilisateurs() {
-    const sql = `
-        SELECT
-            id,
-            nom,
-            prenom,
-            email,
-            role,
-            statut_compte,
-            motif_blocage,
-            date_blocage,
-            created_at
-        FROM users
-        ORDER BY created_at DESC
-    `;
+// Lister les utilisateurs de la page admin ; filtres bornés et SQL paramétré.
+async function listerUtilisateurs(options = {}) {
+    const jointures = `FROM users u LEFT JOIN artisans a ON a.user_id = u.id`;
+    const colonnes = `u.id, u.nom, u.prenom, u.email, u.role, u.statut_compte,
+      u.motif_blocage, u.date_blocage, u.created_at, a.verification_statut`;
 
-    const [resultats] = await db.promise().query(sql);
+    // Compatibilité avec l'ancien appel sans paramètres.
+    if (!options.pagine) {
+        const [resultats] = await db.promise().query(
+            `SELECT ${colonnes} ${jointures} ORDER BY u.created_at DESC, u.id DESC`
+        );
+        return resultats;
+    }
 
-    return resultats;
+    const clauses = [];
+    const params = [];
+    if (options.recherche) {
+        // Les caractères de recherche SQL sont littéraux, pas des jokers libres.
+        const motif = `%${options.recherche.replace(/[\\%_]/g, '\\$&')}%`;
+        clauses.push(`(CONCAT_WS(' ', u.prenom, u.nom) LIKE ? OR CONCAT_WS(' ', u.nom, u.prenom) LIKE ? OR u.email LIKE ?)`);
+        params.push(motif, motif, motif);
+    }
+    if (options.role !== 'tous') {
+        clauses.push('u.role = ?');
+        params.push(options.role);
+    }
+    if (options.statut === 'actif' || options.statut === 'bloque') {
+        clauses.push('u.statut_compte = ?');
+        params.push(options.statut);
+    } else if (options.statut === 'non_traite') {
+        clauses.push("u.role = 'artisan' AND a.verification_statut = 'en_attente'");
+    } else if (options.statut === 'nouveau') {
+        clauses.push('u.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)');
+    }
+    const condition = clauses.length ? ` WHERE ${clauses.join(' AND ')}` : '';
+    const [[{total}]] = await db.promise().query(
+        `SELECT COUNT(*) AS total ${jointures}${condition}`, params
+    );
+    const pages = Math.max(1, Math.ceil(Number(total) / options.limite));
+    const page = Math.min(options.page, pages);
+    const tris = {
+        recent: 'u.created_at DESC, u.id DESC',
+        ancien: 'u.created_at ASC, u.id ASC',
+        nom: 'u.nom ASC, u.prenom ASC, u.id ASC'
+    };
+    const [utilisateurs] = await db.promise().query(
+        `SELECT ${colonnes} ${jointures}${condition} ORDER BY ${tris[options.tri]} LIMIT ? OFFSET ?`,
+        [...params, options.limite, (page - 1) * options.limite]
+    );
+    return {utilisateurs, total: Number(total), page, pages, limite: options.limite};
 }
 
 // Trouver un utilisateur par son id
