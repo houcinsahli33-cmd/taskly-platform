@@ -1,0 +1,8 @@
+/* Cadre de navigation client, pas de changement de dimension du menu ou du contenu. */
+html:has(body[data-taskly-client-shell="1"]),body[data-taskly-client-shell="1"] {height:100%;overflow:hidden}
+body[data-taskly-client-shell="1"] #site-header {position:relative;z-index:10}
+body[data-taskly-client-shell="1"] .dashboard-shell {min-height:calc(100vh - 76px)}
+body[data-taskly-client-shell="1"] .dashboard-shell > .sidebar {z-index:10}
+body[data-taskly-client-shell="1"] .dashboard-shell > .dashboard-content {visibility:hidden;pointer-events:none}
+#taskly-client-content-frame {position:fixed;inset:0;width:100vw;height:100vh;border:0;margin:0;padding:0;z-index:1;background:transparent}
+#taskly-client-content-frame.client-modal-visible {z-index:20}

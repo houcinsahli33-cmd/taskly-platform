@@ -34,6 +34,8 @@ router.post("/logout", authController.deconnexion);
 
 // Utilisateur connecte
 router.get("/me", verifierConnexion, authController.utilisateurConnecte);
+// Renouvele la session uniquement apres une interaction reelle de l’utilisateur.
+router.post("/activity", verifierConnexion, require("../services/sessionActivity").confirmerActivite);
 
 // Modifier la photo de profil
 router.put(

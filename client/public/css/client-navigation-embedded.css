@@ -1,0 +1,3 @@
+/* Garde la geometrie et le CSS du document original, sans doubler le header et le menu. */
+body[data-taskly-client-embedded="1"] #site-header,
+body[data-taskly-client-embedded="1"] .dashboard-shell > .sidebar {visibility:hidden!important;pointer-events:none!important}

@@ -9,7 +9,8 @@
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/client-dashboard.js"></script>
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script>  <link rel="stylesheet" href="/css/client-refonte.css">
+</head>
 <body class="dashboard-page" data-require-role="client" data-workspace-page="demandes">
   <div id="site-header"></div>
   <main class="dashboard-shell">
@@ -26,7 +27,9 @@
 
     <!-- Contenu client -->
     <section class="dashboard-content">
-      <h1 class="dashboard-section-title" id="dashboard-page-title">Mes demandes</h1>
+      <div class="client-heading"><div><p class="client-eyebrow">ESPACE CLIENT / SUIVI DES DEMANDES</p><h1>Mes demandes</h1><p class="client-subtitle">Retrouvez toutes vos demandes et suivez leur avancement en un seul endroit.</p></div><a href="/artisans.html" class="btn primary">+ Trouver un artisan</a></div>
+      <div class="client-section-heading"><h2>Mes demandes en chiffres</h2><span>Données réelles de votre compte</span></div>
+      <div class="stats-grid" id="client-demand-stats"></div>
       
 
       
@@ -38,6 +41,7 @@
             <h2>Mes demandes</h2>
           </div>
           <div class="panel-body">
+            <div class="client-request-toolbar"><div class="client-filters" role="group" aria-label="Filtrer les demandes"><button type="button" data-client-filter="toutes" class="active">Toutes</button><button type="button" data-client-filter="en_attente">En attente</button><button type="button" data-client-filter="en_cours">En cours</button><button type="button" data-client-filter="terminee">Terminées</button><button type="button" data-client-filter="annulee">Annulées</button></div><label class="client-search"><span>Rechercher</span><input id="client-request-search" type="search" placeholder="Rechercher une demande..." autocomplete="off"></label></div>
             <div class="request-list" id="client-requests"></div>
           </div>
         </section>

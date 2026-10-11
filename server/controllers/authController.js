@@ -279,6 +279,7 @@ async function confirmerEmail(req,res) {
         }
         req.session.accountSessionVersion=utilisateur.admin_session_version;
         req.session.utilisateur=compteSession(utilisateur);
+        req.session.lastUserActivityAt=Date.now();
         await sauvegarderSession(req);
         return res.json({message:'Vérification réussie.', utilisateur:req.session.utilisateur});
     } catch(error) {

@@ -221,6 +221,7 @@ async function deconnecterUtilisateur() {
 // Initialiser le header, footer et la session
 async function initialiserTaskly() {
   await chargerUtilisateurConnecte();
+  installerActiviteSession();
   construireHeader();
   construireFooter();
   actualiserCoordonneesSite();
@@ -269,4 +270,72 @@ async function actualiserCoordonneesSite() {
       link.href=url.href;link.rel='noopener noreferrer';link.target='_blank';link.hidden=false;link.style.removeProperty('display');
     });
   } catch { /* Le site et les formulaires restent utilisables si les coordonnées sont indisponibles. */ }
+}
+
+// La prolongation de 4 h est fondee sur des gestes reels et non sur les requetes automatiques.
+function installerActiviteSession() {
+  if (!window.utilisateurCourant || window.__tasklyActivityInstalled) return;
+  window.__tasklyActivityInstalled = true;
+  const delai = 4 * 60 * 60 * 1000;
+  // Precharger le CSRF sans prolonger la session, pour les clics suivis d'une navigation.
+  obtenirCsrf().catch(() => {});
+  let derniereInteraction = Date.now();
+  let dernierEnvoi = 0;
+  function pageConnexionApresExpiration() {
+    // L'admin retrouve toujours sa porte d'entree privee ; autres roles: connexion publique.
+    return document.body.dataset.requireRole === 'admin'
+      ? window.location.pathname.split('/dashboard')[0]
+      : '/login.html?session=expiree';
+  }
+  // Un onglet inactif ne peut pas décider seul de l'expiration : un autre
+  // onglet peut avoir renouvelé la session. Le serveur fait autorité.
+  let verificationExpirationEnCours = false;
+  let derniereVerificationExpiration = 0;
+  function verifierExpirationLocale() {
+    const maintenant = Date.now();
+    if (maintenant - derniereInteraction < delai || verificationExpirationEnCours ||
+        maintenant - derniereVerificationExpiration < 60 * 1000) return;
+    verificationExpirationEnCours = true;
+    derniereVerificationExpiration = maintenant;
+    // GET uniquement : cette verification passive ne confirme aucune activite.
+    requeteAPI('/api/auth/me').catch(error => {
+      if (error.status === 401) window.location.replace(pageConnexionApresExpiration());
+    }).finally(() => { verificationExpirationEnCours = false; });
+  }
+  const action = () => {
+    if (document.visibilityState !== 'visible') return;
+    verifierExpirationLocale();
+    const maintenant = Date.now();
+    derniereInteraction = maintenant;
+    // Le cadre et la rubrique integree partagent la derniere activite humaine.
+    // Les messages ne declenchent pas de requete API supplementaire.
+    if (window.parent !== window && window.frameElement?.id === 'taskly-client-content-frame') {
+      window.parent.postMessage({type:'taskly-client-user-activity'}, window.location.origin);
+    } else {
+      document.getElementById('taskly-client-content-frame')?.contentWindow?.postMessage(
+        {type:'taskly-client-user-activity'}, window.location.origin
+      );
+    }
+    if (maintenant - dernierEnvoi < 60 * 1000) return;
+    dernierEnvoi = maintenant;
+    requeteAPI('/api/auth/activity', { method: 'POST', keepalive: true }).catch(error => {
+      if (error.status === 401 || error.status === 403 && /session expir/i.test(error.message))
+        window.location.replace(pageConnexionApresExpiration());
+    });
+  };
+  // Les messages ne comptent que s'ils proviennent du cadre client de meme origine.
+  // Ils actualisent uniquement le minuteur local ; seule une vraie interaction envoie l'API.
+  window.addEventListener('message', event => {
+    if (event.origin !== window.location.origin || event.data?.type !== 'taskly-client-user-activity') return;
+    const frame = document.getElementById('taskly-client-content-frame');
+    const depuisRubrique = frame && event.source === frame.contentWindow;
+    const depuisCadre = window.parent !== window &&
+      window.frameElement?.id === 'taskly-client-content-frame' && event.source === window.parent;
+    if (depuisRubrique || depuisCadre) derniereInteraction = Date.now();
+  });
+  ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(e => document.addEventListener(e, action, {passive:true}));
+  document.addEventListener('scroll', action, {passive:true, capture:true});
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') verifierExpirationLocale(); });
+  // Surveillance locale d'affichage ; ce controle n'envoie AUCUNE requete au serveur.
+  window.setInterval(verifierExpirationLocale, 60 * 1000);
 }

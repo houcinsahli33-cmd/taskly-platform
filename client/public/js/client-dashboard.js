@@ -12,7 +12,7 @@ function statsDemandes(demandes) {
 
 // Afficher les statistiques du client
 function afficherStatsClient() {
-  const cible = document.getElementById("client-stats");
+  const cible = document.getElementById("client-stats") || document.getElementById("client-demand-stats");
   if (!cible) return;
 
   const stats = statsDemandes(demandesClient);
@@ -61,12 +61,15 @@ function afficherDemandesClient() {
   const cible = document.getElementById("client-requests");
   if (!cible) return;
 
-  if (!demandesClient.length) {
-    cible.innerHTML = etatVide("Aucune demande pour le moment. Parcourez les artisans pour démarrer.");
-    return;
-  }
-
-  cible.innerHTML = demandesClient.map(carteDemandeClient).join("");
+  const filtres = document.querySelector('[data-client-filter].active');
+  const filtre = filtres?.dataset.clientFilter || 'toutes';
+  const texte = normaliserTexte(document.getElementById('client-request-search')?.value || '');
+  const visibles = demandesClient.filter(d => {
+    const statut = filtre === 'annulee' ? ['annulee','refusee'].includes(d.statut) : filtre === 'toutes' || d.statut === filtre;
+    const contenu = [d.service_nom, d.message, d.artisan_ville, d.artisan_nom, d.artisan_prenom].join(' ');
+    return statut && (!texte || normaliserTexte(contenu).includes(texte));
+  });
+  cible.innerHTML = visibles.length ? visibles.map(carteDemandeClient).join('') : etatVide(demandesClient.length ? 'Aucune demande ne correspond à vos filtres.' : 'Aucune demande pour le moment. Parcourez les artisans pour démarrer.');
 }
 
 // Charger les demandes depuis le backend
@@ -79,9 +82,20 @@ async function chargerDemandesClient() {
     demandesClient = data.demandes || [];
     afficherStatsClient();
     afficherDemandesClient();
+    afficherDemandesRecentesClient();
   } catch (error) {
     if (cible) cible.innerHTML = etatVide(error.message);
   }
+}
+
+function afficherDemandesRecentesClient() {
+  const cible = document.getElementById('client-recent-requests');
+  if (!cible) return;
+  if (!demandesClient.length) {
+    cible.innerHTML = '<div class="client-empty"><strong>Aucune demande pour le moment</strong><p>Votre prochain projet commence ici. Découvrez les artisans disponibles sur Taskly.</p><a class="btn primary" href="/artisans.html">Explorer les artisans</a></div>';
+    return;
+  }
+  cible.innerHTML = demandesClient.slice(0, 3).map(d => `<article class="client-recent-row"><div><strong>${echapperHTML(d.service_nom || 'Service')}</strong><p>${echapperHTML(nomComplet(d, 'artisan_'))} · ${formatDate(d.created_at)}</p></div>${badgeStatut(d.statut)}</article>`).join('');
 }
 
 // Annuler une demande en attente
@@ -256,6 +270,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   if(page==='accueil'||page==='demandes'){
     if(page==='accueil')afficherStatsClient();
     if(page==='demandes')initialiserActionsClient();
+    if (page === 'demandes') {
+      document.querySelectorAll('[data-client-filter]').forEach(button => button.addEventListener('click', () => {
+        document.querySelectorAll('[data-client-filter]').forEach(other => other.classList.toggle('active', other === button));
+        afficherDemandesClient();
+      }));
+      document.getElementById('client-request-search')?.addEventListener('input', afficherDemandesClient);
+    }
+    if (page === 'accueil') {
+      const name = nomComplet(window.utilisateurCourant);
+      const target = document.getElementById('client-welcome');
+      if (target && name) target.textContent = `Bienvenue ${name}, votre prochain projet commence ici.`;
+    }
     chargerDemandesClient();
   }
 });

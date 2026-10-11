@@ -9,7 +9,8 @@
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/client-dashboard.js"></script>
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script>  <link rel="stylesheet" href="/css/client-refonte.css">
+</head>
 <body class="dashboard-page" data-require-role="client" data-workspace-page="accueil">
   <div id="site-header"></div>
   <main class="dashboard-shell">
@@ -26,23 +27,16 @@
 
     <!-- Contenu client -->
     <section class="dashboard-content">
-      <h1 class="dashboard-section-title" id="dashboard-page-title">Vue d’ensemble</h1>
-      <div class="dashboard-hero" data-dashboard-view="demandes">
-        <div>
-          <p class="eyebrow">Client</p>
-          <h2 id="client-welcome">Bienvenue</h2>
-          <p>Suivez vos demandes, laissez des avis après les missions terminées et contactez le support si besoin.</p>
-        </div>
-        <a class="btn light" href="/artisans.html">Nouvelle demande</a>
+      <div class="client-heading"><div><p class="client-eyebrow">ESPACE CLIENT / TABLEAU DE BORD</p><h1>Vue d’ensemble</h1><p class="client-subtitle">Retrouvez vos demandes et suivez vos projets au même endroit.</p></div><span class="client-top-chip">Espace personnel</span></div>
+      <div class="dashboard-hero client-hero">
+        <div><p class="client-hero-kicker">BIENVENUE SUR TASKLY</p><h2 id="client-welcome">Votre prochain projet commence ici.</h2><p>Décrivez votre besoin, échangez avec des artisans et suivez vos demandes, de la création à la réalisation.</p></div>
+        <a class="client-hero-action" href="/artisans.html">+ &nbsp; Nouvelle demande</a>
       </div>
-
-      <div class="stats-grid" data-dashboard-view="demandes" id="client-stats"></div>
-
-      
-      <div class="dashboard-grid">
-        
-
-        
+      <div class="client-section-heading"><h2>Mes demandes en chiffres</h2><span>Statistiques de votre compte</span></div>
+      <div class="stats-grid" id="client-stats" data-dashboard-view="demandes" aria-live="polite"></div>
+      <div class="client-home-grid">
+        <section class="panel client-home-panel"><div class="panel-header"><div><h2>Mes demandes récentes</h2><p>Consultez l’avancement de vos dernières demandes.</p></div><a class="client-link" href="/espace/client/demandes">Voir toutes →</a></div><div id="client-recent-requests" class="client-home-body" aria-live="polite"></div></section>
+        <section class="panel client-home-panel"><div class="panel-header"><div><h2>Comment ça marche ?</h2><p>Trois étapes pour concrétiser votre projet.</p></div></div><div class="client-how-steps"><div><b>01</b><span><strong>Choisissez un artisan</strong><small>Consultez les profils disponibles sur Taskly.</small></span></div><div><b>02</b><span><strong>Envoyez votre demande</strong><small>Décrivez votre projet au professionnel.</small></span></div><div><b>03</b><span><strong>Suivez votre projet</strong><small>Retrouvez les échanges et les étapes dans votre espace.</small></span></div><a class="client-help" href="/espace/client/support">Une question ? &nbsp; Contacter le support →</a></div></section>
       </div>
     </section>
   </main>

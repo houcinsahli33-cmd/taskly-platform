@@ -9,7 +9,8 @@
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/client-dashboard.js"></script>
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script>  <link rel="stylesheet" href="/css/client-refonte.css">
+</head>
 <body class="dashboard-page" data-require-role="client" data-workspace-page="support">
   <div id="site-header"></div>
   <main class="dashboard-shell">
@@ -26,11 +27,13 @@
 
     <!-- Contenu client -->
     <section class="dashboard-content">
-      <h1 class="dashboard-section-title" id="dashboard-page-title">Support</h1>
+      <div class="client-heading"><div><p class="client-eyebrow">ESPACE CLIENT / CENTRE D’ASSISTANCE</p><h1>Support</h1><p class="client-subtitle">Une question sur votre compte ou votre demande ? Nous sommes là pour vous aider.</p></div><a class="btn outline" href="/follow-message.html">Suivre un message</a></div>
+      <div class="client-support-banner"><div class="client-support-symbol" aria-hidden="true">✉</div><div><small>ASSISTANCE TASKLY</small><h2>Comment pouvons-nous vous aider ?</h2><p>Envoyez une demande d’assistance et conservez son numéro de suivi.</p></div></div>
       
 
       
 
+      <div class="client-support-columns">
       <section class="panel" id="support" data-dashboard-view="support">
 <div class="panel-header"><h2>Contacter le support</h2></div><div class="panel-body">
 <p class="muted">Décrivez votre question. Votre numéro de suivi vous sera communiqué après l’envoi.</p>
@@ -42,6 +45,8 @@
 <label class="account-full"><span>Votre message</span><textarea class="form-textarea" id="contact-message" minlength="10" maxlength="5000" required></textarea></label>
 <div class="taskly-form-actions account-full"><a class="btn outline" href="/follow-message.html">Suivre un message</a><button class="btn primary" type="submit">Envoyer au support</button></div>
 </form></div></section>
+      <aside class="client-support-aside"><section class="panel"><h3>Avant de nous écrire</h3><p>Quelques conseils pour obtenir une réponse plus précise.</p><div><b>01</b> Choisissez le sujet correspondant à votre problème.</div><div><b>02</b> Expliquez ce qui se passe et depuis quand.</div><div><b>03</b> Conservez votre numéro de suivi après l’envoi.</div></section><section class="client-support-track"><strong>Vous avez déjà écrit ?</strong><p>Consultez le statut de votre message avec son numéro de suivi.</p><a href="/follow-message.html">Suivre mon message →</a></section></aside>
+      </div>
       <div class="dashboard-grid">
         
 

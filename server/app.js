@@ -40,6 +40,7 @@ function preparerApp(store) {
 app.use(express.json({limit:'100kb'}));
 app.use(express.urlencoded({extended:false,limit:'100kb'}));
 app.use(configurerSession(store));
+app.use(require('./services/sessionActivity').verifierInactivite);
 app.use((req,res,next)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
@@ -66,6 +67,7 @@ app.get(adminEntryPath, headersAdminPrive, (req, res) => {
   res.sendFile(path.join(__dirname, '../client/private/admin-login.html'), {dotfiles:'allow'});
 });
 
+require('./routes/clientWorkspaceNavigation')(app);
 require('./routes/workspacePages')(app,{adminEntryPath,headersAdminPrive});
 app.use(require('./middleware/publicFiles').publicFiles);
 app.get('/api/media/:id',async(req,res)=>{
