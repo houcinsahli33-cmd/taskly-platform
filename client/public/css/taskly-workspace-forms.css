@@ -1,0 +1,109 @@
+/* Formulaires des espaces privés et du suivi artisan, palette Taskly. */
+.dashboard-page [hidden], .pending-page [hidden] {display:none!important}
+.dashboard-content, .admin-content {min-width:0}
+.dashboard-section-title {font:700 clamp(1.5rem,3vw,2rem)/1.4 var(--font-main);margin:0 0 22px;color:var(--ink)}
+.dashboard-hero h2 {color:inherit;font:700 clamp(1.5rem,3vw,2rem)/1.4 var(--font-main);margin:0 0 8px}
+.dashboard-page .dashboard-grid {grid-template-columns:minmax(0,1fr)}
+.dashboard-page .panel, .pending-page .panel, .admin-settings-panel {border-radius:16px;overflow:hidden}
+.dashboard-page .panel-header, .pending-page .panel-header {padding:22px 24px}
+.dashboard-page .panel-body, .pending-page .panel-body {padding:24px}
+.dashboard-page form, .pending-page form {min-width:0}
+.dashboard-page form label, .pending-page form label {display:grid;gap:8px;font-weight:600;min-width:0}
+.dashboard-page form input:not([type=checkbox]), .dashboard-page form select,
+.dashboard-page form textarea, .pending-page form input, .pending-page form select, .pending-page form textarea {
+  width:100%;max-width:100%;min-width:0;min-height:48px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+  font:inherit;color:var(--ink);background:var(--surface);box-sizing:border-box;
+}
+.dashboard-page form textarea, .pending-page form textarea {min-height:130px;resize:vertical}
+.dashboard-page form input:focus, .dashboard-page form select:focus, .dashboard-page form textarea:focus,
+.pending-page form input:focus, .pending-page form select:focus, .pending-page form textarea:focus {
+  outline:3px solid var(--primary-soft);outline-offset:1px;border-color:var(--primary);
+}
+.dashboard-page input[type=file], .pending-page input[type=file] {padding:8px;background:var(--soft)}
+.dashboard-page input[type=file]::file-selector-button, .pending-page input[type=file]::file-selector-button {
+  padding:9px 12px;margin-right:12px;border:0;border-radius:7px;background:var(--primary);color:white;font:inherit;cursor:pointer;
+}
+.dashboard-page .admin-settings-form, .taskly-form-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.dashboard-page .admin-field-group {display:grid;gap:8px;min-width:0}
+.dashboard-page .admin-settings-form > button, .dashboard-page .admin-settings-form > [role=status],
+.taskly-form-grid .account-full {grid-column:1/-1}
+.dashboard-page .admin-settings-form > button[type=submit] {
+  justify-self:start;min-height:46px;padding:12px 20px;border:0;border-radius:10px;background:var(--primary);color:#fff;font:inherit;font-weight:600;cursor:pointer;
+}
+.dashboard-page button:disabled, .pending-page button:disabled {opacity:.6;cursor:wait}
+.dashboard-page .admin-settings-panel h3, .account-details summary {margin-bottom:14px}
+.dashboard-page .admin-settings-panel {padding:24px;border:1px solid var(--line);background:white}
+.dashboard-page .admin-settings-grid {align-items:start;gap:24px}
+.dashboard-page [role=status], .pending-page [role=status] {overflow-wrap:anywhere;line-height:1.6}
+.taskly-form-actions {display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:12px;margin-top:22px}
+.taskly-fieldset {border:0;padding:0;margin:0;min-width:0}
+.taskly-fieldset legend {font-weight:700;margin-bottom:20px}
+.admin-review-toolbar {display:grid;grid-template-columns:minmax(0,2fr) minmax(180px,1fr) auto;align-items:end;gap:16px}
+.admin-review-toolbar label {display:grid;gap:8px;min-width:0}
+.admin-review-toolbar input, .admin-review-toolbar select {width:100%;min-width:0;height:48px;padding:10px 12px;font:inherit;border:1px solid var(--line);border-radius:10px;background:white}
+.admin-review-toolbar .btn {height:48px;margin:0}
+#admin-verification-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:20px}
+#admin-verification-list > .admin-review-card {padding:22px;margin:0;border-radius:14px;border:1px solid var(--line);box-shadow:0 6px 22px rgba(16,36,31,.05);display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.review-card-heading {display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;width:100%}
+.review-document-count {font-size:.88rem;color:var(--primary-dark);background:var(--primary-soft);padding:5px 10px;border-radius:7px}
+#admin-verification-list > .admin-review-card h3 {margin:0;font-size:1.08rem}
+#admin-verification-list > .admin-review-card p {margin:0;line-height:1.7;overflow-wrap:anywhere}
+#admin-verification-list > .admin-review-card .btn {margin-top:auto;border-color:var(--primary)}
+#admin-verification-list > :not(.admin-review-card) {grid-column:1/-1}
+.admin-review-pagination {flex-wrap:wrap}
+.admin-review-dialog {border-radius:18px}
+.admin-review-dialog form {display:grid;gap:12px}
+.admin-review-dialog h3 {font-size:1.1rem}
+.admin-review-dialog .admin-review-layout > * {min-width:0}
+.admin-review-dialog img {max-width:100%}
+.admin-review-dialog textarea {width:100%;min-height:130px;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit}
+.account-details {border:1px solid var(--line);padding:22px;border-radius:14px}
+.account-details form {max-width:none}
+.account-danger {border-color:#e9c9ce;background:#fffafb}
+.account-danger p {max-width:70ch}
+.account-danger form {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end}
+.account-danger form > [role=status] {grid-column:1/-1}
+.taskly-confirm-dialog {width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:30px;border:1px solid var(--line);border-radius:18px;color:var(--ink);font-family:var(--font-main);box-shadow:var(--shadow)}
+.taskly-confirm-dialog::backdrop {background:rgba(7,35,27,.55);backdrop-filter:blur(3px)}
+.taskly-confirm-dialog h2 {font-size:1.5rem;line-height:1.4;margin:12px 0}
+.taskly-confirm-dialog p {color:var(--muted);line-height:1.7}
+.taskly-danger-label {font-size:.8rem;text-transform:uppercase;font-weight:700;color:#ad2b42}
+.pending-page {background:var(--soft)}
+.pending-shell {max-width:1080px}
+.pending-intro {border-radius:18px;padding:32px;background:linear-gradient(120deg,var(--primary),var(--primary-dark));color:white;margin-bottom:24px}
+.pending-intro h1 {font-size:clamp(1.6rem,4vw,2.3rem);margin:10px 0 16px}
+.pending-intro p {line-height:1.7}
+.pending-intro .muted {color:#d9eee6}
+.pending-intro .eyebrow {color:#c1eadc}
+.pending-intro .taskly-form-actions {justify-content:flex-start}
+.pending-intro .btn.outline {border-color:#c1eadc;color:white}
+.pending-grid {display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start}
+.pending-grid .account-danger {grid-column:1/-1;margin-top:0}
+.pending-page #pending-forms form {max-width:none;display:grid;gap:14px}
+.pending-page #pending-message-history:empty {display:none}
+.pending-page #pending-message-history p {padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--soft);overflow-wrap:anywhere}
+.pending-page #pending-message-history {max-height:280px;overflow:auto;margin-bottom:20px}
+.pending-page #pending-documents {overflow-wrap:anywhere;font-size:.9rem;line-height:1.7;margin-top:20px}
+.dashboard-page .modal {border-radius:16px}
+.dashboard-page .modal-body {display:grid;gap:16px}
+@media(max-width:1000px) {
+  #admin-verification-list {grid-template-columns:minmax(0,1fr)}
+  .admin-review-toolbar {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-review-toolbar .btn {grid-column:1/-1;justify-self:start}
+}
+@media(max-width:760px) {
+  .dashboard-page .admin-settings-grid, .dashboard-page .admin-settings-form, .taskly-form-grid, .pending-grid {grid-template-columns:minmax(0,1fr)}
+  .dashboard-page .sidebar {position:static;height:auto;min-height:0;padding:18px}
+  .dashboard-page .sidebar .side-nav {display:flex;flex-wrap:wrap;gap:8px}
+  .dashboard-page .sidebar .side-nav > * {width:auto;min-height:44px}
+  .pending-intro {padding:24px}
+  .account-danger form {grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:520px) {
+  .admin-review-toolbar {grid-template-columns:minmax(0,1fr)}
+  .dashboard-page .panel-header, .dashboard-page .panel-body, .pending-page .panel-header, .pending-page .panel-body, .dashboard-page .admin-settings-panel {padding:18px}
+  .taskly-form-actions {align-items:stretch;flex-direction:column}
+  .taskly-form-actions > .btn {width:100%}
+  .taskly-confirm-dialog {padding:22px}
+  .dashboard-page form input, .dashboard-page form select, .dashboard-page form textarea, .pending-page form input, .pending-page form textarea {font-size:16px}
+}
