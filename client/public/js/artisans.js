@@ -181,6 +181,19 @@ function initialiserFiltresArtisans() {
   });
 }
 
+// Le bouton « Nouvelle demande » mène au parcours EXISTANT :
+// choisir un artisan, puis utiliser le vrai formulaire de l'annuaire.
+function afficherGuideNouvelleDemande() {
+  if (obtenirParametre('nouvelleDemande') !== '1') return;
+  const formulaire = document.getElementById('artisans-filter-form');
+  if (!formulaire) return;
+  const guide = document.createElement('p');
+  guide.className = 'alert show success';
+  guide.setAttribute('role', 'status');
+  guide.textContent = 'Nouvelle demande : choisissez un artisan, puis cliquez sur « Envoyer une demande » pour décrire votre projet.';
+  formulaire.insertAdjacentElement('beforebegin', guide);
+}
+
 // Ouvrir la modale de demande
 async function ouvrirDemandeArtisan(id) {
   if (!window.utilisateurCourant) {
@@ -340,6 +353,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await chargerFiltresArtisans();
   initialiserFiltresArtisans();
   initialiserDemandeArtisan();
+  afficherGuideNouvelleDemande();
   chargerArtisans();
   chargerProfilArtisan();
 });

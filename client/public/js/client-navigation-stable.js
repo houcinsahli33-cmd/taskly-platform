@@ -32,7 +32,21 @@
   if(doc.body?.dataset?.tasklyClientShell==='1'&&target){iframe.src=embedded(target);return;}
   if(!target){location.assign(url.href);return;}
   if(!doc.querySelector('.dashboard-shell > .dashboard-content'))return;
-  doc.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a||!canClick(e,a)||!validated(a.href))return;e.preventDefault();navigate(a.href);},true);
+  doc.addEventListener('click',e=>{
+   const a=e.target.closest('a[href]');
+   if(!a||!canClick(e,a)||a.hasAttribute('onclick'))return;
+   // Les ancres internes restent dans leur document sans reinitialiser la rubrique.
+   if(a.getAttribute('href')?.startsWith('#'))return;
+   const rubrique=validated(a.href);
+   if(rubrique){e.preventDefault();navigate(rubrique.href);return;}
+   // Les pages publiques (annuaire, suivi du support...) refusent les iframes.
+   // Les ouvrir au niveau principal, pas dans le cadre de la rubrique client.
+   let destination;
+   try{destination=new URL(a.href,url.href);}catch{return;}
+   if(destination.origin!==location.origin||destination.pathname===url.pathname)return;
+   e.preventDefault();
+   location.assign(destination.href);
+  },true);
   const current=clean(target);if(current!==selected){history.pushState(null,'',current);selected=current;}
   navActive(target);document.title=doc.title||document.title;modal(doc);
   observer=new MutationObserver(()=>modal(doc));observer.observe(doc.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['open','class','hidden']});
