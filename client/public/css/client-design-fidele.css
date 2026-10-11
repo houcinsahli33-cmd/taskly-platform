@@ -1,0 +1,206 @@
+/* Style cible des quatre espaces client Taskly. Le vrai logo, les scripts métier
+   et les espaces artisan/administrateur sont laissés inchangés. */
+body.dashboard-page[data-require-role="client"] {
+  --client-green: #008a70;
+  --client-dark: #0d3c30;
+  --client-ink: #142d39;
+  --client-muted: #8298a9;
+  background: #f3f8f6;
+}
+/* En-tête commun, logo existant fourni par auth.js inchangé. */
+body.dashboard-page[data-require-role="client"] #site-header .site-header {
+  min-height: 76px; background:#fff; border-bottom:1px solid #e1eae7;
+}
+body.dashboard-page[data-require-role="client"] #site-header .main-nav a[href="/index.html"] {
+  display:inline-flex;align-items:center;gap:9px;min-height:42px;padding:10px 17px;
+  color:#152d29;background:transparent;border:1px solid transparent;
+  border-radius:30px;font-size:14px;font-weight:750;text-decoration:none;
+  transition:background .17s,color .17s,border-color .17s,transform .17s;
+}
+body.dashboard-page[data-require-role="client"] #site-header .main-nav a[href="/index.html"]::before {
+  content:'←';display:inline-block;font-size:19px;line-height:1;
+}
+body.dashboard-page[data-require-role="client"] #site-header .main-nav a[href="/index.html"]:hover,
+body.dashboard-page[data-require-role="client"] #site-header .main-nav a[href="/index.html"]:focus-visible {
+  color:#007a62;background:#e4f5ef;border-color:#9bdccc;transform:translateY(-1px);
+}
+body.dashboard-page[data-require-role="client"] #site-header .header-actions [data-logout] {
+  border-radius:24px;min-height:40px;
+}
+body.dashboard-page[data-require-role="client"] .dashboard-shell > .sidebar {background:var(--client-dark);}
+body.dashboard-page[data-require-role="client"] .dashboard-content {color:var(--client-ink);}
+body.dashboard-page[data-require-role="client"] .client-heading h1 {font-size:33px;letter-spacing:-1.1px;}
+body.dashboard-page[data-require-role="client"] .client-heading > .btn.primary {background:var(--client-green);border-radius:12px;}
+body.dashboard-page[data-require-role="client"] .stat-card {position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;}
+body.dashboard-page[data-require-role="client"] .stat-card strong {display:block;font-size:31px;line-height:1.12;}
+body.dashboard-page[data-require-role="client"] .stat-card small {font-size:11px;color:#96a7b7;}
+body.dashboard-page[data-require-role="client"] .client-stat-icon {
+  position:absolute;right:17px;top:17px;display:grid;place-items:center;width:34px;height:34px;
+  border-radius:12px;background:#e6f7ef;color:#008c72;font-size:20px;font-style:normal;
+}
+body.dashboard-page[data-require-role="client"] .stat-card:nth-child(2) .client-stat-icon {background:#eaf1ff;color:#2b7be7;}
+body.dashboard-page[data-require-role="client"] .stat-card:nth-child(3) .client-stat-icon {background:#fff5e1;color:#d29300;}
+body.dashboard-page[data-require-role="client"] .stat-card:nth-child(4) .client-stat-icon {background:#eaf8f0;color:#0b9872;}
+/* Mes demandes : conserver la recherche, les filtres et les actions métier. */
+body.dashboard-page[data-require-role="client"] #demandes.panel {overflow:hidden;}
+body.dashboard-page[data-require-role="client"] #demandes > .panel-header {padding:20px 22px 17px;}
+body.dashboard-page[data-require-role="client"] #demandes > .panel-header h2 {font-size:17px;}
+body.dashboard-page[data-require-role="client"] #demandes > .panel-body {padding:19px 21px 27px;}
+body.dashboard-page[data-require-role="client"] #demandes .client-filters button {background:#fff;}
+body.dashboard-page[data-require-role="client"] #demandes .client-filters button.active {background:#008a70;}
+body.dashboard-page[data-require-role="client"] #demandes .client-search {gap:0;}
+body.dashboard-page[data-require-role="client"] .client-request-empty {
+  display:flex;justify-content:center;align-items:center;gap:40px;padding:35px 20px;min-height:270px;
+}
+body.dashboard-page[data-require-role="client"] .client-request-art {
+  flex:0 0 168px;width:168px;height:168px;border:1px dashed #cfeade;
+  background:#eef9f3;border-radius:50%;display:grid;place-items:center;
+}
+body.dashboard-page[data-require-role="client"] .client-request-empty-description {max-width:450px;}
+body.dashboard-page[data-require-role="client"] .client-request-ready {
+  color:#00876c;background:#eaf8f2;border-radius:8px;padding:7px 11px;font-size:10px;font-weight:800;
+}
+body.dashboard-page[data-require-role="client"] .client-request-empty h3 {font-size:21px;letter-spacing:-.4px;margin:13px 0 10px;}
+body.dashboard-page[data-require-role="client"] .client-request-empty p {color:#849bae;font-size:13px;line-height:1.7;}
+body.dashboard-page[data-require-role="client"] .client-request-empty-buttons {display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+body.dashboard-page[data-require-role="client"] .client-request-empty-buttons .btn {font-size:12px;min-height:40px;border-radius:10px;}
+body.dashboard-page[data-require-role="client"] .client-demand-how {
+  margin-top:17px;border:1px solid #d6ece1;border-radius:15px;background:#f0f8f3;
+  padding:17px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+body.dashboard-page[data-require-role="client"] .client-demand-how > div:first-child {display:flex;gap:12px;align-items:center;}
+body.dashboard-page[data-require-role="client"] .client-demand-how strong {font-size:12px;display:block;}
+body.dashboard-page[data-require-role="client"] .client-demand-how small {font-size:11px;color:#7b9e8e;display:block;margin-top:5px;}
+body.dashboard-page[data-require-role="client"] .client-demand-how-icon {
+  background:#dff3e9;color:#00856a;width:36px;height:36px;display:grid;place-items:center;border-radius:12px;font-size:18px;
+}
+body.dashboard-page[data-require-role="client"] .client-demand-how-steps {display:flex;align-items:center;gap:11px;font-size:11px;font-weight:720;color:#56796b;flex-wrap:wrap;}
+body.dashboard-page[data-require-role="client"] .client-demand-how-steps b {display:inline-grid;place-items:center;border:1px solid #bee4d6;width:22px;height:22px;border-radius:50%;background:white;color:#008d70;margin-right:5px;}
+body.dashboard-page[data-require-role="client"] .client-demand-how-steps i {font-style:normal;color:#60bca3;font-size:18px;}
+/* Mon profil : une carte de présentation suivie de la grille d'informations réelles. */
+body.dashboard-page[data-require-role="client"] #profil.panel,
+body.dashboard-page[data-require-role="client"] #profil > .panel-body {
+  background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;
+}
+body.dashboard-page[data-require-role="client"] #profil > .panel-header {display:none;}
+body.dashboard-page[data-require-role="client"] #client-profile-card {
+  padding:0;border:0;background:transparent;box-shadow:none;margin:0 0 20px;
+}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-hero {
+  display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:170px;
+  background:linear-gradient(115deg,#fff 0%,#fff 58%,#f0faf6 100%);
+  padding:25px 27px;border:1px solid #dfeae6;border-radius:17px;box-shadow:0 6px 21px #18362b0a;
+}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-person {display:flex;align-items:center;gap:21px;min-width:0;}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-person .avatar {
+  width:95px;height:95px;flex:0 0 95px;object-fit:cover;border:7px solid #eff8f4;border-radius:50%;background:#edf6f4;
+}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-person h3 {font-size:24px;letter-spacing:-.5px;color:#142d39;margin:0 0 7px;}
+body.dashboard-page[data-require-role="client"] .client-profile-overline {font-size:10px;letter-spacing:1.4px;font-weight:850;color:#008c70;margin:0 0 7px;}
+body.dashboard-page[data-require-role="client"] .client-profile-email {font-size:13px;color:#8299a7;margin:0 0 12px;overflow-wrap:anywhere;}
+body.dashboard-page[data-require-role="client"] .client-profile-label {
+  display:inline-block;background:#def5e9;color:#008367;font-size:10px;font-weight:750;border-radius:7px;padding:7px 10px;margin-right:4px;
+}
+body.dashboard-page[data-require-role="client"] .client-profile-label.secondary {background:#f2f6f5;color:#71899a;}
+body.dashboard-page[data-require-role="client"] .client-profile-right {max-width:325px;min-width:210px;border-left:1px solid #dbeee5;padding-left:28px;}
+body.dashboard-page[data-require-role="client"] .client-profile-shield {display:grid;place-items:center;width:35px;height:35px;border-radius:11px;background:#dcf6e9;color:#008872;font-size:22px;margin-bottom:9px;}
+body.dashboard-page[data-require-role="client"] .client-profile-right strong {font-size:13px;display:block;}
+body.dashboard-page[data-require-role="client"] .client-profile-right p {font-size:11px;line-height:1.6;color:#809b9c;margin:6px 0 10px;}
+body.dashboard-page[data-require-role="client"] .client-profile-right .btn {font-size:11px;min-height:34px;border-radius:10px;}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields {
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+  margin-top:0;background:white;border:1px solid #dfeae6;border-radius:17px;
+  padding:10px 18px;box-shadow:0 6px 21px #18362b0a;
+}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields > div {
+  display:flex;align-items:center;gap:12px;min-width:0;padding:19px 14px;border:0;
+}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields > div:nth-child(n+4) {border-top:1px solid #edf3f0;}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields i {
+  display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;background:#edf8f3;border-radius:11px;color:#008a70;font-size:17px;font-style:normal;
+}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields > div > span {min-width:0;overflow-wrap:anywhere;}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields strong {font-size:11px;color:#8c9eac;font-weight:500;}
+body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields .muted {color:#142d39;font-size:12px;font-weight:750;}
+body.dashboard-page[data-require-role="client"] .client-account-actions-heading {font-size:17px;font-weight:800;margin:24px 0 13px;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action {
+  min-height:84px;display:grid;grid-template-columns:43px 1fr 17px;column-gap:12px;align-items:center;
+  border:1px solid #deebe5;border-radius:14px;box-shadow:0 5px 13px #133b3210;background:#fff;padding:16px 17px;
+}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action::before {
+  content:'✎';grid-row:1/3;grid-column:1;display:grid;place-items:center;width:43px;height:43px;border-radius:12px;background:#e5f7ee;color:#008d70;font-size:20px;
+}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action::after {
+  content:'↗';grid-row:1/3;grid-column:3;color:#8dbba9;font-size:18px;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action strong {grid-column:2;grid-row:1;align-self:end;font-size:13px;color:#1a3542;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action span {grid-column:2;grid-row:2;align-self:start;font-size:11px;color:#859aaa;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(2)::before {content:'▧';background:#e8f1ff;color:#2379d3;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(3)::before {content:'✉';background:#fff3e7;color:#cf771c;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(4)::before {content:'⚿';background:#f0ecfe;color:#7451bb;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:last-child {
+  grid-column:1/-1;min-height:66px;background:#fffafa;border-color:#f4dddd;box-shadow:none;
+}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:last-child::before {content:'♜';background:#ffeeee;color:#d14b4b;}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:last-child::after {content:'Demander la suppression';color:#b73e42;font-size:11px;font-weight:800;white-space:nowrap;}
+/* Support : conserver le vrai formulaire de contact et le vrai résultat du suivi. */
+body.dashboard-page[data-require-role="client"] .client-support-form-tag {background:#eaf8f2;color:#00876c;font-size:10px;border-radius:8px;padding:7px 10px;font-weight:850;white-space:nowrap;}
+body.dashboard-page[data-require-role="client"] #support.panel {overflow:hidden;}
+body.dashboard-page[data-require-role="client"] #support .panel-header h2 {font-size:16px;}
+body.dashboard-page[data-require-role="client"] #support .panel-body {padding:20px 23px 21px;}
+body.dashboard-page[data-require-role="client"] #contact-form {gap:14px;}
+body.dashboard-page[data-require-role="client"] #contact-form label {font-size:12px;font-weight:750;color:#394f5f;}
+body.dashboard-page[data-require-role="client"] #contact-form input,
+body.dashboard-page[data-require-role="client"] #contact-form select,
+body.dashboard-page[data-require-role="client"] #contact-form textarea {
+  background:#fff;border:1px solid #dae8e4;border-radius:10px;font-size:12px;color:#1a3342;
+}
+body.dashboard-page[data-require-role="client"] #contact-form input,
+body.dashboard-page[data-require-role="client"] #contact-form select {min-height:43px;}
+body.dashboard-page[data-require-role="client"] #contact-form textarea {min-height:135px;}
+body.dashboard-page[data-require-role="client"] .client-support-tip-symbol {display:grid;place-items:center;width:48px;height:48px;background:#e4f6ee;color:#008c72;border-radius:13px;margin-bottom:15px;font-size:22px;}
+body.dashboard-page[data-require-role="client"] .client-support-aside .client-support-track {padding:17px;}
+body.dashboard-page[data-require-role="client"] .client-support-history {margin-top:20px;overflow:hidden;}
+body.dashboard-page[data-require-role="client"] .client-support-history-body {min-height:100px;display:flex;align-items:center;gap:14px;padding:19px 22px;}
+body.dashboard-page[data-require-role="client"] .client-support-history-icon {display:grid;place-items:center;width:46px;height:46px;border-radius:12px;background:#eef9f3;color:#169a7d;font-size:20px;flex:0 0 46px;}
+body.dashboard-page[data-require-role="client"] .client-support-history-body strong {font-size:12px;}
+body.dashboard-page[data-require-role="client"] .client-support-history-body p {font-size:11px;color:#91a5b0;margin:5px 0 0;}
+body.dashboard-page[data-require-role="client"] .client-support-history-body .btn {margin-left:auto;white-space:nowrap;}
+/* Le suivi fonctionne dans le document actuel ; contact.js traite la requête API. */
+body.dashboard-page[data-require-role="client"] .client-support-follow-dialog {
+  border:1px solid #d8e8e1;border-radius:17px;padding:0;overflow:auto;
+  max-height:calc(100dvh - 32px);width:min(520px,calc(100vw - 32px));
+  box-shadow:0 25px 80px #06271f55;color:#142d39;background:white;
+}
+body.dashboard-page[data-require-role="client"] .client-support-follow-dialog::backdrop {background:rgba(7,35,27,.53);backdrop-filter:blur(3px);}
+body.dashboard-page[data-require-role="client"] .client-follow-header {padding:20px 23px;background:#eaf6ef;border-bottom:1px solid #d8e7df;display:flex;justify-content:space-between;gap:12px;}
+body.dashboard-page[data-require-role="client"] .client-follow-header h2 {font-size:19px;color:#075d45;letter-spacing:-.3px;margin:0 0 6px;}
+body.dashboard-page[data-require-role="client"] .client-follow-header p {font-size:12px;color:#687f73;line-height:1.5;margin:0;}
+body.dashboard-page[data-require-role="client"] .client-follow-close {width:34px;height:34px;flex:0 0 34px;border:1px solid #cfe4dc;background:white;border-radius:9px;font-size:22px;cursor:pointer;color:#11634a;}
+body.dashboard-page[data-require-role="client"] .client-follow-form {padding:21px 23px;display:grid;gap:9px;}
+body.dashboard-page[data-require-role="client"] .client-follow-form label {font-size:12px;font-weight:750;color:#394f5f;}
+body.dashboard-page[data-require-role="client"] .client-follow-form input {margin-bottom:9px;min-height:43px;border:1px solid #dae8e4;border-radius:10px;width:100%;box-sizing:border-box;}
+body.dashboard-page[data-require-role="client"] .client-follow-actions {display:flex;justify-content:flex-end;gap:9px;padding-top:9px;}
+body.dashboard-page[data-require-role="client"] .client-follow-actions .btn {min-height:40px;border-radius:10px;}
+body.dashboard-page[data-require-role="client"] #follow-result {overflow-wrap:anywhere;}
+body.dashboard-page[data-require-role="client"] #follow-result:not(:empty) {margin:8px 0 0;}
+@media(max-width:1000px) {
+ body.dashboard-page[data-require-role="client"] .client-profile-right {display:none;}
+ body.dashboard-page[data-require-role="client"] .client-demand-how {flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:700px) {
+ body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields {grid-template-columns:1fr;}
+ body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-fields > div:nth-child(n+2) {border-top:1px solid #edf3f0;}
+ body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-actions {grid-template-columns:1fr;}
+ body.dashboard-page[data-require-role="client"] .client-request-empty {flex-direction:column;gap:16px;text-align:center;}
+ body.dashboard-page[data-require-role="client"] .client-request-empty-buttons {justify-content:center;}
+ body.dashboard-page[data-require-role="client"] .client-support-history-body {flex-wrap:wrap;}
+ body.dashboard-page[data-require-role="client"] .client-support-history-body .btn {margin-left:0;}
+}
+@media(max-width:520px) {
+ body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-hero {padding:19px;}
+ body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-person {gap:12px;}
+ body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-person .avatar {width:70px;height:70px;flex-basis:70px;}
+ body.dashboard-page[data-require-role="client"] #client-profile-card .client-profile-person h3 {font-size:19px;}
+ body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:last-child::after {font-size:10px;}
+}

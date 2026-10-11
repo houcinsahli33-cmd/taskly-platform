@@ -16,12 +16,24 @@ function afficherStatsClient() {
   if (!cible) return;
 
   const stats = statsDemandes(demandesClient);
-  cible.innerHTML = `
-    <div class="stat-card"><span>Total demandes</span><strong>${stats.total}</strong></div>
-    <div class="stat-card"><span>En attente</span><strong>${stats.en_attente}</strong></div>
-    <div class="stat-card"><span>Terminées</span><strong>${stats.terminee}</strong></div>
-    <div class="stat-card"><span>Annulées ou refusées</span><strong>${stats.annulee}</strong></div>
-  `;
+  // Données calculées depuis /api/demandes/client, jamais de chiffres de démonstration.
+  const enCours = demandesClient.filter(d => d.statut === 'acceptee' || d.statut === 'en_cours').length;
+  const surPageDemandes = document.body.dataset.workspacePage === 'demandes';
+  const compteurs = surPageDemandes
+    ? [['Total des demandes', stats.total, 'Toutes les demandes', '▤'],
+       ['En attente', stats.en_attente, 'En attente de réponse', '◷'],
+       ['En cours', enCours, 'Prestations en cours', '▤'],
+       ['Terminées', stats.terminee, 'Missions réalisées', '✓']]
+    : [['Total des demandes', stats.total, 'Depuis votre inscription', '▤'],
+       ['En attente', stats.en_attente, 'En attente de réponse', '◷'],
+       ['Terminées', stats.terminee, 'Prestations finalisées', '✓'],
+       ['Annulées ou refusées', stats.annulee, 'Demandes non abouties', '⊗']];
+  cible.innerHTML = compteurs.map(([label, nombre, detail, icone]) => `
+    <div class="stat-card">
+      <span>${label}</span><i class="client-stat-icon" aria-hidden="true">${icone}</i>
+      <strong>${nombre}</strong><small>${detail}</small>
+    </div>
+  `).join('');
 }
 
 // Construire une carte demande client
@@ -65,11 +77,20 @@ function afficherDemandesClient() {
   const filtre = filtres?.dataset.clientFilter || 'toutes';
   const texte = normaliserTexte(document.getElementById('client-request-search')?.value || '');
   const visibles = demandesClient.filter(d => {
-    const statut = filtre === 'annulee' ? ['annulee','refusee'].includes(d.statut) : filtre === 'toutes' || d.statut === filtre;
+    const statut = filtre === 'annulee' ? ['annulee','refusee'].includes(d.statut) : filtre === 'en_cours' ? ['acceptee','en_cours'].includes(d.statut) : filtre === 'toutes' || d.statut === filtre;
     const contenu = [d.service_nom, d.message, d.artisan_ville, d.artisan_nom, d.artisan_prenom].join(' ');
     return statut && (!texte || normaliserTexte(contenu).includes(texte));
   });
-  cible.innerHTML = visibles.length ? visibles.map(carteDemandeClient).join('') : etatVide(demandesClient.length ? 'Aucune demande ne correspond à vos filtres.' : 'Aucune demande pour le moment. Parcourez les artisans pour démarrer.');
+  cible.innerHTML = visibles.length ? visibles.map(carteDemandeClient).join('') :
+    demandesClient.length ? etatVide('Aucune demande ne correspond à vos filtres.') : `
+      <div class="client-request-empty">
+        <div class="client-request-art" aria-hidden="true"><svg width="158" height="158" viewBox="0 0 180 180" fill="none"><rect x="44" y="26" width="102" height="128" rx="12" fill="white" stroke="#a6ddcc" stroke-width="2" transform="rotate(-8 44 26)"/><path d="M64 55h57M64 75h64M64 95h53" stroke="#b8e4d5" stroke-width="6" stroke-linecap="round"/><circle cx="122" cy="117" r="27" stroke="#008e72" stroke-width="9"/><path d="m142 139 27 29" stroke="#008e72" stroke-width="11" stroke-linecap="round"/></svg></div>
+        <div class="client-request-empty-description"><span class="client-request-ready">✦ PRÊT À COMMENCER ?</span>
+          <h3>Aucune demande pour le moment</h3>
+          <p>Explorez les profils des artisans, trouvez le professionnel adapté à votre projet et envoyez votre première demande.</p>
+          <div class="client-request-empty-buttons"><a class="btn primary" href="/artisans.html">Explorer les artisans →</a><a class="btn outline" href="#client-demand-how">Comment ça marche ?</a></div>
+        </div>
+      </div>`;
 }
 
 // Charger les demandes depuis le backend
@@ -199,23 +220,37 @@ async function afficherProfilClient() {
   }
 
   cible.innerHTML = `
-    <div class="profile-panel">
-      <img class="avatar large" id="client-photo-preview" src="${echapperHTML(imageProfil(utilisateur.photo_profil))}" alt="${echapperHTML(nomComplet(utilisateur))}" onerror="this.src='${DEFAULT_AVATAR}'">
-      <div>
-        <h3>${echapperHTML(nomComplet(utilisateur))}</h3>
-        <p class="muted">${echapperHTML(utilisateur.email)}</p>
-        <span class="badge primary">Compte client</span>
+    <div class="client-profile-hero">
+      <div class="client-profile-person">
+        <img class="avatar large" id="client-photo-preview" src="${echapperHTML(imageProfil(utilisateur.photo_profil))}" alt="${echapperHTML(nomComplet(utilisateur))}" onerror="this.src='${DEFAULT_AVATAR}'">
+        <div>
+          <p class="client-profile-overline">MON ESPACE PERSONNEL</p>
+          <h3>${echapperHTML(nomComplet(utilisateur))}</h3>
+          <p class="client-profile-email">${echapperHTML(utilisateur.email)}</p>
+          <span class="client-profile-label">● Compte client</span>
+          <span class="client-profile-label secondary">Profil personnel</span>
+        </div>
       </div>
+      <aside class="client-profile-right">
+        <span class="client-profile-shield" aria-hidden="true">♢</span>
+        <strong>Vos informations, à portée de main.</strong>
+        <p>Mettez votre profil à jour pour faciliter vos échanges avec les artisans.</p>
+        <button type="button" class="btn outline" id="client-open-edit-profile">Modifier mon profil ↗</button>
+      </aside>
     </div>
-    <div class="profile-fields">
-      <div><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></div>
-      <div><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></div>
-      <div><strong>Email</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></div>
-      <div><strong>Téléphone</strong><br><span class="muted">${echapperHTML(utilisateur.telephone || "Non précisé")}</span></div>
-      <div><strong>Commune</strong><br><span class="muted">${echapperHTML(utilisateur.ville || "Non précisé")}</span></div>
-      <div><strong>Adresse</strong><br><span class="muted">${echapperHTML(utilisateur.adresse || "Non précisé")}</span></div>
-    </div>
-  `;
+    <div class="client-section-heading"><h2>Informations personnelles</h2><span>Données de votre compte</span></div>
+    <div class="profile-fields client-profile-fields">
+      <div><i aria-hidden="true">♙</i><span><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true">♙</i><span><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true">✉</i><span><strong>Adresse e-mail</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true">♧</i><span><strong>Téléphone</strong><br><span class="muted">${echapperHTML(utilisateur.telephone || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true">⌖</i><span><strong>Commune</strong><br><span class="muted">${echapperHTML(utilisateur.ville || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true">⌖</i><span><strong>Adresse</strong><br><span class="muted">${echapperHTML(utilisateur.adresse || "Non précisé")}</span></span></div>
+    </div>`;
+  // Utilise le formulaire existant, déplacé dans sa fenêtre par workspace-dialogs.js.
+  document.getElementById('client-open-edit-profile')?.addEventListener('click', () => {
+    document.querySelector('#account-profile-editor .workspace-actions .workspace-action')?.click();
+  });
 }
 
 // Modifier la photo de profil
