@@ -1,261 +1,61 @@
-
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administrateurs — Taskly</title>
+<link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin-settings.css">
+<link rel="stylesheet" href="/css/admin-integrated.css"><link rel="stylesheet" href="/css/admin-forms.css">
+<link rel="stylesheet" href="/css/admin-workspace.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css">
+<link rel="stylesheet" href="/css/workspace-pro.css"><link rel="stylesheet" href="/css/admin-users-page.css">
+<link rel="stylesheet" href="/css/admin-three-pages.css">
+<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script>
+<script defer src="/js/admin-dashboard.js"></script><script defer src="/js/admin-settings.js"></script>
 
-  <title>Administrateurs — Taskly</title>
-
-  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  
-  <script defer src="/js/admin-settings.js"></script>
-  <link rel="stylesheet" href="/css/admin-integrated.css">
-  <link rel="stylesheet" href="/css/admin-forms.css">
-  <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="admins">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+<script defer src="/js/admin-three-pages.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-three-page admin-three-admins" data-require-role="admin" data-workspace-page="admins">
+<main class="admin-layout">
+<aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  class="active" aria-current="page" data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a class="active" aria-current="page" data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
-
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
-
-    <section class="admin-content"><h1 class="dashboard-section-title">Administrateurs</h1>
-
-      <!-- EN-TETE -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      <section
-        class="admin-section active"
-        id="admin-admins">
-
-        <div class="admin-settings-heading">
-
-          <div>
-            <h2>Gestion des administrateurs</h2>
-            <p>
-              Inviter et gérer les autres comptes
-              administrateurs de Taskly.
-            </p>
-          </div>
-
-        </div>
-
-        <!-- INVITATION -->
-
-        <div class="admin-settings-panel">
-
-          <h3>Inviter un nouvel administrateur</h3>
-
-          <form
-            id="admin-invite-form"
-            class="admin-settings-form">
-
-            <div class="admin-field-group"><label for="admin-invite-nom">
-              Nom
-            </label><input
-              id="admin-invite-nom"
-              type="text"
-              maxlength="100"
-              required></div>
-
-            <div class="admin-field-group"><label for="admin-invite-prenom">
-              Prénom
-            </label><input
-              id="admin-invite-prenom"
-              type="text"
-              maxlength="100"
-              required></div>
-
-            <div class="admin-field-group"><label for="admin-invite-email">
-              Adresse e-mail
-            </label><input
-              id="admin-invite-email"
-              type="email"
-              required></div>
-
-            <div class="admin-field-group"><label for="admin-invite-password">
-              Votre mot de passe administrateur
-            </label><input
-              id="admin-invite-password"
-              type="password"
-              autocomplete="current-password"
-              required></div>
-
-            <button
-              type="submit"
-              class="admin-settings-action">
-              Envoyer une invitation sécurisée
-            </button>
-
-          </form>
-
-          <p
-            id="admin-invite-status"
-            role="status">
-          </p>
-
-        </div>
-
-        <!-- LISTE ADMINISTRATEURS -->
-
-        <div class="admin-settings-panel">
-
-          <h3>Comptes administrateurs</h3>
-
-          <div id="admin-admins-list"></div>
-
-        </div>
-
-        <!-- INVITATIONS -->
-
-        <div class="admin-settings-panel">
-
-          <h3>Invitations en attente</h3>
-
-          <div id="admin-invites-list"></div>
-
-        </div>
-
-        <!-- HISTORIQUE -->
-
-        <div class="admin-settings-panel">
-
-          <h3>Historique des actions</h3>
-
-          <div id="admin-audit-list"></div>
-
-        </div>
-
-      </section>
-
-    </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  
-
-</body>
-</html>
+<section class="admin-content">
+<header class="t-admin-top"><div><p class="t-admin-eyebrow">— &nbsp; ESPACE ADMINISTRATEUR</p><h1>Administrateurs</h1><p>Gérez les accès, envoyez des invitations et consultez l’historique des actions.</p></div><span class="t-admin-top-badge"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4v5c0 5-3 8-8 11-5-3-8-6-8-11V6l8-4Z"></path><path d="m8.7 12 2.3 2.3 4.5-4.5"></path></svg> Accès protégé · Administration</span></header>
+<section class="admin-section active" id="admin-admins"><div class="t-admin-stats" aria-label="Indicateurs administrateurs">
+<div class="t-admin-stat"><span>Total administrateurs</span><i class="t-admin-stat-icon green"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></svg></i><strong id="t-admin-count-total">—</strong><small>Comptes enregistrés</small></div>
+<div class="t-admin-stat"><span>Comptes actifs</span><i class="t-admin-stat-icon blue"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4v5c0 5-3 8-8 11-5-3-8-6-8-11V6l8-4Z"></path><path d="m8.7 12 2.3 2.3 4.5-4.5"></path></svg></i><strong id="t-admin-count-active">—</strong><small>Avec accès à Taskly</small></div>
+<div class="t-admin-stat"><span>Invitations en attente</span><i class="t-admin-stat-icon orange"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></i><strong id="t-admin-count-invites">—</strong><small>Invitations à accepter</small></div>
+<div class="t-admin-stat"><span>Actions récentes</span><i class="t-admin-stat-icon purple"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"></path><path d="M12 7v5l4 2"></path></svg></i><strong id="t-admin-count-history">—</strong><small>Dans l'historique chargé</small></div></div>
+<div class="t-admin-manage-grid">
+<section class="t-admin-card"><div class="t-admin-card-heading"><div><h2>Comptes administrateurs</h2><p>Consultez les comptes autorisés à gérer la plateforme.</p></div><span class="t-admin-counter" id="t-admin-list-caption">Chargement…</span></div><label class="t-admin-search"><span class="sr-only">Rechercher un administrateur</span><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg> <input type="search" id="t-admin-search" placeholder="Rechercher un administrateur…" autocomplete="off"></label><div id="admin-admins-list" class="t-admin-admins-list" aria-live="polite">Chargement des comptes…</div><div class="t-admin-info t-admin-small-info"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg> <div><strong>Compte principal protégé.</strong><p>Le compte administrateur principal ne peut pas être désactivé depuis cette interface.</p></div></div></section>
+<section class="t-admin-card"><div class="t-admin-card-heading"><div><h2>Inviter un administrateur</h2><p>Envoyez un accès sécurisé à un nouveau membre de l'équipe.</p></div><span class="t-admin-counter">Invitation sécurisée</span></div><form id="admin-invite-form" class="admin-settings-form"><div class="t-admin-fields-two"><div><label for="admin-invite-prenom">Prénom</label><input id="admin-invite-prenom" type="text" maxlength="100" autocomplete="given-name" placeholder="Ex. : Nadia" required></div><div><label for="admin-invite-nom">Nom</label><input id="admin-invite-nom" type="text" maxlength="100" autocomplete="family-name" placeholder="Ex. : Benali" required></div></div><label for="admin-invite-email">Adresse e-mail de l’invité</label><input id="admin-invite-email" type="email" autocomplete="email" placeholder="nom@exemple.com" required><label for="admin-invite-password">Votre mot de passe administrateur</label><input id="admin-invite-password" type="password" autocomplete="current-password" placeholder="Confirmer votre identité" required><p class="t-admin-help">Demandé uniquement pour confirmer cette opération sensible.</p><div class="t-admin-info t-admin-inline-info"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg> Le nouvel administrateur choisira lui-même son mot de passe via son invitation. Aucun mot de passe ne lui est transmis.</div><button type="submit" class="t-admin-primary"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7.5 20-3-9.5L2 9.5 22 2ZM11.5 12.5 22 2"></path></svg> Envoyer une invitation sécurisée</button><p id="admin-invite-status" role="status" aria-live="polite"></p></form></section>
+<section class="t-admin-card"><div class="t-admin-card-heading"><div><h2>Invitations en attente</h2><p>Retrouvez les invitations envoyées et non encore acceptées.</p></div><span class="t-admin-counter" id="t-admin-invite-caption">—</span></div><div id="admin-invites-list" class="t-admin-admins-list" aria-live="polite">Chargement des invitations…</div></section>
+<section class="t-admin-card"><div class="t-admin-card-heading"><div><h2>Historique des actions</h2><p>Suivi des actions sensibles des administrateurs.</p></div><span class="t-admin-counter">Journal d’activité</span></div><div id="admin-audit-list" class="t-admin-admins-list" aria-live="polite">Chargement de l’historique…</div></section>
+</div></section>
+</section>
+</main>
+</body></html>

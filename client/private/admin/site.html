@@ -1,167 +1,73 @@
-
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Paramètres du site — Taskly</title>
-
-  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  
-  <script defer src="/js/admin-settings.js"></script>
-  <link rel="stylesheet" href="/css/admin-integrated.css">
-  <link rel="stylesheet" href="/css/admin-forms.css">
-  <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/site-settings.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="site">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paramètres du site — Taskly</title>
+<link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin-settings.css">
+<link rel="stylesheet" href="/css/admin-integrated.css"><link rel="stylesheet" href="/css/admin-forms.css">
+<link rel="stylesheet" href="/css/admin-workspace.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css">
+<link rel="stylesheet" href="/css/workspace-pro.css"><link rel="stylesheet" href="/css/admin-users-page.css">
+<link rel="stylesheet" href="/css/admin-three-pages.css">
+<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script>
+<script defer src="/js/admin-dashboard.js"></script><script defer src="/js/admin-settings.js"></script>
+<script defer src="/js/site-settings.js"></script>
+<script defer src="/js/admin-three-pages.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-three-page admin-three-site" data-require-role="admin" data-workspace-page="site">
+<main class="admin-layout">
+<aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a class="active" aria-current="page" data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a class="active" aria-current="page" data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
-
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
-
-    <section class="admin-content"><h1 class="dashboard-section-title">Paramètres du site</h1>
-
-      <!-- EN-TETE -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <section class="admin-section active" id="admin-site">
-  <div class="admin-settings-heading"><div><h2>Paramètres du site</h2><p>Les coordonnées affichées aux visiteurs et dans le pied de page Taskly.</p></div></div>
-  <section class="admin-settings-panel"><form id="site-settings-form">
-    <fieldset class="taskly-fieldset" disabled><legend>Contact et réseaux sociaux</legend>
-      <div class="taskly-form-grid"><label><span>E-mail de contact</span><input name="email" type="email" maxlength="254" required placeholder="support@taskly.dz"></label><label><span>Page Facebook</span><input name="facebook" type="url" maxlength="500"  placeholder="https://www.facebook.com/…"></label><label><span>Page Instagram</span><input name="instagram" type="url" maxlength="500"  placeholder="https://www.instagram.com/…"></label><label><span>Page X / Twitter</span><input name="twitter" type="url" maxlength="500"  placeholder="https://x.com/…"></label><label><span>Page LinkedIn</span><input name="linkedin" type="url" maxlength="500"  placeholder="https://www.linkedin.com/…"></label><p class="muted account-full">Les liens doivent commencer par https://. Laissez un réseau vide pour masquer son lien public.</p></div>
-      <div class="taskly-form-actions"><button class="btn primary" type="submit">Enregistrer les coordonnées</button></div>
-    </fieldset><p id="site-settings-status" role="status" aria-live="polite"></p>
-  </form></section>
+<section class="admin-content">
+<header class="t-admin-top"><div><p class="t-admin-eyebrow">— &nbsp; ESPACE ADMINISTRATEUR</p><h1>Paramètres du site</h1><p>Personnalisez les informations de contact et les réseaux sociaux de Taskly.</p></div><span class="t-admin-top-badge"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg> Informations publiques</span></header>
+<section class="admin-section active" id="admin-site"><div class="t-admin-info"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg> <strong>Coordonnées visibles par les visiteurs.</strong> Ces informations apparaissent dans le pied de page et dans les espaces de contact Taskly.</div>
+<div class="t-admin-site-layout"><section class="t-admin-card t-admin-site-form"><div class="t-admin-card-heading"><div><h2>Coordonnées et réseaux sociaux</h2><p>Modifiez les renseignements qui seront présentés au public.</p></div><span class="t-admin-icon"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.7 3.4 10.4 2h3.2l.7 1.4 1.5.6 1.5-.5 2.3 2.3-.5 1.5.6 1.5 1.4.7v3.2l-1.4.7-.6 1.5.5 1.5-2.3 2.3-1.5-.5-1.5.6-.7 1.4h-3.2l-.7-1.4-1.5-.6-1.5.5-2.3-2.3.5-1.5-.6-1.5L3 12.7V9.5l1.4-.7.6-1.5-.5-1.5 2.3-2.3 1.5.5z" transform="translate(0 1)"></path><circle cx="12" cy="12" r="3"></circle></svg></span></div>
+<form id="site-settings-form"><fieldset class="t-admin-fieldset taskly-fieldset" disabled><legend class="sr-only">Contact et réseaux sociaux</legend>
+<h3 class="t-admin-form-group-title"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg> Adresse de contact</h3>
+<label class="t-admin-label" for="site-contact-email">E-mail de contact <span aria-hidden="true">*</span></label>
+<input id="site-contact-email" name="email" type="email" autocomplete="email" maxlength="254" required placeholder="support@taskly.dz">
+<p class="t-admin-help">Adresse visible par les visiteurs pour contacter votre équipe.</p>
+<hr class="t-admin-rule">
+<h3 class="t-admin-form-group-title"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg> Liens vers les réseaux sociaux</h3>
+<div class="t-admin-fields-two">
+<div><label class="t-admin-label" for="site-facebook"><span class="t-social-logo t-social-facebook" aria-hidden="true">f</span> Facebook</label><input id="site-facebook" name="facebook" type="url" maxlength="500" placeholder="https://facebook.com/votre-page"></div>
+<div><label class="t-admin-label" for="site-instagram"><svg class="t-admin-svg t-social-ig" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><path d="M17.5 6.5h.01"></path></svg> Instagram</label><input id="site-instagram" name="instagram" type="url" maxlength="500" placeholder="https://instagram.com/votre-page"></div>
+<div><label class="t-admin-label" for="site-twitter"><svg class="t-admin-svg t-social-x" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3 20 21M20 3 4 21"></path></svg> X / Twitter</label><input id="site-twitter" name="twitter" type="url" maxlength="500" placeholder="https://x.com/votre-compte"></div>
+<div><label class="t-admin-label" for="site-linkedin"><svg class="t-admin-svg t-social-in" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 10v7M8 7h.01M12 17v-7M12 12c1-3 6-3 6 1v4"></path></svg> LinkedIn</label><input id="site-linkedin" name="linkedin" type="url" maxlength="500" placeholder="https://linkedin.com/company/votre-page"></div>
+</div>
+<p class="t-admin-info t-admin-inline-info"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg> Les liens doivent commencer par <strong>https://</strong>. Laissez un champ vide pour masquer ce réseau sur le site.</p>
+<hr class="t-admin-rule">
+<div class="t-admin-actions"><button type="submit" class="t-admin-primary"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h12l4 4v14H3V3h2Z"></path><path d="M7 3v6h10V3M7 21v-9h10v9"></path></svg> Enregistrer les modifications</button><button type="button" id="site-settings-reload" class="t-admin-secondary"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7V3l-3.5 3.5A8 8 0 0 0 4 10M4 17v4l3.5-3.5A8 8 0 0 0 20 14"></path></svg> Réinitialiser</button></div>
+</fieldset><p id="site-settings-status" role="status" aria-live="polite" class="t-admin-feedback"></p></form></section>
+<div class="t-admin-side-stack"><section class="t-admin-card"><div class="t-admin-card-heading"><div><h2><span class="t-admin-icon"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.6-4.5 6-7 10-7s7.4 2.5 10 7c-2.6 4.5-6 7-10 7s-7.4-2.5-10-7Z"></path><circle cx="12" cy="12" r="2.6"></circle></svg></span> Aperçu du pied de page</h2><p>Visualisez les informations affichées.</p></div></div>
+<div class="t-footer-preview"><div class="t-footer-preview-nav"><b>Taskly·</b><span>Accueil &nbsp; Services &nbsp; Contact</span></div><div class="t-footer-preview-body">Aperçu simplifié de la page publique</div><div class="t-footer-preview-bottom"><strong>Taskly·</strong><small>Votre plateforme de mise en relation</small><hr><div class="t-footer-preview-columns"><div><b>Contact</b><a id="t-preview-email">En attente de chargement</a></div><div><b>Suivez-nous</b><div id="t-preview-social" class="t-preview-social">Liens à renseigner</div></div></div><hr><small>© <span id="t-admin-year"></span> Taskly · Tous droits réservés</small></div></div>
+<p class="t-admin-help"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.6-4.5 6-7 10-7s7.4 2.5 10 7c-2.6 4.5-6 7-10 7s-7.4-2.5-10-7Z"></path><circle cx="12" cy="12" r="2.6"></circle></svg> L’aperçu se met à jour pendant la saisie. L’enregistrement reste nécessaire pour publier.</p></section>
+<section class="t-admin-card"><h2><span class="t-admin-icon"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M9.5 21h5M8 15c-1.4-1.2-2-2.8-2-4.4A6 6 0 0 1 18 11c0 1.6-.6 3.2-2 4.4-.7.6-1 1.1-1 2.1h-6c0-1-.3-1.5-1-2.5Z"></path></svg></span> Bonnes pratiques</h2><ul class="t-admin-checklist"><li>Utilisez une adresse e-mail professionnelle accessible à l'équipe.</li><li>Vérifiez vos liens avant de les afficher aux visiteurs.</li><li>Seuls les réseaux renseignés apparaissent dans l’aperçu.</li></ul></section></div></div></section>
 </section>
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      
-
-    </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  
-
-</body>
-</html>
+</main>
+</body></html>

@@ -21,19 +21,39 @@
       $('tab-admins').hidden=!principal;
       if(principal&&$('admin-admins-list'))await chargerListeAdmins();
       if($('tab-site'))$('tab-site').hidden=!principal;
+      document.dispatchEvent(new CustomEvent('taskly:admin-account-loaded',{detail:{compte:a}}));
     }catch(e){status('admin-profile-status',e.message,true);}
+  }
+  // Toutes les valeurs proviennent de l'API privee ; echapperHTML neutralise les textes externes.
+  const initiales = a => [String(a.prenom||'')[0],String(a.nom||'')[0]].filter(Boolean).join('').toLocaleUpperCase('fr-FR')||'AD';
+  const safeDate = value => {const date=new Date(value);return Number.isNaN(date.getTime())?'Date inconnue':new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(date);};
+  const empty = (title,subtitle) => `<div class="t-admin-list-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><strong>${safe(title)}</strong><span>${safe(subtitle)}</span></div>`;
+  function renderAdministrateur(a){
+    const principal=a.niveau==='principal';
+    const blocked=a.statut_compte==='bloque';
+    const name=[a.prenom,a.nom].filter(Boolean).join(' ').trim()||'Administrateur';
+    const role=principal?'Principal':'Secondaire';
+    const state=blocked?'Désactivé':'Actif';
+    const toggle=blocked?'enable':'disable';
+    const action=principal?'<details class="t-admin-admin-options"><summary title="Informations sur le compte principal" aria-label="Informations sur le compte principal"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="1.9" aria-hidden="true"><circle cx="9" cy="4" r="1"/><circle cx="9" cy="10" r="1"/><circle cx="9" cy="16" r="1"/></svg></summary><span>Compte principal protégé : aucune désactivation possible.</span></details>':`<button class="admin-settings-secondary" type="button" data-admin-toggle="${toggle}" data-admin-id="${Number(a.id)}">${blocked?'Réactiver':'Désactiver'}</button>`;
+    return `<div class="admin-settings-list-entry"><div class="t-admin-admin-identity"><span class="t-admin-admin-avatar" aria-hidden="true">${safe(initiales(a))}</span><div class="t-admin-admin-text"><strong>${safe(name)}</strong><small>${safe(a.email)}</small></div></div><div class="t-admin-admin-tags"><span class="t-admin-role-tag">${role}</span><span class="t-admin-status-tag ${blocked?'is-blocked':''}">${state}</span>${action}</div></div>`;
   }
   async function chargerListeAdmins(){
     try {
       const d=await requeteAPI('/api/admin-settings/admins');
-      $('admin-admins-list').innerHTML=d.admins.map(a=>`<div class="admin-settings-list-entry"><div><strong>${safe(a.prenom)} ${safe(a.nom)}</strong><small>${safe(a.email)} · ${a.niveau==='principal'?'Principal':'Secondaire'} · ${a.statut_compte==='bloque'?'Désactivé':'Actif'}</small></div>${a.niveau!=='principal'?`<button class="admin-settings-secondary" type="button" data-admin-toggle="${a.statut_compte==='bloque'?'enable':'disable'}" data-admin-id="${Number(a.id)}">${a.statut_compte==='bloque'?'Réactiver':'Désactiver'}</button>`:''}</div>`).join('')||'<p class="admin-settings-empty">Aucun compte.</p>';
-      $('admin-invites-list').innerHTML=d.invitations.map(i=>`<div class="admin-settings-list-entry"><div><strong>${safe(i.prenom)} ${safe(i.nom)}</strong><small>${safe(i.email)} · Expire le ${new Date(i.expires_at).toLocaleString('fr-FR')}</small></div><button class="admin-settings-secondary" type="button" data-invite-revoke="${Number(i.id)}">Annuler</button></div>`).join('')||'<p class="admin-settings-empty">Aucune invitation en attente.</p>';
-      $('admin-audit-list').innerHTML=d.historique.map(a=>`<div class="admin-settings-list-entry"><div><strong>${safe(a.action.replaceAll('_',' '))}</strong><small>${safe(a.prenom)} ${safe(a.nom)} · ${safe(a.detail||'')} · ${new Date(a.created_at).toLocaleString('fr-FR')}</small></div></div>`).join('')||'<p class="admin-settings-empty">Aucune action récente.</p>';
-    }catch(e){$('admin-admins-list').textContent=e.message;}
+      const admins=Array.isArray(d.admins)?d.admins:[];
+      const invitations=Array.isArray(d.invitations)?d.invitations:[];
+      const historique=Array.isArray(d.historique)?d.historique:[];
+      $('admin-admins-list').innerHTML=admins.map(renderAdministrateur).join('')||empty('Aucun compte administrateur','Les comptes autorises apparaitront ici.');
+      $('admin-invites-list').innerHTML=invitations.map(i=>`<div class="admin-settings-list-entry"><div class="t-admin-admin-identity"><span class="t-admin-admin-avatar" aria-hidden="true">${safe(initiales(i))}</span><div class="t-admin-admin-text"><strong>${safe([i.prenom,i.nom].filter(Boolean).join(' '))}</strong><small>${safe(i.email)} · Expire le ${safe(safeDate(i.expires_at))}</small></div></div><button class="admin-settings-secondary" type="button" data-invite-revoke="${Number(i.id)}">Annuler</button></div>`).join('')||empty('Aucune invitation en attente','Les prochaines invitations envoyees apparaitront ici avec leur statut.');
+      $('admin-audit-list').innerHTML=historique.length?`<div class="t-admin-timeline">${historique.map(a=>`<div class="t-admin-timeline-entry"><div><strong>${safe(String(a.action||'Action').replaceAll('_',' '))}</strong><span class="t-admin-audit-label">Securite</span></div><small>${safe([a.prenom,a.nom].filter(Boolean).join(' '))}${a.detail?' · '+safe(a.detail):''} · ${safe(safeDate(a.created_at))}</small></div>`).join('')}</div>`:empty('Aucune action recente','Les actions des administrateurs apparaitront dans ce journal.');
+      document.dispatchEvent(new CustomEvent('taskly:admin-list-loaded',{detail:{...d,admins,invitations,historique}}));
+    }catch(e){$('admin-admins-list').textContent=e.message;status('admin-invite-status','Impossible de charger les comptes administrateurs.',true);}
   }
+
   async function soumettre(form,id,url,method,payload,onSuccess){
     formBusy(form,true);status(id,'Traitement en cours…');
-    try{const rep=await api(url,method,payload());status(id,rep.message);if(onSuccess)await onSuccess(rep);}
+    try{const rep=await api(url,method,payload());status(id,rep.message);if(onSuccess)await onSuccess(rep);document.dispatchEvent(new CustomEvent('taskly:admin-saved',{detail:{url,rep}}));}
     catch(e){status(id,e.message,true);}
     finally{formBusy(form,false);}
   }

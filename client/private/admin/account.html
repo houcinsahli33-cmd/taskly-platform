@@ -1,349 +1,64 @@
-
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon compte — Taskly</title>
+<link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin-settings.css">
+<link rel="stylesheet" href="/css/admin-integrated.css"><link rel="stylesheet" href="/css/admin-forms.css">
+<link rel="stylesheet" href="/css/admin-workspace.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css">
+<link rel="stylesheet" href="/css/workspace-pro.css"><link rel="stylesheet" href="/css/admin-users-page.css">
+<link rel="stylesheet" href="/css/admin-three-pages.css">
+<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script>
+<script defer src="/js/admin-dashboard.js"></script><script defer src="/js/admin-settings.js"></script>
 
-  <title>Mon compte — Taskly</title>
-
-  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  
-  <script defer src="/js/admin-settings.js"></script>
-  <link rel="stylesheet" href="/css/admin-integrated.css">
-  <link rel="stylesheet" href="/css/admin-forms.css">
-  <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="account">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+<script defer src="/js/admin-three-pages.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-three-page admin-three-account" data-require-role="admin" data-workspace-page="account">
+<main class="admin-layout">
+<aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a class="active" aria-current="page" data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a class="active" aria-current="page" data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
-
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
-
-    <section class="admin-content"><h1 class="dashboard-section-title">Mon compte</h1>
-
-      <!-- EN-TETE -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      <section
-        class="admin-section active"
-        id="admin-account">
-
-        <div class="admin-settings-heading">
-
-          <div>
-            <h2>Mon compte administrateur</h2>
-            <p>
-              Modifier mes informations personnelles
-              et mes identifiants de connexion.
-            </p>
-          </div>
-
-          <span id="admin-account-role">
-            Administrateur
-          </span>
-
-        </div>
-
-        <div class="admin-settings-grid">
-
-          <!-- INFORMATIONS PERSONNELLES -->
-
-          <section class="admin-settings-panel">
-
-            <h3>Informations personnelles</h3>
-
-            <form
-              id="admin-profile-form"
-              class="admin-settings-form">
-
-              <div class="admin-field-group"><label for="admin-profile-nom">
-                Nom
-              </label><input
-                id="admin-profile-nom"
-                type="text"
-                maxlength="100"
-                autocomplete="family-name"
-                required></div>
-
-              <div class="admin-field-group"><label for="admin-profile-prenom">
-                Prénom
-              </label><input
-                id="admin-profile-prenom"
-                type="text"
-                maxlength="100"
-                autocomplete="given-name"
-                required></div>
-
-              <div class="admin-field-group"><label for="admin-profile-email">
-                Adresse e-mail actuelle
-              </label><input
-                id="admin-profile-email"
-                type="email"
-                readonly></div>
-
-              <button type="submit">
-                Enregistrer les informations
-              </button>
-
-              <p
-                id="admin-profile-status"
-                role="status">
-              </p>
-
-            </form>
-
-          </section>
-
-          <!-- CHANGER MOT DE PASSE -->
-
-          <section class="admin-settings-panel">
-
-            <h3>Changer mon mot de passe</h3>
-
-            <form
-              id="admin-password-form"
-              class="admin-settings-form">
-
-              <div class="admin-field-group"><label for="admin-password-old">
-                Mot de passe actuel
-              </label><input
-                id="admin-password-old"
-                type="password"
-                autocomplete="current-password"
-                required></div>
-
-              <div class="admin-field-group"><label for="admin-password-new">
-                Nouveau mot de passe
-              </label><input
-                id="admin-password-new"
-                type="password"
-                minlength="12"
-                maxlength="128"
-                autocomplete="new-password"
-                required></div>
-
-              <div class="admin-field-group"><label for="admin-password-repeat">
-                Confirmer le nouveau mot de passe
-              </label><input
-                id="admin-password-repeat"
-                type="password"
-                minlength="12"
-                maxlength="128"
-                autocomplete="new-password"
-                required></div>
-
-              <button type="submit">
-                Changer mon mot de passe
-              </button>
-
-              <p
-                id="admin-password-status"
-                role="status">
-              </p>
-
-            </form>
-
-          </section>
-
-          <!-- CHANGER E-MAIL -->
-
-          <section
-            class="admin-settings-panel admin-settings-wide">
-
-            <h3>Changer mon adresse e-mail</h3>
-
-            <p>
-              La nouvelle adresse devra être confirmée
-              avec un code de vérification.
-            </p>
-
-            <form
-              id="admin-email-request-form"
-              class="admin-settings-form">
-
-              <div class="admin-field-group"><label for="admin-email-new">
-                Nouvelle adresse e-mail
-              </label><input
-                id="admin-email-new"
-                type="email"
-                autocomplete="email"
-                required></div>
-
-              <div class="admin-field-group"><label for="admin-email-password">
-                Mot de passe actuel
-              </label><input
-                id="admin-email-password"
-                type="password"
-                autocomplete="current-password"
-                required></div>
-
-              <button type="submit">
-                Envoyer le code de confirmation
-              </button>
-
-            </form>
-
-            <form
-              id="admin-email-verify-form"
-              class="admin-settings-form"
-              hidden>
-
-              <div class="admin-field-group"><label for="admin-email-code">
-                Code de vérification
-              </label><input
-                id="admin-email-code"
-                type="text"
-                inputmode="numeric"
-                maxlength="6"
-                pattern="[0-9]{6}"
-                autocomplete="one-time-code"
-                required></div>
-
-              <button type="submit">
-                Confirmer la nouvelle adresse
-              </button>
-
-            </form>
-
-            <p
-              id="admin-email-status"
-              role="status">
-            </p>
-
-          </section>
-
-        </div>
-
-      </section>
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      
-
-    </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  
-
-</body>
-</html>
+<section class="admin-content">
+<header class="t-admin-top"><div><p class="t-admin-eyebrow">— &nbsp; ESPACE ADMINISTRATEUR</p><h1>Mon compte</h1><p>Gérez vos informations personnelles et sécurisez votre accès à Taskly.</p></div><span class="t-admin-top-badge"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4v5c0 5-3 8-8 11-5-3-8-6-8-11V6l8-4Z"></path><path d="m8.7 12 2.3 2.3 4.5-4.5"></path></svg> Espace administrateur sécurisé</span></header>
+<section class="admin-section active" id="admin-account"><section class="t-admin-account-hero t-admin-card"><div class="t-admin-account-person"><span class="t-admin-avatar" id="t-admin-avatar">—</span><div><h2 id="t-admin-name">Chargement du compte…</h2><p>Compte de gestion de la plateforme Taskly</p><div class="t-admin-pills"><span id="admin-account-role" class="t-admin-pill">Administrateur</span><span class="t-admin-pill t-admin-pill-success" id="t-admin-account-status">● &nbsp; Compte actif</span></div></div></div><div class="t-admin-private"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg><strong>Accès privé</strong><small>Les modifications sensibles doivent être vérifiées.</small></div></section>
+<div class="t-admin-subheading"><h2>Paramètres de mon compte</h2><span>Vos informations et votre sécurité au même endroit</span></div>
+<div class="t-admin-account-grid">
+<section class="t-admin-card t-admin-personal"><div class="t-admin-card-heading"><div><h2 class="t-admin-heading-icon"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><circle cx="8" cy="10" r="2.2"></circle><path d="M4.5 16c.5-2.4 6.5-2.4 7 0M14 9h5M14 13h5"></path></svg> Informations personnelles</h2><p>Consultez et actualisez votre profil administrateur.</p></div></div>
+<div class="t-admin-readonly-grid"><div><span>Nom affiché</span><strong id="t-admin-display-name">—</strong></div><div><span>Rôle</span><strong id="t-admin-display-role">—</strong></div><div class="t-admin-readonly-full"><span>Adresse e-mail de connexion</span><strong id="t-admin-display-email">—</strong></div></div>
+<div class="t-admin-bottom-action"><p>Ces informations proviennent de votre compte réel.</p><button type="button" class="t-admin-primary" data-account-open="profile"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l5-.8L20 8a2.1 2.1 0 0 0-4-4L5 15l-1 5Z"></path><path d="m14 6 4 4"></path></svg> Modifier mes informations</button></div></section>
+<div class="t-admin-security-stack"><section class="t-admin-card t-admin-action-card"><div><span class="t-admin-icon"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="m11 12 9-9 2 2-2 2-2-2-2 2 2 2-2 2-2-2-2 2"></path></svg></span><div><h2>Mot de passe</h2><p>Mettez à jour votre mot de passe pour protéger votre compte.</p><span class="t-admin-pill t-admin-pill-success"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg> Action sécurisée</span></div></div><button class="t-admin-secondary" type="button" data-account-open="password">Modifier ↗</button></section>
+<section class="t-admin-card t-admin-action-card"><div><span class="t-admin-icon blue"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg></span><div><h2>Adresse e-mail</h2><p>Changez l'adresse utilisée pour vous connecter et recevoir les notifications.</p><span class="t-admin-pill t-admin-pill-success"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 8 4v5c0 5-3 8-8 11-5-3-8-6-8-11V6l8-4Z"></path><path d="m8.7 12 2.3 2.3 4.5-4.5"></path></svg> Confirmation requise</span></div></div><button class="t-admin-secondary" type="button" data-account-open="email">Changer ↗</button></section></div></div>
+<div class="t-admin-info t-admin-security-tip"><svg class="t-admin-svg " viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg> <strong>Conseils de sécurité.</strong> Utilisez un mot de passe unique. Confirmez tout changement d’e-mail et déconnectez-vous des appareils partagés.</div>
+<dialog id="t-admin-account-dialog" class="t-admin-dialog" aria-labelledby="t-admin-dialog-title"><div class="t-admin-dialog-header"><div><p class="t-admin-eyebrow">MON COMPTE · ACTION SÉCURISÉE</p><h2 id="t-admin-dialog-title">Modifier mes informations</h2></div><button type="button" data-account-close class="t-admin-icon-button" aria-label="Fermer">×</button></div><div class="t-admin-dialog-body">
+<section data-account-panel="profile"><p>Les modifications sont enregistrées dans votre compte administrateur.</p><form id="admin-profile-form" class="admin-settings-form"><label for="admin-profile-nom">Nom</label><input id="admin-profile-nom" type="text" maxlength="100" autocomplete="family-name" required><label for="admin-profile-prenom">Prénom</label><input id="admin-profile-prenom" type="text" maxlength="100" autocomplete="given-name" required><label for="admin-profile-email">Adresse e-mail actuelle</label><input id="admin-profile-email" type="email" readonly><button type="submit" class="t-admin-primary">Enregistrer les informations</button><p id="admin-profile-status" role="status" aria-live="polite"></p></form></section>
+<section data-account-panel="password" hidden><p>Choisissez un nouveau mot de passe d’au moins 12 caractères avec majuscule, minuscule, chiffre et symbole.</p><form id="admin-password-form" class="admin-settings-form"><label for="admin-password-old">Mot de passe actuel</label><input id="admin-password-old" type="password" autocomplete="current-password" required><label for="admin-password-new">Nouveau mot de passe</label><input id="admin-password-new" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><label for="admin-password-repeat">Confirmer le nouveau mot de passe</label><input id="admin-password-repeat" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><button type="submit" class="t-admin-primary">Changer mon mot de passe</button><p id="admin-password-status" role="status" aria-live="polite"></p></form></section>
+<section data-account-panel="email" hidden><p>Pour changer d'adresse, confirmez votre mot de passe actuel puis le code reçu à la nouvelle adresse.</p><form id="admin-email-request-form" class="admin-settings-form"><label for="admin-email-new">Nouvelle adresse e-mail</label><input id="admin-email-new" type="email" autocomplete="email" required><label for="admin-email-password">Mot de passe actuel</label><input id="admin-email-password" type="password" autocomplete="current-password" required><button type="submit" class="t-admin-primary">Envoyer le code de confirmation</button></form><form id="admin-email-verify-form" class="admin-settings-form" hidden><label for="admin-email-code">Code de vérification à 6 chiffres</label><input id="admin-email-code" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" required><button type="submit" class="t-admin-primary">Confirmer la nouvelle adresse</button></form><p id="admin-email-status" role="status" aria-live="polite"></p></section>
+</div></dialog></section>
+</section>
+</main>
+</body></html>
