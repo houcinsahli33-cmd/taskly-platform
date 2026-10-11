@@ -1,287 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Signalements — Taskly</title>
-
-  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  
-  <script defer src="/js/admin-settings.js"></script>
-  <link rel="stylesheet" href="/css/admin-integrated.css">
-  <link rel="stylesheet" href="/css/admin-forms.css">
-  <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="reports">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Signalements — Taskly</title>
+<link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin-settings.css">
+<link rel="stylesheet" href="/css/admin-integrated.css"><link rel="stylesheet" href="/css/admin-forms.css">
+<link rel="stylesheet" href="/css/admin-workspace.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css">
+<link rel="stylesheet" href="/css/workspace-pro.css">
+<link rel="stylesheet" href="/css/admin-users-page.css"><link rel="stylesheet" href="/css/admin-reports-page.css">
+<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script>
+<script defer src="/js/admin-dashboard.js"></script><script defer src="/js/admin-settings.js"></script>
+<script defer src="/js/workspace-dialogs.js"></script><script defer src="/js/admin-reports-page.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-reports-page" data-require-role="admin" data-workspace-page="reports">
+<main class="admin-layout">
+    <aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a class="active" aria-current="page" data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a class="active" aria-current="page" data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
-
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
-
-    <section class="admin-content"><h1 class="dashboard-section-title">Signalements</h1>
-
-      <!-- EN-TETE -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      <section class="admin-section active" id="admin-reports">
-
-        <div class="panel">
-
-          <div class="panel-header">
-            <h2>Signalements</h2>
-          </div>
-
-          <div
-            class="panel-body"
-            id="admin-reports-list">
-          </div>
-
-        </div>
-
-      </section>
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      
-
-    </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  <div id="block-modal" class="modal-backdrop">
-
-    <div class="modal" role="dialog" aria-modal="true">
-
-      <div class="modal-header">
-
-        <h2>Bloquer un utilisateur</h2>
-
-        <button
-          class="modal-close"
-          type="button"
-          data-close-modal="block-modal">
-          ×
-        </button>
-
-      </div>
-
-      <form class="modal-body" id="block-form">
-
-        <input
-          type="hidden"
-          id="block-user-id">
-
-        <p class="muted mb-18">
-          Utilisateur :
-          <strong id="block-user-name"></strong>
-        </p>
-
-        <label>
-          <span class="field-label">
-            Motif du blocage
-          </span>
-
-          <textarea
-            class="form-textarea"
-            id="block-reason"
-            required
-            placeholder="Motif clair et précis"></textarea>
-        </label>
-
-        <button
-          class="btn danger block"
-          type="submit">
-          Bloquer
-        </button>
-
-      </form>
-
-    </div>
-
+<section class="admin-content">
+<header class="reports-topbar"><div><h1>Signalements</h1><p>Consultez, priorisez et suivez les incidents signalés sur Taskly.</p></div>
+<span class="reports-year" id="reports-year" aria-label="Année du tableau de suivi">▣ &nbsp; Tableau de suivi</span></header>
+<section class="admin-section active" id="admin-reports" aria-label="Gestion des signalements">
+  <div class="reports-counters" id="reports-counters" aria-live="polite">
+    <button type="button" class="reports-stat active" data-report-counter="tous"><span>Total signalements</span><span class="reports-stat-icon mint">⚑</span><strong id="reports-total">—</strong><small>Tous les dossiers</small></button>
+    <button type="button" class="reports-stat" data-report-counter="nouveau"><span>Nouveaux</span><span class="reports-stat-icon blue">♧</span><strong id="reports-nouveau">—</strong><small>À examiner</small></button>
+    <button type="button" class="reports-stat" data-report-counter="non_traite"><span>Non traités</span><span class="reports-stat-icon orange">⚠</span><strong id="reports-non_traite">—</strong><small>En attente d'une action</small></button>
+    <button type="button" class="reports-stat" data-report-counter="en_cours"><span>En cours</span><span class="reports-stat-icon amber">◷</span><strong id="reports-en_cours">—</strong><small>Dossiers en traitement</small></button>
+    <button type="button" class="reports-stat" data-report-counter="traite"><span>Traités</span><span class="reports-stat-icon mint">✓</span><strong id="reports-traite">—</strong><small>Dossiers clôturés</small></button>
   </div>
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  <div id="service-modal" class="modal-backdrop">
-
-    <div class="modal" role="dialog" aria-modal="true">
-
-      <div class="modal-header">
-
-        <h2 id="service-modal-title">
-          Ajouter un service
-        </h2>
-
-        <button
-          class="modal-close"
-          type="button"
-          data-close-modal="service-modal">
-          ×
-        </button>
-
+  <section class="reports-panel" aria-labelledby="reports-list-heading">
+    <div class="reports-panel-header"><div><h2 id="reports-list-heading">Gestion des signalements</h2><p>Retrouvez les dossiers, leur niveau de priorité et leur état de traitement.</p></div><span class="reports-live-marker">Données réelles · MySQL</span></div>
+    <div class="reports-toolbar">
+      <div class="reports-tabs" role="group" aria-label="Filtrer les signalements par statut">
+        <button type="button" class="active" data-report-status="tous" aria-pressed="true">Tous</button>
+        <button type="button" data-report-status="nouveau" aria-pressed="false">Nouveau</button>
+        <button type="button" data-report-status="non_traite" aria-pressed="false">Non traité</button>
+        <button type="button" data-report-status="en_cours" aria-pressed="false">En cours</button>
+        <button type="button" data-report-status="traite" aria-pressed="false">Traité</button>
       </div>
-
-      <form class="modal-body" id="service-form">
-
-        <input
-          type="hidden"
-          id="service-id">
-
-        <label>
-          <span class="field-label">
-            Nom
-          </span>
-
-          <input
-            class="form-control"
-            id="service-name"
-            required
-            placeholder="Nom du service">
-        </label>
-
-        <label>
-          <span class="field-label">
-            Description
-          </span>
-
-          <textarea
-            class="form-textarea"
-            id="service-description"
-            required
-            placeholder="Description du service"></textarea>
-        </label>
-          <label for="service-photo">Photo du service</label>
-          <input id="service-photo" class="form-control" type="file" accept=".jpg,.jpeg,.png">
-          <small>JPEG ou PNG, 3 Mo maximum. Sans nouvelle photo, l’image existante est conservée.</small>
-
-
-        <button
-          class="btn primary block"
-          type="submit">
-          Enregistrer
-        </button>
-
-      </form>
-
+      <div class="reports-toolbar-fields">
+        <label class="reports-search"><span class="sr-only">Rechercher un dossier</span><span aria-hidden="true">⌕</span><input id="reports-search" type="search" placeholder="Rechercher un dossier..." autocomplete="off" maxlength="100"></label>
+        <label><span class="sr-only">Priorité</span><select id="reports-priority"><option value="toutes">Toutes priorités</option><option value="haute">Haute</option><option value="moyenne">Moyenne</option><option value="basse">Basse</option></select></label>
+        <label><span class="sr-only">Trier par</span><select id="reports-sort"><option value="recent">Plus récents</option><option value="ancien">Plus anciens</option><option value="priorite">Priorité haute</option></select></label>
+      </div>
     </div>
-
-  </div>
-
+    <div class="reports-table-wrap" id="reports-table" aria-live="polite" aria-busy="true"><p class="reports-loading">Chargement des signalements…</p></div>
+    <footer class="reports-panel-footer"><span id="reports-range">—</span><div class="reports-pagination"><button type="button" id="reports-prev" disabled>‹ &nbsp; Précédent</button><span id="reports-page-label">Page —</span><button type="button" id="reports-next" disabled>Suivant &nbsp; ›</button></div></footer>
+  </section>
+  <p class="reports-help">ⓘ &nbsp; Les statuts décrivent l’avancement du dossier, indépendamment du statut du compte utilisateur.</p>
+</section>
+</section>
+</main>
+<div id="reports-dialog-root" hidden></div>
 </body>
 </html>

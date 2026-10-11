@@ -2,6 +2,7 @@
 
 const express = require("express");
 const adminController = require("../controllers/adminController");
+const adminSignalements = require("../controllers/adminSignalementsController");
 
 const { verifierConnexion, verifierAdmin } = require("../middleware/authMiddleware");
 
@@ -26,7 +27,10 @@ router.delete("/services/:id",adminController.supprimerService);
 router.get("/users",adminController.listerUtilisateurs);
 
 // Lister les signalements
-router.get("/signalements",adminController.listerSignalements);
+router.get("/signalements",adminSignalements.lister);
+router.get("/signalements/:id",adminSignalements.examiner);
+router.patch("/signalements/:id",adminSignalements.modifier);
+router.post("/signalements/:id/notifier",require("../middleware/securityMiddleware").limiter({fenetre:3600000,max:20}),adminSignalements.notifier);
 
 // Bloquer un utilisateur
 router.put("/users/:id/bloquer",adminController.bloquerUtilisateur);
