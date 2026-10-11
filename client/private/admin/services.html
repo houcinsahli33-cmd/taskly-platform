@@ -1,289 +1,113 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Services — Taskly</title>
-
-  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  
-  <script defer src="/js/admin-settings.js"></script>
-  <link rel="stylesheet" href="/css/admin-integrated.css">
-  <link rel="stylesheet" href="/css/admin-forms.css">
-  <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="services">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Services — Taskly</title>
+<link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/admin-settings.css">
+<link rel="stylesheet" href="/css/admin-integrated.css">
+<link rel="stylesheet" href="/css/admin-forms.css">
+<link rel="stylesheet" href="/css/admin-workspace.css">
+<link rel="stylesheet" href="/css/taskly-workspace-forms.css">
+<link rel="stylesheet" href="/css/workspace-pro.css">
+<link rel="stylesheet" href="/css/admin-users-page.css">
+<link rel="stylesheet" href="/css/admin-services-page.css">
+<script defer src="/js/api.js"></script>
+<script defer src="/js/auth.js"></script>
+<script defer src="/js/admin-dashboard.js"></script>
+<script defer src="/js/admin-settings.js"></script>
+<script defer src="/js/workspace-dialogs.js"></script>
+<script defer src="/js/admin-services-page.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-services-page" data-require-role="admin" data-workspace-page="services">
+<main class="admin-layout">
+    <aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a class="active" aria-current="page" data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a class="active" aria-current="page" data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
-
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
-
-    <section class="admin-content"><h1 class="dashboard-section-title">Services</h1>
-
-      <!-- EN-TETE -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      <section class="admin-section active" id="admin-services">
-
-        <div class="toolbar">
-
-          <h2>Services</h2>
-
-          <button
-            class="btn primary"
-            id="add-service-btn"
-            type="button">
-            Ajouter un service
-          </button>
-
-        </div>
-
-        <div id="admin-services-list"></div>
-
-      </section>
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      
-
-    </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  <div id="block-modal" class="modal-backdrop">
-
-    <div class="modal" role="dialog" aria-modal="true">
-
-      <div class="modal-header">
-
-        <h2>Bloquer un utilisateur</h2>
-
-        <button
-          class="modal-close"
-          type="button"
-          data-close-modal="block-modal">
-          ×
-        </button>
-
-      </div>
-
-      <form class="modal-body" id="block-form">
-
-        <input
-          type="hidden"
-          id="block-user-id">
-
-        <p class="muted mb-18">
-          Utilisateur :
-          <strong id="block-user-name"></strong>
-        </p>
-
-        <label>
-          <span class="field-label">
-            Motif du blocage
-          </span>
-
-          <textarea
-            class="form-textarea"
-            id="block-reason"
-            required
-            placeholder="Motif clair et précis"></textarea>
-        </label>
-
-        <button
-          class="btn danger block"
-          type="submit">
-          Bloquer
-        </button>
-
-      </form>
-
+<section class="admin-content">
+  <header class="services-heading">
+    <div>
+      <p class="services-eyebrow">— ESPACE ADMINISTRATEUR / CATALOGUE</p>
+      <h1>Services</h1>
+      <p>Consultez et gérez les prestations proposées sur la plateforme Taskly.</p>
     </div>
-
-  </div>
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  <div id="service-modal" class="modal-backdrop">
-
-    <div class="modal" role="dialog" aria-modal="true">
-
-      <div class="modal-header">
-
-        <h2 id="service-modal-title">
-          Ajouter un service
-        </h2>
-
-        <button
-          class="modal-close"
-          type="button"
-          data-close-modal="service-modal">
-          ×
-        </button>
-
-      </div>
-
-      <form class="modal-body" id="service-form">
-
-        <input
-          type="hidden"
-          id="service-id">
-
-        <label>
-          <span class="field-label">
-            Nom
-          </span>
-
-          <input
-            class="form-control"
-            id="service-name"
-            required
-            placeholder="Nom du service">
-        </label>
-
-        <label>
-          <span class="field-label">
-            Description
-          </span>
-
-          <textarea
-            class="form-textarea"
-            id="service-description"
-            required
-            placeholder="Description du service"></textarea>
-        </label>
-          <label for="service-photo">Photo du service</label>
-          <input id="service-photo" class="form-control" type="file" accept=".jpg,.jpeg,.png">
-          <small>JPEG ou PNG, 3 Mo maximum. Sans nouvelle photo, l’image existante est conservée.</small>
-
-
-        <button
-          class="btn primary block"
-          type="submit">
-          Enregistrer
-        </button>
-
-      </form>
-
+    <div class="services-header-actions">
+      <span class="services-total" id="services-total" aria-live="polite">— services au catalogue</span>
+      <button type="button" class="services-add" id="services-add">+ <span>Ajouter un service</span></button>
     </div>
-
-  </div>
-
+  </header>
+  <section class="admin-section active" id="admin-services" aria-labelledby="services-panel-title">
+    <div class="services-filters-panel">
+      <div class="services-filters-title">
+        <div><h2 id="services-panel-title">Gestion des services</h2><p>Retrouvez rapidement une prestation, puis modifiez sa fiche si nécessaire.</p></div>
+        <span class="services-catalog-badge">Catalogue Taskly</span>
+      </div>
+      <div class="services-filter-row">
+        <label class="services-search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg><span class="sr-only">Rechercher un service par nom ou description</span><input type="search" id="services-search" placeholder="Rechercher un service..." autocomplete="off" maxlength="150"></label>
+        <label class="services-sort-label"><span class="sr-only">Trier les services</span><select id="services-sort"><option value="actuel">Trier par : ordre actuel</option><option value="az">Nom : A à Z</option><option value="za">Nom : Z à A</option><option value="artisans">Plus d'artisans</option><option value="demandes">Plus de demandes</option></select></label>
+        <span class="services-visible-count" id="services-visible-count" aria-live="polite">— services affichés</span>
+      </div>
+    </div>
+    <div class="services-catalog-heading"><div><h2>Catalogue des prestations</h2><p>Les services affichés proviennent de la base de données Taskly.</p></div><small>ⓘ &nbsp; Les cartes conservent leur présentation actuelle</small></div>
+    <div id="services-feedback" class="services-feedback" role="status" aria-live="polite"></div>
+    <div class="services-grid" id="services-grid" aria-live="polite" aria-busy="true"><p class="services-empty">Chargement du catalogue…</p></div>
+    <nav class="services-pagination" aria-label="Pagination des services">
+      <span id="services-range">—</span>
+      <div><button type="button" id="services-prev" disabled>‹ &nbsp; Précédent</button><span id="services-page">Page —</span><button type="button" id="services-next" disabled>Suivant &nbsp; ›</button></div>
+    </nav>
+    <p class="services-note">ⓘ &nbsp; Les modifications sont enregistrées seulement après confirmation du serveur. La suppression d'un service utilisé par des artisans est refusée.</p>
+  </section>
+</section>
+</main>
+<dialog class="services-dialog" id="services-editor-dialog" aria-labelledby="services-editor-heading">
+  <form id="services-editor-form" enctype="multipart/form-data">
+    <header class="services-dialog-header"><div><p class="services-eyebrow">CATALOGUE TASKLY</p><h2 id="services-editor-heading">Ajouter un service</h2><p>Complétez les informations de la prestation.</p></div><button type="button" class="services-icon-close" data-service-dialog-close="services-editor-dialog" aria-label="Fermer">×</button></header>
+    <div class="services-dialog-body">
+      <input type="hidden" id="services-edit-id">
+      <label for="services-edit-name">Nom du service <span aria-hidden="true">*</span></label>
+      <input id="services-edit-name" name="nom" type="text" maxlength="255" required autocomplete="off" placeholder="Ex. : Plomberie">
+      <label for="services-edit-description">Description <span aria-hidden="true">*</span></label>
+      <textarea id="services-edit-description" name="description" maxlength="10000" rows="4" required placeholder="Présentez clairement la prestation..."></textarea>
+      <label for="services-edit-photo">Photo de la prestation (facultatif)</label>
+      <input id="services-edit-photo" name="photo" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+      <p class="services-hint" id="services-photo-hint">JPEG ou PNG · 3 Mo maximum. Si aucune photo n'est choisie, celle existante est conservée.</p>
+      <p class="services-dialog-error" id="services-edit-error" role="alert" hidden></p>
+    </div>
+    <footer class="services-dialog-footer"><button type="button" class="services-secondary" data-service-dialog-close="services-editor-dialog">Annuler</button><button type="submit" class="services-primary" id="services-save">Enregistrer</button></footer>
+  </form>
+</dialog>
+<dialog class="services-dialog services-delete-dialog" id="services-delete-dialog" aria-labelledby="services-delete-heading">
+  <header class="services-dialog-header"><div><p class="services-eyebrow">CONFIRMATION</p><h2 id="services-delete-heading">Supprimer un service ?</h2></div><button type="button" class="services-icon-close" data-service-dialog-close="services-delete-dialog" aria-label="Fermer">×</button></header>
+  <div class="services-dialog-body"><p id="services-delete-name"></p><p class="services-warning">Cette action est définitive. Si des artisans utilisent ce service, Taskly refusera sa suppression.</p><p class="services-dialog-error" id="services-delete-error" role="alert" hidden></p></div>
+  <footer class="services-dialog-footer"><button type="button" class="services-secondary" data-service-dialog-close="services-delete-dialog">Annuler</button><button type="button" class="services-danger" id="services-confirm-delete">Supprimer définitivement</button></footer>
+</dialog>
 </body>
 </html>
