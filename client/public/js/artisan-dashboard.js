@@ -317,9 +317,16 @@ function initialiserPhotoArtisan() {
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   if (!window.utilisateurCourant || window.utilisateurCourant.role !== "artisan") return;
-  await chargerProfilArtisanDashboard();
-  afficherStatsArtisan();
-  initialiserPhotoArtisan();
-  initialiserActionsArtisan();
-  chargerDemandesArtisan();
+  const page=document.body.dataset.workspacePage;
+  if(page==='profil'){await chargerProfilArtisanDashboard();initialiserPhotoArtisan();}
+  if(page==='avis'){
+    const cible=document.getElementById('artisan-reviews-dashboard');
+    try {const {compte}=await requeteAPI('/api/account');profilArtisanCourant={...compte,id:compte.artisan_id};await chargerAvisArtisan();}
+    catch(error){cible.textContent=error.message;}
+  }
+  if(page==='accueil'||page==='demandes'){
+    if(page==='accueil')afficherStatsArtisan();
+    if(page==='demandes')initialiserActionsArtisan();
+    chargerDemandesArtisan();
+  }
 });

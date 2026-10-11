@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Support — Taskly</title>
+
+  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin-settings.css">
+
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin-dashboard.js"></script>
+  
+  <script defer src="/js/admin-settings.js"></script>
+  <link rel="stylesheet" href="/css/admin-integrated.css">
+  <link rel="stylesheet" href="/css/admin-forms.css">
+  <link rel="stylesheet" href="/css/admin-workspace.css">
+<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+
+<body class="dashboard-page" data-require-role="admin" data-workspace-page="contacts">
+
+  <main class="admin-layout">
+
+    <!-- =============================== -->
+    <!-- MENU LATERAL ADMINISTRATEUR -->
+    <!-- =============================== -->
+
+    <aside class="admin-sidebar">
+
+      <p class="sidebar-title">Taskly · Administration</p>
+      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+
+      <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
+
+        <a
+          data-admin-tab="overview" href="overview">
+          Vue d'ensemble
+        </a>
+
+        <a data-admin-tab="users" href="users">
+          Utilisateurs
+        </a>
+
+        <a data-admin-tab="reports" href="reports">
+          Signalements
+        </a>
+
+        <a class="active" aria-current="page" data-admin-tab="contacts" href="contacts">
+          Support
+        </a>
+
+        <a data-admin-tab="services" href="services">
+          Services
+        </a>
+
+        <a data-admin-tab="verification" href="verification">
+          Artisans à vérifier
+        </a>
+
+        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
+        <a data-admin-tab="account" href="account">
+          Mon compte
+        </a>
+
+        <a
+  data-admin-tab="admins"
+  id="tab-admins" href="admins">
+  Administrateurs
+</a>
+
+        <button type="button" data-logout>
+          Déconnexion
+        </button>
+
+      </nav>
+
+    </aside>
+
+    <!-- =============================== -->
+    <!-- CONTENU PRINCIPAL -->
+    <!-- =============================== -->
+
+    <section class="admin-content"><h1 class="dashboard-section-title">Support</h1>
+
+      <!-- EN-TETE -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VUE D'ENSEMBLE -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- UTILISATEURS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SIGNALEMENTS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SUPPORT -->
+      <!-- =============================== -->
+
+      <section class="admin-section active" id="admin-contacts">
+
+        <div class="toolbar">
+
+          <h2>Messages support</h2>
+
+          <div class="segmented">
+
+            <button
+              class="active"
+              type="button"
+              data-contact-filter="">
+              Tous
+            </button>
+
+            <button
+              type="button"
+              data-contact-filter="nouveau">
+              Nouveaux
+            </button>
+
+            <button
+              type="button"
+              data-contact-filter="traite">
+              Traités
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="panel">
+          <div
+            class="panel-body"
+            id="admin-contacts-list">
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =============================== -->
+      <!-- SERVICES -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VERIFICATION DES ARTISANS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      
+<!-- MON COMPTE ADMINISTRATEUR -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- GESTION DES ADMINISTRATEURS -->
+      <!-- =============================== -->
+
+      
+
+    </section>
+
+  </main>
+
+  <!-- =============================== -->
+  <!-- MODALE BLOCAGE UTILISATEUR -->
+  <!-- =============================== -->
+
+  
+
+  <!-- =============================== -->
+  <!-- MODALE AJOUT SERVICE -->
+  <!-- =============================== -->
+
+  
+
+</body>
+</html>

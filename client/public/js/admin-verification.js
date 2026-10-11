@@ -35,9 +35,11 @@ async function chargerArtisansVerification(page = pageVerification) {
     const total = Number(resultat.total || 0), pages = Number(resultat.pages || 1);
     const compteur = document.getElementById('admin-verification-counts');
     if (compteur) compteur.textContent = `${total} résultat(s) · page ${pageVerification} sur ${pages}`;
-    target.innerHTML = artisansVerification.map(a => `<article class="card mb-16 admin-review-card" style="padding:16px">
-        <h3>${echapperHTML(nomComplet(a))}</h3>
-        <p class="muted">${echapperHTML(a.service_nom)} · ${echapperHTML(a.ville)} · ${echapperHTML(verificationLabel(a.verification_statut))} · ${Number(a.documents_count || 0)} pièce(s)</p>
+    target.innerHTML = artisansVerification.map(a => `<article class="card admin-review-card">
+        <div class="review-card-heading"><h3>${echapperHTML(nomComplet(a))}</h3>
+        <span class="badge ${a.statut_compte==='bloque'||a.verification_statut==='refuse'?'danger':a.verification_statut==='approuve'?'success':'warning'}">${a.statut_compte==='bloque'?'Compte bloqué':echapperHTML(verificationLabel(a.verification_statut))}</span></div>
+        <p class="muted">${echapperHTML(a.service_nom)} · ${echapperHTML(a.ville)}</p>
+        <p class="review-document-count">${Number(a.documents_count || 0)} justificatif(s) reçu(s)</p>
         <button class="btn outline small" type="button" data-examine-artisan="${Number(a.id)}">Examiner le dossier</button>
       </article>`).join('') || '<p>Aucun artisan pour ces critères.</p>';
     const pagination = document.getElementById('admin-verification-pagination');
@@ -232,5 +234,9 @@ document.addEventListener('DOMContentLoaded', async()=>{
     await attendreSession();
     if (window.utilisateurCourant?.role !== 'admin') return;
     initialiserVerificationAdmin();
+    if(document.body.dataset?.workspacePage==='verification'){
+      const user=new URLSearchParams(window.location.search).get('user');
+      if(user&&/^\d+$/.test(user))await ouvrirDossierParUtilisateur(user);
+    }
   } catch(e) {console.error('Initialisation de la vérification :',e.message);}
 });

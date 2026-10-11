@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon profil — Taskly</title>
+  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/artisan-dashboard.js"></script>
+  <script defer src="/js/artisan-verification.js"></script>
+<link rel="stylesheet" href="/css/account-profile.css"><script defer src="/js/account-profile.js"></script><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+<body class="dashboard-page" data-require-role="artisan" data-workspace-page="profil">
+  <div id="site-header"></div>
+  <main class="dashboard-shell">
+    <!-- Navigation artisan -->
+    <aside class="sidebar">
+      <p class="sidebar-title">Espace artisan</p>
+      <nav class="side-nav"><a href="/espace/artisan/accueil" data-dashboard-link="accueil">Vue d’ensemble</a>
+        <a href="/espace/artisan/demandes" data-dashboard-link="demandes">Demandes reçues</a>
+        <a href="/espace/artisan/avis" data-dashboard-link="avis">Avis</a>
+        <a href="/espace/artisan/profil" class="active" aria-current="page" data-dashboard-link="profil">Mon profil</a>
+        <a href="/espace/artisan/support" data-dashboard-link="support">Support</a>
+        <button type="button" data-logout>Déconnexion</button>
+      </nav>
+    </aside>
+
+    <!-- Contenu artisan -->
+    <section class="dashboard-content">
+      <h1 class="dashboard-section-title" id="dashboard-page-title">Mon profil</h1>
+      
+
+      
+      <section class="panel mt-22" id="artisan-verification-panel" data-dashboard-view="profil">
+        <div class="panel-header"><h2>Vérification professionnelle</h2></div>
+        <div class="panel-body"><p class="muted" id="artisan-verification-status">Chargement du statut...</p>
+          <p class="muted">Déposez une pièce d’identité et au moins un diplôme, certificat ou justificatif de qualification. Les fichiers restent privés et sont examinés par un administrateur.</p>
+          <form id="artisan-document-form" class="grid">
+            <label><span class="field-label">Type de justificatif</span><select class="form-select" name="type_document" required>
+              <option value="identite">Pièce d’identité</option><option value="diplome">Diplôme</option><option value="certificat">Certificat</option><option value="qualification">Qualification professionnelle</option></select></label>
+            <label><span class="field-label">Document PDF, JPG ou PNG (3 Mo max)</span><input class="form-control" type="file" name="document" accept=".pdf,.jpg,.jpeg,.png" required></label>
+            <button class="btn primary" type="submit">Envoyer pour examen</button>
+          </form><div id="artisan-documents-list" class="mt-22"></div><p id="artisan-document-message" class="muted"></p>
+        </div>
+      </section>
+
+
+      
+      <div class="dashboard-grid">
+        
+
+        
+
+        <section class="panel" id="profil" data-dashboard-view="profil">
+          <div class="panel-header">
+            <h2>Mon profil</h2>
+          </div>
+          <div class="panel-body">
+            <div id="artisan-profile-card"></div>
+            <form id="artisan-photo-form" class="mt-22">
+              <label>
+                <span class="field-label">Photo de profil</span>
+                <input class="form-control" id="artisan-photo-input" type="file" accept="image/jpeg,image/png">
+              </label>
+              <div class="request-actions">
+                <button class="btn primary" type="submit">Mettre à jour</button>
+                <button class="btn danger outline" type="button" id="artisan-photo-delete">Supprimer</button>
+              </div>
+            </form><div id="account-profile-editor" class="mt-22"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modale annulation -->
+  
+
+  <!-- Modale signalement -->
+  
+</body>
+</html>

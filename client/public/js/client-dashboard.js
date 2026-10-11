@@ -251,9 +251,11 @@ function initialiserPhotoClient() {
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   if (!window.utilisateurCourant || window.utilisateurCourant.role !== "client") return;
-  afficherProfilClient();
-  afficherStatsClient();
-  initialiserPhotoClient();
-  initialiserActionsClient();
-  chargerDemandesClient();
+  const page=document.body.dataset.workspacePage;
+  if(page==='profil'){afficherProfilClient();initialiserPhotoClient();}
+  if(page==='accueil'||page==='demandes'){
+    if(page==='accueil')afficherStatsClient();
+    if(page==='demandes')initialiserActionsClient();
+    chargerDemandesClient();
+  }
 });

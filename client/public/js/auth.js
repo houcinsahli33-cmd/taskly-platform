@@ -5,8 +5,8 @@ window.tasklyAuthReady = null;
 function lienDashboard(role) {
   // Ne jamais afficher le chemin prive administrateur dans la navigation publique.
   if (role === "admin") return "/index.html";
-  if (role === "artisan") return "/artisan-dashboard.html";
-  return "/client-dashboard.html";
+  if (role === "artisan") return "/espace/artisan/accueil";
+  return "/espace/client/accueil";
 }
 
 // Construire le logo Taskly
@@ -99,7 +99,7 @@ function construireFooter() {
             <a href="/help.html">Centre d'aide</a>
             <a href="/contact.html">Support</a>
             <a href="/follow-message.html">Suivre un message</a>
-            <a href="mailto:support@taskly.dz">support@taskly.dz</a>
+            <a data-site-contact href="mailto:support@taskly.dz">support@taskly.dz</a>
           </div>
         </div>
         <div>
@@ -113,22 +113,22 @@ function construireFooter() {
         <div>
           <h3>Nous suivre</h3>
           <div class="social-links" aria-label="Réseaux sociaux">
-            <a href="#" aria-label="Facebook">
+            <a style="display:none" data-site-social="facebook" hidden aria-label="Facebook">
               <img src="/images/icons/facebook.png" alt="">
               <span>Facebook</span>
             </a>
 
-            <a href="#" aria-label="Instagram">
+            <a style="display:none" data-site-social="instagram" hidden aria-label="Instagram">
               <img src="/images/icons/instagram.png" alt="">
               <span>Instagram</span>
             </a>
 
-            <a href="#" aria-label="X / Twitter">
+            <a style="display:none" data-site-social="twitter" hidden aria-label="X / Twitter">
               <img src="/images/icons/twitter.png" alt="">
               <span>Twitter</span>
             </a>
 
-            <a href="#" aria-label="LinkedIn">
+            <a style="display:none" data-site-social="linkedin" hidden aria-label="LinkedIn">
               <img src="/images/icons/linkedin.png" alt="">
               <span>LinkedIn</span>
             </a>
@@ -168,7 +168,7 @@ function verifierAccesRole() {
   if (!utilisateur) {
     const retour = encodeURIComponent(window.location.pathname + window.location.search);
     window.location.href = roleRequis === "admin"
-      ? window.location.pathname.replace(/\/dashboard\/?$/, "")
+      ? window.location.pathname.split("/dashboard")[0]
       : `/login.html?redirect=${retour}`;
     return;
   }
@@ -213,7 +213,7 @@ async function deconnecterUtilisateur() {
     afficherToast(error.message, "error");
   } finally {
     window.location.href = document.body.dataset.requireRole === "admin"
-      ? window.location.pathname.replace(/\/dashboard\/?$/, "")
+      ? window.location.pathname.split("/dashboard")[0]
       : "/index.html";
   }
 }
@@ -223,6 +223,7 @@ async function initialiserTaskly() {
   await chargerUtilisateurConnecte();
   construireHeader();
   construireFooter();
+  actualiserCoordonneesSite();
   verifierAccesRole();
 
   document.addEventListener("click", (event) => {
@@ -249,4 +250,23 @@ document.addEventListener("DOMContentLoaded", () => {
 // Attendre que la session soit chargee
 function attendreSession() {
   return window.tasklyAuthReady || Promise.resolve(window.utilisateurCourant);
+}
+
+// Les liens proviennent de la base, jamais d'un modèle HTML fourni par l'API.
+async function actualiserCoordonneesSite() {
+  try {
+    const {parametres} = await requeteAPI('/api/site-settings');
+    if (typeof parametres.email === 'string' && /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(parametres.email)) {
+      document.querySelectorAll('[data-site-contact]').forEach(link => {
+        link.href='mailto:'+parametres.email;link.textContent=parametres.email;
+      });
+    }
+    document.querySelectorAll('[data-site-social]').forEach(link => {
+      const value=parametres[link.dataset.siteSocial];
+      if (!value) {link.hidden=true;return;}
+      const url=new URL(value);
+      if(url.protocol!=='https:' || url.username || url.password) return;
+      link.href=url.href;link.rel='noopener noreferrer';link.target='_blank';link.hidden=false;link.style.removeProperty('display');
+    });
+  } catch { /* Le site et les formulaires restent utilisables si les coordonnées sont indisponibles. */ }
 }

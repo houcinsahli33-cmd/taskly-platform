@@ -1,0 +1,87 @@
+/* Espaces Taskly : surfaces compactes, navigation et formulaires homogènes. */
+body.dashboard-page[data-require-role] {background:#f2f6f4}
+body.dashboard-page[data-require-role] .dashboard-shell,body.dashboard-page[data-require-role] .admin-layout {grid-template-columns:210px minmax(0,1fr);min-height:100vh;align-items:start}
+body.dashboard-page[data-require-role] .sidebar,body.dashboard-page[data-require-role] .admin-sidebar {width:210px;padding:24px 14px;background:#0c3c32;height:100vh;top:0;position:sticky;overflow:auto}
+body.dashboard-page[data-require-role] .sidebar-title {font-size:1rem;letter-spacing:-.02em;margin-bottom:24px}
+body.dashboard-page[data-require-role] .side-nav {gap:5px}
+body.dashboard-page[data-require-role] .side-nav a,body.dashboard-page[data-require-role] .side-nav button {border-radius:9px;font-size:.88rem;font-weight:600;min-height:43px;padding:10px 12px}
+body.dashboard-page[data-require-role] .side-nav .active {background:#176b57;box-shadow:inset 3px 0 #a3e8d0}
+body.dashboard-page[data-require-role] .dashboard-content,body.dashboard-page[data-require-role] .admin-content {padding:28px clamp(18px,3vw,42px);width:100%;max-width:1480px;min-width:0;margin:0 auto}
+.dashboard-section-title {font-size:1.7rem;margin:0 0 24px;letter-spacing:-.04em}
+body.dashboard-page[data-require-role] .dashboard-hero {padding:24px;border-radius:16px;margin-bottom:22px}
+body.dashboard-page[data-require-role] .dashboard-hero h1,body.dashboard-page[data-require-role] .dashboard-hero h2 {font-size:1.8rem}
+body.dashboard-page[data-require-role] .dashboard-hero p {font-size:.93rem;max-width:75ch}
+body.dashboard-page[data-require-role] .panel,body.dashboard-page[data-require-role] .admin-settings-panel {border:1px solid #dce7e1;border-radius:14px;box-shadow:0 4px 18px rgba(20,50,37,.035)}
+body.dashboard-page[data-require-role] .panel-header {padding:18px 22px;background:white}
+body.dashboard-page[data-require-role] .panel-header h2 {font-size:1.15rem}
+body.dashboard-page[data-require-role] .panel-body {padding:22px}
+body.dashboard-page[data-require-role] .dashboard-grid {display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
+.workspace-actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%;grid-column:1/-1}
+.workspace-action {display:flex;flex-direction:column;gap:7px;text-align:left;padding:20px;border:1px solid #d5e5dc;border-radius:12px;background:#fff;cursor:pointer;color:#164b3b;font:inherit;transition:border-color .15s,box-shadow .15s}
+.workspace-action strong {font-size:.98rem;font-weight:650}
+.workspace-action span {font-size:.83rem;color:#647b6e;line-height:1.6}
+.workspace-action:hover,.workspace-action:focus-visible {background:#f3faf6;border-color:#087f63;box-shadow:0 3px 15px rgba(8,127,99,.08);outline:2px solid #c5e9d8;outline-offset:2px}
+.workspace-dialog,.taskly-confirm-dialog {position:fixed;inset:0;margin:auto;height:fit-content;box-sizing:border-box;width:min(540px,calc(100vw - 28px));max-height:calc(100dvh - 32px);padding:0;border:1px solid #d8e7df;border-radius:17px;background:#fff;color:#193c2e;font-family:var(--font-main);box-shadow:0 22px 80px rgba(7,40,27,.25);overflow:auto}
+.workspace-dialog::backdrop,.taskly-confirm-dialog::backdrop {background:rgba(6,35,25,.52);backdrop-filter:blur(4px)}
+.workspace-dialog-header {display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;background:#eaf6ef;border-bottom:1px solid #d8e7df}
+.workspace-dialog-header h2 {margin:0;font:700 1.15rem/1.5 var(--font-main);color:#075d45}
+.workspace-close {width:34px;height:34px;flex-shrink:0;border:0;border-radius:8px;font-size:24px;background:white;color:#11634a;cursor:pointer}
+.workspace-dialog-body {padding:22px}
+.workspace-dialog .account-details,.workspace-dialog .admin-settings-panel {padding:0;margin:0;border:0;background:white;box-shadow:none;border-radius:0;overflow:visible}
+.workspace-dialog summary,.workspace-dialog .admin-settings-panel>h3 {display:none}
+.workspace-dialog form,.workspace-dialog .account-edit-grid,.workspace-dialog .admin-settings-form,.workspace-dialog .account-danger form {display:grid;grid-template-columns:minmax(0,1fr);gap:14px;width:100%;margin-top:0}
+.workspace-dialog label {display:grid;gap:7px;font-size:.88rem;font-weight:600}
+.workspace-dialog input,.workspace-dialog select,.workspace-dialog textarea {box-sizing:border-box;width:100%;min-width:0;min-height:44px;border:1px solid #d4e2da;border-radius:9px;background:#fff;padding:10px 12px;font:inherit;color:#1c3e30}
+.workspace-dialog textarea {min-height:110px;resize:vertical}
+.workspace-dialog input:focus,.workspace-dialog textarea:focus,.workspace-dialog select:focus {outline:3px solid #e1f3e9;border-color:#087f63}
+.workspace-dialog p {font-size:.88rem;line-height:1.65}
+.workspace-dialog .account-full {grid-column:1}
+.workspace-dialog button[type=submit],.workspace-dialog .btn.danger {border-radius:9px;min-height:44px;background:#087f63;color:white;border:0;padding:11px 16px;font:600 .9rem var(--font-main);justify-self:stretch}
+.taskly-confirm-dialog {padding:26px;background:linear-gradient(145deg,#f0faf4,#fff)}
+.taskly-confirm-dialog h2 {color:#075d45;font:700 1.25rem/1.5 var(--font-main)}
+.taskly-danger-label {color:#087f63;letter-spacing:.08em}
+.taskly-confirm-dialog p {font-size:.9rem;color:#4c685b}
+body.dashboard-page[data-require-role] .admin-settings-grid:has(.workspace-actions) {display:block}
+body.dashboard-page[data-require-role] #admin-verification-list {grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+body.dashboard-page[data-require-role] .admin-review-card {padding:18px}
+body.dashboard-page[data-require-role] .admin-review-card h3 {font-size:1rem}
+body.dashboard-page[data-require-role] .admin-review-toolbar {background:#f5faf7;padding:16px;border:1px solid #dce9e1;border-radius:12px;margin:0 0 18px}
+body.dashboard-page[data-require-role] .admin-settings-form {gap:15px}
+body.dashboard-page[data-require-role] .admin-settings-heading h2 {font-size:1.5rem}
+body.dashboard-page[data-require-role] .table-wrap {width:100%;overflow:auto}
+body.dashboard-page[data-require-role] table {font-size:.9rem}
+body.dashboard-page[data-require-role] .profile-fields {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;font-size:.88rem;padding:18px;border-radius:12px;background:#f6faf7;margin-top:18px}
+body.dashboard-page[data-require-role] .profile-panel {padding:0;gap:18px}
+body.dashboard-page[data-require-role] .stats-grid {gap:16px}
+body.dashboard-page[data-require-role] .stat-card {padding:18px;border-radius:12px;box-shadow:none;border:1px solid #dce7e1}
+.pending-page .pending-shell {max-width:960px}
+.pending-page .pending-intro {padding:26px}
+.pending-page .pending-grid {gap:20px}
+.pending-account-action {grid-column:1/-1}
+.pending-account-action>.workspace-action {width:100%}
+.pending-page .panel-body {padding:20px}
+body.dashboard-page[data-require-role] [hidden],.pending-page [hidden] {display:none!important}
+@media(max-width:1200px){body.dashboard-page[data-require-role] #admin-verification-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){
+ body.dashboard-page[data-require-role] .dashboard-shell,body.dashboard-page[data-require-role] .admin-layout{display:block}
+ body.dashboard-page[data-require-role] .sidebar,body.dashboard-page[data-require-role] .admin-sidebar{position:static;width:100%;height:auto;padding:12px;overflow:visible}
+ body.dashboard-page[data-require-role] .sidebar-title,body.dashboard-page[data-require-role] .admin-sidebar-subtitle{display:none}
+ body.dashboard-page[data-require-role] .side-nav{display:flex;overflow-x:auto;flex-wrap:nowrap;gap:6px}
+ body.dashboard-page[data-require-role] .side-nav>*{flex:0 0 auto;width:auto;white-space:nowrap;margin:0!important}
+ body.dashboard-page[data-require-role] .dashboard-content,body.dashboard-page[data-require-role] .admin-content{padding:20px 16px}
+ body.dashboard-page[data-require-role] .profile-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ .workspace-actions,body.dashboard-page[data-require-role] #admin-verification-list,body.dashboard-page[data-require-role] .profile-fields{grid-template-columns:minmax(0,1fr)}
+ .workspace-dialog-body{padding:18px}.workspace-dialog-header{padding:16px 18px}
+ .workspace-dialog input,.workspace-dialog select,.workspace-dialog textarea{font-size:16px}
+ body.dashboard-page[data-require-role] .dashboard-hero{padding:20px}body.dashboard-page[data-require-role] .dashboard-hero h1,body.dashboard-page[data-require-role] .dashboard-hero h2{font-size:1.45rem}
+ body.dashboard-page[data-require-role] .panel-body,body.dashboard-page[data-require-role] .panel-header{padding:18px}
+}
+
+body.dashboard-page[data-require-role] .workspace-dialog .panel {margin:0;border:0;box-shadow:none;overflow:visible}
+body.dashboard-page[data-require-role] .workspace-dialog .panel-header {display:none}
+body.dashboard-page[data-require-role] .workspace-dialog .panel-body {padding:0}
+body.dashboard-page[data-require-role] .modal {width:min(540px,calc(100vw - 28px));max-height:calc(100dvh - 32px);overflow:auto}
+body.dashboard-page[data-require-role] #admin-site>.admin-settings-panel {max-width:800px}
+.workspace-dialog #pending-delete-form {padding:0;border:0;background:white}

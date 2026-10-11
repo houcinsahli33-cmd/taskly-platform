@@ -8,18 +8,19 @@
   function formBusy(form,busy){const b=form.querySelector('button[type=submit]');if(b)b.disabled=busy;}
   function redirigerVersConnexion(message){
     alert(message);
-    const path=window.location.pathname.replace(/\/dashboard\/?$/,'');
+    const path=window.location.pathname.split('/dashboard')[0];
     window.location.replace(path);
   }
   async function chargerCompteAdmin(){
     try{
       const {compte:a}=await requeteAPI('/api/admin-settings/me');
-      $('admin-profile-nom').value=a.nom||'';$('admin-profile-prenom').value=a.prenom||'';
-      $('admin-profile-email').value=a.email||'';
-      $('admin-account-role').textContent=a.niveau==='principal'?'Administrateur principal':'Administrateur secondaire';
+      if($('admin-profile-nom'))$('admin-profile-nom').value=a.nom||'';if($('admin-profile-prenom'))$('admin-profile-prenom').value=a.prenom||'';
+      if($('admin-profile-email'))$('admin-profile-email').value=a.email||'';
+      if($('admin-account-role'))$('admin-account-role').textContent=a.niveau==='principal'?'Administrateur principal':'Administrateur secondaire';
       const principal=a.niveau==='principal';
       $('tab-admins').hidden=!principal;
-      if(principal)await chargerListeAdmins();
+      if(principal&&$('admin-admins-list'))await chargerListeAdmins();
+      if($('tab-site'))$('tab-site').hidden=!principal;
     }catch(e){status('admin-profile-status',e.message,true);}
   }
   async function chargerListeAdmins(){
@@ -40,34 +41,34 @@
     await attendreSession();
     if(!window.utilisateurCourant||window.utilisateurCourant.role!=='admin')return;
     await chargerCompteAdmin();
-    $('admin-profile-form').addEventListener('submit',e=>{
+    $('admin-profile-form')?.addEventListener('submit',e=>{
       e.preventDefault();soumettre(e.currentTarget,'admin-profile-status','/api/admin-settings/me','PUT',()=>({nom:$('admin-profile-nom').value,prenom:$('admin-profile-prenom').value}));
     });
-    $('admin-password-form').addEventListener('submit',e=>{
+    $('admin-password-form')?.addEventListener('submit',e=>{
       e.preventDefault();const f=e.currentTarget;
       if($('admin-password-new').value!==$('admin-password-repeat').value)return status('admin-password-status','Les nouveaux mots de passe ne correspondent pas.',true);
       soumettre(f,'admin-password-status','/api/admin-settings/password','PUT',()=>({ancienMotDePasse:$('admin-password-old').value,nouveauMotDePasse:$('admin-password-new').value}),r=>{f.reset();if(r.deconnexion)redirigerVersConnexion(r.message);});
     });
-    $('admin-email-request-form').addEventListener('submit',e=>{
+    $('admin-email-request-form')?.addEventListener('submit',e=>{
       e.preventDefault();const f=e.currentTarget;
       soumettre(f,'admin-email-status','/api/admin-settings/email/request','POST',()=>({nouvelEmail:$('admin-email-new').value,motDePasse:$('admin-email-password').value}),()=>{$('admin-email-password').value='';$('admin-email-verify-form').hidden=false;});
     });
-    $('admin-email-verify-form').addEventListener('submit',e=>{
+    $('admin-email-verify-form')?.addEventListener('submit',e=>{
       e.preventDefault();const f=e.currentTarget;
       soumettre(f,'admin-email-status','/api/admin-settings/email/verify','POST',()=>({code:$('admin-email-code').value.trim()}),r=>{f.reset();if(r.deconnexion)redirigerVersConnexion(r.message);});
     });
-    $('admin-invite-form').addEventListener('submit',e=>{
+    $('admin-invite-form')?.addEventListener('submit',e=>{
       e.preventDefault();const f=e.currentTarget;
       soumettre(f,'admin-invite-status','/api/admin-settings/admins/invite','POST',()=>({nom:$('admin-invite-nom').value,prenom:$('admin-invite-prenom').value,email:$('admin-invite-email').value,motDePasse:$('admin-invite-password').value}),async()=>{f.reset();await chargerListeAdmins();});
     });
-    $('admin-admins-list').addEventListener('click',async e=>{
+    $('admin-admins-list')?.addEventListener('click',async e=>{
       const b=e.target.closest('[data-admin-toggle]');if(!b)return;
       if(!confirm(`Confirmer : ${b.textContent.toLowerCase()} cet administrateur secondaire ?`))return;
       b.disabled=true;
       try{const r=await api(`/api/admin-settings/admins/${b.dataset.adminId}/${b.dataset.adminToggle}`,'PUT',{});alert(r.message);await chargerListeAdmins();}
       catch(err){alert(err.message);b.disabled=false;}
     });
-    $('admin-invites-list').addEventListener('click',async e=>{
+    $('admin-invites-list')?.addEventListener('click',async e=>{
       const b=e.target.closest('[data-invite-revoke]');if(!b)return;
       if(!confirm('Annuler cette invitation ?'))return;
       b.disabled=true;

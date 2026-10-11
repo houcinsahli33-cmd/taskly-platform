@@ -1,8 +1,8 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
-foreach ($relative in @('client\public\index.html', 'client\private\admin-dashboard.html', 'server\middleware\publicFiles.js')) {
+foreach ($relative in @('client\public\index.html', 'client\private\admin\overview.html', 'server\middleware\publicFiles.js')) {
     if (!(Test-Path -LiteralPath (Join-Path $projectRoot $relative))) {
-        throw "Copiez d'abord la version complète corrigée dans le projet : $relative manque."
+        throw "Appliquez d'abord les fichiers du correctif dans le projet : $relative manque."
     }
 }
 $backupRoot = Join-Path $projectRoot ('.taskly-private\architecture-' + (Get-Date -Format 'yyyyMMdd-HHmmss'))

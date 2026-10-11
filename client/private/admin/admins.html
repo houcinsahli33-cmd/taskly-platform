@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Administrateurs — Taskly</title>
+
+  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin-settings.css">
+
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin-dashboard.js"></script>
+  
+  <script defer src="/js/admin-settings.js"></script>
+  <link rel="stylesheet" href="/css/admin-integrated.css">
+  <link rel="stylesheet" href="/css/admin-forms.css">
+  <link rel="stylesheet" href="/css/admin-workspace.css">
+<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+
+<body class="dashboard-page" data-require-role="admin" data-workspace-page="admins">
+
+  <main class="admin-layout">
+
+    <!-- =============================== -->
+    <!-- MENU LATERAL ADMINISTRATEUR -->
+    <!-- =============================== -->
+
+    <aside class="admin-sidebar">
+
+      <p class="sidebar-title">Taskly · Administration</p>
+      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+
+      <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
+
+        <a
+          data-admin-tab="overview" href="overview">
+          Vue d'ensemble
+        </a>
+
+        <a data-admin-tab="users" href="users">
+          Utilisateurs
+        </a>
+
+        <a data-admin-tab="reports" href="reports">
+          Signalements
+        </a>
+
+        <a data-admin-tab="contacts" href="contacts">
+          Support
+        </a>
+
+        <a data-admin-tab="services" href="services">
+          Services
+        </a>
+
+        <a data-admin-tab="verification" href="verification">
+          Artisans à vérifier
+        </a>
+
+        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
+        <a data-admin-tab="account" href="account">
+          Mon compte
+        </a>
+
+        <a
+  class="active" aria-current="page" data-admin-tab="admins"
+  id="tab-admins" href="admins">
+  Administrateurs
+</a>
+
+        <button type="button" data-logout>
+          Déconnexion
+        </button>
+
+      </nav>
+
+    </aside>
+
+    <!-- =============================== -->
+    <!-- CONTENU PRINCIPAL -->
+    <!-- =============================== -->
+
+    <section class="admin-content"><h1 class="dashboard-section-title">Administrateurs</h1>
+
+      <!-- EN-TETE -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VUE D'ENSEMBLE -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- UTILISATEURS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SIGNALEMENTS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SUPPORT -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SERVICES -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VERIFICATION DES ARTISANS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      
+<!-- MON COMPTE ADMINISTRATEUR -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- GESTION DES ADMINISTRATEURS -->
+      <!-- =============================== -->
+
+      <section
+        class="admin-section active"
+        id="admin-admins">
+
+        <div class="admin-settings-heading">
+
+          <div>
+            <h2>Gestion des administrateurs</h2>
+            <p>
+              Inviter et gérer les autres comptes
+              administrateurs de Taskly.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- INVITATION -->
+
+        <div class="admin-settings-panel">
+
+          <h3>Inviter un nouvel administrateur</h3>
+
+          <form
+            id="admin-invite-form"
+            class="admin-settings-form">
+
+            <div class="admin-field-group"><label for="admin-invite-nom">
+              Nom
+            </label><input
+              id="admin-invite-nom"
+              type="text"
+              maxlength="100"
+              required></div>
+
+            <div class="admin-field-group"><label for="admin-invite-prenom">
+              Prénom
+            </label><input
+              id="admin-invite-prenom"
+              type="text"
+              maxlength="100"
+              required></div>
+
+            <div class="admin-field-group"><label for="admin-invite-email">
+              Adresse e-mail
+            </label><input
+              id="admin-invite-email"
+              type="email"
+              required></div>
+
+            <div class="admin-field-group"><label for="admin-invite-password">
+              Votre mot de passe administrateur
+            </label><input
+              id="admin-invite-password"
+              type="password"
+              autocomplete="current-password"
+              required></div>
+
+            <button
+              type="submit"
+              class="admin-settings-action">
+              Envoyer une invitation sécurisée
+            </button>
+
+          </form>
+
+          <p
+            id="admin-invite-status"
+            role="status">
+          </p>
+
+        </div>
+
+        <!-- LISTE ADMINISTRATEURS -->
+
+        <div class="admin-settings-panel">
+
+          <h3>Comptes administrateurs</h3>
+
+          <div id="admin-admins-list"></div>
+
+        </div>
+
+        <!-- INVITATIONS -->
+
+        <div class="admin-settings-panel">
+
+          <h3>Invitations en attente</h3>
+
+          <div id="admin-invites-list"></div>
+
+        </div>
+
+        <!-- HISTORIQUE -->
+
+        <div class="admin-settings-panel">
+
+          <h3>Historique des actions</h3>
+
+          <div id="admin-audit-list"></div>
+
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- =============================== -->
+  <!-- MODALE BLOCAGE UTILISATEUR -->
+  <!-- =============================== -->
+
+  
+
+  <!-- =============================== -->
+  <!-- MODALE AJOUT SERVICE -->
+  <!-- =============================== -->
+
+  
+
+</body>
+</html>

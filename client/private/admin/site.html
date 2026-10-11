@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Paramètres du site — Taskly</title>
+
+  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin-settings.css">
+
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin-dashboard.js"></script>
+  
+  <script defer src="/js/admin-settings.js"></script>
+  <link rel="stylesheet" href="/css/admin-integrated.css">
+  <link rel="stylesheet" href="/css/admin-forms.css">
+  <link rel="stylesheet" href="/css/admin-workspace.css">
+<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/site-settings.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+
+<body class="dashboard-page" data-require-role="admin" data-workspace-page="site">
+
+  <main class="admin-layout">
+
+    <!-- =============================== -->
+    <!-- MENU LATERAL ADMINISTRATEUR -->
+    <!-- =============================== -->
+
+    <aside class="admin-sidebar">
+
+      <p class="sidebar-title">Taskly · Administration</p>
+      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+
+      <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
+
+        <a
+          data-admin-tab="overview" href="overview">
+          Vue d'ensemble
+        </a>
+
+        <a data-admin-tab="users" href="users">
+          Utilisateurs
+        </a>
+
+        <a data-admin-tab="reports" href="reports">
+          Signalements
+        </a>
+
+        <a data-admin-tab="contacts" href="contacts">
+          Support
+        </a>
+
+        <a data-admin-tab="services" href="services">
+          Services
+        </a>
+
+        <a data-admin-tab="verification" href="verification">
+          Artisans à vérifier
+        </a>
+
+        <a class="active" aria-current="page" data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
+        <a data-admin-tab="account" href="account">
+          Mon compte
+        </a>
+
+        <a
+  data-admin-tab="admins"
+  id="tab-admins" href="admins">
+  Administrateurs
+</a>
+
+        <button type="button" data-logout>
+          Déconnexion
+        </button>
+
+      </nav>
+
+    </aside>
+
+    <!-- =============================== -->
+    <!-- CONTENU PRINCIPAL -->
+    <!-- =============================== -->
+
+    <section class="admin-content"><h1 class="dashboard-section-title">Paramètres du site</h1>
+
+      <!-- EN-TETE -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VUE D'ENSEMBLE -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- UTILISATEURS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SIGNALEMENTS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SUPPORT -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SERVICES -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VERIFICATION DES ARTISANS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <section class="admin-section active" id="admin-site">
+  <div class="admin-settings-heading"><div><h2>Paramètres du site</h2><p>Les coordonnées affichées aux visiteurs et dans le pied de page Taskly.</p></div></div>
+  <section class="admin-settings-panel"><form id="site-settings-form">
+    <fieldset class="taskly-fieldset" disabled><legend>Contact et réseaux sociaux</legend>
+      <div class="taskly-form-grid"><label><span>E-mail de contact</span><input name="email" type="email" maxlength="254" required placeholder="support@taskly.dz"></label><label><span>Page Facebook</span><input name="facebook" type="url" maxlength="500"  placeholder="https://www.facebook.com/…"></label><label><span>Page Instagram</span><input name="instagram" type="url" maxlength="500"  placeholder="https://www.instagram.com/…"></label><label><span>Page X / Twitter</span><input name="twitter" type="url" maxlength="500"  placeholder="https://x.com/…"></label><label><span>Page LinkedIn</span><input name="linkedin" type="url" maxlength="500"  placeholder="https://www.linkedin.com/…"></label><p class="muted account-full">Les liens doivent commencer par https://. Laissez un réseau vide pour masquer son lien public.</p></div>
+      <div class="taskly-form-actions"><button class="btn primary" type="submit">Enregistrer les coordonnées</button></div>
+    </fieldset><p id="site-settings-status" role="status" aria-live="polite"></p>
+  </form></section>
+</section>
+<!-- MON COMPTE ADMINISTRATEUR -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- GESTION DES ADMINISTRATEURS -->
+      <!-- =============================== -->
+
+      
+
+    </section>
+
+  </main>
+
+  <!-- =============================== -->
+  <!-- MODALE BLOCAGE UTILISATEUR -->
+  <!-- =============================== -->
+
+  
+
+  <!-- =============================== -->
+  <!-- MODALE AJOUT SERVICE -->
+  <!-- =============================== -->
+
+  
+
+</body>
+</html>

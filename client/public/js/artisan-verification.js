@@ -8,7 +8,7 @@ async function chargerStatutVerification(){
   }catch(e){cible.textContent=e.message;}
 }
 document.addEventListener('DOMContentLoaded',async()=>{
-  await (window.tasklyAuthReady||Promise.resolve());if(window.utilisateurCourant?.role!=='artisan')return;
+  await (window.tasklyAuthReady||Promise.resolve());if(window.utilisateurCourant?.role!=='artisan'||!document.getElementById('artisan-verification-panel'))return;
   await chargerStatutVerification();
   document.getElementById('artisan-document-form')?.addEventListener('submit',async(e)=>{
     e.preventDefault();const info=document.getElementById('artisan-document-message');

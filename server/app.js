@@ -66,16 +66,7 @@ app.get(adminEntryPath, headersAdminPrive, (req, res) => {
   res.sendFile(path.join(__dirname, '../client/private/admin-login.html'), {dotfiles:'allow'});
 });
 
-app.get(adminEntryPath + '/dashboard', headersAdminPrive, require('./middleware/authMiddleware').verifierConnexion, require('./middleware/authMiddleware').verifierAdmin, (req, res) => {
-  if (req.session.utilisateur?.role !== 'admin' || req.session.adminVerified !== true)
-    return res.redirect(302, adminEntryPath);
-  res.sendFile(path.join(__dirname, '../client/private/admin-dashboard.html'), {dotfiles:'allow'});
-});
-app.get(['/artisan-dashboard.html','/client-dashboard.html'],require('./middleware/authMiddleware').verifierConnexion,(req,res)=>{
- const role=req.path.startsWith('/artisan-')?'artisan':'client';
- if(req.session.utilisateur.role!==role)return res.status(403).send('Accès refusé.');
- res.sendFile(path.join(__dirname,'../client/private',role+'-dashboard.html'),{dotfiles:'allow'});
-});
+require('./routes/workspacePages')(app,{adminEntryPath,headersAdminPrive});
 app.use(require('./middleware/publicFiles').publicFiles);
 app.get('/api/media/:id',async(req,res)=>{
   try {
@@ -83,6 +74,10 @@ app.get('/api/media/:id',async(req,res)=>{
     if(!file)return res.status(404).end();
     res.set('Content-Type',file.media_type);res.set('Cache-Control','public,max-age=86400');res.send(file.contenu);
   } catch(e) {res.status(503).end();}
+});
+app.get('/api/site-settings',async(req,res)=>{
+  try {res.set('Cache-Control','no-cache');res.json({parametres:await require('./services/siteSettings').lire(require('./config/db').promise())});}
+  catch(error){res.status(503).json({message:'Coordonnées du site indisponibles.'});}
 });
 app.use('/api',verifierCsrf);
 // L'API de connexion admin partage le meme chemin prive aleatoire.

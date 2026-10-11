@@ -6,11 +6,12 @@ test('architecture client : un seul public et pages privées protégées',()=>{
  assert.equal(fs.existsSync(path.join(root,'private')),false);
  for(const name of ['client-dashboard.html','artisan-dashboard.html','admin-dashboard.html','admin-login.html']){
   assert.equal(fs.existsSync(path.join(root,'client/public',name)),false,name);
-  assert.equal(fs.existsSync(path.join(root,'client/private',name)),true,name);
+  assert.equal(fs.existsSync(path.join(root,'client/private',name)),name==='admin-login.html',name);
+  if(name!=='admin-login.html')assert.equal(fs.existsSync(path.join(root,'client/private',name.replace('-dashboard.html',''),name==='admin-dashboard.html'?'overview.html':'accueil.html')),true,name);
  }
  const app=fs.readFileSync(path.join(root,'server/app.js'),'utf8');
- assert.ok(app.includes("path.join(__dirname,'../client/private',role+'-dashboard.html')"));
- assert.ok(app.includes("require('./middleware/authMiddleware').verifierConnexion"));
+ assert.ok(app.includes("require('./routes/workspacePages')"));
+ assert.match(fs.readFileSync(path.join(root,'server/routes/workspacePages.js'),'utf8'),/verifierConnexion/);
  const config=require('../vercel.json');assert.equal(config.functions['index.js'].includeFiles,'client/**');
 });
 test('fichiers publics : parcours privés, traversée et dotfiles refusés',()=>{

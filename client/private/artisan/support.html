@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support — Taskly</title>
+  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/artisan-dashboard.js"></script>
+  
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+<body class="dashboard-page" data-require-role="artisan" data-workspace-page="support">
+  <div id="site-header"></div>
+  <main class="dashboard-shell">
+    <!-- Navigation artisan -->
+    <aside class="sidebar">
+      <p class="sidebar-title">Espace artisan</p>
+      <nav class="side-nav"><a href="/espace/artisan/accueil" data-dashboard-link="accueil">Vue d’ensemble</a>
+        <a href="/espace/artisan/demandes" data-dashboard-link="demandes">Demandes reçues</a>
+        <a href="/espace/artisan/avis" data-dashboard-link="avis">Avis</a>
+        <a href="/espace/artisan/profil" data-dashboard-link="profil">Mon profil</a>
+        <a href="/espace/artisan/support" class="active" aria-current="page" data-dashboard-link="support">Support</a>
+        <button type="button" data-logout>Déconnexion</button>
+      </nav>
+    </aside>
+
+    <!-- Contenu artisan -->
+    <section class="dashboard-content">
+      <h1 class="dashboard-section-title" id="dashboard-page-title">Support</h1>
+      
+
+      
+      
+
+
+      <section class="panel" id="support" data-dashboard-view="support">
+<div class="panel-header"><h2>Contacter le support</h2></div><div class="panel-body">
+<p class="muted">Décrivez votre question. Votre numéro de suivi vous sera communiqué après l’envoi.</p>
+<div id="contact-alert" class="alert" role="status" aria-live="polite"></div>
+<form id="contact-form" class="taskly-form-grid">
+<label><span>Nom complet</span><input class="form-control" id="contact-name" maxlength="150" required></label>
+<label><span>Adresse e-mail</span><input class="form-control" id="contact-email" type="email" maxlength="254" required></label>
+<label class="account-full"><span>Sujet</span><select class="form-select" id="contact-subject" data-support-subjects required></select></label>
+<label class="account-full"><span>Votre message</span><textarea class="form-textarea" id="contact-message" minlength="10" maxlength="5000" required></textarea></label>
+<div class="taskly-form-actions account-full"><a class="btn outline" href="/follow-message.html">Suivre un message</a><button class="btn primary" type="submit">Envoyer au support</button></div>
+</form></div></section>
+      <div class="dashboard-grid">
+        
+
+        
+
+        
+      </div>
+    </section>
+  </main>
+
+  <!-- Modale annulation -->
+  
+
+  <!-- Modale signalement -->
+  
+</body>
+</html>

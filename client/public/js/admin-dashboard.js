@@ -10,6 +10,7 @@ function activerOngletAdmin(onglet) {
   });
   document.querySelectorAll(".admin-section").forEach((section) => {
     section.classList.toggle("active", section.id === `admin-${onglet}`);
+    section.hidden = section.id !== `admin-${onglet}`;
   });
   document.querySelectorAll("[data-admin-tab]").forEach((bouton) => {
     if (bouton.dataset.adminTab === onglet) bouton.setAttribute('aria-current', 'page');
@@ -20,7 +21,11 @@ function activerOngletAdmin(onglet) {
 // Initialiser les onglets du dashboard admin
 function initialiserNavigationAdmin() {
   document.querySelectorAll("[data-admin-tab]").forEach((bouton) => {
-    bouton.addEventListener("click", () => activerOngletAdmin(bouton.dataset.adminTab));
+    if(bouton.tagName==='A')return;
+    bouton.addEventListener("click", () => {
+      const base=window.location.pathname.split('/dashboard')[0];
+      window.location.assign(base+'/dashboard/'+bouton.dataset.adminTab);
+    });
   });
 }
 
@@ -310,6 +315,8 @@ function ouvrirServiceModal(service = null) {
 // Initialiser les actions admin
 function initialiserActionsAdmin() {
   document.addEventListener("click", async (event) => {
+    const examine=event.target.closest('[data-examine-user]');
+    if(examine){window.location.assign(window.location.pathname.split('/dashboard')[0]+'/dashboard/verification?user='+encodeURIComponent(examine.dataset.examineUser));return;}
     const blocage = event.target.closest("[data-open-block]");
     const debloquer = event.target.closest("[data-unblock-user]");
     const marquerContact = event.target.closest("[data-mark-contact]");
@@ -435,11 +442,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   if (!window.utilisateurCourant || window.utilisateurCourant.role !== "admin") return;
   initialiserNavigationAdmin();
-  activerOngletAdmin('overview');
+  const page=document.body.dataset.workspacePage||'overview';
+  activerOngletAdmin(page);
   initialiserActionsAdmin();
-  chargerStatsAdmin();
-  chargerUtilisateursAdmin();
-  chargerSignalementsAdmin();
-  chargerContactsAdmin();
-  chargerServicesAdmin();
+  if(page==='overview')chargerStatsAdmin();
+  if(page==='users')chargerUtilisateursAdmin();
+  if(page==='reports')chargerSignalementsAdmin();
+  if(page==='contacts')chargerContactsAdmin();
+  if(page==='services')chargerServicesAdmin();
 });

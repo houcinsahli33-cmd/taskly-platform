@@ -73,14 +73,15 @@ test('Examiner ouvre immédiatement une vraie fenêtre avant la réponse du serv
 
 test('les pages privées sont dans client/private et absentes du public',()=>{
   for(const nom of ['admin-login.html','admin-dashboard.html']){
-    assert.equal(fs.existsSync(path.join(root,'client/private',nom)),true);
+    assert.equal(fs.existsSync(path.join(root,'client/private',nom)),nom==='admin-login.html');
     assert.equal(fs.existsSync(path.join(root,'client/public',nom)),false);
     assert.equal(fs.existsSync(path.join(root,'public',nom)),false);
     assert.equal(fs.existsSync(path.join(root,'private',nom)),false);
   }
   const app=fs.readFileSync(path.join(root,'server/app.js'),'utf8');
   assert.ok(app.includes('../client/private/admin-login.html'));
-  assert.ok(app.includes('../client/private/admin-dashboard.html'));
-  assert.match(app,/verifierConnexion/);
-  assert.match(app,/verifierAdmin/);
+  assert.ok(app.includes("require('./routes/workspacePages')"));
+  const pages=fs.readFileSync(path.join(root,'server/routes/workspacePages.js'),'utf8');
+  assert.match(pages,/verifierConnexion/);
+  assert.match(pages,/verifierAdmin/);
 });

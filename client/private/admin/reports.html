@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Signalements — Taskly</title>
+
+  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin-settings.css">
+
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin-dashboard.js"></script>
+  
+  <script defer src="/js/admin-settings.js"></script>
+  <link rel="stylesheet" href="/css/admin-integrated.css">
+  <link rel="stylesheet" href="/css/admin-forms.css">
+  <link rel="stylesheet" href="/css/admin-workspace.css">
+<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+
+<body class="dashboard-page" data-require-role="admin" data-workspace-page="reports">
+
+  <main class="admin-layout">
+
+    <!-- =============================== -->
+    <!-- MENU LATERAL ADMINISTRATEUR -->
+    <!-- =============================== -->
+
+    <aside class="admin-sidebar">
+
+      <p class="sidebar-title">Taskly · Administration</p>
+      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+
+      <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
+
+        <a
+          data-admin-tab="overview" href="overview">
+          Vue d'ensemble
+        </a>
+
+        <a data-admin-tab="users" href="users">
+          Utilisateurs
+        </a>
+
+        <a class="active" aria-current="page" data-admin-tab="reports" href="reports">
+          Signalements
+        </a>
+
+        <a data-admin-tab="contacts" href="contacts">
+          Support
+        </a>
+
+        <a data-admin-tab="services" href="services">
+          Services
+        </a>
+
+        <a data-admin-tab="verification" href="verification">
+          Artisans à vérifier
+        </a>
+
+        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
+        <a data-admin-tab="account" href="account">
+          Mon compte
+        </a>
+
+        <a
+  data-admin-tab="admins"
+  id="tab-admins" href="admins">
+  Administrateurs
+</a>
+
+        <button type="button" data-logout>
+          Déconnexion
+        </button>
+
+      </nav>
+
+    </aside>
+
+    <!-- =============================== -->
+    <!-- CONTENU PRINCIPAL -->
+    <!-- =============================== -->
+
+    <section class="admin-content"><h1 class="dashboard-section-title">Signalements</h1>
+
+      <!-- EN-TETE -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VUE D'ENSEMBLE -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- UTILISATEURS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SIGNALEMENTS -->
+      <!-- =============================== -->
+
+      <section class="admin-section active" id="admin-reports">
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h2>Signalements</h2>
+          </div>
+
+          <div
+            class="panel-body"
+            id="admin-reports-list">
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- =============================== -->
+      <!-- SUPPORT -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- SERVICES -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- VERIFICATION DES ARTISANS -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      
+<!-- MON COMPTE ADMINISTRATEUR -->
+      <!-- =============================== -->
+
+      
+
+      <!-- =============================== -->
+      <!-- GESTION DES ADMINISTRATEURS -->
+      <!-- =============================== -->
+
+      
+
+    </section>
+
+  </main>
+
+  <!-- =============================== -->
+  <!-- MODALE BLOCAGE UTILISATEUR -->
+  <!-- =============================== -->
+
+  <div id="block-modal" class="modal-backdrop">
+
+    <div class="modal" role="dialog" aria-modal="true">
+
+      <div class="modal-header">
+
+        <h2>Bloquer un utilisateur</h2>
+
+        <button
+          class="modal-close"
+          type="button"
+          data-close-modal="block-modal">
+          ×
+        </button>
+
+      </div>
+
+      <form class="modal-body" id="block-form">
+
+        <input
+          type="hidden"
+          id="block-user-id">
+
+        <p class="muted mb-18">
+          Utilisateur :
+          <strong id="block-user-name"></strong>
+        </p>
+
+        <label>
+          <span class="field-label">
+            Motif du blocage
+          </span>
+
+          <textarea
+            class="form-textarea"
+            id="block-reason"
+            required
+            placeholder="Motif clair et précis"></textarea>
+        </label>
+
+        <button
+          class="btn danger block"
+          type="submit">
+          Bloquer
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+  <!-- =============================== -->
+  <!-- MODALE AJOUT SERVICE -->
+  <!-- =============================== -->
+
+  <div id="service-modal" class="modal-backdrop">
+
+    <div class="modal" role="dialog" aria-modal="true">
+
+      <div class="modal-header">
+
+        <h2 id="service-modal-title">
+          Ajouter un service
+        </h2>
+
+        <button
+          class="modal-close"
+          type="button"
+          data-close-modal="service-modal">
+          ×
+        </button>
+
+      </div>
+
+      <form class="modal-body" id="service-form">
+
+        <input
+          type="hidden"
+          id="service-id">
+
+        <label>
+          <span class="field-label">
+            Nom
+          </span>
+
+          <input
+            class="form-control"
+            id="service-name"
+            required
+            placeholder="Nom du service">
+        </label>
+
+        <label>
+          <span class="field-label">
+            Description
+          </span>
+
+          <textarea
+            class="form-textarea"
+            id="service-description"
+            required
+            placeholder="Description du service"></textarea>
+        </label>
+          <label for="service-photo">Photo du service</label>
+          <input id="service-photo" class="form-control" type="file" accept=".jpg,.jpeg,.png">
+          <small>JPEG ou PNG, 3 Mo maximum. Sans nouvelle photo, l’image existante est conservée.</small>
+
+
+        <button
+          class="btn primary block"
+          type="submit">
+          Enregistrer
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

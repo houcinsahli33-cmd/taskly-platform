@@ -94,6 +94,10 @@ function initialiserSuiviSupport() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
+  if(document.body.dataset.workspacePage==='support'&&window.utilisateurCourant){
+    document.getElementById('contact-name').value=nomComplet(window.utilisateurCourant);
+    document.getElementById('contact-email').value=window.utilisateurCourant.email||'';
+  }
   remplirSujetsSupport();
   initialiserContactSupport();
   initialiserSuiviSupport();
