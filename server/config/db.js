@@ -24,15 +24,7 @@ if (process.env.DB_SSL === "true") {
 
 const pool = mysql.createPool(config);  // on cree un pool de connexion MySQL
 
-pool.getConnection((err, connection) => {   // on recupere une connexion de la base de donnees
-  if (err) {
-    console.error("Erreur de connexion à la base de données !");    // on affiche un message d'erreur si la connexion a echoue
-    console.error(err.message);
-    return;
-  }
-
-  console.log("Connexion à la base de données réussie !");  // sinon on affiche un message de reussite
-  connection.release(); // on libere la connexion, c'est a dire : on la rend disponible pour d'autres requetes
-});
+// Le pool ouvre une connexion lors de la première vraie requête.
+// Les scripts courts peuvent ainsi fermer le pool sans contrôle parallèle en retard.
 
 module.exports = pool;  // on exporte le pool de connexion pour l'utiliser dans les models
