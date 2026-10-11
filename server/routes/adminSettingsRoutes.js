@@ -948,4 +948,20 @@ router.put(
   }
 );
 
+// Coordonnées publiques : écriture réservée au principal, journalisée atomiquement.
+function erreurParametresSite(res,error,message) {
+  if (error.code === 'ER_NO_SUCH_TABLE' || error.code === 'ER_BAD_FIELD_ERROR')
+    return res.status(503).json({message:'Migration des paramètres du site requise : après sauvegarde, exécutez npm run db:migrate -- migration_parametres_site.sql.'});
+  return erreurServeur(res,error,message);
+}
+router.get('/site', async (req,res) => {
+  try {res.json({parametres:await require('../services/siteSettings').lire(sql)});}
+  catch (error) {erreurParametresSite(res,error,'Impossible de lire les coordonnées du site.');}
+});
+router.put('/site', limiteNormale, verifierAdminPrincipal, async (req,res) => {
+  try {
+    const parametres=await require('../services/siteSettings').enregistrer(sql,req.body,req.session.utilisateur.id);
+    res.json({message:'Coordonnées du site enregistrées.',parametres});
+  } catch (error) {erreurParametresSite(res,error,'Impossible d’enregistrer les coordonnées du site.');}
+});
 module.exports = router;
