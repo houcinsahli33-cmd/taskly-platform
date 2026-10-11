@@ -1,197 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Support — Taskly</title>
-
-  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  
-  <script defer src="/js/admin-settings.js"></script>
-  <link rel="stylesheet" href="/css/admin-integrated.css">
-  <link rel="stylesheet" href="/css/admin-forms.css">
-  <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="contacts">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Support — Taskly</title>
+<link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin-settings.css">
+<link rel="stylesheet" href="/css/admin-integrated.css"><link rel="stylesheet" href="/css/admin-forms.css"><link rel="stylesheet" href="/css/admin-workspace.css"><link rel="stylesheet" href="/css/workspace-pro.css">
+<link rel="stylesheet" href="/css/admin-users-page.css"><link rel="stylesheet" href="/css/admin-support-page.css">
+<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/admin-settings.js"></script><script defer src="/js/admin-support-page.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-support-page" data-require-role="admin" data-workspace-page="contacts">
+<main class="admin-layout">
+    <aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a class="active" aria-current="page" data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a class="active" aria-current="page" data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
-
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
-
-    <section class="admin-content"><h1 class="dashboard-section-title">Support</h1>
-
-      <!-- EN-TETE -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      <section class="admin-section active" id="admin-contacts">
-
-        <div class="toolbar">
-
-          <h2>Messages support</h2>
-
-          <div class="segmented">
-
-            <button
-              class="active"
-              type="button"
-              data-contact-filter="">
-              Tous
-            </button>
-
-            <button
-              type="button"
-              data-contact-filter="nouveau">
-              Nouveaux
-            </button>
-
-            <button
-              type="button"
-              data-contact-filter="traite">
-              Traités
-            </button>
-
-          </div>
-
-        </div>
-
-        <div class="panel">
-          <div
-            class="panel-body"
-            id="admin-contacts-list">
-          </div>
-        </div>
-
-      </section>
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      
-
-    </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  
-
-</body>
-</html>
+<section class="admin-content">
+<header class="support-header"><div><p class="support-eyebrow">— ESPACE ADMINISTRATEUR</p><h1>Support</h1><p>Consultez, suivez et traitez les demandes d’assistance des utilisateurs.</p></div>
+<button id="support-export" type="button" class="support-export">⇩ &nbsp; Exporter CSV</button></header>
+<section class="admin-section active" id="admin-contacts" aria-label="Gestion du support">
+<div class="support-counters" id="support-counters">
+<button class="support-counter active" data-support-card="tous" type="button"><span>Total des messages</span><span class="support-counter-icon mint">▣</span><strong id="support-total">—</strong><small>Toutes les demandes</small></button>
+<button class="support-counter" data-support-card="nouveau" type="button"><span>Nouveaux</span><span class="support-counter-icon blue">▤</span><strong id="support-nouveau">—</strong><small>À examiner</small></button>
+<button class="support-counter" data-support-card="en_cours" type="button"><span>En cours</span><span class="support-counter-icon amber">◷</span><strong id="support-en-cours">—</strong><small>Suivi en cours</small></button>
+<button class="support-counter" data-support-card="traite" type="button"><span>Traités</span><span class="support-counter-icon mint">✓</span><strong id="support-traite">—</strong><small>Demandes clôturées</small></button>
+</div>
+<section class="support-panel"><div class="support-panel-heading"><div><h2>Messages support</h2><p>Retrouvez chaque message, son expéditeur et son état de traitement.</p></div><span id="support-count-chip" class="support-count-chip">— messages</span></div>
+<div class="support-tools"><label class="support-search"><span aria-hidden="true">⌕</span><input type="search" id="support-search" placeholder="Rechercher un sujet, un nom ou un email..." aria-label="Rechercher un message"></label>
+<div class="support-tools-right"><div class="support-tabs" role="group" aria-label="Filtrer par statut">
+<button type="button" class="active" data-support-status="tous">Tous</button><button type="button" data-support-status="nouveau">Nouveaux</button><button type="button" data-support-status="en_cours">En cours</button><button type="button" data-support-status="traite">Traités</button></div>
+<label class="support-sr" for="support-sort">Trier les messages</label><select id="support-sort"><option value="recent">Plus récents</option><option value="ancien">Plus anciens</option></select></div></div>
+<div class="support-table-wrap"><table class="support-table"><thead><tr><th>MESSAGE</th><th>EXPÉDITEUR</th><th>REÇU LE</th><th>STATUT</th><th>ACTIONS</th></tr></thead><tbody id="support-rows"><tr><td colspan="5" class="support-loading">Chargement des messages…</td></tr></tbody></table></div>
+<footer class="support-pagination"><span id="support-pagination-label">—</span><div><button type="button" id="support-prev">Précédent</button><span id="support-page-number" aria-live="polite">Page —</span><button type="button" id="support-next">Suivant</button></div></footer>
+</section>
+<p class="support-bottom-hint">ⓘ &nbsp; Un message ne devient pas automatiquement « Traité » lorsqu’il est simplement consulté.</p>
+<p class="support-notice" id="support-notice" role="status" aria-live="polite"></p>
+</section></section></main>
+<div id="support-dialog-root" class="support-dialog-root" hidden></div>
+</body></html>

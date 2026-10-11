@@ -1,7 +1,7 @@
 
 const nodemailer = require("nodemailer");
 
-async function envoyerCourrielAdmin(destination, sujet, corps) {
+async function envoyerCourrielAdmin(destination, sujet, corps, expediteur = process.env.MAIL_FROM) {
   const {
     SMTP_HOST,
     SMTP_USER,
@@ -9,7 +9,7 @@ async function envoyerCourrielAdmin(destination, sujet, corps) {
     MAIL_FROM
   } = process.env;
 
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !MAIL_FROM) {
+  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS || !expediteur) {
     const erreur = new Error(
       "La messagerie transactionnelle n'est pas configuree."
     );
@@ -29,7 +29,7 @@ async function envoyerCourrielAdmin(destination, sujet, corps) {
   });
 
   await transporter.sendMail({
-    from: MAIL_FROM,
+    from: expediteur,
     to: destination,
     subject: sujet,
     text: corps

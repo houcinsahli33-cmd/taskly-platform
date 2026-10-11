@@ -3,6 +3,7 @@
 const express = require("express");
 const adminController = require("../controllers/adminController");
 const adminSignalements = require("../controllers/adminSignalementsController");
+const adminSupport = require("../controllers/adminSupportController");
 
 const { verifierConnexion, verifierAdmin } = require("../middleware/authMiddleware");
 
@@ -37,6 +38,12 @@ router.put("/users/:id/bloquer",adminController.bloquerUtilisateur);
 
 // Debloquer un utilisateur
 router.put("/users/:id/debloquer",adminController.debloquerUtilisateur);
+
+// API moderne de traitement du support : routes privees et limitees.
+router.get('/support/messages',adminSupport.lister);
+router.get('/support/messages/:id',adminSupport.examiner);
+router.patch('/support/messages/:id',adminSupport.modifier);
+router.post('/support/messages/:id/reponses',require('../middleware/securityMiddleware').limiter({fenetre:3600000,max:20}),adminSupport.repondre);
 
 // Lister les messages de contact/support
 router.get("/contacts", adminController.listerMessagesContact);
