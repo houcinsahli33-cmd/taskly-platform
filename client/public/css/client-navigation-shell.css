@@ -1,8 +1,13 @@
-/* Cadre de navigation client, pas de changement de dimension du menu ou du contenu. */
-html:has(body[data-taskly-client-shell="1"]),body[data-taskly-client-shell="1"] {height:100%;overflow:hidden}
+/* Le cadre reserve une seule zone au contenu, sous le vrai header. */
+html:has(body[data-taskly-client-shell="1"]) {height:100%;overflow:hidden}
+body.dashboard-page[data-require-role="client"][data-taskly-client-shell="1"] {height:100dvh;overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr)}
 body[data-taskly-client-shell="1"] #site-header {position:relative;z-index:10}
-body[data-taskly-client-shell="1"] .dashboard-shell {min-height:calc(100vh - 76px)}
-body[data-taskly-client-shell="1"] .dashboard-shell > .sidebar {z-index:10}
-body[data-taskly-client-shell="1"] .dashboard-shell > .dashboard-content {visibility:hidden;pointer-events:none}
-#taskly-client-content-frame {position:fixed;inset:0;width:100vw;height:100vh;border:0;margin:0;padding:0;z-index:1;background:transparent}
-#taskly-client-content-frame.client-modal-visible {z-index:20}
+body.dashboard-page[data-require-role="client"][data-taskly-client-shell="1"] .dashboard-shell {height:100%;min-height:0;overflow:hidden}
+body.dashboard-page[data-require-role="client"][data-taskly-client-shell="1"] .dashboard-shell > .sidebar {height:100%;top:0;z-index:10}
+body[data-taskly-client-shell="1"] .client-frame-container {min-width:0;min-height:0;height:100%;overflow:hidden}
+#taskly-client-content-frame {display:block;width:100%;height:100%;border:0;margin:0;padding:0;background:transparent}
+#taskly-client-content-frame.client-modal-visible {position:fixed;inset:0;width:100%;height:100dvh;z-index:20}
+@media(max-width:800px) {
+ body.dashboard-page[data-require-role="client"][data-taskly-client-shell="1"] .dashboard-shell {display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+ body.dashboard-page[data-require-role="client"][data-taskly-client-shell="1"] .dashboard-shell > .sidebar {height:auto}
+}

@@ -1,3 +1,5 @@
-/* Garde la geometrie et le CSS du document original, sans doubler le header et le menu. */
+/* Le header et le menu appartiennent uniquement au cadre parent. */
 body[data-taskly-client-embedded="1"] #site-header,
-body[data-taskly-client-embedded="1"] .dashboard-shell > .sidebar {visibility:hidden!important;pointer-events:none!important}
+body[data-taskly-client-embedded="1"] .dashboard-shell > .sidebar {display:none!important}
+body.dashboard-page[data-require-role="client"][data-taskly-client-embedded="1"] .dashboard-shell {display:block;min-height:100dvh}
+body.dashboard-page[data-require-role="client"][data-taskly-client-embedded="1"] .dashboard-content {width:100%;min-width:0}

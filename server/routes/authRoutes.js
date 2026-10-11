@@ -29,6 +29,10 @@ router.get("/pending", protection, authController.etatVerification);
 router.post("/verify-email", protection, authController.confirmerEmail);
 router.post("/resend-email", protection, authController.renvoyerCodeEmail);
 
+// Choix uniquement après mot de passe et code e-mail validés.
+router.get('/spaces', protection, authController.espacesDisponibles);
+router.post('/select-space', protection, authController.choisirEspace);
+
 // Deconnexion
 router.post("/logout", authController.deconnexion);
 

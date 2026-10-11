@@ -61,7 +61,12 @@ async function supprimerPhotoProfil(userId) {
 }
 
 // exportation des fonctions pour pouvoir les utiliser dans d'autres fichiers
+async function trouverEspacesParEmail(email){
+ const [rows]=await db.promise().query('SELECT u.*,a.verification_statut,s.nom AS service_nom FROM users u LEFT JOIN artisans a ON a.user_id=u.id LEFT JOIN services s ON s.id=a.service_id WHERE u.email=? ORDER BY u.id',[email]);
+ return rows;
+}
 module.exports = {
+    trouverEspacesParEmail,
     trouverUtilisateurParEmail,
     creerUtilisateur,
     trouverUtilisateurParId,

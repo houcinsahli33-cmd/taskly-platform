@@ -9,7 +9,7 @@
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/client-dashboard.js"></script>
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script>  <link rel="stylesheet" href="/css/client-refonte.css"><link rel="stylesheet" href="/css/client-design-fidele.css">
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script>  <link rel="stylesheet" href="/css/client-refonte.css"><link rel="stylesheet" href="/css/client-design-fidele.css?v=20261012-maquette">
 </head>
 <body class="dashboard-page" data-require-role="client" data-workspace-page="support">
   <div id="site-header"></div>
@@ -21,14 +21,15 @@
         <a href="/espace/client/demandes" data-dashboard-link="demandes">Mes demandes</a>
         <a href="/espace/client/profil" data-dashboard-link="profil">Mon profil</a>
         <a href="/espace/client/support" class="active" aria-current="page" data-dashboard-link="support">Support</a>
-        <button type="button" data-logout>Déconnexion</button>
+
       </nav>
+      <div class="client-side-bottom"><button type="button" data-logout><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 7l5 5-5 5M20 12H9"></path></svg>Déconnexion</button><p>Votre espace personnel Taskly</p></div>
     </aside>
 
     <!-- Contenu client -->
     <section class="dashboard-content">
       <div class="client-heading"><div><p class="client-eyebrow">ESPACE CLIENT / CENTRE D’ASSISTANCE</p><h1>Support</h1><p class="client-subtitle">Une question sur votre compte ou votre demande ? Nous sommes là pour vous aider.</p></div><a class="btn outline" href="#suivre-message" data-open-support-follow>Suivre un message</a></div>
-      <div class="client-support-banner"><div class="client-support-symbol" aria-hidden="true">✉</div><div><small>ASSISTANCE TASKLY</small><h2>Comment pouvons-nous vous aider ?</h2><p>Envoyez une demande d’assistance et conservez son numéro de suivi.</p></div></div>
+      <div class="client-support-banner"><div class="client-support-symbol" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-mail"></use></svg></div><div><small>ASSISTANCE TASKLY</small><h2>Comment pouvons-nous vous aider ?</h2><p>Envoyez une demande d’assistance et conservez son numéro de suivi.</p></div></div>
       
 
       
@@ -45,7 +46,7 @@
 <label class="account-full"><span>Votre message</span><textarea class="form-textarea" id="contact-message" minlength="10" maxlength="5000" required></textarea></label>
 <div class="taskly-form-actions account-full"><a class="btn outline" href="#suivre-message" data-open-support-follow>Suivre un message</a><button class="btn primary" type="submit">Envoyer au support</button></div>
 </form></div></section>
-      <aside class="client-support-aside"><section class="panel"><span class="client-support-tip-symbol" aria-hidden="true">?</span><h3>Avant de nous écrire</h3><p>Quelques conseils pour obtenir une réponse plus précise.</p><div><b>01</b> Choisissez le sujet correspondant à votre problème.</div><div><b>02</b> Expliquez ce qui se passe et depuis quand.</div><div><b>03</b> Conservez votre numéro de suivi après l’envoi.</div></section><section class="client-support-track"><strong>Vous avez déjà écrit ?</strong><p>Consultez le statut de votre message avec son numéro de suivi.</p><a href="#suivre-message" data-open-support-follow>Suivre mon message →</a></section></aside>
+      <aside class="client-support-aside"><section class="panel"><span class="client-support-tip-symbol" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-chat"></use></svg></span><h3>Avant de nous écrire</h3><p>Quelques conseils pour obtenir une réponse plus précise.</p><div><b>01</b> Choisissez le sujet correspondant à votre problème.</div><div><b>02</b> Expliquez ce qui se passe et depuis quand.</div><div><b>03</b> Conservez votre numéro de suivi après l’envoi.</div></section><section class="client-support-track"><strong>Vous avez déjà écrit ?</strong><p>Consultez le statut de votre message avec son numéro de suivi.</p><a href="#suivre-message" data-open-support-follow>Suivre mon message →</a></section></aside>
       </div>
       <section class="panel client-support-history">
         <div class="panel-header"><div><h2>Mes messages au support</h2><p>Retrouvez le statut de vos demandes d’assistance grâce à leur référence.</p></div></div>

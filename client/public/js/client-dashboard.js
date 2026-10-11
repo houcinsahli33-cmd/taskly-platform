@@ -20,17 +20,17 @@ function afficherStatsClient() {
   const enCours = demandesClient.filter(d => d.statut === 'acceptee' || d.statut === 'en_cours').length;
   const surPageDemandes = document.body.dataset.workspacePage === 'demandes';
   const compteurs = surPageDemandes
-    ? [['Total des demandes', stats.total, 'Toutes les demandes', '▤'],
-       ['En attente', stats.en_attente, 'En attente de réponse', '◷'],
-       ['En cours', enCours, 'Prestations en cours', '▤'],
-       ['Terminées', stats.terminee, 'Missions réalisées', '✓']]
-    : [['Total des demandes', stats.total, 'Depuis votre inscription', '▤'],
-       ['En attente', stats.en_attente, 'En attente de réponse', '◷'],
-       ['Terminées', stats.terminee, 'Prestations finalisées', '✓'],
-       ['Annulées ou refusées', stats.annulee, 'Demandes non abouties', '⊗']];
+    ? [['Total des demandes', stats.total, 'Toutes les demandes', 'paper'],
+       ['En attente', stats.en_attente, 'En attente de réponse', 'clock'],
+       ['En cours', enCours, 'Prestations en cours', 'paper'],
+       ['Terminées', stats.terminee, 'Missions réalisées', 'check']]
+    : [['Total des demandes', stats.total, 'Depuis votre inscription', 'paper'],
+       ['En attente', stats.en_attente, 'En attente de réponse', 'clock'],
+       ['Terminées', stats.terminee, 'Prestations finalisées', 'check'],
+       ['Annulées ou refusées', stats.annulee, 'Demandes non abouties', 'close']];
   cible.innerHTML = compteurs.map(([label, nombre, detail, icone]) => `
     <div class="stat-card">
-      <span>${label}</span><i class="client-stat-icon" aria-hidden="true">${icone}</i>
+      <span>${label}</span><i class="client-stat-icon" aria-hidden="true"><svg aria-hidden="true"><use href="/images/icons/client-workspace.svg#${icone}"/></svg></i>
       <strong>${nombre}</strong><small>${detail}</small>
     </div>
   `).join('');
@@ -113,7 +113,7 @@ function afficherDemandesRecentesClient() {
   const cible = document.getElementById('client-recent-requests');
   if (!cible) return;
   if (!demandesClient.length) {
-    cible.innerHTML = '<div class="client-empty"><strong>Aucune demande pour le moment</strong><p>Votre prochain projet commence ici. Découvrez les artisans disponibles sur Taskly.</p><a class="btn primary" href="/artisans.html">Explorer les artisans</a></div>';
+    cible.innerHTML = '<div class="client-empty"><span class="client-empty-icon" aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#paper"/></svg></span><strong>Aucune demande pour le moment</strong><p>Votre prochain projet commence ici. Découvrez les artisans disponibles sur Taskly.</p><a class="btn primary" href="/artisans.html">Explorer les artisans</a></div>';
     return;
   }
   cible.innerHTML = demandesClient.slice(0, 3).map(d => `<article class="client-recent-row"><div><strong>${echapperHTML(d.service_nom || 'Service')}</strong><p>${echapperHTML(nomComplet(d, 'artisan_'))} · ${formatDate(d.created_at)}</p></div>${badgeStatut(d.statut)}</article>`).join('');
@@ -232,7 +232,7 @@ async function afficherProfilClient() {
         </div>
       </div>
       <aside class="client-profile-right">
-        <span class="client-profile-shield" aria-hidden="true">♢</span>
+        <span class="client-profile-shield" aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#i-shield"/></svg></span>
         <strong>Vos informations, à portée de main.</strong>
         <p>Mettez votre profil à jour pour faciliter vos échanges avec les artisans.</p>
         <button type="button" class="btn outline" id="client-open-edit-profile">Modifier mon profil ↗</button>
@@ -240,12 +240,12 @@ async function afficherProfilClient() {
     </div>
     <div class="client-section-heading"><h2>Informations personnelles</h2><span>Données de votre compte</span></div>
     <div class="profile-fields client-profile-fields">
-      <div><i aria-hidden="true">♙</i><span><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></span></div>
-      <div><i aria-hidden="true">♙</i><span><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></span></div>
-      <div><i aria-hidden="true">✉</i><span><strong>Adresse e-mail</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></span></div>
-      <div><i aria-hidden="true">♧</i><span><strong>Téléphone</strong><br><span class="muted">${echapperHTML(utilisateur.telephone || "Non précisé")}</span></span></div>
-      <div><i aria-hidden="true">⌖</i><span><strong>Commune</strong><br><span class="muted">${echapperHTML(utilisateur.ville || "Non précisé")}</span></span></div>
-      <div><i aria-hidden="true">⌖</i><span><strong>Adresse</strong><br><span class="muted">${echapperHTML(utilisateur.adresse || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#i-user"/></svg></i><span><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#i-user"/></svg></i><span><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#i-mail"/></svg></i><span><strong>Adresse e-mail</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#i-phone"/></svg></i><span><strong>Téléphone</strong><br><span class="muted">${echapperHTML(utilisateur.telephone || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#i-location"/></svg></i><span><strong>Commune</strong><br><span class="muted">${echapperHTML(utilisateur.ville || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg><use href="/images/icons/client-workspace.svg#i-location"/></svg></i><span><strong>Adresse</strong><br><span class="muted">${echapperHTML(utilisateur.adresse || "Non précisé")}</span></span></div>
     </div>`;
   // Utilise le formulaire existant, déplacé dans sa fenêtre par workspace-dialogs.js.
   document.getElementById('client-open-edit-profile')?.addEventListener('click', () => {

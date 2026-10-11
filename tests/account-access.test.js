@@ -7,7 +7,7 @@ function load(file,mocks){const module={exports:{}};vm.runInNewContext(fs.readFi
 for(const statut of ['en_attente','a_completer','refuse','approuve'])test('code e-mail : session limitée ou complète '+statut,async()=>{
  const db={query:async()=>[{}]};
  const user={id:42,role:'artisan',email_verified:1,statut_compte:statut==='refuse'?'bloque':'actif',admin_session_version:0};
- const mocks={'../models/userModel':{trouverUtilisateurParId:async()=>user},'../models/clientModel':{},'../models/artisanModel':{trouverArtisanParUserId:async()=>({verification_statut:statut})},'../models/serviceModel':{},'../config/db':{promise:()=>db},'../services/codeService':{verifierCode:async()=>true,obtenirEtatCode:async()=>({})},'../services/emailService':{},'../services/accountAccess':access,bcrypt:{},fs:{},path:{}};
+ const mocks={'../models/userModel':{trouverUtilisateurParId:async()=>user,trouverEspacesParEmail:async()=>[user]},'../models/clientModel':{},'../models/artisanModel':{trouverArtisanParUserId:async()=>({verification_statut:statut})},'../models/serviceModel':{},'../config/db':{promise:()=>db},'../services/codeService':{verifierCode:async()=>true,obtenirEtatCode:async()=>({})},'../services/emailService':{},'../services/accountAccess':access,bcrypt:{},fs:{},path:{}};
  const c=load('server/controllers/authController.js',mocks),req={body:{code:'123456'}};
  function session(){return {regenerate(cb){req.session=session();cb();},save(cb){cb();}};}
  req.session=session();req.session.verificationPending={userId:42,flow:'connexion'};

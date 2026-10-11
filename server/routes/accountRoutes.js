@@ -33,6 +33,9 @@ router.put('/',limiter({max:20}),async(req,res)=>{
   if(role==='client')await conn.query('UPDATE clients SET telephone=?,ville=?,adresse=? WHERE user_id=?',[b.telephone,b.ville.trim(),b.adresse.trim(),id]);
   else {
    const [service]=await conn.query('SELECT id FROM services WHERE id=?',[Number(b.serviceId)]);if(!service[0]){const e=Error('Service inconnu.');e.status=400;throw e;}
+   await conn.query('SELECT id FROM users WHERE email=(SELECT email FROM (SELECT email FROM users WHERE id=?) AS compte) ORDER BY id FOR UPDATE',[id]);
+   const [doublon]=await conn.query('SELECT a.id FROM artisans a JOIN users u ON u.id=a.user_id WHERE u.email=(SELECT email FROM users WHERE id=?) AND u.id<>? AND a.service_id=?',[id,id,Number(b.serviceId)]);
+   if(doublon.length){const e=Error('Un autre espace artisan de cette adresse utilise déjà ce métier.');e.status=409;throw e;}
    const [artisans]=await conn.query('SELECT service_id FROM artisans WHERE user_id=? FOR UPDATE',[id]);
    reexamen=Number(artisans[0].service_id)!==Number(b.serviceId);
    await conn.query('UPDATE artisans SET telephone=?,ville=?,description=?,experience=?,service_id=? WHERE user_id=?',[b.telephone,b.ville.trim(),b.description.trim(),Number(b.experience),Number(b.serviceId),id]);
@@ -49,9 +52,9 @@ router.put('/password',sensible,async(req,res)=>{
  try {
   if(!validPassword(req.body.nouveauMotDePasse))return res.status(400).json({message:'8 caractères minimum, majuscule, minuscule, chiffre et symbole ; 72 octets maximum.'});
   const user=await password(req),hash=await bcrypt.hash(req.body.nouveauMotDePasse,12);
-  const [result]=await db.query('UPDATE users SET mot_de_passe=?,admin_session_version=admin_session_version+1 WHERE id=? AND mot_de_passe=?',[hash,user.id,user.mot_de_passe]);
+  const [result]=await db.query("UPDATE users SET mot_de_passe=?,admin_session_version=admin_session_version+1 WHERE email=? AND role IN ('client','artisan') AND mot_de_passe=?",[hash,user.email,user.mot_de_passe]);
   if(!result.affectedRows)return res.status(409).json({message:'Le compte a changé. Reconnectez-vous.'});
-  req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Mot de passe modifié. Reconnectez-vous.',deconnexion:true});
+  req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Mot de passe commun modifié pour tous vos espaces. Reconnectez-vous.',deconnexion:true});
  }catch(e){fail(res,e);}
 });
 router.post('/email/request',sensible,async(req,res)=>{
@@ -75,9 +78,14 @@ router.post('/email/verify',sensible,async(req,res)=>{
   const [rows]=await conn.query('SELECT * FROM account_email_changes WHERE user_id=? AND expires_at>NOW() FOR UPDATE',[req.session.utilisateur.id]);
   const row=rows[0];if(!row||row.attempts>=3){await conn.rollback();return res.status(400).json({message:'Code expiré ou tentatives épuisées.'});}
   if(!crypto.timingSafeEqual(Buffer.from(row.code_hash,'hex'),Buffer.from(emailHash(row.user_id,row.nouveau_email,code),'hex'))){await conn.query('UPDATE account_email_changes SET attempts=attempts+1 WHERE user_id=?',[row.user_id]);await conn.commit();return res.status(400).json({message:'Code incorrect.'});}
-  await conn.query('UPDATE users SET email=?,email_verified=1,admin_session_version=admin_session_version+1 WHERE id=?',[row.nouveau_email,row.user_id]);
+  const [origine]=await conn.query('SELECT email FROM users WHERE id=? FOR UPDATE',[row.user_id]);
+  if(!origine[0]){const e=Error('Compte introuvable.');e.status=409;throw e;}
+  await conn.query('SELECT id FROM users WHERE email=? ORDER BY id FOR UPDATE',[origine[0].email]);
+  const [destination]=await conn.query('SELECT id FROM users WHERE email=? FOR UPDATE',[row.nouveau_email]);
+  if(destination.length){const e=Error('Cette adresse est déjà utilisée. Les espaces ne peuvent pas être fusionnés.');e.status=409;throw e;}
+  await conn.query("UPDATE users SET email=?,email_verified=1,admin_session_version=admin_session_version+1 WHERE email=? AND role IN ('client','artisan')",[row.nouveau_email,origine[0].email]);
   await conn.query('DELETE FROM account_email_changes WHERE user_id=?',[row.user_id]);await conn.commit();
-  req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Adresse modifiée et confirmée. Reconnectez-vous.',deconnexion:true});
+  req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Adresse commune modifiée et confirmée pour tous vos espaces. Reconnectez-vous.',deconnexion:true});
  }catch(e){if(conn)await conn.rollback();fail(res,e);}finally{conn?.release();}
 });
 router.delete('/',sensible,async(req,res)=>{

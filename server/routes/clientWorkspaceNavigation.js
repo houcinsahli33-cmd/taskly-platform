@@ -10,15 +10,15 @@ function preparerCadreClient(original) {
  const aside=original.match(/<aside\b[^>]*class="[^"]*sidebar[^"]*"[^>]*>[\s\S]*?<\/aside>/i)?.[0];
  if(!head||!body||!aside)throw new Error('Document client non reconnu.');
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<\/head>/i,
-  '<link rel="stylesheet" href="/css/client-navigation-shell.css"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/client-navigation-stable.js"></script></head>');
+  '<link rel="stylesheet" href="/css/client-navigation-shell.css?v=20261012-maquette"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/client-navigation-stable.js"></script></head>');
  const shellBody=body.replace(/>$/, ' data-taskly-client-shell="1">');
  return '<!doctype html><html lang="fr">'+shellHead+shellBody+
-  '<div id="site-header"></div><main class="dashboard-shell">'+aside+'<section class="dashboard-content" aria-hidden="true"></section></main>'+
-  '<iframe id="taskly-client-content-frame" title="Contenu de l’espace client"></iframe></body></html>';
+  '<div id="site-header"></div><main class="dashboard-shell">'+aside+
+  '<section class="client-frame-container" aria-label="Rubrique client"><iframe id="taskly-client-content-frame" title="Contenu de l’espace client"></iframe></section></main></body></html>';
 }
 function preparerPageClientIntegree(original){
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw new Error('Document client invalide.');
- return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/client-navigation-embedded.css"></head>')
+ return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/client-navigation-embedded.css?v=20261012-maquette"></head>')
   .replace(/<body\b([^>]*)>/i,'<body$1 data-taskly-client-embedded="1">');
 }
 function monterNavigationClient(app){

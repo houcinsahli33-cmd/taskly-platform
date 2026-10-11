@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       actif = false;
       clearInterval(timer);
+      if(data.choixCompteRequis){window.location.replace(data.choixUrl);return;}
       if(data.supportSeulement){window.location.replace(data.supportUrl);return;}
       notification('Code validé ! Ouverture de votre espace…');
       const role = data.utilisateur?.role;
