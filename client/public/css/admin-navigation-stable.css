@@ -1,0 +1,16 @@
+/* Navigation persistante : aucun style des pages administrateur n'est modifié.
+   Le cadre du contenu utilise 100% du viewport pour garder les media queries
+   et les dialogues natifs IDENTIQUES au document original. */
+html:has(body[data-taskly-shell="1"]),
+body[data-taskly-shell="1"] { height:100%; overflow:hidden; }
+body[data-taskly-shell="1"] .admin-layout { min-height:100vh; height:100vh; }
+body[data-taskly-shell="1"] .admin-sidebar { z-index:10; }
+body[data-taskly-shell="1"] > main > .admin-content { visibility:hidden; pointer-events:none; }
+#taskly-admin-content-frame {
+ position:fixed; inset:0; width:100vw; height:100vh; border:0;
+ padding:0; margin:0; z-index:1; display:block; background:transparent;
+}
+#taskly-admin-content-frame.taskly-modal-visible { z-index:20; }
+@media(max-width:800px) {
+ body[data-taskly-shell="1"] .admin-sidebar { z-index:10; }
+}

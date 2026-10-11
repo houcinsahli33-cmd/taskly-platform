@@ -1,0 +1,7 @@
+/* Feuille chargee uniquement dans une rubrique integree.
+   Le menu interne reste a sa place pour conserver les dimensions originales.
+   Le vrai menu visible et cliquable demeure dans la page parente. */
+body[data-taskly-embed="1"]:not([data-taskly-modal="1"]) .admin-sidebar {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
