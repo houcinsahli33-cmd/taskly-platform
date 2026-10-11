@@ -5,6 +5,18 @@ document.addEventListener('DOMContentLoaded',()=>{
  $('pending-support-form').addEventListener('submit',e=>{e.preventDefault();soumettre(e.currentTarget,'/api/artisan-support/messages',JSON.stringify({message:$('pending-message').value}),'pending-support-status');});
  $('pending-doc-form').addEventListener('submit',e=>{e.preventDefault();soumettre(e.currentTarget,'/api/artisan-support/documents',new FormData(e.currentTarget),'pending-doc-status');});
  $('pending-logout').addEventListener('click',async()=>{try{await requeteAPI('/api/auth/logout',{method:'POST',body:'{}'});location.replace('/login.html');}catch(e){$('pending-status').textContent=e.message;}});
- $('pending-delete-form').addEventListener('submit',async e=>{e.preventDefault();if($('pending-delete-confirm').value!=='SUPPRIMER'){$('pending-delete-status').textContent='Écrivez SUPPRIMER.';return;}if(!confirm('Supprimer définitivement votre compte et ses données liées ?'))return;const b=e.currentTarget.querySelector('button');b.disabled=true;try{await requeteAPI('/api/artisan-support/account',{method:'DELETE',body:JSON.stringify({motDePasse:$('pending-delete-password').value,confirmation:'SUPPRIMER'})});location.replace('/');}catch(err){$('pending-delete-status').textContent=err.message;b.disabled=false;}});
+ $('pending-delete-form').addEventListener('submit',async e=>{
+   e.preventDefault();
+   const form=e.currentTarget,b=form.querySelector('button');
+   if(b.disabled)return;
+   const motDePasse=$('pending-delete-password').value;
+   b.disabled=true;
+   try{
+     if(!await window.confirmerSuppressionCompte())return;
+     await requeteAPI('/api/artisan-support/account',{method:'DELETE',body:JSON.stringify({motDePasse,confirmation:'SUPPRIMER'})});
+     location.replace('/');
+   }catch(err){$('pending-delete-status').textContent=err.message;}
+   finally{b.disabled=false;}
+ });
  charger();
 });

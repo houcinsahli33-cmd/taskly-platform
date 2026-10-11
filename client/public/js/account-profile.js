@@ -22,7 +22,18 @@ document.addEventListener('DOMContentLoaded',async()=>{
   $('account-email-request').addEventListener('submit',e=>{e.preventDefault();submit(e.currentTarget,'/api/account/email/request','POST',{email:$('account-email').value,motDePasse:$('account-email-password').value},'account-email-status',()=>{$('account-email-password').value='';$('account-email-verify').hidden=false;});});
   $('account-email-verify').addEventListener('submit',e=>{e.preventDefault();submit(e.currentTarget,'/api/account/email/verify','POST',{code:$('account-email-code').value},'account-email-status');});
   $('account-password-form').addEventListener('submit',e=>{e.preventDefault();if($('account-password-new').value!==$('account-password-repeat').value){$('account-password-status').textContent='Les mots de passe ne correspondent pas.';return;}submit(e.currentTarget,'/api/account/password','PUT',{motDePasse:$('account-password-old').value,nouveauMotDePasse:$('account-password-new').value},'account-password-status');});
-  $('account-delete-form').addEventListener('submit',async e=>{e.preventDefault();if(!await window.confirmerSuppressionCompte())return;submit(e.currentTarget,'/api/account','DELETE',{motDePasse:$('account-delete-password').value,confirmation:'SUPPRIMER'},'account-delete-status',()=>location.replace('/'));});
+  $('account-delete-form').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const form=e.currentTarget,button=form.querySelector('button[type=submit]');
+    if(button.disabled)return;
+    const motDePasse=$('account-delete-password').value;
+    button.disabled=true;
+    try{
+      if(!await window.confirmerSuppressionCompte())return;
+      await submit(form,'/api/account','DELETE',{motDePasse,confirmation:'SUPPRIMER'},'account-delete-status',()=>location.replace('/'));
+    }catch(error){$('account-delete-status').textContent=error.message;}
+    finally{button.disabled=false;}
+  });
   if(window.installerActionsCompte)window.installerActionsCompte(target);
  }catch(e){target.textContent=e.message;}
 });

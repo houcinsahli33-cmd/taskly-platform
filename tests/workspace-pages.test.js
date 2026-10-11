@@ -49,7 +49,12 @@ test('artisan en attente : Annuler ne supprime rien, confirmer envoie le mot de 
   requeteAPI:async(url,options)=>{calls.push([url,options]);if(url.endsWith('/context'))return {active:false,message:'En attente',compte:{email:'test@example.com',verification_statut:'en_attente'},messages:[],documents:[]};return {message:'Compte supprimé.'};}};
  vm.runInNewContext(fs.readFileSync(path.join(root,'client/public/js/artisan-pending.js'),'utf8'),sandbox);
  ready();await Promise.resolve();get('pending-delete-password').value='secret-de-test';
- const submit=()=>get('pending-delete-form').listeners.submit({preventDefault(){},currentTarget:get('pending-delete-form')});
+ const submit=()=>{
+  const event={preventDefault(){},currentTarget:get('pending-delete-form')};
+  const promise=get('pending-delete-form').listeners.submit(event);
+  event.currentTarget=null;
+  return promise;
+ };
  await submit();assert.equal(calls.some(([,o])=>o?.method==='DELETE'),false);
  confirmed=true;await submit();
  const deletion=calls.find(([,o])=>o?.method==='DELETE');assert.equal(deletion[0],'/api/artisan-support/account');
