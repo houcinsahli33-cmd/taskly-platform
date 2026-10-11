@@ -1,0 +1,28 @@
+/* Navigation persistante uniquement. Le style original du menu est inchangé. */
+html:has(body.admin-shell-page),body.admin-shell-page {height:100%;overflow:hidden;}
+body.dashboard-page.admin-shell-page {background:#f4f8f6;margin:0;}
+body.dashboard-page.admin-shell-page .admin-layout {
+ height:100dvh;min-height:0;overflow:hidden;display:grid;
+ grid-template-columns:242px minmax(0,1fr);
+}
+body.dashboard-page.admin-shell-page .admin-sidebar {
+ height:100dvh;position:relative;top:auto;overflow-y:scroll;
+ scrollbar-gutter:stable;overscroll-behavior:contain;
+}
+body.dashboard-page.admin-shell-page .admin-content {
+ width:100%;height:100dvh;min-height:0;max-width:none;
+ overflow:hidden;margin:0;padding:0;display:block;
+}
+#taskly-admin-frame {
+ display:block;width:100%;height:100%;border:0;background:#f4f8f6;
+}
+@media (max-width:800px) {
+ body.dashboard-page.admin-shell-page .admin-layout {display:flex;flex-direction:column;}
+ body.dashboard-page.admin-shell-page .admin-sidebar {
+   width:100%;height:auto;max-height:none;flex:0 0 auto;overflow:visible;
+   padding:10px 12px;position:relative;z-index:10;
+ }
+ body.dashboard-page.admin-shell-page .admin-content {
+   flex:1 1 auto;min-height:0;height:auto;
+ }
+}

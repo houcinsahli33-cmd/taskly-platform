@@ -1,0 +1,10 @@
+/* Intégration iframe : ne toucher qu'à la structure commune, jamais au contenu des pages. */
+html {overflow-y:scroll;scrollbar-gutter:stable;}
+body.dashboard-page[data-require-role="admin"] .admin-layout {
+ display:block !important;grid-template-columns:none !important;
+ min-height:100vh !important;
+}
+body.dashboard-page[data-require-role="admin"] .admin-sidebar {display:none !important;}
+body.dashboard-page[data-require-role="admin"] .admin-content {
+ margin:0 auto;min-width:0;box-sizing:border-box;
+}
