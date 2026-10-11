@@ -37,7 +37,12 @@ test('Le fond et le menu sont persistants, le scroll a un conteneur stable',()=>
   assert.match(shell,/overflow-y:scroll/);
   assert.match(shell,/scrollbar-gutter:stable/);
   assert.match(inner,/\.admin-sidebar \{display:none !important;\}/);
-  assert.match(inner,/scrollbar-gutter:stable/);
+  assert.match(inner,/scrollbar-width:none/);
+  assert.match(inner,/visibility:hidden !important/);
+  assert.doesNotMatch(inner,/\.admin-layout \{\s*display:block !important/);
+  assert.match(shell, /width:100vw/);
+  assert.match(shell, /left:var\(--taskly-frame-offset/);
+  assert.match(read('client/private/admin/admin-shell.html'),/id="taskly-admin-scroll"/);
 });
 
 test('Naviguer entre rubriques ne recrée pas la barre latérale et conserve URL + historique',async()=>{
@@ -48,7 +53,7 @@ test('Naviguer entre rubriques ne recrée pas la barre latérale et conserve URL
     setAttribute(k,v){this.attributes[k]=v;},removeAttribute(k){delete this.attributes[k];},
     textContent:page}));
   const title={textContent:''};
-  const frame={src:'',contentWindow:{location:{href:'about:blank'},scrollY:0,scrollTo(){ }},addEventListener(k,fn){frameEvents[k]=fn;}};
+  const frame={src:'',style:{setProperty(k,v){this[k]=v;}},contentWindow:{location:{href:'about:blank'},scrollY:0,scrollTo(){ }},addEventListener(k,fn){frameEvents[k]=fn;}};
   const fields={ 'taskly-admin-frame':frame,'taskly-admin-loading':title,'tab-site':{hidden:true},'tab-admins':{hidden:true}};
   const location={origin,pathname:'/prive/dashboard/overview',href:origin+'/prive/dashboard/overview'};
   const pushed=[];
@@ -62,6 +67,7 @@ test('Naviguer entre rubriques ne recrée pas la barre latérale et conserve URL
   assert.equal(fields['tab-site'].hidden,false);
   assert.equal(fields['tab-admins'].hidden,false);
   assert.equal(frame.src,'/prive/dashboard/overview?taskly_embed=1');
+  assert.equal(frame.style['--taskly-frame-offset'],'-242px','le viewport d’origine inclut l’ancien menu');
   assert.equal(pushed.length,0,'la première page ne doit pas ajouter une entrée');
   const event={target:{closest:()=>links[4]},defaultPrevented:false,button:0,
     preventDefault(){this.defaultPrevented=true;}};
@@ -142,4 +148,49 @@ test('Routes : autorisations conservées et documents réels servis dans le cadr
   res=response();
   await route({params:{page:'does-not-exist'},query:{},session:{utilisateur:{id:1}}},res);
   assert.equal(res.statusCode,404);
+});
+
+test('Régression visuelle : le viewport de Services/Admins garde la largeur du navigateur et la barre défile à gauche',async()=>{
+  const origin='https://taskly.test';
+  const frameEvents={},railEvents={},childEvents={};
+  const page='/prive/dashboard/services';
+  const child={
+    location:{href:origin+page+'?taskly_embed=1'},scrollY:280,innerHeight:800,
+    document:{documentElement:{scrollHeight:1600,clientHeight:800},body:{scrollHeight:1600}},
+    addEventListener(k,fn){childEvents[k]=fn;},removeEventListener(){},
+    scrollTo(_x,y){this.scrollY=y;}
+  };
+  const frame={src:'',style:{setProperty(k,v){this[k]=v;}},contentWindow:child,
+    addEventListener(k,fn){frameEvents[k]=fn;}};
+  const rail={clientHeight:800,scrollHeight:1600,scrollTop:0,
+    addEventListener(k,fn){railEvents[k]=fn;}};
+  const spacer={style:{}};
+  const sidebar={getBoundingClientRect(){return {width:242};}};
+  const links=['overview','services','admins'].map(tab=>({dataset:{adminTab:tab},href:origin+'/prive/dashboard/'+tab,
+    classList:{toggle(){}},setAttribute(){},removeAttribute(){},textContent:tab}));
+  const document={
+    getElementById:k=>({'taskly-admin-frame':frame,'taskly-admin-scroll':rail,
+      'taskly-admin-scroll-spacer':spacer,'taskly-admin-loading':{textContent:''}}[k]),
+    querySelector:k=>k==='.admin-sidebar'?sidebar:null,
+    querySelectorAll:()=>links,addEventListener(){}
+  };
+  const window={location:{href:origin+page,pathname:page,origin},
+    utilisateurCourant:{role:'admin'},
+    matchMedia:()=>({matches:false}),history:{pushState(){}},addEventListener(){}};
+  vm.runInNewContext(read('client/public/js/admin-shell.js'),{
+    URL,window,document,attendreSession:async()=>{},
+    requeteAPI:async()=>({compte:{niveau:'principal'}})
+  });
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(frame.style['--taskly-frame-offset'],'-242px');
+  assert.equal(frame.src,page+'?taskly_embed=1');
+  frameEvents.load();
+  assert.equal(rail.scrollTop,280,'le curseur gris suit le contenu défilé');
+  assert.equal(spacer.style.height,'1600px');
+  rail.scrollTop=470;
+  railEvents.scroll();
+  assert.equal(child.scrollY,470,'déplacer la barre grise défile réellement le contenu');
+  child.scrollY=615;
+  childEvents.scroll();
+  assert.equal(rail.scrollTop,615,'la molette dans la rubrique actualise le curseur gris');
 });

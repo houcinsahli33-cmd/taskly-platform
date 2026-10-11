@@ -1,28 +1,47 @@
-/* Navigation persistante uniquement. Le style original du menu est inchangé. */
-html:has(body.admin-shell-page),body.admin-shell-page {height:100%;overflow:hidden;}
-body.dashboard-page.admin-shell-page {background:#f4f8f6;margin:0;}
+/* Le cadre et le menu sont permanents. AUCUN style de page métier n'est remplacé.
+   Le document embarqué garde un viewport égal à celui de l'ancien tableau de bord,
+   sinon les @media de Services, Administrateurs, etc. changent leur présentation. */
+html:has(body.admin-shell-page), body.admin-shell-page {
+  height:100%; overflow:hidden;
+}
+body.dashboard-page.admin-shell-page { margin:0; }
 body.dashboard-page.admin-shell-page .admin-layout {
- height:100dvh;min-height:0;overflow:hidden;display:grid;
- grid-template-columns:242px minmax(0,1fr);
+  height:100dvh; min-height:0; overflow:hidden;
+  /* La grille et la largeur du menu proviennent toujours de admin-users-page.css. */
 }
 body.dashboard-page.admin-shell-page .admin-sidebar {
- height:100dvh;position:relative;top:auto;overflow-y:scroll;
- scrollbar-gutter:stable;overscroll-behavior:contain;
+  height:100dvh; top:0;
+  /* Le menu garde son CSS historique et son défilement si nécessaire. */
 }
 body.dashboard-page.admin-shell-page .admin-content {
- width:100%;height:100dvh;min-height:0;max-width:none;
- overflow:hidden;margin:0;padding:0;display:block;
+  position:relative; min-width:0; max-width:none; margin:0;
+  padding:0; width:100%; height:100dvh; min-height:0; overflow:hidden;
 }
 #taskly-admin-frame {
- display:block;width:100%;height:100%;border:0;background:#f4f8f6;
+  position:absolute; display:block; top:0; left:var(--taskly-frame-offset,-242px);
+  width:100vw; height:100%; border:0;
+  background:transparent;
 }
+/* Unique barre persistante du contenu, placée JUSTE à droite du menu vert. */
+#taskly-admin-scroll {
+  position:absolute; left:0; top:0; bottom:0; width:14px;
+  box-sizing:border-box; overflow-y:scroll; overflow-x:hidden;
+  background:#f1f5f3; z-index:4;
+  scrollbar-gutter:stable; overscroll-behavior:contain;
+  scrollbar-color:#969998 #f1f5f3;
+}
+#taskly-admin-scroll-spacer { width:1px; height:100%; pointer-events:none; }
+/* Le menu est indépendant du contenu et ne se recrée jamais. */
 @media (max-width:800px) {
- body.dashboard-page.admin-shell-page .admin-layout {display:flex;flex-direction:column;}
- body.dashboard-page.admin-shell-page .admin-sidebar {
-   width:100%;height:auto;max-height:none;flex:0 0 auto;overflow:visible;
-   padding:10px 12px;position:relative;z-index:10;
- }
- body.dashboard-page.admin-shell-page .admin-content {
-   flex:1 1 auto;min-height:0;height:auto;
- }
+  body.dashboard-page.admin-shell-page .admin-layout {
+    display:flex; flex-direction:column;
+  }
+  body.dashboard-page.admin-shell-page .admin-sidebar {
+    width:100%; height:auto; flex:0 0 auto;
+  }
+  body.dashboard-page.admin-shell-page .admin-content {
+    flex:1 1 auto; min-height:0; height:auto;
+  }
+  #taskly-admin-frame {left:0;width:100%;}
+  #taskly-admin-scroll {display:none;}
 }

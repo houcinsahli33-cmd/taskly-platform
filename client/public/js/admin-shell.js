@@ -10,6 +10,62 @@
   let requestedUrl = '';
   const loading = document.getElementById('taskly-admin-loading');
   const scrollPositions = new Map();
+  const rail = document.getElementById('taskly-admin-scroll');
+  const railSpacer = document.getElementById('taskly-admin-scroll-spacer');
+  let detachChildScroll = () => {};
+  let railIsSyncing = false;
+
+  // On conserve le viewport original, y compris ses breakpoints CSS :
+  // le cadre a la largeur de la fenêtre et sa copie du menu reste hors champ.
+  function alignFrame() {
+    const sidebar = document.querySelector?.('.admin-sidebar');
+    const width = (window.matchMedia && window.matchMedia('(max-width:800px)').matches)
+      ? 0 : (sidebar?.getBoundingClientRect().width || 242);
+    frame.style?.setProperty?.('--taskly-frame-offset', -width + 'px');
+  }
+  alignFrame();
+  window.addEventListener('resize', alignFrame);
+
+  function syncScrollRail() {
+    if (!rail || !railSpacer) return;
+    try {
+      const child = frame.contentWindow;
+      const doc = child.document;
+      const scrollHeight = Math.max(doc.documentElement.scrollHeight,doc.body?.scrollHeight || 0);
+      const viewport = doc.documentElement.clientHeight || child.innerHeight;
+      // Dimensions identiques au document réel : même plage de défilement.
+      railSpacer.style.height = Math.max(scrollHeight,rail.clientHeight) + 'px';
+      const bottom = Math.max(0,scrollHeight-viewport);
+      const railBottom = Math.max(0,rail.scrollHeight-rail.clientHeight);
+      railIsSyncing = true;
+      rail.scrollTop = bottom > 0 ? child.scrollY * railBottom / bottom : 0;
+      railIsSyncing = false;
+    } catch { railIsSyncing = false; }
+  }
+  if (rail) rail.addEventListener('scroll',()=>{
+    if(railIsSyncing) return;
+    try {
+      const child=frame.contentWindow;
+      const doc=child.document;
+      const bottom=Math.max(0,Math.max(doc.documentElement.scrollHeight,doc.body?.scrollHeight || 0)-(doc.documentElement.clientHeight || child.innerHeight));
+      const railBottom=Math.max(0,rail.scrollHeight-rail.clientHeight);
+      if(railBottom) child.scrollTo(0,rail.scrollTop*bottom/railBottom);
+    } catch { /* cadre déconnecté : aucun changement d'état */ }
+  });
+  function watchChildScroll() {
+    detachChildScroll();
+    const child=frame.contentWindow;
+    try {
+      child.addEventListener('scroll',syncScrollRail,{passive:true});
+      const obs=typeof ResizeObserver==='undefined' ? null : new ResizeObserver(syncScrollRail);
+      if(obs) {
+        obs.observe(child.document.documentElement);
+        if(child.document.body) obs.observe(child.document.body);
+      }
+      detachChildScroll=()=>{child.removeEventListener('scroll',syncScrollRail);obs?.disconnect();};
+      syncScrollRail();
+    } catch {detachChildScroll=()=>{};}
+  }
 
   function urlForPage(value) {
     try {
@@ -51,6 +107,7 @@
     const embedded=new URL(url);
     embedded.searchParams.set('taskly_embed','1');
     requestedUrl=embedded.pathname+embedded.search;
+    detachChildScroll();
     loading.textContent='Chargement de la rubrique…';
     frame.src=requestedUrl;
     return true;
@@ -89,6 +146,7 @@
       }
       const target=scrollPositions.get(currentUrl) || 0;
       if(target) frame.contentWindow.scrollTo(0,target);
+      watchChildScroll();
     } catch { window.location.reload(); }
   });
   // Le serveur protège aussi les pages directes et les documents embarqués.
