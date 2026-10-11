@@ -30,19 +30,20 @@ test('Structure : sidebar originale reprise, tous les liens et scripts indépend
   assert.match(routes,/frame-ancestors 'self'/);
 });
 
-test('Le fond et le menu sont persistants, le scroll a un conteneur stable',()=>{
+test('Menu vert et contenu ont deux défilements indépendants, sans barre synchronisée',()=>{
   const shell=read('client/public/css/admin-shell.css');
   const inner=read('client/public/css/admin-embedded.css');
   assert.match(shell,/#taskly-admin-frame/);
-  assert.match(shell,/overflow-y:scroll/);
-  assert.match(shell,/scrollbar-gutter:stable/);
+  assert.match(shell,/\.admin-sidebar \{/);
+  assert.match(shell,/overflow-y:auto !important/);
+  assert.match(shell,/scrollbar-color:#939997/);
   assert.match(inner,/\.admin-sidebar \{display:none !important;\}/);
-  assert.match(inner,/scrollbar-width:none/);
+  assert.match(inner,/scrollbar-width:none !important/);
   assert.match(inner,/visibility:hidden !important/);
   assert.doesNotMatch(inner,/\.admin-layout \{\s*display:block !important/);
   assert.match(shell, /width:100vw/);
   assert.match(shell, /left:var\(--taskly-frame-offset/);
-  assert.match(read('client/private/admin/admin-shell.html'),/id="taskly-admin-scroll"/);
+  assert.doesNotMatch(read('client/private/admin/admin-shell.html'),/id="taskly-admin-scroll"/);
 });
 
 test('Naviguer entre rubriques ne recrée pas la barre latérale et conserve URL + historique',async()=>{
@@ -150,33 +151,28 @@ test('Routes : autorisations conservées et documents réels servis dans le cadr
   assert.equal(res.statusCode,404);
 });
 
-test('Régression visuelle : le viewport de Services/Admins garde la largeur du navigateur et la barre défile à gauche',async()=>{
+test('Menu natif : le déplacement du menu ne commande jamais le défilement central',async()=>{
   const origin='https://taskly.test';
-  const frameEvents={},railEvents={},childEvents={};
+  const frameEvents={},windowEvents={};
   const page='/prive/dashboard/services';
+  let contentScrollCalls=0;
   const child={
-    location:{href:origin+page+'?taskly_embed=1'},scrollY:280,innerHeight:800,
-    document:{documentElement:{scrollHeight:1600,clientHeight:800},body:{scrollHeight:1600}},
-    addEventListener(k,fn){childEvents[k]=fn;},removeEventListener(){},
-    scrollTo(_x,y){this.scrollY=y;}
+    location:{href:origin+page+'?taskly_embed=1'},scrollY:280,
+    scrollTo(){contentScrollCalls++;}
   };
   const frame={src:'',style:{setProperty(k,v){this[k]=v;}},contentWindow:child,
     addEventListener(k,fn){frameEvents[k]=fn;}};
-  const rail={clientHeight:800,scrollHeight:1600,scrollTop:0,
-    addEventListener(k,fn){railEvents[k]=fn;}};
-  const spacer={style:{}};
-  const sidebar={getBoundingClientRect(){return {width:242};}};
+  const sidebar={scrollTop:0,getBoundingClientRect(){return {width:242};}};
   const links=['overview','services','admins'].map(tab=>({dataset:{adminTab:tab},href:origin+'/prive/dashboard/'+tab,
     classList:{toggle(){}},setAttribute(){},removeAttribute(){},textContent:tab}));
   const document={
-    getElementById:k=>({'taskly-admin-frame':frame,'taskly-admin-scroll':rail,
-      'taskly-admin-scroll-spacer':spacer,'taskly-admin-loading':{textContent:''}}[k]),
+    getElementById:k=>({'taskly-admin-frame':frame,'taskly-admin-loading':{textContent:''}}[k]),
     querySelector:k=>k==='.admin-sidebar'?sidebar:null,
     querySelectorAll:()=>links,addEventListener(){}
   };
   const window={location:{href:origin+page,pathname:page,origin},
-    utilisateurCourant:{role:'admin'},
-    matchMedia:()=>({matches:false}),history:{pushState(){}},addEventListener(){}};
+    utilisateurCourant:{role:'admin'},matchMedia:()=>({matches:false}),
+    history:{pushState(){}},addEventListener(k,fn){windowEvents[k]=fn;}};
   vm.runInNewContext(read('client/public/js/admin-shell.js'),{
     URL,window,document,attendreSession:async()=>{},
     requeteAPI:async()=>({compte:{niveau:'principal'}})
@@ -185,12 +181,88 @@ test('Régression visuelle : le viewport de Services/Admins garde la largeur du 
   assert.equal(frame.style['--taskly-frame-offset'],'-242px');
   assert.equal(frame.src,page+'?taskly_embed=1');
   frameEvents.load();
-  assert.equal(rail.scrollTop,280,'le curseur gris suit le contenu défilé');
-  assert.equal(spacer.style.height,'1600px');
-  rail.scrollTop=470;
-  railEvents.scroll();
-  assert.equal(child.scrollY,470,'déplacer la barre grise défile réellement le contenu');
-  child.scrollY=615;
-  childEvents.scroll();
-  assert.equal(rail.scrollTop,615,'la molette dans la rubrique actualise le curseur gris');
+  sidebar.scrollTop=150;
+  assert.equal(child.scrollY,280);
+  assert.equal(contentScrollCalls,0,'la barre du menu ne doit jamais défiler la page');
+  assert.equal(sidebar.scrollTop,150,'la position du menu reste indépendante');
+  assert.doesNotMatch(read('client/public/js/admin-shell.js'),/syncScrollRail|railSpacer|railEvents/);
+});
+
+test('Modales : centrage dans le contenu et conservation des dimensions de la maquette',()=>{
+  const css=read('client/public/css/admin-embedded.css');
+  const frame=read('client/public/js/admin-frame.js');
+  assert.match(css,/\.admin-review-modal/);
+  assert.match(css,/\.support-dialog-root/);
+  assert.match(css,/#reports-dialog-root/);
+  assert.match(css,/dialog:modal/);
+  assert.match(css,/left:var\(--taskly-embedded-sidebar-width/);
+  assert.match(frame,/getBoundingClientRect\(\)\.width/);
+  assert.doesNotMatch(css,/\.admin-review-dialog\s*\{/);
+  assert.doesNotMatch(css,/\.services-dialog\s*\{/);
+  assert.doesNotMatch(css,/\.t-admin-dialog\s*\{/);
+});
+
+test('Le menu Paramètres redevient accessible depuis une page Administrateurs autorisée',async()=>{
+  const origin='https://taskly.test';
+  const page='/prive/dashboard/admins';
+  const fields={'tab-site':{hidden:true},'tab-admins':{hidden:true},
+    'taskly-admin-loading':{textContent:''},
+    'taskly-admin-frame':{src:'',style:{setProperty(){}},addEventListener(){},contentWindow:{location:{href:'about:blank'}}}};
+  const window={location:{origin,pathname:page,href:origin+page},
+    utilisateurCourant:{role:'admin'},
+    matchMedia:()=>({matches:false}),history:{pushState(){}},addEventListener(){}};
+  const document={getElementById:k=>fields[k],querySelectorAll:()=>[],addEventListener(){},querySelector:()=>({getBoundingClientRect:()=>({width:242})})};
+  vm.runInNewContext(read('client/public/js/admin-shell.js'),{
+    URL,window,document,attendreSession:async()=>{},requeteAPI:async()=>{throw Error('API indisponible');}
+  });
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(fields['tab-site'].hidden,false);
+  assert.equal(fields['tab-admins'].hidden,false);
+});
+
+test('Navigation : un compte secondaire ne voit jamais les accès réservés au principal',async()=>{
+  const origin='https://taskly.test';
+  const page='/prive/dashboard/overview';
+  const fields={'tab-site':{hidden:true},'tab-admins':{hidden:true},
+    'taskly-admin-loading':{textContent:''},
+    'taskly-admin-frame':{src:'',style:{setProperty(){}},addEventListener(){},contentWindow:{location:{href:'about:blank'}}}};
+  const window={location:{origin,pathname:page,href:origin+page},
+    utilisateurCourant:{role:'admin'},matchMedia:()=>({matches:false}),
+    history:{pushState(){}},addEventListener(){}};
+  const document={getElementById:k=>fields[k],querySelectorAll:()=>[],addEventListener(){},
+    querySelector:()=>({getBoundingClientRect:()=>({width:242})})};
+  vm.runInNewContext(read('client/public/js/admin-shell.js'),{
+    URL,window,document,attendreSession:async()=>{},
+    requeteAPI:async()=>({compte:{niveau:'secondaire'}})
+  });
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(fields['tab-site'].hidden,true);
+  assert.equal(fields['tab-admins'].hidden,true);
+});
+
+test('Navigation : si l’API du profil échoue, seul un HEAD autorisé débloque Paramètres',async()=>{
+  const origin='https://taskly.test';
+  const page='/prive/dashboard/overview';
+  async function run(allowed){
+    const fields={'tab-site':{hidden:true},'tab-admins':{hidden:true},
+      'taskly-admin-loading':{textContent:''},
+      'taskly-admin-frame':{src:'',style:{setProperty(){}},addEventListener(){},contentWindow:{location:{href:'about:blank'}}}};
+    const window={location:{origin,pathname:page,href:origin+page},
+      utilisateurCourant:{role:'admin'},matchMedia:()=>({matches:false}),
+      history:{pushState(){}},addEventListener(){}};
+    const document={getElementById:k=>fields[k],querySelectorAll:()=>[],addEventListener(){},
+      querySelector:()=>({getBoundingClientRect:()=>({width:242})})};
+    const calls=[];
+    vm.runInNewContext(read('client/public/js/admin-shell.js'),{
+      URL,window,document,attendreSession:async()=>{},
+      requeteAPI:async()=>{throw Error('API indisponible');},
+      fetch:async (url,opts)=>{calls.push([url,opts.method]);return {ok:allowed};}
+    });
+    await new Promise(resolve=>setImmediate(resolve));
+    return {fields,calls};
+  }
+  const no=await run(false);assert.equal(no.fields['tab-site'].hidden,true);
+  const yes=await run(true);assert.equal(yes.fields['tab-site'].hidden,false);
+  assert.equal(yes.calls[0][1],'HEAD');
+  assert.match(yes.calls[0][0],/site\?taskly_embed=1/);
 });

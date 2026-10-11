@@ -10,62 +10,16 @@
   let requestedUrl = '';
   const loading = document.getElementById('taskly-admin-loading');
   const scrollPositions = new Map();
-  const rail = document.getElementById('taskly-admin-scroll');
-  const railSpacer = document.getElementById('taskly-admin-scroll-spacer');
-  let detachChildScroll = () => {};
-  let railIsSyncing = false;
-
-  // On conserve le viewport original, y compris ses breakpoints CSS :
-  // le cadre a la largeur de la fenêtre et sa copie du menu reste hors champ.
+  // Aucun faux ascenseur synchronisé : la sidebar et le contenu de droite
+  // disposent de deux scrolls natifs et strictement indépendants.
   function alignFrame() {
     const sidebar = document.querySelector?.('.admin-sidebar');
-    const width = (window.matchMedia && window.matchMedia('(max-width:800px)').matches)
-      ? 0 : (sidebar?.getBoundingClientRect().width || 242);
+    const small = window.matchMedia?.('(max-width:800px)').matches;
+    const width = small ? 0 : (sidebar?.getBoundingClientRect().width || 242);
     frame.style?.setProperty?.('--taskly-frame-offset', -width + 'px');
   }
   alignFrame();
   window.addEventListener('resize', alignFrame);
-
-  function syncScrollRail() {
-    if (!rail || !railSpacer) return;
-    try {
-      const child = frame.contentWindow;
-      const doc = child.document;
-      const scrollHeight = Math.max(doc.documentElement.scrollHeight,doc.body?.scrollHeight || 0);
-      const viewport = doc.documentElement.clientHeight || child.innerHeight;
-      // Dimensions identiques au document réel : même plage de défilement.
-      railSpacer.style.height = Math.max(scrollHeight,rail.clientHeight) + 'px';
-      const bottom = Math.max(0,scrollHeight-viewport);
-      const railBottom = Math.max(0,rail.scrollHeight-rail.clientHeight);
-      railIsSyncing = true;
-      rail.scrollTop = bottom > 0 ? child.scrollY * railBottom / bottom : 0;
-      railIsSyncing = false;
-    } catch { railIsSyncing = false; }
-  }
-  if (rail) rail.addEventListener('scroll',()=>{
-    if(railIsSyncing) return;
-    try {
-      const child=frame.contentWindow;
-      const doc=child.document;
-      const bottom=Math.max(0,Math.max(doc.documentElement.scrollHeight,doc.body?.scrollHeight || 0)-(doc.documentElement.clientHeight || child.innerHeight));
-      const railBottom=Math.max(0,rail.scrollHeight-rail.clientHeight);
-      if(railBottom) child.scrollTo(0,rail.scrollTop*bottom/railBottom);
-    } catch { /* cadre déconnecté : aucun changement d'état */ }
-  });
-  function watchChildScroll() {
-    detachChildScroll();
-    const child=frame.contentWindow;
-    try {
-      child.addEventListener('scroll',syncScrollRail,{passive:true});
-      const obs=typeof ResizeObserver==='undefined' ? null : new ResizeObserver(syncScrollRail);
-      if(obs) {
-        obs.observe(child.document.documentElement);
-        if(child.document.body) obs.observe(child.document.body);
-      }
-      detachChildScroll=()=>{child.removeEventListener('scroll',syncScrollRail);obs?.disconnect();};
-      syncScrollRail();
-    } catch {detachChildScroll=()=>{};}
-  }
 
   function urlForPage(value) {
     try {
@@ -107,7 +61,6 @@
     const embedded=new URL(url);
     embedded.searchParams.set('taskly_embed','1');
     requestedUrl=embedded.pathname+embedded.search;
-    detachChildScroll();
     loading.textContent='Chargement de la rubrique…';
     frame.src=requestedUrl;
     return true;
@@ -146,7 +99,6 @@
       }
       const target=scrollPositions.get(currentUrl) || 0;
       if(target) frame.contentWindow.scrollTo(0,target);
-      watchChildScroll();
     } catch { window.location.reload(); }
   });
   // Le serveur protège aussi les pages directes et les documents embarqués.
@@ -155,15 +107,31 @@
       await attendreSession();
       if(window.utilisateurCourant?.role!=='admin')return;
       const {compte}=await requeteAPI('/api/admin-settings/me');
-      const principal=compte?.niveau==='principal';
+      // Les routes /site et /admins ont DEJA exigé le niveau principal
+      // avant de servir ce shell. Cela restaure le lien Paramètres lorsque
+      // la page courante est /admins, même si l'API du profil est transitoire.
+      const principal=compte?.niveau==='principal' || ['site','admins'].includes(window.location.pathname.slice(base.length));
       for(const id of ['tab-site','tab-admins']){
         const link=document.getElementById(id);
         if(link)link.hidden=!principal;
       }
     } catch {
+      // Ne jamais afficher le menu privilégié sur une page non autorisée.
+      // /admins et /site ne peuvent être servis qu'après le contrôle serveur.
+      let authorizedPage=['site','admins'].includes(window.location.pathname.slice(base.length));
+      // Repli en lecture seule : HEAD utilise exactement les protections
+      // serveur de la rubrique site. Ne jamais déduire le rôle de l'UI.
+      if(!authorizedPage && typeof fetch==='function') {
+        try {
+          const probe=await fetch(base+'site?taskly_embed=1',{
+            method:'HEAD',credentials:'same-origin',cache:'no-store'
+          });
+          authorizedPage=probe.ok;
+        } catch { authorizedPage=false; }
+      }
       for(const id of ['tab-site','tab-admins']){
         const link=document.getElementById(id);
-        if(link)link.hidden=true;
+        if(link)link.hidden=!authorizedPage;
       }
     }
   })();

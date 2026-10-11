@@ -9,6 +9,17 @@
     return;
   }
   if(parts.length!==2)return;
+  // Les modales se centrent sur le contenu visible (pas derrière le menu).
+  // Calculé sur la barre interne dont la largeur d'origine est préservée.
+  function alignDialogs() {
+    const narrow=window.matchMedia?.('(max-width:800px)').matches;
+    const menu=document.querySelector?.('.admin-sidebar');
+    const width=narrow ? 0 : (menu?.getBoundingClientRect().width || 242);
+    document.documentElement?.style?.setProperty?.('--taskly-embedded-sidebar-width',width+'px');
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',alignDialogs,{once:true});
+  else alignDialogs();
+  window.addEventListener?.('resize',alignDialogs);
   document.addEventListener('click',event=>{
     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
     const link=event.target.closest('a[href]');
