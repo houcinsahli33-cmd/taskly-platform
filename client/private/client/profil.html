@@ -41,8 +41,10 @@
           <div class="panel-header">
             <h2>Mon profil</h2>
           </div>
-          <div class="panel-body">
+          <p id="client-profile-loading" role="status">Chargement de votre profil…</p>
+          <div class="panel-body" data-client-profile-content hidden>
             <div id="client-profile-card"></div>
+            <div hidden>
             <form id="client-photo-form" class="mt-22">
               <label>
                 <span class="field-label">Photo de profil</span>
@@ -52,7 +54,9 @@
                 <button class="btn primary" type="submit">Mettre à jour</button>
                 <button class="btn danger outline" type="button" id="client-photo-delete">Supprimer</button>
               </div>
-            </form><h2 class="client-account-actions-heading">Gérer mon compte</h2><div id="account-profile-editor" class="mt-22"></div>
+            </form>
+            </div>
+            <h2 class="client-account-actions-heading">Gérer mon compte</h2><div id="account-profile-editor" class="mt-22"></div>
           </div>
         </section>
       </div>

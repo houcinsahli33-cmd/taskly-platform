@@ -36,4 +36,5 @@ document.addEventListener('DOMContentLoaded',async()=>{
   });
   if(window.installerActionsCompte)window.installerActionsCompte(target);
  }catch(e){target.textContent=e.message;}
+ finally{if(window.utilisateurCourant?.role==='client' && window.actualiserChargementProfilClient){target.dataset.profileReady='1';window.actualiserChargementProfilClient();}}
 });

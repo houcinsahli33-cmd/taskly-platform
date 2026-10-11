@@ -206,13 +206,22 @@ function initialiserActionsClient() {
   });
 }
 
+// Ne montrer le profil qu’après la préparation de sa carte et des actions.
+function actualiserChargementProfilClient() {
+  const contenu=document.querySelector('[data-client-profile-content]');
+  if (!contenu || document.getElementById('client-profile-card')?.dataset.profileReady !== '1' ||
+      document.getElementById('account-profile-editor')?.dataset.profileReady !== '1') return;
+  contenu.hidden=false;
+  document.getElementById('client-profile-loading').hidden=true;
+}
+
 // Afficher le profil client
 async function afficherProfilClient() {
   const cible = document.getElementById("client-profile-card");
   if (!cible || !window.utilisateurCourant) return;
   let utilisateur = window.utilisateurCourant;
   try { const {compte}=await requeteAPI('/api/account');utilisateur={...utilisateur,...compte}; }
-  catch(e) {cible.textContent=e.message;return;}
+  catch(e) {cible.textContent=e.message;cible.dataset.profileReady='1';actualiserChargementProfilClient();return;}
 
   const bienvenue = document.getElementById("client-welcome");
   if (bienvenue) {
@@ -251,6 +260,8 @@ async function afficherProfilClient() {
   document.getElementById('client-open-edit-profile')?.addEventListener('click', () => {
     document.querySelector('#account-profile-editor .workspace-actions .workspace-action')?.click();
   });
+  cible.dataset.profileReady='1';
+  actualiserChargementProfilClient();
 }
 
 // Modifier la photo de profil
