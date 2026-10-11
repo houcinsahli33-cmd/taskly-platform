@@ -11,6 +11,7 @@ router.use(verifierConnexion, verifierAdmin);
 
 // Statistiques admin
 router.get("/stats", adminController.statistiques);
+router.get("/stats/inscriptions", adminController.inscriptionsParPeriode);
 
 // Creer un service
 router.post("/services", require('../middleware/documentUpload').upload.single('photo'), adminController.creerService);

@@ -1,227 +1,140 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Vue d’ensemble — Taskly</title>
-
   <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  
-  <script defer src="/js/admin-settings.js"></script>
   <link rel="stylesheet" href="/css/admin-integrated.css">
   <link rel="stylesheet" href="/css/admin-forms.css">
   <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="overview">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+  <link rel="stylesheet" href="/css/taskly-workspace-forms.css">
+  <link rel="stylesheet" href="/css/workspace-pro.css">
+  <!-- La barre latérale réutilise EXACTEMENT la feuille de la page Utilisateurs. -->
+  <link rel="stylesheet" href="/css/admin-users-page.css">
+  <link rel="stylesheet" href="/css/admin-overview-page.css">
+  <script defer src="/js/api.js"></script>
+  <script defer src="/js/auth.js"></script>
+  <script defer src="/js/admin-dashboard.js"></script>
+  <script defer src="/js/admin-settings.js"></script>
+  <script defer src="/js/workspace-dialogs.js"></script>
+  <script defer src="/js/admin-overview-page.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-overview-page" data-require-role="admin" data-workspace-page="overview">
+<main class="admin-layout">
+    <aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          class="active" aria-current="page" data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a class="active" aria-current="page" data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
 
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
 
-    <section class="admin-content">
+  <section class="admin-content">
+    <header class="overview-topbar">
+      <div>
+        <h1>Vue d’ensemble</h1>
+        <p>Suivez votre plateforme et accédez rapidement aux actions essentielles.</p>
+      </div>
+      <div class="overview-top-actions">
+        <time id="overview-today" class="overview-date" aria-label="Date du jour">—</time>
+        <button id="overview-export" type="button" class="overview-export" disabled title="Disponible lorsque les données sont chargées">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"></path></svg>
+          Exporter le rapport
+        </button>
+      </div>
+    </header>
 
-      <!-- EN-TETE -->
-
-      <div class="dashboard-hero">
-
-        <div>
-          <p class="eyebrow">Administration</p>
-
-          <h1>Administration de la plateforme</h1>
-
-          <p>
-            Gérez les utilisateurs, suivez les demandes,
-            consultez les signalements, traitez les messages
-            support et maintenez les services proposés
-            sur Taskly.
-          </p>
+    <section class="admin-section active" id="admin-overview" aria-label="Tableau de bord administrateur">
+      <div class="overview-hero">
+        <div class="overview-hero-copy">
+          <span class="overview-kicker">● TABLEAU DE BORD ADMINISTRATEUR</span>
+          <h2>Bienvenue dans votre espace Taskly</h2>
+          <p>Un aperçu clair de l’activité de la plateforme, des comptes inscrits et des éléments à suivre.</p>
         </div>
-
+        <div class="overview-activity" aria-label="Inscriptions au cours des 7 derniers jours">
+          <div class="overview-activity-header"><strong>Activité de la plateforme</strong><span>↗</span></div>
+          <p>Inscriptions · 7 derniers jours</p>
+          <div class="overview-activity-bars" id="overview-mini-bars" role="img" aria-label="Graphique des inscriptions récentes"></div>
+        </div>
       </div>
 
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
+      <div class="overview-section-heading"><h2>Indicateurs principaux</h2><span>Données réelles de la plateforme</span></div>
+      <div class="overview-main-stats" id="admin-stats-grid" aria-live="polite" aria-busy="true">
+        <p class="overview-loading">Chargement des statistiques…</p>
+      </div>
+      <div class="overview-secondary-stats" id="overview-secondary-stats" aria-live="polite"></div>
 
-      <section
-        class="admin-section active"
-        id="admin-overview">
-
-        <div
-          class="stats-grid"
-          id="admin-stats-grid">
-        </div>
-
-        <div class="admin-overview-grid">
-
-          <div class="panel">
-            <div class="panel-header">
-              <h2>Derniers utilisateurs</h2>
-            </div>
-            <div
-              class="panel-body"
-              id="admin-latest-users">
-            </div>
+      <div class="overview-layout-grid">
+        <article class="overview-panel overview-chart-card">
+          <div class="overview-panel-header">
+            <div><h2>Évolution des inscriptions</h2><p>Nombre réel de nouveaux comptes Artisans et Clients</p></div>
+            <label for="overview-period" class="overview-period-label"><span class="sr-only">Période du graphique</span>
+              <select id="overview-period" aria-label="Période du graphique">
+                <option value="7j">7 derniers jours</option>
+                <option value="30j">30 derniers jours</option>
+                <option value="12m">12 derniers mois</option>
+              </select>
+            </label>
           </div>
-
-          <div class="panel">
-            <div class="panel-header">
-              <h2>Dernières demandes</h2>
-            </div>
-            <div
-              class="panel-body"
-              id="admin-latest-requests">
-            </div>
+          <div class="overview-chart" id="overview-chart" role="img" aria-label="Évolution des inscriptions par période" aria-live="polite">
+            <p class="overview-loading">Chargement des inscriptions…</p>
           </div>
+          <div class="overview-chart-legend"><span><i class="artisan-line"></i>Artisans</span><span><i class="client-line"></i>Clients</span></div>
+          <p id="overview-chart-status" class="overview-chart-status" role="status"></p>
+          <details class="overview-chart-details"><summary>Consulter les données du graphique en tableau</summary><div id="overview-chart-table"></div></details>
+        </article>
 
-          <div class="panel">
-            <div class="panel-header">
-              <h2>Derniers avis</h2>
-            </div>
-            <div
-              class="panel-body"
-              id="admin-latest-reviews">
-            </div>
+        <article class="overview-panel overview-priorities-card">
+          <div class="overview-panel-header"><div><h2>Actions prioritaires</h2><p>Les espaces à consulter en priorité</p></div></div>
+          <div id="overview-priorities" class="overview-priorities" aria-live="polite">
+            <p class="overview-loading">Chargement…</p>
           </div>
+          <a class="overview-priorities-link" href="reports">Accéder à la gestion <span aria-hidden="true">→</span></a>
+        </article>
 
-          <div class="panel">
-            <div class="panel-header">
-              <h2>Derniers messages support</h2>
-            </div>
-            <div
-              class="panel-body"
-              id="admin-latest-contacts">
-            </div>
-          </div>
+        <article class="overview-panel overview-latest-card">
+          <div class="overview-panel-header overview-latest-header"><h2>Derniers utilisateurs inscrits</h2><a href="users">Voir tous les utilisateurs <span aria-hidden="true">→</span></a></div>
+          <div class="overview-latest-table" id="admin-latest-users" aria-live="polite"><p class="overview-loading">Chargement…</p></div>
+        </article>
 
-        </div>
-
-      </section>
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      
-
+        <article class="overview-panel overview-links-card">
+          <div class="overview-panel-header"><h2>Accès rapides</h2></div>
+          <nav class="overview-quick-links" aria-label="Accès rapides à l’administration">
+            <a href="users"><span class="overview-quick-icon">♙</span><span><strong>Gestion des utilisateurs</strong><small>Rechercher, filtrer et gérer les comptes</small></span><span aria-hidden="true">→</span></a>
+            <a href="verification"><span class="overview-quick-icon">◇</span><span><strong>Vérification des artisans</strong><small>Valider les dossiers et les justificatifs</small></span><span aria-hidden="true">→</span></a>
+            <a href="contacts"><span class="overview-quick-icon">♧</span><span><strong>Messages support</strong><small>Répondre aux demandes d’assistance</small></span><span aria-hidden="true">→</span></a>
+            <a href="site" id="overview-site-link" hidden><span class="overview-quick-icon">⚙</span><span><strong>Paramètres du site</strong><small>Configurer les options de la plateforme</small></span><span aria-hidden="true">→</span></a>
+          </nav>
+        </article>
+      </div>
     </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  
-
+  </section>
+</main>
 </body>
 </html>

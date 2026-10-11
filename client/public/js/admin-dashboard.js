@@ -445,7 +445,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const page=document.body.dataset.workspacePage||'overview';
   activerOngletAdmin(page);
   initialiserActionsAdmin();
-  if(page==='overview')chargerStatsAdmin();
+  if(page==='overview' && !document.body.classList.contains('admin-overview-page'))chargerStatsAdmin();
   if(page==='users')chargerUtilisateursAdmin();
   if(page==='reports')chargerSignalementsAdmin();
   if(page==='contacts')chargerContactsAdmin();

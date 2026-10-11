@@ -52,6 +52,27 @@ async function statistiques(req, res) {
     });
 }
 
+// Série réelle des inscriptions ; route protégée par le middleware administrateur.
+async function inscriptionsParPeriode(req, res) {
+    const periode = req.query?.periode || '7j';
+    if (!['7j', '30j', '12m'].includes(periode)) {
+        return res.status(400).json({message:'Période invalide.'});
+    }
+    try {
+        const points = await adminModel.inscriptionsParPeriode(periode);
+        // Cette donnée n'est pas indispensable au graphique : panne isolée.
+        let artisansEnAttente = null;
+        if (periode === '7j') {
+            try { artisansEnAttente = await adminModel.compterArtisansEnAttente(); }
+            catch (error) { console.error('Compteur de vérifications indisponible :', error.code || error.message); }
+        }
+        return res.status(200).json({periode, points, artisansEnAttente});
+    } catch (error) {
+        console.error('Statistiques inscriptions indisponibles :',error.code || error.message);
+        return res.status(503).json({message:'Historique des inscriptions indisponible pour le moment.'});
+    }
+}
+
 // Creer un service
 async function creerService(req, res) {
     try {
@@ -347,6 +368,7 @@ async function traiterMessageContact(req, res) {
 
 module.exports = {
     statistiques,
+    inscriptionsParPeriode,
     creerService,
     modifierService,
     supprimerService,

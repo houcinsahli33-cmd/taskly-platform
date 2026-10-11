@@ -29,10 +29,56 @@ async function demandesParStatut() {
     return resultats;
 }
 
+// Dossiers en attente : ce sont des artisans réellement inscrits, jamais une valeur fictive.
+async function compterArtisansEnAttente() {
+    const [[ligne]] = await db.promise().query(
+        "SELECT COUNT(*) AS total FROM artisans WHERE verification_statut = 'en_attente'"
+    );
+    return Number(ligne.total);
+}
+
+// Séries temporelles complètes, zéros inclus, calculées sur les inscriptions réelles.
+// Les expressions SQL proviennent exclusivement de cette liste fixe, jamais de l'URL.
+async function inscriptionsParPeriode(periode) {
+    const periodes = {
+        '7j':  {jours:7, groupe:"DATE_FORMAT(created_at, '%Y-%m-%d')", debut:'DATE_SUB(CURDATE(), INTERVAL 6 DAY)'},
+        '30j': {jours:30, groupe:"DATE_FORMAT(created_at, '%Y-%m-%d')", debut:'DATE_SUB(CURDATE(), INTERVAL 29 DAY)'},
+        '12m': {mois:12, groupe:"DATE_FORMAT(created_at, '%Y-%m')", debut:"DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 11 MONTH), '%Y-%m-01')"}
+    };
+    const config = periodes[periode];
+    if (!config) throw new RangeError('Période invalide.');
+    const [[{reference}]] = await db.promise().query("SELECT DATE_FORMAT(CURDATE(), '%Y-%m-%d') AS reference");
+    const [groupes] = await db.promise().query(`
+        SELECT ${config.groupe} AS periode,
+               SUM(CASE WHEN role = 'artisan' THEN 1 ELSE 0 END) AS artisans,
+               SUM(CASE WHEN role = 'client' THEN 1 ELSE 0 END) AS clients
+        FROM users
+        WHERE created_at >= ${config.debut}
+          AND created_at < DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+          AND role IN ('artisan', 'client')
+        GROUP BY ${config.groupe}
+        ORDER BY periode ASC
+    `);
+    const parPeriode = new Map(groupes.map(ligne => [ligne.periode, ligne]));
+    // UTC uniquement pour manipuler les dates du calendrier sans décalage DST.
+    const [annee, mois, jour] = reference.split('-').map(Number);
+    const date = new Date(Date.UTC(annee, mois - 1, jour));
+    const points = [];
+    for (let index = (config.jours || config.mois) - 1; index >= 0; index--) {
+        const d = new Date(date);
+        if (config.mois) d.setUTCMonth(d.getUTCMonth() - index, 1);
+        else d.setUTCDate(d.getUTCDate() - index);
+        const cle = config.mois ? d.toISOString().slice(0,7) : d.toISOString().slice(0,10);
+        const ligne = parPeriode.get(cle);
+        points.push({periode:cle, artisans:Number(ligne?.artisans || 0), clients:Number(ligne?.clients || 0)});
+    }
+    return points;
+}
+
 // Recuperer les derniers utilisateurs inscrits
 async function derniersUtilisateurs() {
     const sql = `
-        SELECT id, nom, prenom, email, role, created_at
+        SELECT id, nom, prenom, email, role, statut_compte, created_at
         FROM users
         ORDER BY created_at DESC
         LIMIT 8
@@ -209,6 +255,8 @@ async function debloquerUtilisateur(id) {
 
 module.exports = {
     compter,
+    compterArtisansEnAttente,
+    inscriptionsParPeriode,
     demandesParStatut,
     derniersUtilisateurs,
     dernieresDemandes,
