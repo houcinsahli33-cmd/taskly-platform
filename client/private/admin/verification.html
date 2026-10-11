@@ -1,202 +1,89 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Contrôle des artisans — Taskly</title>
-
-  <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/admin-settings.css">
-
-  <script defer src="/js/api.js"></script>
-  <script defer src="/js/auth.js"></script>
-  <script defer src="/js/admin-dashboard.js"></script>
-  <script defer src="/js/admin-verification.js"></script>
-  <script defer src="/js/admin-settings.js"></script>
-  <link rel="stylesheet" href="/css/admin-integrated.css">
-  <link rel="stylesheet" href="/css/admin-forms.css">
-  <link rel="stylesheet" href="/css/admin-workspace.css">
-<link rel="stylesheet" href="/css/taskly-workspace-forms.css"><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
-
-<body class="dashboard-page" data-require-role="admin" data-workspace-page="verification">
-
-  <main class="admin-layout">
-
-    <!-- =============================== -->
-    <!-- MENU LATERAL ADMINISTRATEUR -->
-    <!-- =============================== -->
-
-    <aside class="admin-sidebar">
-
-      <p class="sidebar-title">Taskly · Administration</p>
-      <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artisans à vérifier — Taskly</title>
+<link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
+<link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin-settings.css">
+<link rel="stylesheet" href="/css/admin-integrated.css"><link rel="stylesheet" href="/css/admin-forms.css">
+<link rel="stylesheet" href="/css/admin-workspace.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css">
+<link rel="stylesheet" href="/css/workspace-pro.css"><link rel="stylesheet" href="/css/admin-users-page.css">
+<link rel="stylesheet" href="/css/admin-verification-page.css">
+<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script>
+<script defer src="/js/admin-dashboard.js"></script><script defer src="/js/admin-settings.js"></script>
+<script defer src="/js/admin-verification.js"></script>
+</head>
+<body class="dashboard-page admin-users-page admin-verification-page" data-require-role="admin" data-workspace-page="verification">
+<main class="admin-layout">
+<aside class="admin-sidebar" aria-label="Menu d’administration">
+      <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
+        <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
+        <symbol id="nav-flag" viewBox="0 0 24 24"><path d="M5 22V4m0 1c4-3 7 3 12 0l2-1v12c-6 3-9-3-14 0"></path></symbol>
+        <symbol id="nav-headset" viewBox="0 0 24 24"><path d="M4 14v-4a8 8 0 0 1 16 0v4M4 14h3v6H5a3 3 0 0 1-3-3v-1a2 2 0 0 1 2-2Zm16 0h-3v6h2a3 3 0 0 0 3-3v-1a2 2 0 0 0-2-2ZM17 20c0 2-2 2-5 2"></path></symbol>
+        <symbol id="nav-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Zm-9 10 9 5 9-5M3 17l9 5 9-5"></path></symbol>
+        <symbol id="nav-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-4 8-9 10-5-2-9-5-9-10V6z"></path></symbol>
+        <symbol id="nav-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l1 3 2 1 3-1 2 4-2 2v2l2 2-2 4-3-1-2 1-1 3h-4l-1-3-2-1-3 1-2-4 2-2v-2L2 9l2-4 3 1 2-1z"></path></symbol>
+        <symbol id="nav-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3z"></path></symbol>
+        <symbol id="nav-logout" viewBox="0 0 24 24"><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5m5-5 4-4-4-4m-8 4h12"></path></symbol>
+      </svg>
+      <div class="admin-users-brand">
+        <p class="sidebar-title">Taskly <span aria-hidden="true">·</span><br>Administration</p>
+        <p class="admin-sidebar-subtitle">Espace privé · Projet de licence</p>
+      </div>
       <nav class="side-nav admin-nav" aria-label="Navigation de l’administration">
-
-        <a
-          data-admin-tab="overview" href="overview">
-          Vue d'ensemble
-        </a>
-
-        <a data-admin-tab="users" href="users">
-          Utilisateurs
-        </a>
-
-        <a data-admin-tab="reports" href="reports">
-          Signalements
-        </a>
-
-        <a data-admin-tab="contacts" href="contacts">
-          Support
-        </a>
-
-        <a data-admin-tab="services" href="services">
-          Services
-        </a>
-
-        <a class="active" aria-current="page" data-admin-tab="verification" href="verification">
-          Artisans à vérifier
-        </a>
-
-        <a data-admin-tab="site" id="tab-site" hidden href="site">Paramètres du site</a>
-        <a data-admin-tab="account" href="account">
-          Mon compte
-        </a>
-
-        <a
-  data-admin-tab="admins"
-  id="tab-admins" href="admins">
-  Administrateurs
-</a>
-
-        <button type="button" data-logout>
-          Déconnexion
-        </button>
-
+        <a data-admin-tab="overview" href="overview"><svg aria-hidden="true"><use href="#nav-home"></use></svg><span>Vue d'ensemble</span></a>
+        <a data-admin-tab="users" href="users"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Utilisateurs</span></a>
+        <a data-admin-tab="reports" href="reports"><svg aria-hidden="true"><use href="#nav-flag"></use></svg><span>Signalements</span></a>
+        <a data-admin-tab="contacts" href="contacts"><svg aria-hidden="true"><use href="#nav-headset"></use></svg><span>Support</span></a>
+        <a data-admin-tab="services" href="services"><svg aria-hidden="true"><use href="#nav-layers"></use></svg><span>Services</span></a>
+        <a class="active" aria-current="page" data-admin-tab="verification" href="verification"><svg aria-hidden="true"><use href="#nav-shield"></use></svg><span>Artisans à vérifier</span></a>
+        <a data-admin-tab="site" id="tab-site" hidden href="site"><svg aria-hidden="true"><use href="#nav-settings"></use></svg><span>Paramètres du site</span></a>
+        <a data-admin-tab="account" href="account"><svg aria-hidden="true"><use href="#nav-user"></use></svg><span>Mon compte</span></a>
+        <a data-admin-tab="admins" id="tab-admins" href="admins"><svg aria-hidden="true"><use href="#nav-users"></use></svg><span>Administrateurs</span></a>
+        <button type="button" class="admin-nav-logout" data-logout><svg aria-hidden="true"><use href="#nav-logout"></use></svg><span>Déconnexion</span></button>
       </nav>
-
     </aside>
-
-    <!-- =============================== -->
-    <!-- CONTENU PRINCIPAL -->
-    <!-- =============================== -->
-
-    <section class="admin-content"><h1 class="dashboard-section-title">Contrôle des artisans</h1>
-
-      <!-- EN-TETE -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VUE D'ENSEMBLE -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- UTILISATEURS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SIGNALEMENTS -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SUPPORT -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- SERVICES -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- VERIFICATION DES ARTISANS -->
-      <!-- =============================== -->
-
-      <section
-        class="admin-section active"
-        id="admin-verification">
-
-        <div class="panel">
-
-          <div class="panel-header">
-            <h2>Contrôle des artisans</h2>
-          </div>
-
-          <div class="panel-body">
-
-            <p class="muted">
-              Identité et qualifications : examen manuel
-              des justificatifs. Une vérification documentaire
-              n'est pas une certification officielle.
-            </p>
-
-            <div class="admin-review-toolbar">
-              <label for="admin-verification-search">Rechercher un artisan
-                <input class="form-input" id="admin-verification-search" type="search" placeholder="Nom, e-mail, ville ou métier" autocomplete="off">
-              </label>
-              <label for="admin-verification-status">Statut du dossier
-                <select class="form-select" id="admin-verification-status">
-                  <option value="tous">Tous les dossiers</option>
-                  <option value="en_attente">En attente</option>
-                  <option value="a_completer">Complément demandé</option>
-                  <option value="approuve">Approuvés</option>
-                  <option value="refuse">Refusés</option>
-                  <option value="bloque">Comptes bloqués</option>
-                </select>
-              </label>
-              <button class="btn outline small" type="button" id="admin-verification-refresh">Actualiser</button>
-            </div>
-            <p id="admin-verification-counts" role="status" aria-live="polite"></p>
-            <div id="admin-verification-list"></div>
-            <nav id="admin-verification-pagination" class="admin-review-pagination" aria-label="Pagination des dossiers"></nav>
-            <div id="admin-verification-details" class="admin-review-modal" hidden></div>
-
-          </div>
-
+<section class="admin-content">
+  <header class="verify-topbar"><div>
+    <p class="verify-eyebrow"><span aria-hidden="true">—</span> &nbsp;ESPACE ADMINISTRATEUR</p>
+    <h1>Artisans à vérifier</h1>
+    <p>Contrôlez les profils, examinez les justificatifs et suivez les décisions.</p>
+  </div><span class="verify-year" id="verify-year">▣ &nbsp; Vérification documentaire</span></header>
+  <section class="admin-section active" id="admin-verification" aria-label="Gestion des vérifications">
+    <div class="verify-stats" id="verify-stats" aria-label="Statistiques des dossiers">
+      <button type="button" class="verify-stat is-active" data-verify-stat="tous" aria-pressed="true"><span>Total des dossiers</span><span class="verify-stat-icon mint" aria-hidden="true">▤</span><strong id="verify-total">—</strong><small>Tous les artisans</small></button>
+      <button type="button" class="verify-stat" data-verify-stat="en_attente" aria-pressed="false"><span>En attente</span><span class="verify-stat-icon blue" aria-hidden="true">◷</span><strong id="verify-pending">—</strong><small>À examiner</small></button>
+      <button type="button" class="verify-stat" data-verify-stat="a_completer" aria-pressed="false"><span>Complément demandé</span><span class="verify-stat-icon orange" aria-hidden="true">⚠</span><strong id="verify-complement">—</strong><small>Pièces à fournir</small></button>
+      <button type="button" class="verify-stat" data-verify-stat="examines" aria-pressed="false"><span>Dossiers examinés</span><span class="verify-stat-icon mint" aria-hidden="true">✓</span><strong id="verify-reviewed">—</strong><small>Validés ou refusés</small></button>
+    </div>
+    <section class="verify-panel" aria-labelledby="verify-heading">
+      <div class="verify-panel-header"><div><h2 id="verify-heading">Gestion des vérifications</h2><p>Retrouvez les artisans, consultez leurs documents et prenez une décision.</p></div><span class="verify-total-tag" id="verify-total-tag">— dossiers</span></div>
+      <div class="verify-toolbar">
+        <label class="verify-search"><span class="sr-only">Rechercher un artisan</span><span aria-hidden="true">⌕</span><input type="search" id="admin-verification-search" placeholder="Rechercher un nom, un métier, une ville..." autocomplete="off" maxlength="100"></label>
+        <div class="verify-filter-tabs" role="group" aria-label="Filtrer par état du dossier">
+          <button type="button" class="is-active" data-verify-filter="tous" aria-pressed="true">Tous</button>
+          <button type="button" data-verify-filter="en_attente" aria-pressed="false">En attente</button>
+          <button type="button" data-verify-filter="a_completer" aria-pressed="false">Compléments</button>
+          <button type="button" data-verify-filter="approuve" aria-pressed="false">Validés</button>
+          <button type="button" data-verify-filter="refuse" aria-pressed="false">Refusés</button>
         </div>
-
-      </section>
-
-      <!-- =============================== -->
-      
-<!-- MON COMPTE ADMINISTRATEUR -->
-      <!-- =============================== -->
-
-      
-
-      <!-- =============================== -->
-      <!-- GESTION DES ADMINISTRATEURS -->
-      <!-- =============================== -->
-
-      
-
+        <label class="verify-sort"><span class="sr-only">Trier les dossiers</span><select id="admin-verification-sort"><option value="recent">Plus récents</option><option value="ancien">Plus anciens</option></select></label>
+        <select id="admin-verification-status" aria-label="Statut du dossier" hidden>
+          <option value="tous">Tous</option><option value="en_attente">En attente</option><option value="a_completer">Complément demandé</option><option value="approuve">Validés</option><option value="refuse">Refusés</option><option value="bloque">Bloqués</option><option value="examines">Examinés</option>
+        </select>
+        <button id="admin-verification-refresh" type="button" class="verify-refresh" title="Actualiser les dossiers" aria-label="Actualiser les dossiers">↻</button>
+      </div>
+      <div class="verify-table-scroll"><table class="verify-table" aria-label="Liste des dossiers artisans">
+        <thead><tr><th>Artisan</th><th>Activité</th><th>Justificatifs</th><th>Statut du dossier</th><th>Actions</th></tr></thead>
+        <tbody id="admin-verification-list" aria-live="polite"><tr><td colspan="5">Chargement des dossiers…</td></tr></tbody>
+      </table></div>
+      <footer class="verify-footer"><p id="admin-verification-counts" role="status" aria-live="polite">Chargement des dossiers…</p><nav id="admin-verification-pagination" class="verify-pagination" aria-label="Pagination des dossiers"></nav></footer>
     </section>
-
-  </main>
-
-  <!-- =============================== -->
-  <!-- MODALE BLOCAGE UTILISATEUR -->
-  <!-- =============================== -->
-
-  
-
-  <!-- =============================== -->
-  <!-- MODALE AJOUT SERVICE -->
-  <!-- =============================== -->
-
-  
-
+    <p class="verify-disclaimer">ⓘ &nbsp; Les validations sont internes à Taskly et ne constituent pas une certification officielle. Les données sont issues des dossiers réels.</p>
+  </section>
+</section>
+</main>
+<div id="admin-verification-details" class="admin-review-modal verify-modal" hidden></div>
 </body>
 </html>

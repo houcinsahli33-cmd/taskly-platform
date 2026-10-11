@@ -31,11 +31,14 @@ router.get('/artisans', async (req, res) => {
     const limite = borne(req.query?.limite ?? req.query?.limit, 20, 50);
     const statut = String(req.query?.statut || 'tous');
     const recherche = String(req.query?.recherche || '').trim().slice(0,100);
-    if (!['tous','en_attente','a_completer','approuve','refuse','bloque'].includes(statut))
+    const tri = String(req.query?.tri || 'recent');
+    if (!['recent','ancien'].includes(tri)) return sansCache(res).status(400).json({message:'Tri invalide.'});
+    if (!['tous','en_attente','a_completer','approuve','refuse','bloque','examines'].includes(statut))
       return sansCache(res).status(400).json({message:'Filtre de statut invalide.'});
     const conditions = [];
     const parametres = [];
     if (statut === 'bloque') conditions.push("u.statut_compte = 'bloque'");
+    else if (statut === 'examines') conditions.push("a.verification_statut IN ('approuve','refuse')");
     else if (statut !== 'tous') {conditions.push('a.verification_statut = ?'); parametres.push(statut);}
     if (recherche) {
       conditions.push('(u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ? OR s.nom LIKE ? OR a.ville LIKE ?)');
@@ -56,10 +59,10 @@ router.get('/artisans', async (req, res) => {
     const pages = Math.max(1, Math.ceil(total/limite));
     const pageEffective = Math.min(page, pages);
     const [artisans] = await db.query(`SELECT a.id,a.verification_statut,a.verification_commentaire,a.ville,
-      a.telephone,a.experience,a.description,a.user_id,u.nom,u.prenom,u.email,u.statut_compte,
+      a.telephone,a.experience,a.description,a.user_id,u.nom,u.prenom,u.email,u.statut_compte,u.created_at AS date_inscription,
       s.nom AS service_nom,
       (SELECT COUNT(*) FROM artisan_documents d WHERE d.artisan_id=a.id) AS documents_count
-      ${jointures}${filtre} ORDER BY a.created_at DESC,a.id DESC LIMIT ? OFFSET ?`,
+      ${jointures}${filtre} ORDER BY a.created_at ${tri === 'ancien' ? 'ASC,a.id ASC' : 'DESC,a.id DESC'} LIMIT ? OFFSET ?`,
       [...parametres,limite,(pageEffective-1)*limite]);
     sansCache(res).json({artisans,total,page:pageEffective,limite,pages,comptes:statistiques[0] || {total:0}});
   } catch(e) {erreur(res,e,'liste');}
@@ -71,7 +74,7 @@ router.get('/artisans/by-user/:userId', async (req,res) => {
   if (!userId) return sansCache(res).status(400).json({message:'Identifiant invalide.'});
   try {
     const [rows] = await db.query(`SELECT a.id,a.user_id,a.verification_statut,a.verification_commentaire,
-      a.ville,a.telephone,a.experience,a.description,u.nom,u.prenom,u.email,u.statut_compte,
+      a.ville,a.telephone,a.experience,a.description,u.nom,u.prenom,u.email,u.statut_compte,u.created_at AS date_inscription,
       s.nom AS service_nom FROM artisans a JOIN users u ON u.id=a.user_id
       JOIN services s ON s.id=a.service_id WHERE a.user_id=? LIMIT 1`,[userId]);
     if (!rows.length) return sansCache(res).status(404).json({message:'Dossier artisan introuvable.'});
@@ -85,7 +88,7 @@ router.get('/artisans/:id/documents', async (req,res) => {
   try {
     const [exists] = await db.query('SELECT id FROM artisans WHERE id=?',[id]);
     if (!exists.length) return sansCache(res).status(404).json({message:'Dossier introuvable.'});
-    const [documents] = await db.query('SELECT id,type_document,original_name,created_at FROM artisan_documents WHERE artisan_id=? ORDER BY id DESC',[id]);
+    const [documents] = await db.query('SELECT id,type_document,original_name,media_type,created_at FROM artisan_documents WHERE artisan_id=? ORDER BY id DESC',[id]);
     const [support] = await db.query(`SELECT id,message,statut,created_at FROM contacts_support
       WHERE user_id=(SELECT user_id FROM artisans WHERE id=?) AND contexte='artisan_activation'
       ORDER BY id DESC LIMIT 30`,[id]);
@@ -109,7 +112,11 @@ router.get('/documents/:id',async(req,res)=>{
     const stored=await require('../services/fileStorage').lire(doc.stored_name,true);
     sansCache(res).set('Content-Type',doc.media_type);
     res.set('X-Content-Type-Options','nosniff');
-    res.set('Content-Disposition',`attachment; filename="justificatif-${id}"`);
+    // Seuls les PDF et images sûres sont présentés dans le navigateur. Jamais de SVG/HTML.
+    const visualisable=['application/pdf','image/png','image/jpeg'].includes(doc.media_type);
+    const afficher=req.query?.afficher==='1' && visualisable;
+    if(afficher)res.set('Content-Security-Policy',"sandbox; default-src 'none'; style-src 'unsafe-inline'");
+    res.set('Content-Disposition',`${afficher?'inline':'attachment'}; filename="justificatif-${id}"`);
     if(stored) return res.send(stored.contenu);
     // Support des documents historiques restés dans le stockage disque privé.
     res.sendFile(path.join(dossier,doc.stored_name));
@@ -122,6 +129,8 @@ router.put('/artisans/:id/decision',async(req,res)=>{
   const statut=String(req.body?.statut||'');
   const motif=req.body?.commentaire;
   const commentaire=typeof motif==='string'?motif.trim():'';
+  // Les anciennes interfaces continuent de notifier par défaut.
+  const notifier=req.body?.notifier!==false;
   if(!['approuve','refuse','a_completer'].includes(statut))return sansCache(res).status(400).json({message:'Statut invalide.'});
   if(commentaire.length>500 || (statut!=='approuve' && commentaire.length<5))
     return sansCache(res).status(400).json({message:'Motif de 5 à 500 caractères requis pour un refus ou complément.'});
@@ -145,10 +154,15 @@ router.put('/artisans/:id/decision',async(req,res)=>{
     const sujet=statut==='approuve'?'Taskly — compte artisan activé':statut==='refuse'?'Taskly — compte artisan bloqué':'Taskly — complément demandé';
     const corps=statut==='approuve'?`Bonjour ${compte.prenom}, votre compte artisan est activé. Connectez-vous avec votre e-mail, votre mot de passe et le code de confirmation.`:
       `Bonjour ${compte.prenom}, ${statut==='refuse'?'votre compte artisan est bloqué':'votre dossier nécessite un complément'}. Motif : ${commentaire}. Depuis la connexion, vérifiez vos identifiants et votre code e-mail pour contacter le support.`;
-    const [notification]=await conn.query('INSERT INTO account_notifications(user_id,destinataire,sujet,corps) VALUES (?,?,?,?)',[compte.user_id,compte.email,sujet,corps]);
+    let notificationId=null;
+    if(notifier){
+      const [notification]=await conn.query('INSERT INTO account_notifications(user_id,destinataire,sujet,corps) VALUES (?,?,?,?)',[compte.user_id,compte.email,sujet,corps]);
+      notificationId=notification.insertId;
+    }
     await conn.commit();
-    const emailEnvoye=await require('../services/accountNotifications').envoyer(notification.insertId).catch(()=>false);
-    return sansCache(res).json({message:emailEnvoye?'Décision enregistrée et e-mail envoyé.':'Décision enregistrée. E-mail en attente : utilisez Réessayer dans le dossier.',emailEnvoye});
+    const emailEnvoye=notificationId?await require('../services/accountNotifications').envoyer(notificationId).catch(()=>false):false;
+    const message=!notifier?'Décision enregistrée sans notification e-mail.':emailEnvoye?'Décision enregistrée et e-mail envoyé.':'Décision enregistrée. E-mail en attente : utilisez Réessayer dans le dossier.';
+    return sansCache(res).json({message,emailEnvoye});
   }catch(e){if(conn) await conn.rollback().catch(()=>{});return erreur(res,e,'décision');}
   finally{if(conn)conn.release();}
 });
