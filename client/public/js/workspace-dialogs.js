@@ -16,7 +16,7 @@
   button.addEventListener('click',()=>{dialog.showModal();close.focus();});
   close.addEventListener('click',()=>dialog.close());
   dialog.addEventListener('close',()=>{
-   node.querySelectorAll('input[type=password]').forEach(input=>{input.value='';});button.focus();
+   node.querySelectorAll('input[type=password],input[data-taskly-password-managed]').forEach(input=>{input.value='';input.type='password';const oeil=input.parentElement?.querySelector('.taskly-password-eye-button');if(oeil){oeil.setAttribute('aria-pressed','false');oeil.setAttribute('aria-label','Afficher le mot de passe');}});button.focus();
   });
   return button;
  }

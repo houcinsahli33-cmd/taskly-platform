@@ -37,10 +37,12 @@
         <div class="panel-body"><p class="muted" id="artisan-verification-status">Chargement du statut...</p>
           <p class="muted" id="artisan-verification-help">Déposez une pièce d’identité et au moins un diplôme, certificat ou justificatif de qualification. Les fichiers restent privés et sont examinés par un administrateur.</p>
           <form id="artisan-document-form" class="grid">
+            <input type="hidden" name="remplacer_document_id" id="artisan-document-replace-id" value="">
             <label><span class="field-label">Type de justificatif</span><select class="form-select" name="type_document" required>
               <option value="identite">Pièce d’identité</option><option value="diplome">Diplôme</option><option value="certificat">Certificat</option><option value="qualification">Qualification professionnelle</option></select></label>
             <label><span class="field-label">Document PDF, JPG ou PNG (3 Mo max)</span><input class="form-control" type="file" name="document" accept=".pdf,.jpg,.jpeg,.png" required></label>
-            <button class="btn primary" type="submit">Envoyer pour examen</button>
+            <button class="btn primary" type="submit">Ajouter ce justificatif</button>
+            <button class="btn outline" type="button" id="artisan-document-cancel-replace" hidden>Annuler le remplacement</button>
           </form><div id="artisan-documents-list" class="mt-22"></div><p id="artisan-document-message" class="muted"></p>
         </div>
       </section>

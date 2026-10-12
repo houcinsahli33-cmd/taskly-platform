@@ -31,21 +31,38 @@ router.get('/documents/:id',async(req,res)=>{
     return res.sendFile(path.join(dossier,doc.stored_name));
   }catch(e){console.error(e.message);return res.status(500).end();}
 });
-router.post('/documents',upload.single('document'),async(req,res)=>{
-  if(!req.file)return res.status(400).json({message:'Document requis.'});
-  const nettoyer=async()=>{};
-  try{
-    const type=String(req.body.type_document||'');
-    if(!['identite','diplome','certificat','qualification'].includes(type)) {await nettoyer();return res.status(400).json({message:'Type invalide.'});}
-    const contenu=req.file.buffer;
-    if(!formatValide(contenu,req.file.mimetype)){await nettoyer();return res.status(400).json({message:'Fichier invalide.'});}
-    const [rows]=await db.query('SELECT id,verification_statut FROM artisans WHERE user_id=?',[req.session.utilisateur.id]);
-    if(!rows[0] || rows[0].verification_statut==='approuve'){await nettoyer();return res.status(403).json({message:'Depot non autorise.'});}
-    const stored = await require('../services/fileStorage').enregistrer(req.file,true);
-    await db.query(`INSERT INTO artisan_documents (artisan_id,type_document,stored_name,original_name,media_type,taille) VALUES (?,?,?,?,?,?)`,
-      [rows[0].id,type,stored,path.basename(req.file.originalname).slice(0,255),req.file.mimetype,req.file.size]);
-    await db.query("UPDATE artisans SET verification_statut='en_attente',verification_commentaire=NULL WHERE id=?",[rows[0].id]);
-    res.status(201).json({message:'Document depose. Examen administratif en attente.'});
-  }catch(e){await nettoyer();console.error(e.message);res.status(500).json({message:'Erreur serveur.'});}
+router.post('/documents', upload.single('document'), async (req,res) => {
+  if(!req.file)return sansCache(res).status(400).json({message:'Document requis.'});
+  const type=String(req.body?.type_document||'');
+  if(!types.has(type) || !formatValide(req.file.buffer,req.file.mimetype))
+    return sansCache(res).status(400).json({message:'Type ou fichier invalide.'});
+  const remplacement=String(req.body?.remplacer_document_id||'').trim();
+  const documentId=remplacement?Number(remplacement):null;
+  if(remplacement && (!Number.isSafeInteger(documentId)||documentId<1))
+    return sansCache(res).status(400).json({message:'Document à remplacer invalide.'});
+  let conn;
+  try {
+    conn=await db.getConnection();await conn.beginTransaction();
+    const [artisans]=await conn.query('SELECT id,verification_statut FROM artisans WHERE user_id=? FOR UPDATE',[req.session.utilisateur.id]);
+    if(!artisans[0]){await conn.rollback();return sansCache(res).status(404).json({message:'Profil artisan introuvable.'});}
+    const artisan=artisans[0];
+    if(documentId){
+      const [existants]=await conn.query('SELECT id FROM artisan_documents WHERE id=? AND artisan_id=? FOR UPDATE',[documentId,artisan.id]);
+      if(!existants.length){await conn.rollback();return sansCache(res).status(404).json({message:'Ce document ne fait pas partie de votre dossier.'});}
+    }
+    // L'enregistrement du blob, la pièce et la remise en verification sont atomiques.
+    const stored=await enregistrer(req.file,true,conn);
+    const valeurs=[type,stored,nomFichier(req.file.originalname),req.file.mimetype,req.file.size];
+    if(documentId){
+      await conn.query('UPDATE artisan_documents SET type_document=?,stored_name=?,original_name=?,media_type=?,taille=? WHERE id=? AND artisan_id=?', [...valeurs,documentId,artisan.id]);
+    } else {
+      await conn.query('INSERT INTO artisan_documents (type_document,stored_name,original_name,media_type,taille,artisan_id) VALUES (?,?,?,?,?,?)',[...valeurs,artisan.id]);
+    }
+    await conn.query("UPDATE artisans SET verification_statut='en_attente',verification_commentaire=NULL WHERE id=?",[artisan.id]);
+    await conn.commit();
+    sansCache(res).status(201).json({message:'Justificatif enregistré. Nouvelle vérification administrative requise.',nouvelleVerification:artisan.verification_statut==='approuve'});
+  } catch(e){if(conn)await conn.rollback().catch(()=>{});console.error('Justificatif artisan:',e.code||e.message);
+    sansCache(res).status(e.status||500).json({message:e.status?e.message:'Impossible d’enregistrer le document.'});
+  } finally {conn?.release();}
 });
 module.exports=router;

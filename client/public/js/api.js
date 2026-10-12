@@ -288,3 +288,60 @@ document.addEventListener("click", (event) => {
     document.body.classList.remove("no-scroll");
   }
 });
+
+/* Champs mot de passe : bouton oeil accessible, y compris dans les fenetres creees apres chargement. */
+(function installerVisibiliteMotsDePasse() {
+  'use strict';
+  if (typeof document === 'undefined' || typeof MutationObserver === 'undefined') return;
+  const STYLE_ID = 'taskly-password-eye-style';
+  const icon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  function installerStyles() {
+    if (document.getElementById(STYLE_ID)) return;
+    const style = document.createElement('style'); style.id = STYLE_ID;
+    style.textContent = '.taskly-password-eye-wrap{position:relative;display:block;width:100%;min-width:0}' +
+      '.taskly-password-eye-wrap>input{width:100%;box-sizing:border-box;padding-right:48px!important}' +
+      '.taskly-password-eye-button{position:absolute;right:7px;top:50%;transform:translateY(-50%);' +
+      'width:34px;height:34px;padding:7px;display:grid;place-items:center;background:transparent;border:0;border-radius:8px;' +
+      'color:#43675d;cursor:pointer;z-index:1}' +
+      '.taskly-password-eye-button:hover{background:#eaf5ef}' +
+      '.taskly-password-eye-button:focus-visible{outline:2px solid #087f63;outline-offset:2px}' +
+      '.taskly-password-eye-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}' +
+      '.taskly-password-eye-button[aria-pressed=true]{color:#087f63}';
+    (document.head || document.documentElement).append(style);
+  }
+  function ajouterChamp(input) {
+    if (input.dataset.tasklyPasswordManaged) return;
+    if (input.type !== 'password') return;
+    input.dataset.tasklyPasswordManaged = '1';
+    // Les formulaires de connexion/inscription qui ont deja un oeil restent inchanges.
+    if (input.parentElement?.querySelector('[data-password-toggle],.taskly-eye,.admin-private-toggle')) return;
+    installerStyles();
+    const wrap = document.createElement('span');wrap.className='taskly-password-eye-wrap';
+    input.parentNode.insertBefore(wrap,input);wrap.append(input);
+    const button = document.createElement('button');button.type='button';button.className='taskly-password-eye-button';
+    button.setAttribute('aria-label','Afficher le mot de passe');button.setAttribute('aria-pressed','false');
+    button.innerHTML=icon;
+    button.addEventListener('click', () => {
+      const visible = input.type === 'password';
+      input.type = visible ? 'text' : 'password';
+      button.setAttribute('aria-label', visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+      button.setAttribute('aria-pressed',String(visible));
+      input.focus({preventScroll:true});
+    });
+    wrap.append(button);
+  }
+  function inspecter(node) {
+    if (!node || node.nodeType !== 1) return;
+    if (node.matches?.('input[type="password"]')) ajouterChamp(node);
+    node.querySelectorAll?.('input[type="password"]:not([data-taskly-password-managed])').forEach(ajouterChamp);
+  }
+  function pret() {
+    inspecter(document.body);
+    const observer=new MutationObserver(records => {
+      for (const record of records) for(const node of record.addedNodes) inspecter(node);
+    });
+    observer.observe(document.body,{childList:true,subtree:true});
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',pret,{once:true});
+  else pret();
+})();

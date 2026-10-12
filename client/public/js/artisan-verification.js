@@ -1,29 +1,79 @@
-async function chargerStatutVerification(){
-  const cible=document.getElementById('artisan-verification-status');if(!cible)return;
-  try{const d=await requeteAPI('/api/artisan-verification/status');
-    const statuts={en_attente:'En attente de controle',a_completer:'Documents complementaires demandes',approuve:'Profil approuve',refuse:'Dossier refuse'};
-    cible.textContent=`Statut : ${statuts[d.statut]||d.statut}${d.commentaire?' — '+d.commentaire:''}`;
-    const liste=document.getElementById('artisan-documents-list');
-    liste.innerHTML=d.documents.length?d.documents.map(doc=>{
-      const id=Number(doc.id),safe=echapperHTML;
-      if(!Number.isSafeInteger(id)||id<=0)return '';
-      const voir=['application/pdf','image/jpeg','image/png'].includes(doc.media_type);
-      return `<article class="artisan-document"><div><strong>${safe(doc.original_name||'Justificatif')}</strong><small>${safe(doc.type_document||'Document')}</small></div><div class="artisan-document-actions">${voir?`<a class="btn outline" href="/api/artisan-verification/documents/${id}?afficher=1" target="_blank" rel="noopener noreferrer">Voir ↗</a>`:''}<a class="btn outline" href="/api/artisan-verification/documents/${id}">Télécharger</a></div></article>`;
-    }).join(''):'Aucun document reçu.';
-    document.getElementById('artisan-document-form').hidden=d.statut==='approuve';
-    const aide=document.getElementById('artisan-verification-help');
-    if(aide)aide.textContent=d.statut==='approuve'
-      ? 'Votre dossier est approuvé. Vous pouvez consulter et télécharger vos justificatifs. Le dépôt de nouvelles pièces reste réservé aux dossiers en cours d’examen.'
-      : 'Consultez vos pièces ou déposez un nouveau justificatif pour compléter votre dossier. Les fichiers restent privés et sont examinés par un administrateur.';
-  }catch(e){cible.textContent=e.message;}
-}
-document.addEventListener('DOMContentLoaded',async()=>{
-  await (window.tasklyAuthReady||Promise.resolve());if(window.utilisateurCourant?.role!=='artisan'||!document.getElementById('artisan-verification-panel'))return;
-  await chargerStatutVerification();
-  document.getElementById('artisan-document-form')?.addEventListener('submit',async(e)=>{
-    e.preventDefault();const info=document.getElementById('artisan-document-message');
-    const form=e.currentTarget,button=form.querySelector('button');button.disabled=true;
-    try{const d=await requeteAPI('/api/artisan-verification/documents',{method:'POST',body:new FormData(form)});info.textContent=d.message;form.reset();await chargerStatutVerification();}
-    catch(err){info.textContent=err.message;}finally{button.disabled=false;}
+/* Justificatifs professionnels : consultation, telechargement, ajout ou remplacement. */
+(() => {
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const noms={identite:'Pièce d’identité',diplome:'Diplôme',certificat:'Certificat',qualification:'Qualification professionnelle'};
+  function afficherDocuments(documents) {
+    const cible=$('artisan-documents-list');if(!cible)return;
+    cible.replaceChildren();
+    if(!documents?.length){cible.textContent='Aucun justificatif reçu.';return;}
+    const titre=document.createElement('h3');titre.textContent='Documents déposés';cible.append(titre);
+    for(const d of documents){
+      const id=Number(d.id);
+      if(!Number.isSafeInteger(id)||id<1)continue;
+      const ligne=document.createElement('div');ligne.className='artisan-document';
+      const infos=document.createElement('div');
+      const nom=document.createElement('strong');nom.textContent=noms[d.type_document]||d.type_document||'Justificatif';
+      const fichier=document.createElement('small');fichier.textContent=d.original_name||`Document n°${id}`;
+      infos.append(nom,fichier);
+      const actions=document.createElement('div');actions.className='artisan-document-actions';
+      function lien(texte,afficher){
+        const a=document.createElement('a');a.className='btn outline';
+        a.textContent=texte;a.href=`/api/artisan-verification/documents/${id}`+(afficher?'?afficher=1':'');
+        if(afficher){a.target='_blank';a.rel='noopener noreferrer';}return a;
+      }
+      if(['application/pdf','image/jpeg','image/png'].includes(d.media_type))actions.append(lien('Voir ↗',true));
+      actions.append(lien('Télécharger',false));
+      const remplacer=document.createElement('button');remplacer.type='button';remplacer.className='btn outline';remplacer.textContent='Remplacer';
+      remplacer.addEventListener('click',()=>{
+        const form=$('artisan-document-form');
+        const champ=$('artisan-document-replace-id');
+        const select=form.querySelector('[name="type_document"]');
+        const bouton=form.querySelector('button[type="submit"]');
+        champ.value=String(id);if(noms[d.type_document])select.value=d.type_document;
+        bouton.textContent='Envoyer le remplacement';
+        $('artisan-document-cancel-replace').hidden=false;
+        $('artisan-document-message').textContent=`Remplacement de : ${d.original_name||nom.textContent}. Sélectionnez le nouveau fichier puis confirmez.`;
+        form.querySelector('[name="document"]').focus();
+      });
+      actions.append(remplacer);ligne.append(infos,actions);cible.append(ligne);
+    }
+  }
+  function resetRemplacement(){
+    $('artisan-document-replace-id').value='';
+    $('artisan-document-cancel-replace').hidden=true;
+    $('artisan-document-form').querySelector('button[type="submit"]').textContent='Ajouter ce justificatif';
+  }
+  async function actualiser() {
+    const cible=$('artisan-verification-status');
+    try {
+      const d=await requeteAPI('/api/artisan-verification/status');
+      const libelles={en_attente:'En attente de contrôle',a_completer:'Documents complémentaires demandés',approuve:'Profil approuvé',refuse:'Dossier refusé'};
+      cible.textContent=`Statut : ${libelles[d.statut]||d.statut}${d.commentaire?' — '+d.commentaire:''}`;
+      afficherDocuments(d.documents);
+      $('artisan-document-form').hidden=false;
+    } catch(e){cible.textContent=e.message;}
+  }
+  document.addEventListener('DOMContentLoaded',async()=>{
+    await (window.tasklyAuthReady||Promise.resolve());
+    if(window.utilisateurCourant?.role!=='artisan'||!$('artisan-verification-panel'))return;
+    $('artisan-document-cancel-replace').addEventListener('click',()=>{
+      resetRemplacement();$('artisan-document-message').textContent='Ajout d’un nouveau justificatif.';
+    });
+    $('artisan-document-form').addEventListener('submit',async(e)=>{
+      e.preventDefault();
+      const form=e.currentTarget,button=form.querySelector('button[type="submit"]');
+      if(button.disabled)return;button.disabled=true;
+      const info=$('artisan-document-message');
+      try{
+        const data=await requeteAPI('/api/artisan-verification/documents',{method:'POST',body:new FormData(form)});
+        form.reset();resetRemplacement();info.textContent=data.message;
+        if(data.nouvelleVerification){
+          $('artisan-verification-status').textContent='Statut : En attente de contrôle administratif';
+          info.textContent+=' Votre espace artisan sera limité pendant cet examen ; reconnectez-vous pour suivre votre dossier.';
+        }else {await actualiser();info.textContent=data.message;}
+      } catch(err){info.textContent=err.message;}finally{button.disabled=false;}
+    });
+    await actualiser();
   });
-});
+})();

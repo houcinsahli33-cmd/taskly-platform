@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<style id="taskly-support-loading-style">body[data-workspace-page="support"] .dashboard-content{visibility:hidden}body[data-workspace-page="support"].taskly-support-loaded .dashboard-content{visibility:visible}</style>
+<script>window.addEventListener("load",function(){document.body.classList.add("taskly-support-loaded");},{once:true});</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Support — Taskly</title>
@@ -10,7 +13,7 @@
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/artisan-dashboard.js?v=20261012-2"></script>
   
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script><link rel="stylesheet" href="/css/artisan-design-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/artisan-support-fidele.css?v=20261012"></head>
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script><link rel="stylesheet" href="/css/artisan-design-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/artisan-support-fidele.css?v=20261012-fix4"></head>
 <body class="dashboard-page" data-require-role="artisan" data-workspace-page="support">
   <div id="site-header"></div>
   <main class="dashboard-shell">

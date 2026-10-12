@@ -78,9 +78,14 @@ async function inscriptionsParPeriode(periode) {
 // Recuperer les derniers utilisateurs inscrits
 async function derniersUtilisateurs() {
     const sql = `
-        SELECT id, nom, prenom, email, role, statut_compte, created_at
-        FROM users
-        ORDER BY created_at DESC
+        SELECT u.id, u.nom, u.prenom, u.email, u.role, u.statut_compte,
+               (SELECT a.verification_statut FROM artisans a WHERE a.user_id=u.id
+                ORDER BY CASE a.verification_statut
+                  WHEN 'en_attente' THEN 0 WHEN 'a_completer' THEN 1
+                  WHEN 'refuse' THEN 2 WHEN 'approuve' THEN 3 ELSE 4 END, a.id DESC LIMIT 1) AS verification_statut,
+               u.created_at
+        FROM users u
+        ORDER BY u.created_at DESC
         LIMIT 8
     `;
     const [resultats] = await db.promise().query(sql);

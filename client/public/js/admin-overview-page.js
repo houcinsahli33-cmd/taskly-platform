@@ -54,9 +54,13 @@
       const nom = `${String(u.prenom || '').trim()} ${String(u.nom || '').trim()}`.trim() || 'Utilisateur';
       const initiales = `${(String(u.prenom || '').trim()[0] || String(u.nom || '').trim()[0] || '?')}${String(u.nom || '').trim()[0] || ''}`.toUpperCase();
       const bloque = u.statut_compte === 'bloque';
+      const dossier = u.role === 'artisan' ? u.verification_statut : null;
+      const statut = bloque ? 'Bloqué'
+        : u.role === 'artisan' ? ({en_attente:'Non traité',a_completer:'À compléter',refuse:'Refusé',approuve:'Actif'}[dossier] || 'Non traité')
+        : ({actif:'Actif',bloque:'Bloqué'}[u.statut_compte] || String(u.statut_compte || 'Inconnu'));
       const role = {artisan:'Artisan',client:'Client',admin:'Admin'}[u.role] || String(u.role || '—');
       const date = u.created_at ? formatDate(u.created_at) : '—';
-      return `<tr><td><span class="overview-person"><span class="overview-avatar" aria-hidden="true">${texte(initiales)}</span>${texte(nom)}</span></td><td>${texte(role)}</td><td>${texte(date)}</td><td><span class="overview-account-status ${bloque?'blocked':''}">${bloque?'Bloqué':'Actif'}</span></td></tr>`;
+      return `<tr><td><span class="overview-person"><span class="overview-avatar" aria-hidden="true">${texte(initiales)}</span>${texte(nom)}</span></td><td>${texte(role)}</td><td>${texte(date)}</td><td><span class="overview-account-status ${bloque?'blocked':''}">${texte(statut)}</span></td></tr>`;
     }).join('')}</tbody></table>`;
   }
 
