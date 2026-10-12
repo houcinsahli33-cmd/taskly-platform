@@ -16,8 +16,38 @@ function fixture(comptes=[client,artisan,second],codeValide=true,statut='approuv
 }
 function pending(){return {email:client.email,expiresAt:Date.now()+300000,comptes:[client,artisan,second].map(c=>({id:c.id,version:c.admin_session_version}))};}
 test('même e-mail : un client et deux artisans de métiers différents',()=>{assert.equal(spaces.choisirSlot([], 'client'),0);assert.equal(spaces.choisirSlot([client],'artisan',7),1);assert.equal(spaces.choisirSlot([client,artisan],'artisan',8),2);assert.equal(spaces.choisirSlot([artisan,second],'client'),0);});
-test('doublon client, troisième artisan, même métier et adresse admin refusés',()=>{for(const [comptes,role,service] of [[[client],'client'],[[artisan,second],'artisan',9],[[artisan],'artisan',7],[[{role:'admin'}],'artisan',7]])assert.throws(()=>spaces.choisirSlot(comptes,role,service),{status:409});});
+test('doublon client, troisième artisan et même métier refusés',()=>{for(const [comptes,role,service] of [[[client],'client'],[[artisan,second],'artisan',9],[[artisan],'artisan',7]])assert.throws(()=>spaces.choisirSlot(comptes,role,service),{status:409});});
+test('adresse administrateur compatible avec client et deux artisans distincts',()=>{
+ const admin={id:4,email:client.email,role:'admin',compte_slot:3};
+ assert.equal(spaces.choisirSlot([admin],'client'),0);
+ assert.equal(spaces.choisirSlot([admin,client],'artisan',7),1);
+ assert.equal(spaces.choisirSlot([admin,client,artisan],'artisan',8),2);
+ assert.throws(()=>spaces.choisirSlot([admin,client,artisan,second],'artisan',9),{status:409});
+});
 test('création liée exige le mot de passe existant sans écraser les identités',async()=>{const bcrypt=require('bcrypt');const hash=await bcrypt.hash('Existing1!',4);const rows=[{...client,mot_de_passe:hash}];const queries=[];const conn={query:async(sql,args)=>{queries.push(sql);return [sql.includes('information_schema')?[{present:1}]:rows];}};await assert.rejects(spaces.preparerInscription(conn,client.email,'artisan',7,'Wrong1!'),{status:403});const result=await spaces.preparerInscription(conn,client.email,'artisan',7,'Existing1!');assert.equal(result.hash,hash);assert.equal(result.slot,1);assert.ok(queries.filter(s=>!s.includes('information_schema')).every(s=>s.includes('FOR UPDATE')));});
+test('mot de passe administrateur jamais requis ni réutilisé pour un espace public',async()=>{
+ const bcrypt=require('bcrypt');
+ const adminHash=await bcrypt.hash('AdminSecret1!',4);
+ const publicHash=await bcrypt.hash('PublicSecret1!',4);
+ const admin={id:4,role:'admin',compte_slot:3,mot_de_passe:adminHash};
+ let rows=[admin];
+ const conn={query:async sql=>[sql.includes('information_schema')?[{present:1}]:rows]};
+ const debut=await spaces.preparerInscription(conn,client.email,'client',null,'PublicSecret1!');
+ assert.equal(debut.slot,0);
+ assert.notEqual(debut.hash,adminHash);
+ rows=[admin,{...client,mot_de_passe:publicHash}];
+ await assert.rejects(spaces.preparerInscription(conn,client.email,'artisan',7,'AdminSecret1!'),{status:403});
+ const artisanResult=await spaces.preparerInscription(conn,client.email,'artisan',7,'PublicSecret1!');
+ assert.equal(artisanResult.hash,publicHash);
+});
+test('choix des espaces après vérification exclut toujours administration',async()=>{
+ const admin={...client,id:4,role:'admin',compte_slot:3};
+ const f=fixture([admin,client,artisan,second]);
+ await f.controller.confirmerEmail(f.req,f.res);
+ assert.equal(f.req.session.accountChoice.comptes.length,3);
+ await f.controller.espacesDisponibles(f.req,f.res);
+ assert.deepEqual(Array.from(f.res.data.comptes,c=>c.role),['client','artisan','artisan']);
+});
 test('pas de choix ni session complète avant validation du code',async()=>{const f=fixture(undefined,false);await f.controller.confirmerEmail(f.req,f.res);assert.equal(f.res.code,400);assert.equal(f.req.session.accountChoice,undefined);assert.equal(f.req.session.utilisateur,undefined);});
 test('code valide : trois choix, sans accès à un profil avant sélection',async()=>{const f=fixture();await f.controller.confirmerEmail(f.req,f.res);assert.equal(f.res.data.choixCompteRequis,true);assert.equal(f.req.session.accountChoice.comptes.length,3);assert.equal(f.req.session.utilisateur,undefined);assert.equal(f.regenerations(),1);await f.controller.espacesDisponibles(f.req,f.res);assert.equal(f.res.data.comptes.length,3);assert.equal(f.res.data.comptes.some(c=>'mot_de_passe' in c),false);});
 test('un seul compte garde la connexion existante',async()=>{const f=fixture([client]);await f.controller.confirmerEmail(f.req,f.res);assert.equal(f.req.session.utilisateur.id,1);assert.equal(f.req.session.accountChoice,undefined);});

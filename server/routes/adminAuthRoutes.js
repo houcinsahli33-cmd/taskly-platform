@@ -6,7 +6,7 @@ router.post('/login',limite,async(req,res)=>{
   try{
     const {email,motDePasse}=req.body;
     if(!email || !motDePasse || !estConfigure()) return res.status(503).json({message:'Identifiants incomplets ou messagerie SMTP non configuree.'});
-    const user=await model.trouverUtilisateurParEmail(String(email).trim().toLowerCase());
+    const user=await model.trouverAdministrateurParEmail(String(email).trim().toLowerCase());
     if(!user || user.role!=='admin' || user.statut_compte==='bloque' || !await bcrypt.compare(motDePasse,user.mot_de_passe))
       return res.status(401).json({message:'Identifiants invalides.'});
     req.session.regenerate(async(error)=>{

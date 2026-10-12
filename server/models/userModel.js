@@ -10,6 +10,15 @@ async function trouverUtilisateurParEmail(email) {
     return resultats[0]; // on retourne le premier et dernier resultat si il y en a un puisque c'est 0 ou 1
 }
 
+// Connexion privée : ne jamais prendre arbitrairement le premier
+// utilisateur d'une adresse partagée par plusieurs espaces.
+async function trouverAdministrateurParEmail(email) {
+    const [rows] = await db.promise().query(
+        "SELECT * FROM users WHERE email = ? AND role = 'admin' LIMIT 1", [email]
+    );
+    return rows[0];
+}
+
 // cree un nouvel utilisateur
 async function creerUtilisateur(nom, prenom, email, motDePasse, role) {
     const sql = "INSERT INTO users (nom, prenom, email, mot_de_passe, role) VALUES (?, ?, ?, ?, ?)";
@@ -68,6 +77,7 @@ async function trouverEspacesParEmail(email){
 module.exports = {
     trouverEspacesParEmail,
     trouverUtilisateurParEmail,
+    trouverAdministrateurParEmail,
     creerUtilisateur,
     trouverUtilisateurParId,
     modifierPhotoProfil,

@@ -13,7 +13,7 @@ const db = require('../config/db').promise();
 const {genererCode, verifierCode, obtenirEtatCode} = require('../services/codeService');
 const {envoyerCode, estConfigure} = require('../services/emailService');
 
-const REGEX_GMAIL = /^[A-Za-z0-9._%+-]+@gmail\.com$/i;
+const REGEX_EMAIL = /^[^\s@<>]{1,64}@[^\s@<>]+\.[^\s@<>]{2,}$/;
 const REGEX_TELEPHONE_ALGERIE = /^0[567]\d{8}$/;
 const REGEX_MDP_FORT = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/;
 
@@ -54,9 +54,9 @@ async function inscription(req, res) {
             });
         }
 
-        if (!REGEX_GMAIL.test(emailNormalise)) {
+        if (emailNormalise.length > 254 || !REGEX_EMAIL.test(emailNormalise)) {
             return res.status(400).json({
-                message: "Veuillez utiliser une adresse @gmail.com valide."
+                message: "Veuillez utiliser une adresse e-mail valide."
             });
         }
 
@@ -147,12 +147,18 @@ async function connexion(req, res) {
             return res.status(400).json({ message: 'Veuillez remplir tous les champs.' });
         }
         const comptes = await userModel.trouverEspacesParEmail(email.trim().toLowerCase());
-        const utilisateur = comptes.find(c=>c.role!=='admin' && (c.role==='artisan'||c.statut_compte!=='bloque')) || comptes[0];
-        if (!utilisateur || !await bcrypt.compare(motDePasse, utilisateur.mot_de_passe)) {
-            return res.status(401).json({message:'Email ou mot de passe incorrect.'});
+        // Ne jamais sélectionner ni mentionner un compte administrateur
+        // depuis le formulaire de connexion public.
+        const comptesPublics = comptes.filter(c=>c.role==='client'||c.role==='artisan');
+        let utilisateur=null;
+        for (const compte of comptesPublics) {
+            if (await bcrypt.compare(motDePasse,compte.mot_de_passe)) {
+                // Privilégier un profil accessible parmi ceux qui ont ce mot de passe.
+                if (!utilisateur || (utilisateur.statut_compte==='bloque' && compte.statut_compte!=='bloque')) utilisateur=compte;
+            }
         }
-        if (utilisateur.role === 'admin') {
-            return res.status(403).json({message:'Administration : utilisez la connexion privée.'});
+        if (!utilisateur) {
+            return res.status(401).json({message:'Email ou mot de passe incorrect.'});
         }
         if (utilisateur.statut_compte === 'bloque' && utilisateur.role !== 'artisan') {
             return res.status(403).json({message:'Votre compte a été bloqué. Contactez le support.'});

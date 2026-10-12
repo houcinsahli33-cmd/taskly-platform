@@ -151,7 +151,7 @@ router.post('/invitation/accept', limiteSensible, async (req, res) => {
     const invitation = invitations[0];
 
     const [existants] = await connexion.query(
-      'SELECT id FROM users WHERE email = ?',
+      "SELECT id FROM users WHERE email = ? AND role = 'admin' FOR UPDATE",
       [invitation.email]
     );
 
@@ -165,8 +165,8 @@ router.post('/invitation/accept', limiteSensible, async (req, res) => {
 
     const [ajout] = await connexion.query(
       `INSERT INTO users
-       (nom, prenom, email, mot_de_passe, role, email_verified)
-       VALUES (?, ?, ?, ?, 'admin', 1)`,
+       (nom, prenom, email, mot_de_passe, role, email_verified, compte_slot)
+       VALUES (?, ?, ?, ?, 'admin', 1, 3)`,
       [
         invitation.nom,
         invitation.prenom,
@@ -437,7 +437,7 @@ router.post('/email/request', limiteSensible, async (req, res) => {
     }
 
     const [existants] = await sql.query(
-      'SELECT id FROM users WHERE email = ?',
+      "SELECT id FROM users WHERE email = ? AND role = 'admin'",
       [nouvelEmail]
     );
 
@@ -695,7 +695,7 @@ router.post(
       }
 
       const [existants] = await sql.query(
-        'SELECT id FROM users WHERE email = ?',
+        "SELECT id FROM users WHERE email = ? AND role = 'admin'",
         [email]
       );
 

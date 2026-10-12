@@ -53,7 +53,7 @@ function estEmailGmail(valeur) {
   return /^[A-Za-z0-9._%+-]+@gmail\.com$/i.test(String(valeur || "").trim());
 }
 
-function validerFormatEmail(inputEmail, { gmailOnly = true } = {}) {
+function validerFormatEmail(inputEmail, { gmailOnly = false } = {}) {
   if (!inputEmail || !inputEmail.value.trim()) return true;
   const valeur = inputEmail.value.trim();
   const regexGeneral = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -147,7 +147,7 @@ function validerMotDePasseInscription(inputPassword) {
   return true;
 }
 
-function mettreAJourStatutEmail(inputEmail, { gmailOnly = true } = {}) {
+function mettreAJourStatutEmail(inputEmail, { gmailOnly = false } = {}) {
   if (!inputEmail) return;
   const icone = document.getElementById(`${inputEmail.id}-status`);
   if (!icone) return;
