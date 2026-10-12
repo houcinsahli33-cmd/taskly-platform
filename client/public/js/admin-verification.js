@@ -6,6 +6,7 @@ let requeteVerificationNumero = 0;
 let dossierActifId = null;
 let examenNumero = 0;
 let declencheurExamen = null;
+const DOSSIERS_PAR_PAGE = 8;
 const verificationLabel = statut => ({
   en_attente:'En attente', a_completer:'Complément demandé', approuve:'Validé', refuse:'Refusé'
 })[statut] || statut || 'Non renseigné';
@@ -73,7 +74,7 @@ async function chargerArtisansVerification(page=pageVerification) {
   const recherche=String(document.getElementById('admin-verification-search')?.value || '').trim();
   const statut=document.getElementById('admin-verification-status')?.value || 'tous';
   const tri=document.getElementById('admin-verification-sort')?.value || 'recent';
-  const params=new URLSearchParams({page:String(page),limite:'5',statut,tri});
+  const params=new URLSearchParams({page:String(page),limite:String(DOSSIERS_PAR_PAGE),statut,tri});
   if (recherche) params.set('recherche',recherche);
   target.innerHTML='<tr><td colspan="5" class="verify-empty">Chargement des dossiers…</td></tr>';
   try {
@@ -93,7 +94,7 @@ async function chargerArtisansVerification(page=pageVerification) {
     const tag=document.getElementById('verify-total-tag');
     if (tag) tag.textContent=counters.total!=null?`${Number(counters.total)} dossiers`:'— dossiers';
     const count=document.getElementById('admin-verification-counts');
-    if (count) count.textContent=`${total} résultat(s) · Affichage de ${total?(pageVerification-1)*5+1:0} à ${Math.min(pageVerification*5,total)} sur ${total} dossiers · page ${pageVerification} sur ${pages}`;
+    if (count) count.textContent=`${total} résultat(s) · Affichage de ${total?(pageVerification-1)*DOSSIERS_PAR_PAGE+1:0} à ${Math.min(pageVerification*DOSSIERS_PAR_PAGE,total)} sur ${total} dossiers · page ${pageVerification} sur ${pages}`;
     target.innerHTML=artisansVerification.map(ligneArtisanVerification).join('') || '<tr><td colspan="5" class="verify-empty">Aucun artisan pour ces critères.</td></tr>';
     const pagination=document.getElementById('admin-verification-pagination');
     if (pagination) pagination.innerHTML=paginationVerification(pageVerification,pages);

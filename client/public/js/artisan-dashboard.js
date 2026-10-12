@@ -255,14 +255,14 @@ async function chargerProfilArtisanDashboard() {
       </div>
     </div>
     <div class="profile-fields">
-      <div><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></div>
-      <div><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></div>
-      <div><strong>Email</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></div>
-      <div><strong>Téléphone</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.telephone || "Non précisé")}</span></div>
-      <div><strong>Service</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.service_nom || "Non précisé")}</span></div>
-      <div><strong>Commune</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.ville || "Non précisée")}</span></div>
-      <div><strong>Expérience</strong><br><span class="muted">${Number(profilArtisanCourant?.experience || 0)} an(s)</span></div>
-      <div><strong>Description</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.description || "Non précisée")}</span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-user"/></svg></i><span><strong>Nom</strong><br><span class="muted">${echapperHTML(utilisateur.nom || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-user"/></svg></i><span><strong>Prénom</strong><br><span class="muted">${echapperHTML(utilisateur.prenom || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-mail"/></svg></i><span><strong>Email</strong><br><span class="muted">${echapperHTML(utilisateur.email || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-phone"/></svg></i><span><strong>Téléphone</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.telephone || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#paper"/></svg></i><span><strong>Service</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.service_nom || "Non précisé")}</span></span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-location"/></svg></i><span><strong>Commune</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.ville || "Non précisée")}</span></span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#clock"/></svg></i><span><strong>Expérience</strong><br><span class="muted">${Number(profilArtisanCourant?.experience || 0)} an(s)</span></span></div>
+      <div><i aria-hidden="true"><svg viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-chat"/></svg></i><span><strong>Description</strong><br><span class="muted">${echapperHTML(profilArtisanCourant?.description || "Non précisée")}</span></span></div>
     </div>
   `;
 

@@ -29,7 +29,8 @@ test('Vérification : statistiques, cinq filtres, tri, tableau réel et modale p
   }
   assert.equal((page.match(/data-verify-filter=/g)||[]).length,5);
   assert.match(js,/requeteAPI\(`\/api\/admin-verification\/artisans\?/);
-  assert.match(js,/limite:'5'/);
+  assert.match(js,/DOSSIERS_PAR_PAGE = 8/);
+  assert.match(js,/limite:String\(DOSSIERS_PAR_PAGE\)/);
   assert.match(js,/data-examine-artisan/);
   assert.match(js,/Dossier de/);
   assert.match(js,/admin-decision-form/);
@@ -59,14 +60,14 @@ test('Vérification : pagination et tri serveur validés et paramétrés',async(
   const {routesMap,queries}=chargerRoutes();
   const handler=routesMap.get('GET /artisans');
   const res=response();
-  await handler({query:{page:'2',limite:'5',statut:'a_completer',tri:'ancien',recherche:'Plomberie'}},res);
+  await handler({query:{page:'2',limite:'8',statut:'a_completer',tri:'ancien',recherche:'Plomberie'}},res);
   assert.equal(res.statusCode,200);
   assert.equal(res.data.total,21);
   const req=queries.find(x=>x.sql.includes('SELECT a.id,a.verification_statut'));
   assert.match(req.sql,/ORDER BY a\.created_at ASC,a\.id ASC LIMIT \? OFFSET \?/);
   assert.match(req.sql,/u\.created_at AS date_inscription/);
-  assert.equal(req.params.at(-2),5);
-  assert.equal(req.params.at(-1),5);
+  assert.equal(req.params.at(-2),8);
+  assert.equal(req.params.at(-1),8);
   assert.ok(req.params.includes('%Plomberie%'));
   assert.ok(req.params.includes('a_completer'));
   assert.equal(res.headers['Cache-Control'],'no-store');

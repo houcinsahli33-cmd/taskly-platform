@@ -59,3 +59,32 @@ body.dashboard-page[data-require-role="artisan"] .artisan-review-stats{grid-temp
 @media(max-width:1120px){body.dashboard-page[data-require-role="artisan"] .dashboard-content{padding:28px 26px}body.dashboard-page[data-require-role="artisan"] .workspace-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:800px){body.dashboard-page[data-require-role="artisan"] .header-inner{display:flex;padding:0 18px;flex-wrap:wrap}body.dashboard-page[data-require-role="artisan"] .dashboard-shell{grid-template-columns:minmax(0,1fr)}body.dashboard-page[data-require-role="artisan"] .sidebar{position:static;height:auto;padding:16px}body.dashboard-page[data-require-role="artisan"] .sidebar-title{margin:0 0 12px}body.dashboard-page[data-require-role="artisan"] .side-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]{margin:0;padding:12px 14px;border:0}body.dashboard-page[data-require-role="artisan"] .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}body.dashboard-page[data-require-role="artisan"] .dashboard-content{padding:25px 18px}body.dashboard-page[data-require-role="artisan"] .dashboard-section-title{font-size:28px}body.dashboard-page[data-require-role="artisan"] .dashboard-hero{align-items:flex-start;flex-direction:column}body.dashboard-page[data-require-role="artisan"] .profile-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){body.dashboard-page[data-require-role="artisan"] .side-nav{grid-template-columns:repeat(2,minmax(0,1fr))}body.dashboard-page[data-require-role="artisan"] .workspace-actions,body.dashboard-page[data-require-role="artisan"] .profile-fields{grid-template-columns:minmax(0,1fr)}body.dashboard-page[data-require-role="artisan"] .profile-panel{padding:20px 0}body.dashboard-page[data-require-role="artisan"] .panel-body{padding:18px}body.dashboard-page[data-require-role="artisan"] .profile-panel h3{font-size:20px}}
+body.dashboard-page[data-require-role="artisan"] .profile-fields>div{display:flex;align-items:flex-start;gap:12px}
+body.dashboard-page[data-require-role="artisan"] .profile-fields>div>span{min-width:0;overflow-wrap:anywhere}
+body.dashboard-page[data-require-role="artisan"] .profile-fields>div:last-child{grid-column:span 2}
+body.dashboard-page[data-require-role="artisan"] .profile-fields i{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#e5f5ee;color:#008b70;flex:none}
+body.dashboard-page[data-require-role="artisan"] .profile-fields i svg{width:19px;height:19px}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action{display:grid;grid-template-columns:43px minmax(0,1fr) 18px;grid-template-rows:auto auto;column-gap:14px;row-gap:4px;align-items:center;min-height:100px;padding:18px;text-align:left;transition:transform .18s,border-color .18s,box-shadow .18s}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action::before{content:"";grid-column:1;grid-row:1/3;width:43px;height:43px;border-radius:12px;background:#e5f6ee url('/images/icons/artisan-workspace-actions.svg') no-repeat 0 0;background-size:258px 43px}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action::after{content:'›';grid-column:3;grid-row:1/3;font-size:24px;color:#83a599}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action strong{grid-column:2;grid-row:1;align-self:end}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action span{grid-column:2;grid-row:2;align-self:start}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(2)::before{background-position:-43px 0;background-color:#e8f1ff}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(3)::before{background-position:-86px 0}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(4)::before{background-position:-129px 0;background-color:#fff3e7}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(5)::before{background-position:-172px 0;background-color:#f0ecfe}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:last-child{grid-column:1/-1;min-height:85px;background:#fffafa;border-color:#f4dddd}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:last-child::before{background-position:-215px 0;background-color:#ffeeee}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:last-child strong{color:#b73e42}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:hover{transform:translateY(-3px);box-shadow:0 12px 24px #123c2c12}
+.artisan-document{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #deebe5;background:#f8fcfa;border-radius:12px;padding:16px;margin-top:12px;flex-wrap:wrap}
+.artisan-document>div:first-child{min-width:0;overflow-wrap:anywhere;flex:1}
+.artisan-document strong{font-size:14px}.artisan-document small{display:block;color:#7a9389;margin-top:4px}
+.artisan-document-actions{display:flex;gap:10px;flex-wrap:wrap}
+body.dashboard-page[data-require-role="artisan"] .dashboard-hero{padding-right:170px;min-height:180px}
+body.dashboard-page[data-require-role="artisan"] .dashboard-hero>div:first-child,body.dashboard-page[data-require-role="artisan"] .dashboard-hero>.btn{position:relative;z-index:1}
+.artisan-hero-art{position:absolute;right:28px;top:50%;transform:translateY(-50%) rotate(9deg);width:110px;height:110px;border:1px solid #ffffff38;border-radius:26px;background:#ffffff12;display:grid;place-items:center;color:#d9fae9}
+.artisan-hero-art svg{width:68px;height:68px}.dashboard-hero>.btn svg{width:18px;height:18px;flex:none}
+@media(max-width:1100px){body.dashboard-page[data-require-role="artisan"] .dashboard-hero{padding-right:30px}.artisan-hero-art{display:none}}
+@media(max-width:480px){body.dashboard-page[data-require-role="artisan"] .profile-fields>div:last-child{grid-column:auto}}
+@media(prefers-reduced-motion:reduce){body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action{transition:none}body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:hover{transform:none}}

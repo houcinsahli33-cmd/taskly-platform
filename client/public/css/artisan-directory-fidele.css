@@ -23,3 +23,7 @@ body[data-active="artisans"] .artisans-results-count{font-size:15px;color:#73858
 body[data-active="artisans"] .artisans-results-count strong{color:#007c69}
 @media(max-width:1100px){body[data-active="artisans"] #artisans-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}}
 @media(max-width:640px){body[data-active="artisans"] #artisans-grid{grid-template-columns:minmax(0,1fr)}body[data-active="artisans"] .artisan-card .card-body{padding:25px}body[data-active="artisans"] .artisan-top h3{font-size:18px}}
+body[data-active="artisans"] .artisan-description{width:100%;white-space:normal;word-break:normal;overflow-wrap:anywhere;text-align:left}
+body[data-active="artisans"] .artisan-card{transition:transform .18s,border-color .18s,box-shadow .18s}
+body[data-active="artisans"] .artisan-card:hover,body[data-active="artisans"] .artisan-card:focus-within{transform:translateY(-4px);border-color:#a2d8c9;box-shadow:0 24px 50px #123c2c18}
+@media(prefers-reduced-motion:reduce){body[data-active="artisans"] .artisan-card{transition:none}body[data-active="artisans"] .artisan-card:hover{transform:none}}

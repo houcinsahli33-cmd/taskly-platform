@@ -16,7 +16,7 @@ function carteArtisan(artisan) {
           <span class="badge accent">${echapperHTML(noteArtisan(artisan))}</span>
           <span class="badge">${Number(artisan.total_demandes || 0)} mission(s)</span>
         </div>
-        <p class="muted">${echapperHTML(tronquer(artisan.description || "Artisan Taskly disponible pour vos demandes.", 150))}</p>
+        <p class="muted artisan-description">${echapperHTML(artisan.description || "Artisan Taskly disponible pour vos demandes.")}</p>
         <div class="request-actions">
           <a class="btn outline" href="/artisan-profile.html?id=${artisan.id}">Voir le profil</a>
           ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${artisan.id}">Envoyer une demande</button>` : ""}
@@ -28,7 +28,7 @@ function carteArtisan(artisan) {
 
 // La page ne conserve qu'une page de profils par requête, mais permet de
 // parcourir tous les résultats approuvés sans plafond artificiel à 6 profils.
-const TAILLE_PAGE_ARTISANS = 12;
+const TAILLE_PAGE_ARTISANS = 6;
 let artisansCharges = [];
 let pageArtisans = 0;
 let totalArtisans = 0;
@@ -61,7 +61,7 @@ function mettreAJourCompteurArtisans() {
   const conteneur = bouton.closest('.load-more-artisans-wrap');
   const compteur = document.getElementById('artisans-results-count');
   const vus = artisansCharges.length;
-  compteur.textContent = `${vus} artisan${vus > 1 ? 's' : ''} affiché${vus > 1 ? 's' : ''} sur ${totalArtisans} résultat${totalArtisans > 1 ? 's' : ''}`;
+  compteur.innerHTML = `<strong>${vus}</strong> artisan${vus > 1 ? 's' : ''} affiché${vus > 1 ? 's' : ''} sur <strong>${totalArtisans}</strong> résultat${totalArtisans > 1 ? 's' : ''}`;
   conteneur.hidden = totalArtisans === 0;
   bouton.hidden = vus >= totalArtisans;
   bouton.disabled = chargementPageArtisans;
