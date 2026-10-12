@@ -1,5 +1,14 @@
 let demandesArtisan = [];
 let profilArtisanCourant = null;
+let filtreDemandesArtisan = "";
+let rechercheDemandesArtisan = "";
+
+function filtrerDemandesArtisan(demandes, statut, recherche) {
+  const texte = recherche.trim().toLocaleLowerCase('fr');
+  return demandes.filter(d => (!statut || d.statut === statut) &&
+    (!texte || [d.client_nom, d.client_prenom, d.client_ville, d.message, d.id]
+      .join(' ').toLocaleLowerCase('fr').includes(texte)));
+}
 
 // Calculer les compteurs artisan
 function statsDemandesArtisan(demandes) {
@@ -13,7 +22,7 @@ function statsDemandesArtisan(demandes) {
 
 // Afficher les statistiques artisan
 function afficherStatsArtisan() {
-  const cible = document.getElementById("artisan-stats");
+  const cible = document.getElementById("artisan-stats") || document.getElementById("artisan-demandes-stats");
   if (!cible) return;
 
   const stats = statsDemandesArtisan(demandesArtisan);
@@ -62,26 +71,42 @@ function afficherDemandesArtisan() {
   const cible = document.getElementById("artisan-requests");
   if (!cible) return;
 
-  if (!demandesArtisan.length) {
-    cible.innerHTML = etatVide("Aucune demande reçue pour le moment.");
+  const demandes = filtrerDemandesArtisan(demandesArtisan, filtreDemandesArtisan, rechercheDemandesArtisan);
+  if (!demandes.length) {
+    cible.innerHTML = etatVide(demandesArtisan.length ? "Aucune demande ne correspond à votre recherche." : "Aucune demande reçue pour le moment.");
     return;
   }
 
-  cible.innerHTML = demandesArtisan.map(carteDemandeArtisan).join("");
+  cible.innerHTML = demandes.map(carteDemandeArtisan).join("");
+}
+
+function afficherDernieresDemandesArtisan() {
+  const cible = document.getElementById('artisan-recent-requests');
+  if (!cible) return;
+  if (!demandesArtisan.length) {
+    cible.innerHTML = `<div class="artisan-empty"><span class="artisan-empty-icon" aria-hidden="true">✉</span><div><h3>Aucune demande pour le moment</h3><p>Lorsqu’un client vous contactera, sa demande apparaîtra ici et dans la rubrique « Demandes reçues ».</p><a class="btn outline" href="/espace/artisan/profil">Consulter mon profil →</a></div></div>`;
+    return;
+  }
+  cible.innerHTML = [...demandesArtisan].sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0,3).map(d =>
+    `<article class="artisan-recent"><div><h3>${echapperHTML(nomComplet(d,'client_'))}</h3><p>${echapperHTML(tronquer(d.message || '',100))}</p><small>${formatDate(d.created_at)}</small></div>${badgeStatut(d.statut)}<a href="/espace/artisan/demandes">Consulter →</a></article>`).join('');
 }
 
 // Charger les demandes depuis le backend
 async function chargerDemandesArtisan() {
   const cible = document.getElementById("artisan-requests");
   if (cible) cible.innerHTML = etatChargement("Chargement des demandes reçues...");
+  const recentes = document.getElementById('artisan-recent-requests');
+  if (recentes) recentes.innerHTML = etatChargement("Chargement des demandes reçues...");
 
   try {
     const data = await requeteAPI("/api/demandes/artisan");
     demandesArtisan = data.demandes || [];
     afficherStatsArtisan();
     afficherDemandesArtisan();
+    afficherDernieresDemandesArtisan();
   } catch (error) {
     if (cible) cible.innerHTML = etatVide(error.message);
+    if (recentes) recentes.innerHTML = etatVide(error.message);
   }
 }
 
@@ -124,6 +149,19 @@ function ouvrirSignalementArtisan(id) {
 
 // Initialiser les actions artisan
 function initialiserActionsArtisan() {
+  document.querySelectorAll('[data-artisan-filter]').forEach(bouton => bouton.addEventListener('click', () => {
+    filtreDemandesArtisan = bouton.dataset.artisanFilter;
+    document.querySelectorAll('[data-artisan-filter]').forEach(b => {
+      const actif = b === bouton;
+      b.classList.toggle('active', actif);
+      b.setAttribute('aria-pressed', String(actif));
+    });
+    afficherDemandesArtisan();
+  }));
+  document.getElementById('artisan-request-search')?.addEventListener('input', event => {
+    rechercheDemandesArtisan = event.target.value;
+    afficherDemandesArtisan();
+  });
   document.addEventListener("click", (event) => {
     const statut = event.target.closest("[data-set-status]");
     const terminer = event.target.closest("[data-complete-request]");
@@ -243,6 +281,8 @@ async function chargerAvisArtisan() {
 
   try {
     const { avis, statistiques } = await requeteAPI(`/api/avis/artisan/${profilArtisanCourant.id}`);
+    const stats = document.getElementById('artisan-review-stats');
+    if (stats) stats.innerHTML = `<div class="stat-card"><span>Total des avis</span><strong>${Number(statistiques.total_avis || 0)}</strong></div><div class="stat-card"><span>Note moyenne</span><strong>${Number(statistiques.total_avis) ? Number(statistiques.moyenne_note || 0).toFixed(1) : '—'} / 5</strong></div><div class="stat-card"><span>Avis affichés</span><strong>${Math.min(avis.length,6)}</strong></div>`;
     if (!avis.length) {
       cible.innerHTML = etatVide("Aucun avis reçu pour le moment.");
       return;
@@ -325,7 +365,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     catch(error){cible.textContent=error.message;}
   }
   if(page==='accueil'||page==='demandes'){
-    if(page==='accueil')afficherStatsArtisan();
     if(page==='demandes')initialiserActionsArtisan();
     chargerDemandesArtisan();
   }

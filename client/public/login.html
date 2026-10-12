@@ -10,7 +10,7 @@
   <script defer src="/js/algeria-locations.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/auth-pages.js"></script>
-</head>
+<link rel="stylesheet" href="/css/login-password.css"></head>
 <body class="auth-page" data-auth-page="true">
   <!-- Carte connexion -->
   <main class="auth-card">
@@ -33,7 +33,7 @@
           </label>
           <label>
             <span class="field-label">Mot de passe</span>
-            <input class="form-control" id="login-password" type="password" required placeholder="Mot de passe">
+            <span class="login-password-wrap"><input class="form-control" id="login-password" type="password" autocomplete="current-password" required placeholder="Mot de passe"><button type="button" class="taskly-eye" data-password-toggle="login-password" aria-label="Afficher le mot de passe" aria-pressed="false"></button></span>
           </label>
           <button class="btn primary block" type="submit">Se connecter</button>
         </form>

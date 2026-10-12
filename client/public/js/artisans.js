@@ -45,7 +45,7 @@ function obtenirBoutonAfficherPlusArtisans() {
     conteneur.hidden = true;
     conteneur.innerHTML = `
       <button class="btn load-more-artisans-btn" id="load-more-artisans" type="button">
-        Afficher plus d’artisans
+        Afficher plus
       </button>
       <p class="artisans-results-count" id="artisans-results-count" role="status" aria-live="polite"></p>`;
     grille.insertAdjacentElement('afterend', conteneur);
@@ -65,7 +65,7 @@ function mettreAJourCompteurArtisans() {
   conteneur.hidden = totalArtisans === 0;
   bouton.hidden = vus >= totalArtisans;
   bouton.disabled = chargementPageArtisans;
-  bouton.textContent = chargementPageArtisans ? 'Chargement…' : 'Afficher plus d’artisans';
+  bouton.textContent = chargementPageArtisans ? 'Chargement…' : 'Afficher plus';
 }
 
 async function chargerPageArtisans() {

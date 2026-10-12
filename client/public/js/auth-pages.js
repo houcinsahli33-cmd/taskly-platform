@@ -199,6 +199,7 @@ function initialiserIndicateursAuth() {
       input.type = visible ? "text" : "password";
       bouton.innerHTML = visible ? iconeOeilBarre() : iconeOeil();
       bouton.classList.toggle("is-visible", visible);
+      bouton.setAttribute("aria-pressed", String(visible));
       bouton.setAttribute("aria-label", visible ? "Masquer le mot de passe" : "Afficher le mot de passe");
     });
   });

@@ -45,12 +45,13 @@
     const role = String(utilisateur.role || '').toLowerCase();
     const roleIcone = role === 'artisan' ? '⚒' : role === 'admin' ? '♛' : '♙';
     const couleur = role === 'admin' ? 'admin' : role === 'client' ? 'client' : 'artisan';
-    const statut = utilisateur.statut_compte === 'bloque' ? 'bloque' : 'actif';
+    const statut = utilisateur.statut_compte === 'bloque' ? 'bloque'
+      : utilisateur.role === 'artisan' && utilisateur.verification_statut === 'en_attente' ? 'non_traite' : 'actif';
     return `<tr>
       <td><div class="admin-users-person"><span class="admin-users-avatar ${couleur}" aria-hidden="true">${initiales(utilisateur)}</span><span class="admin-users-person-text"><strong>${nom}</strong>${informationsSupplementaires(utilisateur)}</span></div></td>
       <td class="admin-users-email">${echapperHTML(utilisateur.email || '—')}</td>
       <td><span class="admin-users-role"><span aria-hidden="true">${roleIcone}</span> ${echapperHTML(role || '—')}</span></td>
-      <td><span class="admin-users-account-status ${statut}"><span class="admin-users-status-dot" aria-hidden="true"></span>${statut === 'bloque' ? 'Bloqué' : 'Actif'}</span></td>
+      <td><span class="admin-users-account-status ${statut}"><span class="admin-users-status-dot" aria-hidden="true"></span>${statut === 'bloque' ? 'Bloqué' : statut === 'non_traite' ? 'Non traité' : 'Actif'}</span></td>
       <td class="admin-users-date">${echapperHTML(formatDate(utilisateur.created_at))}</td>
       <td>${actionsPour(utilisateur)}</td>
     </tr>`;

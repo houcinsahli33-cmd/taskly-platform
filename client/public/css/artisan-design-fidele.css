@@ -1,0 +1,61 @@
+/* Styles réservés à l'espace artisan ; les formulaires et routes restent ceux du site. */
+body.dashboard-page[data-require-role="artisan"]{--ink:#142d39;--muted:#73879a;--line:#dfeae6;--primary:#008a70;--font-main:Inter,"Segoe UI",Arial,sans-serif;background:#f2f7f5;color:var(--ink);font-family:var(--font-main)}
+body.dashboard-page[data-require-role="artisan"] h1,body.dashboard-page[data-require-role="artisan"] h2,body.dashboard-page[data-require-role="artisan"] h3{font-family:var(--font-main);color:var(--ink)}
+body.dashboard-page[data-require-role="artisan"] .header-inner{display:grid;grid-template-columns:1fr 1fr 1fr;max-width:none;padding:0 34px;min-height:76px}
+body.dashboard-page[data-require-role="artisan"] .main-nav{justify-self:center;margin:0}
+body.dashboard-page[data-require-role="artisan"] .header-actions{justify-self:end}
+body.dashboard-page[data-require-role="artisan"] .dashboard-shell{grid-template-columns:208px minmax(0,1fr);min-height:calc(100dvh - 76px)}
+body.dashboard-page[data-require-role="artisan"] .sidebar{background:#0b392e;padding:31px 15px 22px;display:flex;flex-direction:column;top:76px;height:calc(100dvh - 76px)}
+body.dashboard-page[data-require-role="artisan"] .sidebar-title{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:#92b6a7;margin:0 14px 30px}
+body.dashboard-page[data-require-role="artisan"] .side-nav{display:flex;flex-direction:column;gap:7px;flex:1}
+body.dashboard-page[data-require-role="artisan"] .side-nav a,body.dashboard-page[data-require-role="artisan"] .side-nav button{min-height:45px;border-radius:11px;padding:12px 14px;font-size:12px;font-weight:650;color:#c5ded3;gap:10px}
+body.dashboard-page[data-require-role="artisan"] .side-nav a.active{background:#e3f5ed;color:#007b62}
+body.dashboard-page[data-require-role="artisan"] .side-nav a:hover{background:#0c4739;color:white}
+body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]{margin-top:auto;border-top:1px solid #ffffff18;border-radius:0;padding-top:20px}
+.artisan-nav-icon{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8}
+body.dashboard-page[data-require-role="artisan"] .dashboard-content{min-width:0;padding:30px 42px 48px;max-width:1480px;width:100%;margin:auto}
+body.dashboard-page[data-require-role="artisan"] .dashboard-section-title{font-size:34px;letter-spacing:-.8px;margin:0 0 24px;line-height:1.2;font-weight:800}
+body.dashboard-page[data-require-role="artisan"] .dashboard-hero{min-height:169px;padding:27px 30px;border-radius:18px;background:linear-gradient(111deg,#008e72,#045e4c 72%,#084939);position:relative;overflow:hidden;color:#def7ed;gap:18px}
+body.dashboard-page[data-require-role="artisan"] .dashboard-hero:after{content:"";position:absolute;border:1px solid #ffffff24;border-radius:50%;width:390px;height:390px;right:20px;top:-270px;pointer-events:none}
+body.dashboard-page[data-require-role="artisan"] .dashboard-hero h2{color:white;font-size:27px;margin:5px 0 10px;letter-spacing:-.65px}
+body.dashboard-page[data-require-role="artisan"] .dashboard-hero p{font-size:14px;color:#def7ed;max-width:660px}
+body.dashboard-page[data-require-role="artisan"] .dashboard-hero .eyebrow{font-size:11px;letter-spacing:1.3px}
+body.dashboard-page[data-require-role="artisan"] .btn{border-radius:11px;font-size:13px;min-height:42px;font-weight:700}
+body.dashboard-page[data-require-role="artisan"] .stats-grid{gap:15px;grid-template-columns:repeat(4,minmax(0,1fr))}
+body.dashboard-page[data-require-role="artisan"] .stat-card{min-height:129px;padding:19px 20px 17px;border-radius:16px;border-color:#e0e9e6;box-shadow:0 6px 19px #163c3110}
+body.dashboard-page[data-require-role="artisan"] .stat-card span{font-size:13px;color:#617b8d;font-weight:650}
+body.dashboard-page[data-require-role="artisan"] .stat-card strong{font-size:31px;color:#142d39;letter-spacing:-1px}
+body.dashboard-page[data-require-role="artisan"] .panel{border:1px solid #dfebe6;border-radius:17px;box-shadow:0 6px 21px #18362b0a;overflow:hidden}
+body.dashboard-page[data-require-role="artisan"] .panel-header{padding:20px 22px 17px;border-bottom:1px solid #eef3f1;background:white}
+body.dashboard-page[data-require-role="artisan"] .panel-header h2{font-size:16px;letter-spacing:-.2px;margin:0}
+body.dashboard-page[data-require-role="artisan"] .panel-body{padding:22px}
+body.dashboard-page[data-require-role="artisan"] .request-card{border:1px solid #dfeae6;border-radius:15px;padding:22px;background:#fff}
+body.dashboard-page[data-require-role="artisan"] .request-card h3{font-size:16px}
+body.dashboard-page[data-require-role="artisan"] .request-card p{font-size:13px}
+body.dashboard-page[data-require-role="artisan"] .profile-panel{padding:27px 29px 23px;position:relative;border-top:6px solid #008f71}
+body.dashboard-page[data-require-role="artisan"] .profile-panel .avatar{width:86px;height:86px;border:5px solid #eaf8f2;border-radius:24px}
+body.dashboard-page[data-require-role="artisan"] .profile-panel h3{font-size:24px;margin:5px 0;letter-spacing:-.6px}
+body.dashboard-page[data-require-role="artisan"] .profile-fields{background:white;gap:12px;padding:19px}
+body.dashboard-page[data-require-role="artisan"] .profile-fields>div{padding:15px;border-radius:12px;background:#f6faf8;border:1px solid #eef3f1;overflow-wrap:anywhere}
+body.dashboard-page[data-require-role="artisan"] .profile-fields strong{font-size:11px;color:#8a9da6;font-weight:500}
+body.dashboard-page[data-require-role="artisan"] .profile-fields span{font-size:13px;color:#19383e;font-weight:600}
+body.dashboard-page[data-require-role="artisan"] .workspace-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+body.dashboard-page[data-require-role="artisan"] .workspace-action{border-radius:15px;padding:20px;min-height:135px}
+body.dashboard-page[data-require-role="artisan"] .workspace-action strong{font-size:13px}
+body.dashboard-page[data-require-role="artisan"] .workspace-action span{font-size:11.5px;color:#8a9ea8}
+body.dashboard-page[data-require-role="artisan"] .form-control,body.dashboard-page[data-require-role="artisan"] .form-select,body.dashboard-page[data-require-role="artisan"] .form-textarea{border-radius:11px;border-color:#dce8e4;font-size:13px}
+body.dashboard-page[data-require-role="artisan"] #support{max-width:960px}
+body.dashboard-page[data-require-role="artisan"] .review-card{border-radius:16px;border:1px solid #dfeae6}
+.artisan-upper{margin-bottom:24px}.artisan-upper .dashboard-section-title{margin-bottom:8px!important}.artisan-eyebrow{font-size:10px;font-weight:800;color:#008a70;letter-spacing:1.25px;margin:0 0 8px}.artisan-subtitle{font-size:13px;color:#8da0ae;margin:0}
+.artisan-section-title{display:flex;justify-content:space-between;align-items:center;margin:25px 0 13px;gap:12px}.artisan-section-title h2{font-size:17px;margin:0}.artisan-section-title span{font-size:12px;color:#90a0af}
+.artisan-overview-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(310px,.87fr);gap:18px;margin-top:22px}.artisan-overview-grid .panel-header{display:flex;justify-content:space-between;align-items:start;gap:12px}.artisan-overview-grid .panel-header p{font-size:12px;margin:4px 0 0}.artisan-overview-grid .panel-header>a{font-size:12px;font-weight:700;white-space:nowrap;color:#008a70}
+.artisan-guide{padding:12px 20px 18px}.artisan-guide>div{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #edf2f0}.artisan-guide b{height:30px;min-width:30px;display:grid;place-items:center;border-radius:10px;color:#008869;background:#e5f7ee;font-size:12px}.artisan-guide strong{font-size:13px}.artisan-guide p{font-size:11.5px;color:#8da0ae;line-height:1.5;margin:5px 0 0}.artisan-guide>a{margin-top:16px}
+.artisan-empty{display:flex;align-items:center;justify-content:center;gap:30px;min-height:230px;padding:15px 0}.artisan-empty-icon{height:132px;min-width:132px;background:#ecf8f2;border:1px dashed #a9dfcc;border-radius:35px;display:grid;place-items:center;font-size:65px;color:#008c70}.artisan-empty h3{font-size:17px;margin:0 0 8px}.artisan-empty p{font-size:12.5px;color:#7d94a3;line-height:1.7;margin:0 0 15px}
+.artisan-recent{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:15px 0;border-bottom:1px solid #edf2f0}.artisan-recent>div{flex:1;min-width:160px}.artisan-recent h3{font-size:14px;margin:0}.artisan-recent p,.artisan-recent small{font-size:12px;color:#7d94a3;margin:6px 0}.artisan-recent>a{font-size:12px;color:#008a70}
+.artisan-filter-bar{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:0 0 20px}.artisan-filter-bar>div{display:flex;gap:7px;flex-wrap:wrap}.artisan-filter{border:0;background:white;color:#657e8e;font:700 12px var(--font-main);padding:10px 13px;border-radius:9px;cursor:pointer}.artisan-filter.active{background:#008a70;color:white}.artisan-filter-bar .form-control{width:250px;max-width:100%}
+body.dashboard-page[data-require-role="artisan"] .artisan-review-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.artisan-review-banner,.artisan-support-banner{background:linear-gradient(100deg,#e8f8f0,#f7fcf9);border:1px solid #d9eee3;border-radius:16px;padding:22px 25px;margin-bottom:18px}.artisan-review-banner{display:flex;gap:16px;align-items:center}.artisan-review-banner>span{display:grid;place-items:center;background:#e4f5ec;color:#d2a72c;width:59px;height:59px;border-radius:16px;font-size:29px;flex:none}.artisan-review-banner h2,.artisan-support-banner h2{font-size:16px;margin:0 0 5px}.artisan-review-banner p,.artisan-support-banner p{font-size:12px;color:#8197a3;margin:0}
+@media(max-width:1120px){.artisan-overview-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.artisan-empty{flex-direction:column;align-items:flex-start;gap:18px}.artisan-section-title{align-items:start;flex-direction:column}.artisan-filter-bar .form-control{width:100%}body.dashboard-page[data-require-role="artisan"] .artisan-review-stats{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:1120px){body.dashboard-page[data-require-role="artisan"] .dashboard-content{padding:28px 26px}body.dashboard-page[data-require-role="artisan"] .workspace-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){body.dashboard-page[data-require-role="artisan"] .header-inner{display:flex;padding:0 18px;flex-wrap:wrap}body.dashboard-page[data-require-role="artisan"] .dashboard-shell{grid-template-columns:minmax(0,1fr)}body.dashboard-page[data-require-role="artisan"] .sidebar{position:static;height:auto;padding:16px}body.dashboard-page[data-require-role="artisan"] .sidebar-title{margin:0 0 12px}body.dashboard-page[data-require-role="artisan"] .side-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]{margin:0;padding:12px 14px;border:0}body.dashboard-page[data-require-role="artisan"] .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}body.dashboard-page[data-require-role="artisan"] .dashboard-content{padding:25px 18px}body.dashboard-page[data-require-role="artisan"] .dashboard-section-title{font-size:28px}body.dashboard-page[data-require-role="artisan"] .dashboard-hero{align-items:flex-start;flex-direction:column}body.dashboard-page[data-require-role="artisan"] .profile-fields{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){body.dashboard-page[data-require-role="artisan"] .side-nav{grid-template-columns:repeat(2,minmax(0,1fr))}body.dashboard-page[data-require-role="artisan"] .workspace-actions,body.dashboard-page[data-require-role="artisan"] .profile-fields{grid-template-columns:minmax(0,1fr)}body.dashboard-page[data-require-role="artisan"] .profile-panel{padding:20px 0}body.dashboard-page[data-require-role="artisan"] .panel-body{padding:18px}body.dashboard-page[data-require-role="artisan"] .profile-panel h3{font-size:20px}}

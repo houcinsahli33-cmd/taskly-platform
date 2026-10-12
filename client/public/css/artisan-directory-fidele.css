@@ -1,0 +1,25 @@
+/* Annuaire public : dimensions et espaces de la capture de référence. */
+body[data-active="artisans"] #artisans-grid{gap:34px;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+body[data-active="artisans"] .artisan-card{border:1px solid #dcecea;border-radius:22px;background:#fff;box-shadow:0 18px 44px rgba(16,52,43,.07);overflow:hidden}
+body[data-active="artisans"] .artisan-card .card-body{padding:28px;display:flex;flex-direction:column;height:100%;gap:0}
+body[data-active="artisans"] .artisan-top{display:flex;align-items:center;gap:20px;margin:0 0 20px;min-height:94px}
+body[data-active="artisans"] .artisan-top>div{min-width:0}
+body[data-active="artisans"] .artisan-top .avatar{width:94px;height:94px;flex:0 0 94px;border-radius:50%;border:7px solid #eff7f4;box-shadow:0 8px 25px #143b2b0d;object-fit:cover}
+body[data-active="artisans"] .artisan-top h3{font:800 19px/1.3 var(--font-main);color:#102d34;margin:0 0 16px;overflow-wrap:anywhere}
+body[data-active="artisans"] .artisan-top p{font-size:16px;line-height:1.5;margin:0;color:#738588}
+body[data-active="artisans"] .artisan-top .stars{color:#da9200;font-size:18px;line-height:1.2;margin-top:4px;letter-spacing:-1px}
+body[data-active="artisans"] .artisan-card .meta-row{gap:10px;display:flex;flex-wrap:wrap;margin:0 0 18px}
+body[data-active="artisans"] .artisan-card .badge{border:0;border-radius:6px;background:#f4f7f3;color:#173641;padding:6px 9px;font-size:13px;font-weight:800;line-height:1.4}
+body[data-active="artisans"] .artisan-card .badge.primary{background:#e3f5ee;color:#006b5b}
+body[data-active="artisans"] .artisan-card .badge.accent{background:#fff4cf;color:#885b00}
+body[data-active="artisans"] .artisan-card .card-body>p{font-size:16px;line-height:1.55;color:#738588;margin:0 0 28px;min-height:75px}
+body[data-active="artisans"] .artisan-card .request-actions{margin:auto 0 0;gap:10px;flex-wrap:wrap}
+body[data-active="artisans"] .artisan-card .btn.outline{border:1px solid #21a48b;border-radius:28px;color:#008a70;padding:11px 22px;min-height:46px;font-size:14px;background:#fff}
+body[data-active="artisans"] .artisan-card .btn.outline:hover{background:#e3f5ee}
+body[data-active="artisans"] .artisan-card .btn.primary{border-radius:28px;font-size:14px}
+body[data-active="artisans"] .load-more-artisans-wrap{text-align:center;margin:30px 0 0}
+body[data-active="artisans"] .load-more-artisans-btn{border:0;border-radius:28px;background:linear-gradient(110deg,#00866b,#0ab58e);color:white;min-width:190px;min-height:46px;font-size:15px;font-weight:700;padding:11px 28px}
+body[data-active="artisans"] .artisans-results-count{font-size:15px;color:#738588;font-weight:600;margin:14px 0 0}
+body[data-active="artisans"] .artisans-results-count strong{color:#007c69}
+@media(max-width:1100px){body[data-active="artisans"] #artisans-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}}
+@media(max-width:640px){body[data-active="artisans"] #artisans-grid{grid-template-columns:minmax(0,1fr)}body[data-active="artisans"] .artisan-card .card-body{padding:25px}body[data-active="artisans"] .artisan-top h3{font-size:18px}}

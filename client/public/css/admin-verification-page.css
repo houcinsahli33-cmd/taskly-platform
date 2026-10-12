@@ -119,3 +119,22 @@ body.admin-verification-page .review-support{padding:10px 0;border-bottom:1px so
 @media(max-width:480px){body.admin-verification-page .verify-stats{grid-template-columns:1fr 1fr}body.admin-verification-page .verify-panel-header{padding:16px}body.admin-verification-page .verify-panel-header p{font-size:.72rem}}
 body.admin-verification-page{font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
 body.admin-verification-page .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+/* Grille de dossiers : tous les filtres utilisent le même alignement. */
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-table-scroll{overflow:visible;padding:0 23px 20px}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-table{display:block;min-width:0;width:100%}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] #admin-verification-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;width:100%}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card{display:flex;flex-direction:column;min-width:0;padding:20px;border:1px solid #d6e3df;border-radius:18px;background:white;box-shadow:0 8px 24px #173b2f08;transition:transform .18s,border-color .18s,box-shadow .18s}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card:hover,body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card:focus-within{transform:translateY(-4px);border-color:#63baa1;box-shadow:0 15px 32px #173b2f16}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card td{display:block;min-width:0;padding:17px 0;border-bottom:1px solid #e4eced;overflow-wrap:anywhere}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card td:first-child{padding-top:5px;min-height:83px}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card td:last-child{margin-top:auto;padding-bottom:0;border:0}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-person{min-width:0;gap:11px;align-items:center}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-person>span:last-child{min-width:0}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-person strong{font-size:14px;line-height:1.4}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-examine{white-space:normal;width:100%;min-height:46px}
+body.dashboard-page.admin-verification-page[data-require-role="admin"] #admin-verification-list>tr:not(.admin-review-card){grid-column:1/-1;display:block}
+@media(max-width:1300px){body.dashboard-page.admin-verification-page[data-require-role="admin"] #admin-verification-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1050px){body.dashboard-page.admin-verification-page[data-require-role="admin"] #admin-verification-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){body.dashboard-page.admin-verification-page[data-require-role="admin"] #admin-verification-list{grid-template-columns:minmax(0,1fr)}body.dashboard-page.admin-verification-page[data-require-role="admin"] .verify-table-scroll{padding:0 14px 16px}}
+@media(prefers-reduced-motion:reduce){body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card{transition:none}body.dashboard-page.admin-verification-page[data-require-role="admin"] .admin-review-card:hover{transform:none}}

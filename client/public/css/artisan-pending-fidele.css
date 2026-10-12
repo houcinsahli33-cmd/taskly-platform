@@ -1,0 +1,36 @@
+.pending-page{background:#f5f8f6;font-family:"Segoe UI",Arial,sans-serif;color:#103a32}
+.pending-page .pending-shell{max-width:1040px;width:calc(100% - 40px);padding:42px 0 70px}
+.pending-page .pending-intro{border-radius:24px;background:linear-gradient(115deg,#079778,#006450);color:white;padding:33px 38px;position:relative;overflow:hidden;margin-bottom:24px}
+.pending-page .pending-intro:before,.pending-page .pending-intro:after{content:"";position:absolute;width:490px;height:490px;right:-105px;top:-195px;border:1px solid #ffffff16;border-radius:50%;pointer-events:none}
+.pending-page .pending-intro:after{width:320px;height:320px;right:-70px;top:-130px}
+.pending-page .pending-intro h1{font:700 40px/1.25 "Segoe UI",Arial,sans-serif;color:white;margin:0 0 20px;letter-spacing:-1px}
+.pending-page .pending-intro .eyebrow{display:none}
+.pending-page .pending-intro p{font-size:16px;line-height:1.6;margin:0;color:#edfaf6}
+.pending-page #pending-status{font-weight:600}
+.pending-page #pending-reason:empty{display:none}
+.pending-page .pending-intro .taskly-form-actions{margin-top:28px;justify-content:flex-start;gap:12px}
+.pending-page .btn{border-radius:11px;font-size:14px;min-height:48px;padding:12px 21px;font-weight:700}
+.pending-page .pending-intro .btn.light{background:white;color:#006b55}
+.pending-page .pending-intro .btn.outline{background:transparent;border:1px solid #9ddacc;color:white}
+.pending-page .pending-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}
+.pending-page .panel{border:1px solid #d5e6df;border-radius:20px;box-shadow:0 8px 25px #143b2b04;overflow:hidden}
+.pending-page .panel-header{padding:27px;border-bottom:1px solid #e1eae6;background:white}
+.pending-page .panel-header h2{font:700 20px/1.5 "Segoe UI",Arial,sans-serif;color:#103a32;margin:0;letter-spacing:-.5px}
+.pending-page .panel-body{padding:24px 25px}
+.pending-page .panel-body p{font-size:15px;line-height:1.6;color:#637e74;margin:0 0 3px}
+.pending-page .field-label{font-size:14px;font-weight:700;margin-bottom:10px}
+.pending-page .form-control,.pending-page .form-select,.pending-page .form-textarea{background:#fbfdfc;border:1px solid #d3e3dc;border-radius:12px;font-size:15px;padding:14px 20px}
+.pending-page .form-textarea{min-height:138px;margin-bottom:12px}
+.pending-page #pending-doc-type{min-height:52px;margin-bottom:20px}
+.pending-page #pending-doc{border:1px dashed #a9daca;padding:11px;background:#f5faf7;font-size:14px;margin-bottom:10px}
+.pending-page #pending-doc::file-selector-button{border:0;border-radius:10px;background:#07866b;color:white;font-weight:700;padding:13px 14px;margin-right:12px;cursor:pointer}
+.pending-page .panel form .btn.primary{width:100%;background:linear-gradient(110deg,#008d70,#00775f);box-shadow:0 8px 20px #00876b22;margin-top:18px}
+.pending-page #pending-support-form .btn.primary{margin-top:58px}
+.pending-page #pending-documents{margin-top:16px;font-size:14px}
+.pending-page .pending-account-action{grid-column:1/-1}
+.pending-page .pending-account-action .workspace-action{min-height:85px;border-radius:15px;padding:22px 25px;border-color:#d5e6df;box-shadow:none}
+.pending-page .pending-account-action .workspace-action strong{font-size:14px;color:#206853}
+.pending-page .pending-account-action .workspace-action span{font-size:13px;color:#83988d}
+.pending-page .mt-22>a{font-size:14px;color:#3b7665;text-decoration:underline;text-underline-offset:5px}
+.pending-page [hidden]{display:none!important}
+@media(max-width:700px){.pending-page .pending-shell{width:calc(100% - 28px);padding-top:24px}.pending-page .pending-intro{padding:27px 24px}.pending-page .pending-intro h1{font-size:30px}.pending-page .pending-grid{grid-template-columns:minmax(0,1fr)}.pending-page .pending-intro .taskly-form-actions{flex-direction:column;align-items:stretch}.pending-page #pending-support-form .btn.primary{margin-top:24px}}

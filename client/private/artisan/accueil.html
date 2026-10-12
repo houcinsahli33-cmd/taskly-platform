@@ -10,46 +10,40 @@
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/artisan-dashboard.js"></script>
   
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script></head>
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script><link rel="stylesheet" href="/css/artisan-design-fidele.css?v=20261012"></head>
 <body class="dashboard-page" data-require-role="artisan" data-workspace-page="accueil">
   <div id="site-header"></div>
   <main class="dashboard-shell">
     <!-- Navigation artisan -->
     <aside class="sidebar">
       <p class="sidebar-title">Espace artisan</p>
-      <nav class="side-nav"><a href="/espace/artisan/accueil" class="active" aria-current="page" data-dashboard-link="accueil">Vue d’ensemble</a>
-        <a href="/espace/artisan/demandes" data-dashboard-link="demandes">Demandes reçues</a>
-        <a href="/espace/artisan/avis" data-dashboard-link="avis">Avis</a>
-        <a href="/espace/artisan/profil" data-dashboard-link="profil">Mon profil</a>
-        <a href="/espace/artisan/support" data-dashboard-link="support">Support</a>
+      <nav class="side-nav"><a href="/espace/artisan/accueil" class="active" aria-current="page" data-dashboard-link="accueil"><svg class="artisan-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3z"></path><path d="M9 20v-7h6v7"></path></svg>Vue d’ensemble</a>
+        <a href="/espace/artisan/demandes" data-dashboard-link="demandes"><svg class="artisan-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg>Demandes reçues</a>
+        <a href="/espace/artisan/avis" data-dashboard-link="avis"><svg class="artisan-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11a9 9 0 0 1-9 9H3l2-5a9 9 0 1 1 16-4Z"></path></svg>Avis</a>
+        <a href="/espace/artisan/profil" data-dashboard-link="profil"><svg class="artisan-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4"></circle><path d="M4 21c0-5 3-8 8-8s8 3 8 8"></path></svg>Mon profil</a>
+        <a href="/espace/artisan/support" data-dashboard-link="support"><svg class="artisan-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 5M12 17v1"></path></svg>Support</a>
         <button type="button" data-logout>Déconnexion</button>
       </nav>
     </aside>
 
     <!-- Contenu artisan -->
     <section class="dashboard-content">
-      <h1 class="dashboard-section-title" id="dashboard-page-title">Vue d’ensemble</h1>
+      <div class="artisan-upper"><p class="artisan-eyebrow">ESPACE ARTISAN &nbsp; / &nbsp; TABLEAU DE BORD</p><h1 class="dashboard-section-title" id="dashboard-page-title">Vue d’ensemble</h1><p class="artisan-subtitle">Gérez vos demandes, suivez vos missions et développez votre activité.</p></div>
       <div class="dashboard-hero" data-dashboard-view="demandes">
         <div>
-          <p class="eyebrow">Artisan</p>
-          <h2 id="artisan-welcome">Bienvenue</h2>
+          <p class="eyebrow">BIENVENUE SUR TASKLY</p>
+          <h2 id="artisan-welcome">Votre activité, tout simplement.</h2>
           <p>Traitez les demandes reçues, finalisez vos missions et consultez vos avis.</p>
         </div>
-        <a class="btn light" href="/contact.html">Contacter le support</a>
+        <a class="btn light" href="/espace/artisan/demandes">Voir mes demandes →</a>
       </div>
 
-      <div class="stats-grid" data-dashboard-view="demandes" id="artisan-stats"></div>
+      <div class="artisan-section-title"><h2>Votre activité en chiffres</h2><span>Vue actuelle de votre compte</span></div><div class="stats-grid" data-dashboard-view="demandes" id="artisan-stats"></div>
       
 
 
       
-      <div class="dashboard-grid">
-        
-
-        
-
-        
-      </div>
+      <div class="artisan-overview-grid"><section class="panel"><div class="panel-header"><div><h2>Dernières demandes reçues</h2><p class="muted">Suivez les nouvelles sollicitations de vos clients.</p></div><a href="/espace/artisan/demandes">Tout voir →</a></div><div class="panel-body"><div id="artisan-recent-requests"></div></div></section><section class="panel"><div class="panel-header"><div><h2>Bien démarrer sur Taskly</h2><p class="muted">Quelques étapes pour préparer votre activité.</p></div></div><div class="artisan-guide"><div><b>01</b><div><strong>Complétez votre profil</strong><p>Renseignez votre métier, votre expérience et vos coordonnées.</p></div></div><div><b>02</b><div><strong>Consultez vos justificatifs</strong><p>Gardez vos documents professionnels à jour.</p></div></div><div><b>03</b><div><strong>Répondez à vos clients</strong><p>Traitez les demandes à mesure de leur réception.</p></div></div><a class="btn outline" href="/espace/artisan/support">Contacter le support →</a></div></section></div>
     </section>
   </main>
 
