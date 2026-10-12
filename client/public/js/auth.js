@@ -309,12 +309,16 @@ function installerActiviteSession() {
     derniereInteraction = maintenant;
     // Le cadre et la rubrique integree partagent la derniere activite humaine.
     // Les messages ne declenchent pas de requete API supplementaire.
-    if (window.parent !== window && window.frameElement?.id === 'taskly-client-content-frame') {
-      window.parent.postMessage({type:'taskly-client-user-activity'}, window.location.origin);
+    const iframeId = window.frameElement?.id;
+    const dansRubrique = ['taskly-client-content-frame', 'taskly-artisan-content-frame'].includes(iframeId);
+    if (window.parent !== window && dansRubrique) {
+      window.parent.postMessage({type: iframeId === 'taskly-artisan-content-frame'
+        ? 'taskly-artisan-user-activity' : 'taskly-client-user-activity'}, window.location.origin);
     } else {
-      document.getElementById('taskly-client-content-frame')?.contentWindow?.postMessage(
-        {type:'taskly-client-user-activity'}, window.location.origin
-      );
+      const frame = document.getElementById('taskly-client-content-frame') ||
+        document.getElementById('taskly-artisan-content-frame');
+      frame?.contentWindow?.postMessage({type: frame.id === 'taskly-artisan-content-frame'
+        ? 'taskly-artisan-user-activity' : 'taskly-client-user-activity'}, window.location.origin);
     }
     if (maintenant - dernierEnvoi < 60 * 1000) return;
     dernierEnvoi = maintenant;
@@ -323,14 +327,21 @@ function installerActiviteSession() {
         window.location.replace(pageConnexionApresExpiration());
     });
   };
-  // Les messages ne comptent que s'ils proviennent du cadre client de meme origine.
-  // Ils actualisent uniquement le minuteur local ; seule une vraie interaction envoie l'API.
+  // Seuls les cadres Taskly connus échangent la dernière activité humaine.
   window.addEventListener('message', event => {
-    if (event.origin !== window.location.origin || event.data?.type !== 'taskly-client-user-activity') return;
-    const frame = document.getElementById('taskly-client-content-frame');
-    const depuisRubrique = frame && event.source === frame.contentWindow;
+    if (event.origin !== window.location.origin ||
+        !['taskly-client-user-activity', 'taskly-artisan-user-activity'].includes(event.data?.type)) return;
+    const frame = document.getElementById('taskly-client-content-frame') ||
+      document.getElementById('taskly-artisan-content-frame');
+    const iframeId = window.frameElement?.id;
+    const attenduParent = frame?.id === 'taskly-artisan-content-frame'
+      ? 'taskly-artisan-user-activity' : 'taskly-client-user-activity';
+    const attenduEnfant = iframeId === 'taskly-artisan-content-frame'
+      ? 'taskly-artisan-user-activity' : 'taskly-client-user-activity';
+    const depuisRubrique = frame && event.source === frame.contentWindow && event.data.type === attenduParent;
     const depuisCadre = window.parent !== window &&
-      window.frameElement?.id === 'taskly-client-content-frame' && event.source === window.parent;
+      ['taskly-client-content-frame', 'taskly-artisan-content-frame'].includes(iframeId) &&
+      event.source === window.parent && event.data.type === attenduEnfant;
     if (depuisRubrique || depuisCadre) derniereInteraction = Date.now();
   });
   ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(e => document.addEventListener(e, action, {passive:true}));

@@ -1,0 +1,5 @@
+/* Le header et le menu appartiennent uniquement au cadre parent. */
+body[data-taskly-artisan-embedded="1"] #site-header,
+body[data-taskly-artisan-embedded="1"] .dashboard-shell > .sidebar {display:none!important}
+body.dashboard-page[data-require-role="artisan"][data-taskly-artisan-embedded="1"] .dashboard-shell {display:block;min-height:100dvh}
+body.dashboard-page[data-require-role="artisan"][data-taskly-artisan-embedded="1"] .dashboard-content {width:100%;min-width:0}

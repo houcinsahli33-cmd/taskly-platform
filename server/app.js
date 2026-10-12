@@ -68,6 +68,7 @@ app.get(adminEntryPath, headersAdminPrive, (req, res) => {
 });
 
 require('./routes/clientWorkspaceNavigation')(app);
+require('./routes/artisanWorkspaceNavigation')(app);
 require('./routes/workspacePages')(app,{adminEntryPath,headersAdminPrive});
 app.use(require('./middleware/publicFiles').publicFiles);
 app.get('/api/media/:id',async(req,res)=>{
