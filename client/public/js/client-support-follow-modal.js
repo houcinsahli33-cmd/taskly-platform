@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   document.addEventListener('DOMContentLoaded', () => {
-    if (document.body.dataset.requireRole !== 'client' ||
+    if (!['client', 'artisan'].includes(document.body.dataset.requireRole) ||
         document.body.dataset.workspacePage !== 'support') return;
     const dialog = document.getElementById('client-support-follow-dialog');
     if (!dialog || typeof dialog.showModal !== 'function') return;

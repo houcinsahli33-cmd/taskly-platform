@@ -10,7 +10,7 @@
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/artisan-dashboard.js?v=20261012-2"></script>
   
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script><link rel="stylesheet" href="/css/artisan-design-fidele.css?v=20261012-2"></head>
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script><link rel="stylesheet" href="/css/artisan-design-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/artisan-support-fidele.css?v=20261012"></head>
 <body class="dashboard-page" data-require-role="artisan" data-workspace-page="support">
   <div id="site-header"></div>
   <main class="dashboard-shell">
@@ -28,31 +28,34 @@
 
     <!-- Contenu artisan -->
     <section class="dashboard-content">
-      <div class="artisan-upper"><p class="artisan-eyebrow">ESPACE ARTISAN &nbsp; / &nbsp; AIDE</p><h1 class="dashboard-section-title" id="dashboard-page-title">Support</h1><p class="artisan-subtitle">Posez une question, signalez une difficulté ou retrouvez le suivi de vos messages.</p></div>
+      <div class="client-heading"><div><p class="client-eyebrow">ESPACE ARTISAN / CENTRE D’ASSISTANCE</p><h1>Support</h1><p class="client-subtitle">Une question sur votre compte artisan ou une demande ? Nous sommes là pour vous aider.</p></div><a class="btn outline" href="#suivre-message" data-open-support-follow>Suivre un message</a></div>
+      <div class="client-support-banner"><div class="client-support-symbol" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-mail"></use></svg></div><div><small>ASSISTANCE TASKLY</small><h2>Comment pouvons-nous vous aider ?</h2><p>Envoyez une demande d’assistance et conservez son numéro de suivi.</p></div></div>
       
 
       
-      
 
-
-      <div class="artisan-support-banner"><h2>Nous sommes là pour vous accompagner.</h2><p>Décrivez votre besoin et retrouvez votre numéro de suivi après l’envoi.</p></div><section class="panel" id="support" data-dashboard-view="support">
-<div class="panel-header"><h2>Contacter le support</h2></div><div class="panel-body">
-<p class="muted">Décrivez votre question. Votre numéro de suivi vous sera communiqué après l’envoi.</p>
+      <div class="client-support-columns">
+      <section class="panel" id="support" data-dashboard-view="support">
+<div class="panel-header"><div><h2>Contacter notre équipe</h2><p>Remplissez le formulaire ci-dessous pour nous expliquer votre besoin.</p></div><span class="client-support-form-tag">FORMULAIRE D’ASSISTANCE</span></div><div class="panel-body">
+<p class="muted">Votre numéro de suivi vous sera communiqué après l’envoi du message.</p>
 <div id="contact-alert" class="alert" role="status" aria-live="polite"></div>
 <form id="contact-form" class="taskly-form-grid">
 <label><span>Nom complet</span><input class="form-control" id="contact-name" maxlength="150" required></label>
 <label><span>Adresse e-mail</span><input class="form-control" id="contact-email" type="email" maxlength="254" required></label>
 <label class="account-full"><span>Sujet</span><select class="form-select" id="contact-subject" data-support-subjects required></select></label>
 <label class="account-full"><span>Votre message</span><textarea class="form-textarea" id="contact-message" minlength="10" maxlength="5000" required></textarea></label>
-<div class="taskly-form-actions account-full"><a class="btn outline" href="/follow-message.html">Suivre un message</a><button class="btn primary" type="submit">Envoyer au support</button></div>
+<div class="taskly-form-actions account-full"><a class="btn outline" href="#suivre-message" data-open-support-follow>Suivre un message</a><button class="btn primary" type="submit">Envoyer au support</button></div>
 </form></div></section>
-      <div class="dashboard-grid">
-        
-
-        
-
-        
+      <aside class="client-support-aside"><section class="panel"><span class="client-support-tip-symbol" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-chat"></use></svg></span><h3>Avant de nous écrire</h3><p>Quelques conseils pour obtenir une réponse plus précise.</p><div><b>01</b> Choisissez le sujet correspondant à votre problème.</div><div><b>02</b> Expliquez ce qui se passe et depuis quand.</div><div><b>03</b> Conservez votre numéro de suivi après l’envoi.</div></section><section class="client-support-track"><strong>Vous avez déjà écrit ?</strong><p>Consultez le statut de votre message avec son numéro de suivi.</p><a href="#suivre-message" data-open-support-follow>Suivre mon message →</a></section></aside>
       </div>
+      <section class="panel client-support-history">
+        <div class="panel-header"><div><h2>Mes messages au support</h2><p>Retrouvez le statut de vos demandes d’assistance grâce à leur référence.</p></div></div>
+        <div class="client-support-history-body">
+          <span class="client-support-history-icon" aria-hidden="true">✉</span>
+          <div><strong>Retrouver un message</strong><p>Utilisez votre adresse e-mail et le numéro de suivi reçu après l’envoi.</p></div>
+          <a class="btn outline" href="#suivre-message" data-open-support-follow>Suivre un message</a>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -61,5 +64,26 @@
 
   <!-- Modale signalement -->
   
+  <noscript><p><a href="/follow-message.html">Suivre un message sans JavaScript</a></p></noscript>
+  <!-- Suivi réel via /api/contact/suivi : mêmes champs et même script métier que la page existante. -->
+  <dialog id="client-support-follow-dialog" class="client-support-follow-dialog" aria-labelledby="client-follow-title" aria-describedby="client-follow-description">
+    <div class="client-follow-header">
+      <div><h2 id="client-follow-title">Suivre mon message</h2>
+      <p id="client-follow-description">Retrouvez votre message avec l’e-mail utilisé et son numéro de suivi.</p></div>
+      <button type="button" class="client-follow-close" data-close-support-follow aria-label="Fermer la fenêtre">×</button>
+    </div>
+    <form id="follow-form" class="client-follow-form">
+      <label for="follow-email">Adresse e-mail</label>
+      <input class="form-control" id="follow-email" type="email" required maxlength="254" autocomplete="email" placeholder="Adresse e-mail du message">
+      <label for="follow-id">Numéro de suivi</label>
+      <input class="form-control" id="follow-id" type="text" required inputmode="numeric" maxlength="30" placeholder="Exemple : 123">
+      <div id="follow-result" role="status" aria-live="polite"></div>
+      <div class="client-follow-actions">
+        <button type="button" class="btn outline" data-close-support-follow>Annuler</button>
+        <button type="submit" class="btn primary">Rechercher</button>
+      </div>
+    </form>
+  </dialog>
+  <script defer src="/js/client-support-follow-modal.js"></script>
 </body>
 </html>

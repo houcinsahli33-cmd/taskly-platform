@@ -88,3 +88,16 @@ body.dashboard-page[data-require-role="artisan"] .dashboard-hero>div:first-child
 @media(max-width:1100px){body.dashboard-page[data-require-role="artisan"] .dashboard-hero{padding-right:30px}.artisan-hero-art{display:none}}
 @media(max-width:480px){body.dashboard-page[data-require-role="artisan"] .profile-fields>div:last-child{grid-column:auto}}
 @media(prefers-reduced-motion:reduce){body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action{transition:none}body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:hover{transform:none}}
+
+/* Profil artisan : les six actions restent dans la grille, avec suppression apr├¿s mot de passe. */
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-actions > .workspace-action:last-child {
+  grid-column:auto!important; min-height:135px; background:#fffafa; border-color:#f4dddd;
+}
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-action:last-child strong {color:#b73e42}
+/* LÔÇÖaction dangereuse et la confirmation explicite sont rouges, non vertes. */
+body.dashboard-page[data-require-role="artisan"] .workspace-dialog .account-danger .btn.danger,
+body.dashboard-page[data-require-role="artisan"] .taskly-confirm-dialog [data-delete] {
+  background:#c72e44!important;color:#fff!important;border-color:#c72e44!important;
+}
+body.dashboard-page[data-require-role="artisan"] .workspace-dialog .account-danger .btn.danger:hover,
+body.dashboard-page[data-require-role="artisan"] .taskly-confirm-dialog [data-delete]:hover {background:#a91e34!important}
