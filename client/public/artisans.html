@@ -10,7 +10,7 @@
   <script defer src="/js/algeria-locations.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/artisans.js?v=20261012-2"></script>
-<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"></head>
+<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/taskly-artisans-map.css"></head>
 <body data-active="artisans">
   <div id="site-header"></div>
   <main class="page-main">
@@ -51,6 +51,13 @@
             <button class="btn outline" id="reset-filters" type="button" aria-label="Réinitialiser les filtres">Réinitialiser</button>
           </div>
         </form>
+        <div class="request-actions mt-22 taskly-artisans-map-controls" role="group" aria-label="Affichage de l'annuaire">
+          <button class="btn primary" type="button" data-artisan-view="liste">Liste</button>
+          <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel">Carte des artisans proches</button>
+          <label class="muted" style="align-self:center">Rayon : <select id="taskly-map-radius" class="form-select"><option value="10">10 km</option><option value="25" selected>25 km</option><option value="50">50 km</option><option value="100">100 km</option></select></label>
+        </div>
+        <div id="taskly-artisans-map-panel" hidden><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p><div id="taskly-artisans-map" ></div></div>
+        <p class="muted" style="margin:12px 0">La carte affiche uniquement les zones publiques approximatives partagées volontairement par les artisans. Votre localisation est facultative.</p>
         <div class="grid three" id="artisans-grid"></div>
       </div>
     </section>
@@ -77,5 +84,5 @@
     </div>
   </div>
   <div id="site-footer"></div>
-</body>
+<script defer src="/js/taskly-artisans-map.js"></script></body>
 </html>

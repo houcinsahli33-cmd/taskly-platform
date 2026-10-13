@@ -6,6 +6,12 @@ const artisanController = require("../controllers/artisanController");
 
 const router = express.Router();
 
+// La carte ne présente que des emplacements publics approximatifs.
+router.get('/carte',artisanController.artisansCarte);
+router.put('/ma-zone',require('../middleware/authMiddleware').verifierConnexion,
+ require('../middleware/authMiddleware').verifierArtisan,artisanController.enregistrerZone);
+router.delete('/ma-zone',require('../middleware/authMiddleware').verifierConnexion,
+ require('../middleware/authMiddleware').verifierArtisan,artisanController.supprimerZone);
 // Route pour récupérer tous les artisans
 router.get("/", artisanController.listerArtisans);
 

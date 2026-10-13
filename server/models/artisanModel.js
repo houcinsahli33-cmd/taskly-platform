@@ -157,7 +157,44 @@ async function trouverArtisanParUserId(userId) {
     return resultats[0];
 }
 
-module.exports = { // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
+// Requête dédiée à la carte pour ne pas exposer les téléphones ni les adresses.
+async function artisansPourCarte(filtres,lat,lon,rayon){
+ const {where,valeurs}=construireFiltresAnnuaire(filtres);
+ let sql=`SELECT a.id,a.ville,a.public_lat AS lat,a.public_lon AS lon,
+ u.nom,u.prenom,u.photo_profil,s.nom AS service_nom
+ FROM artisans a JOIN users u ON u.id=a.user_id JOIN services s ON s.id=a.service_id
+ WHERE ${where} AND a.public_lat IS NOT NULL AND a.public_lon IS NOT NULL`;
+ const params=[...valeurs];
+ if(lat!==null&&lon!==null){
+  const deltaLat=rayon/111.1,deltaLon=rayon/(111.1*Math.max(0.2,Math.cos(lat*Math.PI/180)));
+  sql+=' AND a.public_lat BETWEEN ? AND ? AND a.public_lon BETWEEN ? AND ?';
+  params.push(lat-deltaLat,lat+deltaLat,lon-deltaLon,lon+deltaLon);
+ }
+ if(lat!==null&&lon!==null){
+   // Classer AVANT LIMIT par distance approximative pour ne pas écarter les plus proches.
+   sql+=' ORDER BY (POW(a.public_lat-?,2)+POW((a.public_lon-?)*?,2)) ASC,a.id DESC LIMIT 200';
+   params.push(lat,lon,Math.cos(lat*Math.PI/180));
+ }else sql+=' ORDER BY a.created_at DESC LIMIT 200';
+ const [rows]=await db.promise().query(sql,params);
+ if(lat===null||lon===null)return rows;
+ const radians=n=>n*Math.PI/180;
+ return rows.map(a=>{
+  const dLat=radians(Number(a.lat)-lat),dLon=radians(Number(a.lon)-lon);
+  const h=Math.sin(dLat/2)**2+Math.cos(radians(lat))*Math.cos(radians(Number(a.lat)))*Math.sin(dLon/2)**2;
+  return {...a,distanceKm:Math.round(6371*2*Math.asin(Math.min(1,Math.sqrt(h)))*10)/10};
+ }).filter(a=>a.distanceKm<=rayon).sort((a,b)=>a.distanceKm-b.distanceKm);
+}
+async function enregistrerZone(userId,lat,lon){
+ const [result]=await db.promise().query('UPDATE artisans SET public_lat=?,public_lon=? WHERE user_id=?',
+ [Math.round(lat*20)/20,Math.round(lon*20)/20,userId]);
+ return result.affectedRows===1;
+}
+async function supprimerZone(userId){
+ const [result]=await db.promise().query('UPDATE artisans SET public_lat=NULL,public_lon=NULL WHERE user_id=?',[userId]);
+ return result.affectedRows===1;
+}
+module.exports = {
+    artisansPourCarte,enregistrerZone,supprimerZone, // on exporte les fonctions pour pouvoir les utiliser dans d'autres fichiers
     creerProfilArtisan,
     trouverTousLesArtisans,
     trouverArtisanParId,

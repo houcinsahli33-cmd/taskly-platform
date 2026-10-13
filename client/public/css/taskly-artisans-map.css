@@ -1,0 +1,7 @@
+/* Ajout scoped : ne modifie ni les cartes originales ni la barre de navigation Taskly. */
+#taskly-artisans-map-panel[hidden], #artisans-grid[hidden], .load-more-artisans-wrap[hidden] { display: none !important; }
+.taskly-artisans-map-controls { display:flex;align-items:center;gap:12px;flex-wrap:wrap; }
+#taskly-artisans-map-panel { margin-top:16px; }
+#taskly-artisans-map-status { margin:0 0 12px; color:#596b66; }
+#taskly-artisans-map { min-height:460px; border:1px solid #dcecea; border-radius:18px; overflow:hidden; }
+@media (max-width:640px) { #taskly-artisans-map { min-height:340px; } .taskly-artisans-map-controls button { flex:1 1 auto; } }

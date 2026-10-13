@@ -58,7 +58,41 @@ async function detailArtisan(req, res) {
     }
 }
 
+// Carte publique : uniquement profils approuvés et positions approximatives.
+async function artisansCarte(req,res){
+ try{
+  const lat=req.query.lat===undefined?null:Number(req.query.lat);
+  const lon=req.query.lon===undefined?null:Number(req.query.lon);
+  if((lat===null)!==(lon===null)) return res.status(400).json({message:'Latitude et longitude nécessaires ensemble.'});
+  const rayon=Number(req.query.rayonKm||25);
+  if((lat!==null||lon!==null)&&(!Number.isFinite(lat)||!Number.isFinite(lon)||lat< -90||lat>90||lon< -180||lon>180))
+    return res.status(400).json({message:'Localisation invalide.'});
+  if(!Number.isFinite(rayon)||rayon<1||rayon>100)return res.status(400).json({message:'Rayon invalide.'});
+  const filtres={serviceId:req.query.serviceId,wilaya:req.query.wilaya,recherche:req.query.recherche};
+  const data=await artisanModel.artisansPourCarte(filtres,lat,lon,rayon);
+  res.set('Cache-Control','no-store');res.json({artisans:data});
+ }catch(e){console.error('Carte artisans :',e.code||e.message);res.status(503).json({message:'Carte temporairement indisponible.'});}
+}
+async function enregistrerZone(req,res){
+ try{
+  const user=req.session?.utilisateur;
+  if(req.body?.lat===undefined||req.body?.lon===undefined||req.body?.lat===''||req.body?.lon==='')
+    return res.status(400).json({message:'Latitude et longitude obligatoires.'});
+  const lat=Number(req.body.lat),lon=Number(req.body.lon);
+  if(!Number.isFinite(lat)||!Number.isFinite(lon)||lat<18||lat>38||lon< -9||lon>12)
+    return res.status(400).json({message:'Position invalide pour une zone en Algérie.'});
+  const ok=await artisanModel.enregistrerZone(user.id,lat,lon);
+  res.status(ok?200:404).json({message:ok?'Zone publique approximative enregistrée.':'Profil artisan introuvable.'});
+ }catch(e){res.status(503).json({message:'Impossible de mettre à jour votre zone.'});}
+}
+async function supprimerZone(req,res){
+ try{
+  const ok=await artisanModel.supprimerZone(req.session.utilisateur.id);
+  res.status(ok?200:404).json({message:ok?'Zone retirée de la carte.':'Profil artisan introuvable.'});
+ }catch(e){res.status(503).json({message:'Impossible de retirer la zone.'});}
+}
 module.exports = {
+    artisansCarte,enregistrerZone,supprimerZone,
     listerArtisans,
     detailArtisan
 };
