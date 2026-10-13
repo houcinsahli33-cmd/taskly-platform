@@ -41,5 +41,13 @@
       </div>
     </section>
   </main>
+<script>
+if(new URLSearchParams(location.search).get('session')==='expiree'){
+ const info=document.createElement('div'); info.setAttribute('role','status'); info.className='alert show warning';
+ info.style.cssText='max-width:560px;margin:16px auto;padding:16px;border-radius:12px';
+ info.textContent='Votre session Taskly a expiré après 4 heures consécutives d’inactivité. Reconnectez-vous ou retournez à l’accueil du site.';
+ const main=document.querySelector('main');if(main) main.prepend(info);
+}
+</script>
 </body>
 </html>

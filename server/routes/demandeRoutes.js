@@ -17,6 +17,12 @@ router.get("/client", verifierConnexion, verifierClient, demandeController.liste
 // Annuler une demande encore en attente
 router.put("/:id/annuler", verifierConnexion, verifierClient, demandeController.annulerDemandeClient);
 
+// La clé de la carte est publique côté navigateur : la restreindre à l'origine Taskly et à l'API Embed.
+router.get('/itineraire/config',verifierConnexion,verifierArtisan,verifierArtisanActif,(req,res)=>{
+  res.set('Cache-Control','no-store, private');
+  res.json({embedKey:process.env.GOOGLE_MAPS_EMBED_API_KEY||null});
+});
+
 // Routes côté artisan
 // Lister les demandes reçues par l'artisan connecté
 router.get("/artisan", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.listerDemandesArtisan);

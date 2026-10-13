@@ -3,3 +3,8 @@
 .env.*
 server/.env
 server/.env.*
+
+# Fichiers de développement non nécessaires à Vercel
+*.zip
+*.patch
+.taskly-private/

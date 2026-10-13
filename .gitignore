@@ -19,3 +19,10 @@ client/public/uploads/
 *.patch
 *_Diagnostic.zip
 server/private_uploads/
+
+# Archives et correctifs générés localement : garder uniquement les sources versionnées.
+/Taskly_*.zip
+/taskly-platform-*.zip
+/*_pour_commit*.zip
+/*.patch
+/*.ps1

@@ -38,19 +38,20 @@ function afficherStatsArtisan() {
 function carteDemandeArtisan(demande) {
   const peutTraiter = demande.statut === "en_attente";
   const peutTerminer = demande.statut === "acceptee";
+  const donneesPrivees = ['acceptee','attente_confirmation','terminee','conteste'].includes(demande.statut);
 
   return `
     <article class="request-card">
       <div class="request-head">
         <div>
           <h3>${echapperHTML(nomComplet(demande, "client_"))}</h3>
-          <p class="muted">${echapperHTML(demande.client_ville || "Commune non précisée")} · ${echapperHTML(demande.client_telephone || "Téléphone non précisé")}</p>
+          <p class="muted">${echapperHTML(demande.client_ville || "Commune non précisée")} · ${echapperHTML(donneesPrivees ? (demande.client_telephone || "Téléphone non précisé") : "Coordonnées après acceptation")}</p>
         </div>
         ${badgeStatut(demande.statut)}
       </div>
       <p>${echapperHTML(demande.message || "Aucun message.")}</p>
       <div class="meta-row mt-14">
-        <span class="badge">Adresse : ${echapperHTML(demande.adresse || demande.client_adresse || "Non précisée")}</span>
+        <span class="badge">Adresse : ${echapperHTML(donneesPrivees ? (demande.adresse || demande.client_adresse || "Non précisée") : "Disponible après acceptation")}</span>
         <span class="badge">Date souhaitée : ${formatDate(demande.date_souhaitee)}</span>
         <span class="badge">Créée le ${formatDate(demande.created_at)}</span>
       </div>
@@ -430,8 +431,32 @@ async function consulterDemandeArtisan(id) {
         <button class="btn danger" type="button" data-open-report="${numero}">Signaler</button>
       </div>
       ${autorisee && adresse ? `<div class="taskly-route-preview"><h3>Localisation de l'intervention</h3>
-        <iframe title="Carte de l'intervention" referrerpolicy="no-referrer" loading="lazy" src="https://maps.google.com/maps?q=${destination}&amp;output=embed"></iframe>
-        <p><a class="btn primary" target="_blank" rel="noopener noreferrer" href="${googleMaps}">🧭 Voir l'itinéraire sur Google Maps</a></p></div>` : ""}`;
+        <iframe title="Carte de l'intervention" referrerpolicy="strict-origin-when-cross-origin" loading="lazy" src="https://maps.google.com/maps?q=${destination}&amp;output=embed" id="taskly-route-map-${numero}"></iframe>
+        <div class="taskly-detail-actions"><button type="button" class="btn outline" data-taskly-route="${numero}">🧭 Calculer le trajet sur cette carte</button>
+        <a class="btn primary" target="_blank" rel="noopener noreferrer" href="${googleMaps}">Ouvrir l'itinéraire Google Maps</a></div>
+        <p id="taskly-route-status-${numero}" role="status" class="muted">Le trajet intégré nécessite votre autorisation de localisation et l'activation du service de carte.</p></div>` : ""}`;
+    if (autorisee && adresse) {
+      const bouton = corps.querySelector('[data-taskly-route]');
+      bouton?.addEventListener('click', async()=>{
+        const status = document.getElementById('taskly-route-status-'+numero);
+        if(!navigator.geolocation){status.textContent='Localisation indisponible. Utilisez le bouton Google Maps.';return;}
+        bouton.disabled=true;status.textContent='Demande de votre position pour calculer le trajet…';
+        try {
+          const {embedKey}=await requeteAPI('/api/demandes/itineraire/config');
+          if(!embedKey)throw new Error('Trajet intégré non configuré. Utilisez Google Maps pour la navigation.');
+          const position = await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,
+            {enableHighAccuracy:false,timeout:12000,maximumAge:120000}));
+          const orig=position.coords.latitude+','+position.coords.longitude;
+          const route='https://www.google.com/maps/embed/v1/directions?key='+encodeURIComponent(embedKey)+
+            '&origin='+encodeURIComponent(orig)+'&destination='+destination+'&mode=driving';
+          const iframe=document.getElementById('taskly-route-map-'+numero);
+          if(iframe)iframe.src=route;
+          status.textContent='Itinéraire routier affiché. Durées estimatives selon le fournisseur.';
+        }catch(e){status.textContent=e?.message?.includes('permission')?'Autorisez votre localisation ou utilisez Google Maps.':
+            (e?.message||'Carte indisponible. Utilisez Google Maps.');}
+        finally{bouton.disabled=false;}
+      });
+    }
   } catch (error) {
     corps.textContent = error.message || "Détail indisponible.";
   }

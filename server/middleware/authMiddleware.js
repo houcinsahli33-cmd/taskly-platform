@@ -3,7 +3,11 @@
 
 // Verifier si l'utilisateur est connecte
 async function verifierConnexion(req,res,next) {
-  if (!req.session.utilisateur) return res.status(401).json({message:'Vous devez être connecté.'});
+  if (!req.session?.utilisateur) {
+    if (!String(req.originalUrl||req.path||'').startsWith('/api/') && typeof req.accepts==='function' && req.accepts('html'))
+      return res.redirect(302,req.tasklyAdminContext?process.env.ADMIN_ENTRY_PATH+'?session=expiree':'/login.html?session=expiree');
+    return res.status(401).json({code:'SESSION_EXPIREE',message:'Vous devez être connecté.'});
+  }
   try {
     const user=await require('../models/userModel').trouverUtilisateurParId(req.session.utilisateur.id);
     if (!user || user.statut_compte !== 'actif' || !user.email_verified || user.role!==req.session.utilisateur?.role ||

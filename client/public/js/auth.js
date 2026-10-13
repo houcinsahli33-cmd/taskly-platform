@@ -284,7 +284,7 @@ function installerActiviteSession() {
   function pageConnexionApresExpiration() {
     // L'admin retrouve toujours sa porte d'entree privee ; autres roles: connexion publique.
     return document.body.dataset.requireRole === 'admin'
-      ? window.location.pathname.split('/dashboard')[0]
+      ? window.location.pathname.split('/dashboard')[0] + '?session=expiree'
       : '/login.html?session=expiree';
   }
   // Un onglet inactif ne peut pas décider seul de l'expiration : un autre

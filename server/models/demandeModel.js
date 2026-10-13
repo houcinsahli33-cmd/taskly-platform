@@ -72,7 +72,7 @@ async function listerDemandesArtisan(artisanId) {
             demandes.client_id,
             demandes.artisan_id,
             demandes.message,
-            demandes.adresse,
+            CASE WHEN demandes.statut IN ('acceptee','attente_confirmation','terminee','conteste') THEN demandes.adresse ELSE NULL END AS adresse,
             demandes.date_souhaitee,
             demandes.statut,
             demandes.annulee_par,
@@ -85,9 +85,9 @@ async function listerDemandesArtisan(artisanId) {
             users.prenom AS client_prenom,
             users.photo_profil AS client_photo_profil,
 
-            clients.telephone AS client_telephone,
+            CASE WHEN demandes.statut IN ('acceptee','attente_confirmation','terminee','conteste') THEN clients.telephone ELSE NULL END AS client_telephone,
             clients.ville AS client_ville,
-            clients.adresse AS client_adresse
+            CASE WHEN demandes.statut IN ('acceptee','attente_confirmation','terminee','conteste') THEN clients.adresse ELSE NULL END AS client_adresse
         FROM demandes
         JOIN clients ON demandes.client_id = clients.id
         JOIN users ON clients.user_id = users.id

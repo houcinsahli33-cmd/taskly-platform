@@ -7,9 +7,14 @@ function estFormData(valeur) {
 }
 
 let csrfEnCours=null;
+function contexteAdminTaskly(url='') {
+  return window.TASKLY_ADMIN_CONTEXT===true || /^\/[a-z0-9][a-z0-9-]{30,100}\/dashboard(?:\/|$)/i.test(location.pathname) ||
+    /^\/api\/(?:admin(?:\/|$)|admin-verification|admin-settings(?!\/invitation))/.test(url);
+}
+function enTetesSessionTaskly(url='') {return contexteAdminTaskly(url)?{'X-Taskly-Admin':'1'}:{};}
 async function obtenirCsrf(renouveler=false) {
   if (renouveler) csrfEnCours=null;
-  if (!csrfEnCours) csrfEnCours=fetch('/api/auth/csrf',{credentials:'include'})
+  if (!csrfEnCours) csrfEnCours=fetch('/api/auth/csrf',{credentials:'include',headers:enTetesSessionTaskly()})
     .then(async r=>{if(!r.ok) throw new Error('Impossible de recuperer le jeton de securite.');return (await r.json()).csrfToken;})
     .catch(e=>{csrfEnCours=null;throw e;});
   return csrfEnCours;
@@ -31,6 +36,7 @@ async function requeteAPI(url, options = {}) {
     configuration.headers = options.headers || {};
   }
 
+  if (contexteAdminTaskly(url)) configuration.headers = {...configuration.headers,...enTetesSessionTaskly(url)};
   const mutation = !['GET','HEAD','OPTIONS'].includes((configuration.method||'GET').toUpperCase());
   if(mutation) configuration.headers['X-CSRF-Token']=await obtenirCsrf();
   let reponse = await fetch(API_BASE + url, configuration);

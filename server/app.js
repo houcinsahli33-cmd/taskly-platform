@@ -39,7 +39,22 @@ app.disable('x-powered-by');
 function preparerApp(store) {
 app.use(express.json({limit:'100kb'}));
 app.use(express.urlencoded({extended:false,limit:'100kb'}));
-app.use(configurerSession(store));
+// Les comptes publics et administrateurs n'utilisent ni le même cookie ni le même contexte.
+const sessionPublique = configurerSession(store, false);
+const sessionAdmin = configurerSession(store, true);
+app.use((req,res,next)=>{
+  const chemin=req.path;
+  const apiAdmin = chemin==='/api/admin' || chemin.startsWith('/api/admin/') ||
+    chemin.startsWith('/api/admin-verification') ||
+    (chemin.startsWith('/api/admin-settings') && !chemin.startsWith('/api/admin-settings/invitation')) ||
+    chemin.startsWith('/api'+adminEntryPath+'/auth');
+  // Ces endpoints sont partagés : seul le portail privé les marque comme admin.
+  const partage=['/api/auth/me','/api/auth/logout','/api/auth/activity','/api/auth/csrf'].includes(chemin) &&
+    req.get('X-Taskly-Admin')==='1';
+  const prive=chemin===adminEntryPath || chemin.startsWith(adminEntryPath+'/') || apiAdmin || partage;
+  req.tasklyAdminContext=prive;
+  (prive?sessionAdmin:sessionPublique)(req,res,next);
+});
 app.use(require('./services/sessionActivity').verifierInactivite);
 app.use((req,res,next)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
@@ -81,6 +96,16 @@ app.get('/api/media/:id',async(req,res)=>{
 app.get('/api/site-settings',async(req,res)=>{
   try {res.set('Cache-Control','no-cache');res.json({parametres:await require('./services/siteSettings').lire(require('./config/db').promise())});}
   catch(error){res.status(503).json({message:'Coordonnées du site indisponibles.'});}
+});
+// Déclencheur externe planifié pour le serverless. Sans CRON_SECRET, accès désactivé.
+app.get('/api/internal/expire-sessions', async(req,res)=>{
+ const crypto=require('node:crypto');
+ const secret=process.env.CRON_SECRET;
+ const fourni=(req.get('Authorization')||'').replace(/^Bearer\s+/i,'');
+ if(!secret||!fourni||secret.length!==fourni.length||
+     !crypto.timingSafeEqual(Buffer.from(secret),Buffer.from(fourni)))return res.status(404).end();
+ try { const resultat=await require('./services/sessionExpiryNotifier').traiterEcheances();res.json({notifications:resultat}); }
+ catch(e){console.error('Cron session :',e.code||e.message);res.status(503).json({message:'Tâche indisponible.'});}
 });
 app.use('/api',verifierCsrf);
 // L'API de connexion admin partage le meme chemin prive aleatoire.

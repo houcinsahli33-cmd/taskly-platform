@@ -1,4 +1,9 @@
+window.TASKLY_ADMIN_CONTEXT = true;
 document.addEventListener('DOMContentLoaded', () => {
+  if (new URLSearchParams(location.search).get('session') === 'expiree') {
+    const message = document.getElementById('admin-alert');
+    if (message) {message.textContent='Votre session administrateur a expiré. Reconnectez-vous.';message.setAttribute('role','status');}
+  }
   const formulaire = document.getElementById('admin-login-form');
   const codeForm = document.getElementById('admin-code-form');
   const info = document.getElementById('admin-alert');

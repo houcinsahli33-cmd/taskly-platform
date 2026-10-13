@@ -5,5 +5,11 @@
     "index.js": {
       "includeFiles": "client/**"
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/internal/expire-sessions",
+      "schedule": "0 * * * *"
+    }
+  ]
 }

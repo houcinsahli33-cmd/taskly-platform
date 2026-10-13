@@ -18,6 +18,7 @@ const REGEX_TELEPHONE_ALGERIE = /^0[567]\d{8}$/;
 const REGEX_MDP_FORT = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/;
 
 function renouvelerSession(req) {
+    if(req.session?.utilisateur) require('../services/sessionExpiryNotifier').oublier(req.sessionID).catch(()=>{});
     return new Promise((resolve, reject) => req.session.regenerate(err => err ? reject(err) : resolve()));
 }
 function sauvegarderSession(req) {
@@ -182,6 +183,7 @@ async function connexion(req, res) {
 
 // Deconnexion de l'utilisateur connecte
 function deconnexion(req, res) {
+    require('../services/sessionExpiryNotifier').oublier(req.sessionID).catch(()=>{});
     req.session.destroy((err) => {
         if (err) {  // si erreur, on arrete et affiche
             return res.status(500).json({
@@ -189,7 +191,7 @@ function deconnexion(req, res) {
             });
         }
 
-        res.clearCookie("artisans.sid"); // on supprime le cookie de session
+        res.clearCookie(req.tasklyAdminContext?'taskly.admin.sid':'artisans.sid'); // cookie de l'espace courant
 
         res.status(200).json({  // la requete a ete acceptee
             message: "Déconnexion réussie."
