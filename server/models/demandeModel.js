@@ -199,7 +199,27 @@ async function detailArtisan(id, artisanId) {
     return lignes[0] || null;
 }
 
+
+// Les destinataires viennent de la demande réellement enregistrée, pas du corps HTTP.
+async function trouverDestinataires(id) {
+    const [rows] = await db.promise().query(`
+        SELECT d.id,
+            uc.id AS client_user_id, uc.email AS client_email,
+            uc.prenom AS client_prenom, uc.nom AS client_nom,
+            ua.id AS artisan_user_id, ua.email AS artisan_email,
+            ua.prenom AS artisan_prenom, ua.nom AS artisan_nom
+        FROM demandes d
+        JOIN clients c ON c.id = d.client_id
+        JOIN users uc ON uc.id = c.user_id
+        JOIN artisans a ON a.id = d.artisan_id
+        JOIN users ua ON ua.id = a.user_id
+        WHERE d.id = ? LIMIT 1
+    `, [id]);
+    return rows[0] || null;
+}
+
 module.exports = {
+    trouverDestinataires,
     detailArtisan,
     creerDemande,
     listerDemandesClient,

@@ -19,6 +19,7 @@ function controllerFor(records) {
             if (name === "../models/demandeModel") return demandeModel;
             if (name === "../models/artisanModel") return { trouverArtisanParUserId: async () => ({ id: 7 }) };
             if (name === "../models/clientModel") return {};
+            if (name === "../services/tasklyMail") return { base: () => "", mettreEnFile: async () => {}, traiterLot: async () => {} };
             throw Error("Dépendance imprévue: " + name);
         }
     }, {filename: controllerFile});

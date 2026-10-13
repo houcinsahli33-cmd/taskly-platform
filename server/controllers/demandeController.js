@@ -5,6 +5,45 @@ const demandeModel = require("../models/demandeModel");
 const clientModel = require("../models/clientModel");
 const artisanModel = require("../models/artisanModel");
 
+const tasklyMail = require('../services/tasklyMail');
+
+// Après l'enregistrement en base : notifier le bon destinataire, jamais un autre profil.
+// Une panne SMTP ne doit pas transformer une opération déjà validée en échec HTTP.
+async function notifierDemande(id, type) {
+    try {
+        const d = await demandeModel.trouverDestinataires(id);
+        if (!d) return;
+        const nomClient = [d.client_prenom, d.client_nom].filter(Boolean).join(' ').trim() || 'un client';
+        const nomArtisan = [d.artisan_prenom, d.artisan_nom].filter(Boolean).join(' ').trim() || 'votre artisan';
+        const site = tasklyMail.base();
+        if (type === 'nouvelle') {
+            await tasklyMail.mettreEnFile({
+                userId: d.artisan_user_id, to: d.artisan_email,
+                subject: 'Vous avez reçu une nouvelle demande — Taskly',
+                message: `Une nouvelle demande de ${nomClient} vous attend. Connectez-vous à votre profil artisan pour consulter les détails et répondre.`,
+                link: site ? site + '/espace/artisan/demandes' : '', button: 'Consulter la demande',
+                key: `demande:${id}:nouvelle`
+            });
+        } else if (type === 'acceptee' || type === 'refusee') {
+            await tasklyMail.mettreEnFile({
+                userId: d.client_user_id, to: d.client_email,
+                subject: type === 'acceptee' ? 'Votre demande a été acceptée — Taskly' : 'Réponse à votre demande — Taskly',
+                message: type === 'acceptee'
+                    ? `Bonne nouvelle ! ${nomArtisan} a accepté votre demande. Retrouvez ses coordonnées et le suivi dans votre espace client.`
+                    : `${nomArtisan} ne peut pas donner suite à votre demande. Vous pouvez rechercher un autre artisan sur Taskly.`,
+                link: site ? site + (type === 'acceptee' ? '/espace/client/demandes' : '/artisans.html') : '',
+                button: type === 'acceptee' ? 'Consulter ma demande' : 'Trouver un artisan',
+                key: `demande:${id}:${type}`
+            });
+        } else return;
+        // Tentative immédiate (utile pour Vercel); la file assure des relances sur serveur Node.
+        await tasklyMail.traiterLot();
+    } catch (error) {
+        console.error('Notification Taskly impossible :', error.code || error.message);
+    }
+}
+
+
 // Récupérer le profil client lie à l'utilisateur connecte
 async function obtenirClientConnecte(req, res) {
     const userId = req.session.utilisateur.id;
@@ -69,6 +108,8 @@ async function creerDemande(req, res) {
             adresse,
             dateSouhaitee || null
         );
+
+        await notifierDemande(resultat.insertId, 'nouvelle');
 
         res.status(201).json({
             message: "Demande envoyée avec succès.",
@@ -164,6 +205,8 @@ async function modifierStatutDemande(req, res) {
                 message: "Modification impossible pour cette demande."
             });
         }
+
+        await notifierDemande(req.params.id, statut);
 
         res.status(200).json({
             message: "Statut mis à jour avec succès."
