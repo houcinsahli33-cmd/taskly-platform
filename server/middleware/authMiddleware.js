@@ -1,11 +1,24 @@
+function pagePriveeHTML(req) {
+  // Express peut considérer Accept: */* comme HTML ; ce n'est pas une navigation.
+  if (req.method !== 'GET') return false;
+  const accept = String((typeof req.get === 'function' ? req.get('Accept') : req.headers?.accept) || '');
+  if (!/\btext\/html\b/i.test(accept)) return false;
+  const chemin = String(req.originalUrl || req.path || '').split('?')[0];
+  const portail = process.env.ADMIN_ENTRY_PATH;
+  if (req.tasklyAdminContext)
+    return !!portail && (chemin === portail + '/dashboard' || chemin.startsWith(portail + '/dashboard/'));
+  return /^\/(?:client|artisan)-dashboard\.html$/.test(chemin) ||
+    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support)$/.test(chemin);
+}
+
 // Ce fichier contient les middlewares d'authentification.
 // Un middleware est une fonction exécutée entre la route et le controller. Il permet de vérifier si l'utilisateur est connecté et s'il possède le bon rôle.
 
 // Verifier si l'utilisateur est connecte
 async function verifierConnexion(req,res,next) {
   if (!req.session?.utilisateur) {
-    if (!String(req.originalUrl||req.path||'').startsWith('/api/') && typeof req.accepts==='function' && req.accepts('html'))
-      return res.redirect(302,req.tasklyAdminContext?process.env.ADMIN_ENTRY_PATH+'?session=expiree':'/login.html?session=expiree');
+    if (pagePriveeHTML(req))
+      return res.redirect(302, req.tasklyAdminContext ? process.env.ADMIN_ENTRY_PATH + '?session=expiree' : '/login.html?session=expiree');
     return res.status(401).json({code:'SESSION_EXPIREE',message:'Vous devez être connecté.'});
   }
   try {

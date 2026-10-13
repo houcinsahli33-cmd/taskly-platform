@@ -1,4 +1,17 @@
 'use strict';
+function pagePriveeHTML(req) {
+  // Express peut considérer Accept: */* comme HTML ; ce n'est pas une navigation.
+  if (req.method !== 'GET') return false;
+  const accept = String((typeof req.get === 'function' ? req.get('Accept') : req.headers?.accept) || '');
+  if (!/\btext\/html\b/i.test(accept)) return false;
+  const chemin = String(req.originalUrl || req.path || '').split('?')[0];
+  const portail = process.env.ADMIN_ENTRY_PATH;
+  if (req.tasklyAdminContext)
+    return !!portail && (chemin === portail + '/dashboard' || chemin.startsWith(portail + '/dashboard/'));
+  return /^\/(?:client|artisan)-dashboard\.html$/.test(chemin) ||
+    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support)$/.test(chemin);
+}
+
 // L'inactivite expire sur le serveur, meme si un onglet effectue des requetes passives.
 const INACTIVITE_MS = 4 * 60 * 60 * 1000;
 function verifierInactivite(req, res, next) {
@@ -10,8 +23,8 @@ function verifierInactivite(req, res, next) {
     return req.session.destroy(() => {
       res.clearCookie(admin?'taskly.admin.sid':'artisans.sid', {path:'/'});
       if(identifiant && utilisateur?.email)require('./sessionExpiryNotifier').notifierFin(identifiant,utilisateur,admin).catch(()=>{});
-      if (!String(req.originalUrl||req.path||'').startsWith('/api/') && typeof req.accepts==='function' && req.accepts('html'))
-        return res.redirect(302,req.tasklyAdminContext?process.env.ADMIN_ENTRY_PATH+'?session=expiree':'/login.html?session=expiree');
+      if (pagePriveeHTML(req))
+        return res.redirect(302, req.tasklyAdminContext ? process.env.ADMIN_ENTRY_PATH + '?session=expiree' : '/login.html?session=expiree');
       res.status(401).json({code:'SESSION_EXPIREE',message:'Session expirée après 4 heures sans activité. Reconnectez-vous.'});
     });
   }
