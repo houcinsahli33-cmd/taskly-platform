@@ -1,0 +1,30 @@
+/* Petite carte de suivi du support : styles reserves aux deux espaces Taskly. */
+.client-support-history[data-support-history]{overflow:hidden}
+.taskly-history-toggle{width:100%;border:0;background:#fff;color:inherit;display:flex;align-items:center;gap:16px;padding:20px 24px;text-align:left;cursor:pointer;font:inherit}
+.taskly-history-toggle:hover,.taskly-history-toggle:focus-visible{background:#f7fcfa}
+.taskly-history-icon{display:grid;place-items:center;width:45px;height:45px;flex:none;border-radius:13px;background:#e5f5ee;color:#00866c;font-size:24px}
+.taskly-history-label{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.taskly-history-label strong{font-size:16px;color:#17383b}
+.taskly-history-label small{font-size:12px;color:#7c919a;line-height:1.5}
+.taskly-history-chevron{font-size:26px;color:#00866c;transition:transform .2s ease}
+.taskly-history-toggle[aria-expanded="true"] .taskly-history-chevron{transform:rotate(180deg)}
+.taskly-history-content{padding:0 24px 22px;border-top:1px solid #e3eee9}
+.taskly-history-content[hidden]{display:none!important}
+.taskly-history-info{font-size:12px;line-height:1.5;color:#718b95;margin:16px 0}
+.taskly-history-list{display:grid;gap:10px}
+.taskly-history-item{padding:15px;border:1px solid #dfebe6;border-radius:13px;background:#fcfefd}
+.taskly-history-item-head{display:flex;justify-content:space-between;align-items:start;gap:12px}
+.taskly-history-item-head>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.taskly-history-item-head strong{font-size:14px;overflow-wrap:anywhere}
+.taskly-history-item-head small{font-size:12px;color:#748b96}
+.taskly-history-status{white-space:nowrap;background:#e6f5ef;color:#086e55;border-radius:20px;padding:6px 10px;font-size:11px;font-weight:700}
+.taskly-history-status.is-closed{background:#f1f3f3;color:#47626a}
+.taskly-history-item details{margin-top:10px}
+.taskly-history-item summary{font-size:12px;color:#007c68;cursor:pointer;font-weight:700}
+.taskly-history-item p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.6;margin:9px 0 0}
+.taskly-history-more{margin-top:15px}
+.taskly-history-old{display:inline-block;margin-top:15px;font-size:12px;color:#007f68;font-weight:700}
+.taskly-history-loading,.taskly-history-empty,.taskly-history-error{font-size:13px;color:#748b96;padding:10px 0}
+.taskly-history-error{color:#a43542}
+@media(max-width:640px){.taskly-history-toggle{padding:16px;gap:10px}.taskly-history-content{padding:0 16px 18px}.taskly-history-item-head{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.taskly-history-chevron{transition:none}}

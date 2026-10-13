@@ -13,7 +13,20 @@ async function envoyerMessageContact(req, res) {
             });
         }
 
-        const resultat = await contactModel.creerMessageContact(nom, email, sujet, message);
+        let resultat;
+        const identite = req.session?.utilisateur;
+        // Le formulaire public conserve son fonctionnement. Dans un espace connecte,
+        // l'auteur est force par la session, et jamais par les champs transmis.
+        if (identite && ['client','artisan'].includes(identite.role)) {
+            const user = await require('../models/userModel').trouverUtilisateurParId(identite.id);
+            if (!user || user.role !== identite.role || user.statut_compte !== 'actif' || !user.email_verified)
+                return res.status(401).json({message:'Veuillez vous reconnecter.'});
+            resultat = await contactModel.creerMessageCompte(
+                [user.prenom, user.nom].filter(Boolean).join(' '), user.email, sujet, message, user.id
+            );
+        } else {
+            resultat = await contactModel.creerMessageContact(nom, email, sujet, message);
+        }
 
         res.status(201).json({
             message: "Votre message a été envoyé avec succès.",
@@ -61,7 +74,27 @@ async function consulterMessageContact(req, res) {
     }
 }
 
+// Historique prive : seule l'identite de session est utilisee pour le filtrage.
+async function mesMessagesSupport(req, res) {
+    try {
+        const user = req.session?.utilisateur;
+        if (!user || !['client','artisan'].includes(user.role))
+            return res.status(403).json({message:'Espace client ou artisan requis.'});
+        const page = Number(req.query.page || 1);
+        if (!Number.isSafeInteger(page) || page < 1 || page > 10000)
+            return res.status(400).json({message:'Page invalide.'});
+        const limit = 20;
+        const rows = await contactModel.listerMessagesCompte(user.id, limit + 1, (page - 1) * limit);
+        res.set('Cache-Control','no-store, private');
+        res.json({messages:rows.slice(0,limit),page,hasMore:rows.length > limit});
+    } catch (error) {
+        console.error('Historique support indisponible :',error.code || error.name);
+        res.status(503).json({message:'Historique momentanement indisponible.'});
+    }
+}
+
 module.exports = {
     envoyerMessageContact,
+    mesMessagesSupport,
     consulterMessageContact
 };

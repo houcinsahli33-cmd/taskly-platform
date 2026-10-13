@@ -48,6 +48,7 @@ function initialiserContactSupport() {
         "success"
       );
       form.reset();
+      document.dispatchEvent(new CustomEvent('taskly:support-message-sent'));
     } catch (error) {
       afficherAlerte(alerte, echapperHTML(error.message), "error");
     } finally {

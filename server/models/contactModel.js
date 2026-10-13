@@ -33,6 +33,25 @@ async function creerMessageContact(nom, email, sujet, message) {
     return resultat;
 }
 
+// Pour les espaces authentifies, l'identite provient de la session serveur.
+// Aucun e-mail provenant du formulaire ne sert de cle d'autorisation.
+async function creerMessageCompte(nom, email, sujet, message, userId) {
+    const [resultat] = await db.promise().query(
+        "INSERT INTO contacts_support (nom,email,sujet,message,user_id,contexte) VALUES (?,?,?,?,?,'public')",
+        [nom, email, sujet, message, userId]
+    );
+    return resultat;
+}
+
+async function listerMessagesCompte(userId, limite = 20, decalage = 0) {
+    const [messages] = await db.promise().query(
+        "SELECT id, sujet, message, statut, created_at, date_traitement FROM contacts_support " +
+        "WHERE user_id=? AND contexte='public' ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?",
+        [userId, limite, decalage]
+    );
+    return messages;
+}
+
 // Consulter un message de contact avec son id et son email
 async function trouverMessageContactParIdEtEmail(id, email) {
     const sql = `SELECT ${champsSupport} FROM contacts_support
@@ -78,6 +97,8 @@ async function derniersMessagesContact() {
 
 module.exports = {
     creerMessageContact,
+    creerMessageCompte,
+    listerMessagesCompte,
     trouverMessageContactParIdEtEmail,
     listerMessagesContact,
     traiterMessageContact,

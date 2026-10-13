@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<style id="taskly-support-loading-style">body[data-workspace-page="support"] .dashboard-content{visibility:hidden}body[data-workspace-page="support"].taskly-support-loaded .dashboard-content{visibility:visible}</style>
-<script>window.addEventListener("load",function(){document.body.classList.add("taskly-support-loaded");},{once:true});</script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Support — Taskly</title>
@@ -11,9 +8,9 @@
   <link rel="stylesheet" href="/css/style.css">
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
-  <script defer src="/js/artisan-dashboard.js?v=20261012-2"></script>
+  <script defer src="/js/artisan-dashboard.js"></script>
   
-<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script><link rel="stylesheet" href="/css/artisan-design-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/artisan-support-fidele.css?v=20261012-fix4"></head>
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script><link rel="stylesheet" href="/css/artisan-design-fidele.css?v=20261012"><link rel="stylesheet" href="/css/artisan-support-fidele.css?v=20261012"><link rel="stylesheet" href="/css/taskly-support-history.css"></head>
 <body class="dashboard-page" data-require-role="artisan" data-workspace-page="support">
   <div id="site-header"></div>
   <main class="dashboard-shell">
@@ -51,12 +48,17 @@
 </form></div></section>
       <aside class="client-support-aside"><section class="panel"><span class="client-support-tip-symbol" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24"><use href="/images/icons/client-workspace.svg#i-chat"></use></svg></span><h3>Avant de nous écrire</h3><p>Quelques conseils pour obtenir une réponse plus précise.</p><div><b>01</b> Choisissez le sujet correspondant à votre problème.</div><div><b>02</b> Expliquez ce qui se passe et depuis quand.</div><div><b>03</b> Conservez votre numéro de suivi après l’envoi.</div></section><section class="client-support-track"><strong>Vous avez déjà écrit ?</strong><p>Consultez le statut de votre message avec son numéro de suivi.</p><a href="#suivre-message" data-open-support-follow>Suivre mon message →</a></section></aside>
       </div>
-      <section class="panel client-support-history">
-        <div class="panel-header"><div><h2>Mes messages au support</h2><p>Retrouvez le statut de vos demandes d’assistance grâce à leur référence.</p></div></div>
-        <div class="client-support-history-body">
-          <span class="client-support-history-icon" aria-hidden="true">✉</span>
-          <div><strong>Retrouver un message</strong><p>Utilisez votre adresse e-mail et le numéro de suivi reçu après l’envoi.</p></div>
-          <a class="btn outline" href="#suivre-message" data-open-support-follow>Suivre un message</a>
+      <section class="client-support-history panel" data-support-history>
+        <button type="button" class="taskly-history-toggle" data-support-history-toggle aria-controls="taskly-history-content" aria-expanded="false">
+          <span class="taskly-history-icon" aria-hidden="true">✉</span>
+          <span class="taskly-history-label"><strong>Mes messages au support</strong><small>Tous mes messages et numéros de suivi, du plus récent au plus ancien</small></span>
+          <span class="taskly-history-chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="taskly-history-content" id="taskly-history-content" hidden>
+          <p class="taskly-history-info">Seuls les messages rattachés à votre compte apparaissent ici. Les anciens messages peuvent être retrouvés avec « Suivre un message ».</p>
+          <div class="taskly-history-list" data-support-history-list role="status" aria-live="polite"></div>
+          <button type="button" class="btn outline taskly-history-more" data-support-history-more hidden>Afficher les messages précédents</button>
+          <a href="#suivre-message" class="taskly-history-old" data-open-support-follow>Retrouver un ancien message par numéro de suivi →</a>
         </div>
       </section>
     </section>
@@ -88,5 +90,6 @@
     </form>
   </dialog>
   <script defer src="/js/client-support-follow-modal.js"></script>
+<script defer src="/js/taskly-support-history.js"></script>
 </body>
 </html>

@@ -8,6 +8,10 @@ const router = express.Router();
 // Envoyer un message au support
 router.post("/",require('../middleware/securityMiddleware').limiter({max:8}),contactController.envoyerMessageContact);
 
+// Historique des messages du seul compte client/artisan connecte.
+// Les anciens messages anonymes restent consultables uniquement par numero et e-mail.
+router.get('/mes-messages',require('../middleware/authMiddleware').verifierConnexion,contactController.mesMessagesSupport);
+
 // Consulter l'état d'un message de contact avec id + email
 router.get("/suivi",contactController.consulterMessageContact);
 
