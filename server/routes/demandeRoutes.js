@@ -30,4 +30,7 @@ router.put("/:id/annuler-artisan", verifierConnexion, verifierArtisan, verifierA
 // Marquer une demande acceptée comme terminée
 router.put("/:id/terminer", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.terminerDemande);
 
+// Le détail est réservé au profil artisan propriétaire de la demande.
+router.get("/:id/details", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.detailsArtisan);
+
 module.exports = router;

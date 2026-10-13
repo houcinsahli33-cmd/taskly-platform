@@ -119,9 +119,13 @@ async function listerDemandesArtisan(req, res) {
 
         const demandes = await demandeModel.listerDemandesArtisan(artisan.id);
 
-        res.status(200).json({
-            demandes
+        // Les données personnelles d'intervention sont cachées avant acceptation.
+        const demandesVisibles = demandes.map((demande) => {
+            if (["acceptee", "attente_confirmation", "terminee", "conteste"].includes(demande.statut)) return demande;
+            return { ...demande, adresse: null, client_adresse: null, client_telephone: null, client_email: null };
         });
+        res.set("Cache-Control", "no-store, private");
+        res.status(200).json({ demandes: demandesVisibles });
 
     } catch (error) {
         console.error("Erreur lors de la liste des demandes de l'artisan :", error.message);
@@ -282,7 +286,31 @@ async function terminerDemande(req, res) {
     }
 }
 
+
+
+// Sécurisé par les middlewares artisan; vérifie aussi l'appartenance par SQL.
+async function detailsArtisan(req, res) {
+    try {
+        const artisan = await obtenirArtisanConnecte(req, res);
+        if (!artisan) return;
+        const demande = await demandeModel.detailArtisan(req.params.id, artisan.id);
+        if (!demande) return res.status(404).json({ message: "Demande introuvable." });
+        if (!["acceptee", "attente_confirmation", "terminee", "conteste"].includes(demande.statut)) {
+            demande.adresse = null;
+            demande.client_adresse = null;
+            demande.client_telephone = null;
+            demande.client_email = null;
+        }
+        res.set("Cache-Control", "no-store, private");
+        return res.status(200).json({ demande });
+    } catch (error) {
+        console.error("Erreur détail demande artisan :", error.message);
+        return res.status(500).json({ message: "Détail indisponible." });
+    }
+}
+
 module.exports = {
+    detailsArtisan,
     creerDemande,
     listerDemandesClient,
     listerDemandesArtisan,

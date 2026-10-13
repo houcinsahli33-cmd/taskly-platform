@@ -56,6 +56,7 @@ function carteDemandeArtisan(demande) {
       </div>
       ${demande.motif_annulation ? `<p class="alert show warning mt-14">Motif d'annulation : ${echapperHTML(demande.motif_annulation)}</p>` : ""}
       <div class="request-actions">
+        <button class="btn outline" type="button" data-view-artisan-request="${Number(demande.id)}">Consulter la demande</button>
         ${peutTraiter ? `<button class="btn primary" type="button" data-set-status="${demande.id}" data-status="acceptee">Accepter</button>` : ""}
         ${peutTraiter ? `<button class="btn outline" type="button" data-set-status="${demande.id}" data-status="refusee">Refuser</button>` : ""}
         ${peutTerminer ? `<button class="btn primary" type="button" data-complete-request="${demande.id}">Marquer terminée</button>` : ""}
@@ -163,6 +164,8 @@ function initialiserActionsArtisan() {
     afficherDemandesArtisan();
   });
   document.addEventListener("click", (event) => {
+    const details = event.target.closest("[data-view-artisan-request]");
+    if (details) consulterDemandeArtisan(details.dataset.viewArtisanRequest);
     const statut = event.target.closest("[data-set-status]");
     const terminer = event.target.closest("[data-complete-request]");
     const annuler = event.target.closest("[data-open-cancel-artisan]");
@@ -369,3 +372,67 @@ document.addEventListener("DOMContentLoaded", async () => {
     chargerDemandesArtisan();
   }
 });
+
+
+// Ouvre les informations privées d'une demande appartenant au profil artisan actif.
+// Le serveur décide quelles coordonnées sont accessibles selon le statut.
+async function consulterDemandeArtisan(id) {
+  let dialogue = document.getElementById("taskly-detail-artisan");
+  if (!dialogue) {
+    dialogue = document.createElement("dialog");
+    dialogue.id = "taskly-detail-artisan";
+    dialogue.className = "taskly-detail-dialog";
+    dialogue.innerHTML = '<div class="taskly-detail-content"><button class="btn outline taskly-detail-close" type="button" data-close-artisan-detail>Fermer ×</button><div id="taskly-detail-body"></div></div>';
+    document.body.appendChild(dialogue);
+    dialogue.addEventListener("click", (event) => {
+      if (event.target === dialogue || event.target.closest("[data-close-artisan-detail]")) dialogue.close();
+      if (event.target.closest("[data-set-status], [data-complete-request], [data-open-cancel-artisan], [data-open-report]")) dialogue.close();
+    });
+  }
+  const corps = dialogue.querySelector("#taskly-detail-body");
+  corps.textContent = "Chargement des informations…";
+  if (!dialogue.open) dialogue.showModal();
+  try {
+    const { demande: d } = await requeteAPI("/api/demandes/" + encodeURIComponent(id) + "/details");
+    if (!d) throw new Error("Demande indisponible.");
+    const autorisee = ["acceptee", "attente_confirmation", "terminee", "conteste"].includes(d.statut);
+    const nom = echapperHTML(nomComplet(d, "client_"));
+    const commune = echapperHTML(d.client_ville || "Commune non précisée");
+    const adresse = autorisee ? String(d.adresse || "") : "";
+    const numero = Number(d.id);
+    const tel = autorisee && d.client_telephone ? String(d.client_telephone) : "";
+    const email = autorisee && d.client_email ? String(d.client_email) : "";
+    const telHref = tel.replace(/[^+0-9]/g, "");
+    const courrielHref = encodeURIComponent(email).replace(/%40/g,"@");
+    const destination = encodeURIComponent([adresse, d.client_ville, "Algérie"].filter(Boolean).join(", "));
+    const googleMaps = "https://www.google.com/maps/dir/?api=1&destination=" + destination;
+    const peutTraiter = d.statut === "en_attente";
+    const peutTerminer = d.statut === "acceptee";
+    corps.innerHTML = `<h2>Demande n° ${numero}</h2>${badgeStatut(d.statut)}
+      <section class="taskly-detail-grid">
+        <div><h3>Informations du client</h3>
+          <p>👤 ${nom}</p>
+          <p>📞 ${tel ? `<a href="tel:${telHref}">${echapperHTML(tel)}</a>` : "Disponible après acceptation"}</p>
+          <p>✉ ${email ? `<a href="mailto:${courrielHref}">${echapperHTML(email)}</a>` : "Disponible après acceptation"}</p>
+          <p>📍 ${adresse ? echapperHTML(adresse) : commune}</p>
+        </div>
+        <div><h3>La prestation</h3>
+          <p><strong>Métier :</strong> ${echapperHTML(d.service_nom || "Non précisé")}</p>
+          <p>${echapperHTML(d.message || "Aucun message fourni.")}</p>
+          <p>📅 Date souhaitée : ${formatDate(d.date_souhaitee)}</p>
+          <p>Créée le : ${formatDate(d.created_at)}</p>
+          <p>Statut : ${echapperHTML(libelleStatut(d.statut))}</p>
+        </div>
+      </section>
+      <div class="request-actions taskly-detail-actions">
+        ${peutTraiter ? `<button class="btn primary" type="button" data-set-status="${numero}" data-status="acceptee">Accepter</button><button class="btn outline" type="button" data-set-status="${numero}" data-status="refusee">Refuser</button>` : ""}
+        ${peutTerminer ? `<button class="btn primary" type="button" data-complete-request="${numero}">Marquer terminée</button><button class="btn outline" type="button" data-open-cancel-artisan="${numero}">Annuler avec motif</button>` : ""}
+        <button class="btn danger" type="button" data-open-report="${numero}">Signaler</button>
+      </div>
+      ${autorisee && adresse ? `<div class="taskly-route-preview"><h3>Localisation de l'intervention</h3>
+        <iframe title="Carte de l'intervention" referrerpolicy="no-referrer" loading="lazy" src="https://maps.google.com/maps?q=${destination}&amp;output=embed"></iframe>
+        <p><a class="btn primary" target="_blank" rel="noopener noreferrer" href="${googleMaps}">🧭 Voir l'itinéraire sur Google Maps</a></p></div>` : ""}`;
+  } catch (error) {
+    corps.textContent = error.message || "Détail indisponible.";
+  }
+}

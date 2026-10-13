@@ -181,7 +181,26 @@ async function terminerDemande(id, artisanId) {
     return resultat;
 }
 
+
+
+// Lecture ciblée : impossible de consulter la demande d'un autre artisan.
+async function detailArtisan(id, artisanId) {
+    const [lignes] = await db.promise().query(`
+        SELECT d.*, u.nom AS client_nom, u.prenom AS client_prenom,
+            u.email AS client_email, c.telephone AS client_telephone,
+            c.ville AS client_ville, s.nom AS service_nom
+        FROM demandes d
+        JOIN clients c ON c.id = d.client_id
+        JOIN users u ON u.id = c.user_id
+        JOIN artisans a ON a.id = d.artisan_id
+        LEFT JOIN services s ON s.id = a.service_id
+        WHERE d.id = ? AND d.artisan_id = ? LIMIT 1
+    `, [id, artisanId]);
+    return lignes[0] || null;
+}
+
 module.exports = {
+    detailArtisan,
     creerDemande,
     listerDemandesClient,
     listerDemandesArtisan,
