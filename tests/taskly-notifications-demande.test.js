@@ -24,7 +24,8 @@ function preparer(modif = 1) {
         '../models/demandeModel': model,
         '../models/clientModel': {trouverClientParUserId: async () => ({id: 7})},
         '../models/artisanModel': {trouverArtisanParUserId: async () => ({id: 8}),trouverArtisanParId: async () => ({id: 8})},
-        '../services/tasklyMail': mail
+        '../services/tasklyMail': mail,
+        '../services/tasklyConfirmation': {creer:async()=>('a'.repeat(64)),confirmer:async()=>false}
     };
     const file = path.join(base,'server/controllers/demandeController.js');
     const source = fs.readFileSync(file, 'utf8');

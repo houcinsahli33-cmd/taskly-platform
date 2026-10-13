@@ -6,6 +6,7 @@ const clientModel = require("../models/clientModel");
 const artisanModel = require("../models/artisanModel");
 
 const tasklyMail = require('../services/tasklyMail');
+const tasklyConfirmation = require('../services/tasklyConfirmation');
 
 // Après l'enregistrement en base : notifier le bon destinataire, jamais un autre profil.
 // Une panne SMTP ne doit pas transformer une opération déjà validée en échec HTTP.
@@ -316,8 +317,29 @@ async function terminerDemande(req, res) {
             });
         }
 
+        // Le statut est en attente : jamais terminé sans confirmation du client.
+        try {
+            const dest = await demandeModel.trouverDestinataires(req.params.id);
+            if (dest) {
+                const token = await tasklyConfirmation.creer(req.params.id);
+                const site = tasklyMail.base();
+                await tasklyMail.mettreEnFile({
+                    userId:dest.client_user_id, to:dest.client_email,
+                    subject:'Votre artisan demande la confirmation de la prestation — Taskly',
+                    message:`Votre artisan ${[dest.artisan_prenom,dest.artisan_nom].filter(Boolean).join(' ')} indique que la prestation est terminée. Confirmez uniquement si le travail est réellement terminé. Sinon, signalez que la prestation n'est pas terminée.`,
+                    link:site ? `${site}/confirmation-prestation.html?demande=${encodeURIComponent(req.params.id)}#token=${token}` : '',
+                    button:'Confirmer la fin de la prestation',
+                    secondaryLink:site ? `${site}/signalement-prestation.html?demande=${encodeURIComponent(req.params.id)}` : '',
+                    secondaryButton:'La prestation n’est pas terminée',
+                    key:`demande:${req.params.id}:confirmation`
+                });
+                await tasklyMail.traiterLot();
+            }
+        } catch (err) {
+            console.error('Notification fin de prestation impossible :', err.code || err.message);
+        }
         res.status(200).json({
-            message: "Travail marqué comme terminé."
+            message: "Fin déclarée : en attente de confirmation du client."
         });
 
     } catch (error) {
@@ -352,7 +374,37 @@ async function detailsArtisan(req, res) {
     }
 }
 
+// Confirmation depuis l'espace client connecté (propriété vérifiée côté SQL).
+async function confirmerFinClient(req,res) {
+    try {
+        const client=await obtenirClientConnecte(req,res);if(!client)return;
+        const result=await demandeModel.confirmerFinClient(req.params.id,client.id);
+        if(!result.affectedRows)return res.status(409).json({message:'Cette demande ne peut pas être confirmée.'});
+        res.status(200).json({message:'Merci, votre prestation est confirmée comme terminée.'});
+    }catch(err){console.error('Confirmation client :',err.code||err.message);res.status(500).json({message:'Confirmation momentanément indisponible.'});}
+}
+// Une contestation ne crée PAS automatiquement de signalement : le client décide ensuite.
+async function contesterFinClient(req,res) {
+    try {
+        const client=await obtenirClientConnecte(req,res);if(!client)return;
+        const result=await demandeModel.contesterFinClient(req.params.id,client.id);
+        if(!result.affectedRows)return res.status(409).json({message:'Cette demande ne peut pas être contestée.'});
+        res.status(200).json({message:'Prestation marquée non terminée. Vous pouvez signaler le problème.'});
+    }catch(err){console.error('Contestation client :',err.code||err.message);res.status(500).json({message:'Contestation momentanément indisponible.'});}
+}
+// Le lien e-mail ne modifie rien à son ouverture : POST explicite, token unique.
+async function confirmerDepuisEmail(req,res) {
+    try {
+        const ok=await tasklyConfirmation.confirmer(req.body?.token);
+        if(!ok)return res.status(409).json({message:'Lien invalide, expiré ou demande déjà traitée.'});
+        res.set('Cache-Control','no-store').status(200).json({message:'La prestation a été confirmée. Merci !'});
+    }catch(err){console.error('Confirmation e-mail :',err.code||err.message);res.status(500).json({message:'Service temporairement indisponible.'});}
+}
+
 module.exports = {
+    confirmerFinClient,
+    contesterFinClient,
+    confirmerDepuisEmail,
     detailsArtisan,
     creerDemande,
     listerDemandesClient,

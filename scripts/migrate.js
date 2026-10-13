@@ -4,7 +4,7 @@ const fs=require('fs'),path=require('path');
 (async()=>{let conn;try{
  conn=await pool.promise().getConnection();
  const fichier=process.argv[2]||'migration_taskly_integrated.sql';
- if(!['migration_taskly_integrated.sql','migration_comptes_support.sql','migration_parametres_site.sql','migration_multi_espaces.sql','migration_notifications_taskly.sql'].includes(fichier))throw Error('Migration inconnue.');
+ if(!['migration_taskly_integrated.sql','migration_comptes_support.sql','migration_parametres_site.sql','migration_multi_espaces.sql','migration_notifications_taskly.sql','migration_confirmation_prestation.sql'].includes(fichier))throw Error('Migration inconnue.');
  if(fichier==='migration_multi_espaces.sql'){
   const [[schema]]=await conn.query('SHOW CREATE TABLE users');
   const dossier=path.join(__dirname,'../.taskly-private/migrations');fs.mkdirSync(dossier,{recursive:true});

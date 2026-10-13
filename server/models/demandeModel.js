@@ -166,7 +166,7 @@ async function annulerDemandeArtisan(id, artisanId, motifAnnulation) {
 async function terminerDemande(id, artisanId) {
     const sql = `
         UPDATE demandes
-        SET statut = 'terminee',
+        SET statut = 'attente_confirmation',
             date_traitement = NOW()
         WHERE id = ?
         AND artisan_id = ?
@@ -218,7 +218,22 @@ async function trouverDestinataires(id) {
     return rows[0] || null;
 }
 
+// Le compte client connecté ne peut agir que sur ses propres demandes.
+async function confirmerFinClient(id, clientId) {
+    const [resultat] = await db.promise().query(`UPDATE demandes
+        SET statut='terminee', date_traitement=NOW()
+        WHERE id=? AND client_id=? AND statut='attente_confirmation'`,[id,clientId]);
+    return resultat;
+}
+async function contesterFinClient(id, clientId) {
+    const [resultat] = await db.promise().query(`UPDATE demandes
+        SET statut='conteste',date_traitement=NOW()
+        WHERE id=? AND client_id=? AND statut='attente_confirmation'`,[id,clientId]);
+    return resultat;
+}
 module.exports = {
+    confirmerFinClient,
+    contesterFinClient,
     trouverDestinataires,
     detailArtisan,
     creerDemande,

@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded',async()=>{
     try{
      const data=await requeteAPI('/api/auth/select-space',{method:'POST',body:JSON.stringify({compteId:compte.id})});
      if(data.supportSeulement){location.replace('/artisan-pending.html');return;}
+     const pending=Number(sessionStorage.getItem('tasklyReportPending'));
+     if(data.utilisateur.role==='client' && Number.isSafeInteger(pending)&&pending>0) {
+      location.replace('/espace/client/demandes?signaler='+pending);return;
+     }
      location.replace(data.utilisateur.role==='artisan'?'/espace/artisan/accueil':'/espace/client/accueil');
     }catch(e){status.textContent=e.message;list.querySelectorAll('button').forEach(b=>b.disabled=false);}
    });

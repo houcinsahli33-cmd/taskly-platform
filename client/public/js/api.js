@@ -161,6 +161,8 @@ function libelleStatut(statut) {
     refusee: "Refusée",
     annulee: "Annulée",
     terminee: "Terminée",
+    attente_confirmation: "À confirmer par le client",
+    conteste: "Prestation contestée",
     nouveau: "Nouveau",
     traite: "Traité",
     actif: "Actif",

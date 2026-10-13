@@ -33,4 +33,9 @@ router.put("/:id/terminer", verifierConnexion, verifierArtisan, verifierArtisanA
 // Le détail est réservé au profil artisan propriétaire de la demande.
 router.get("/:id/details", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.detailsArtisan);
 
+// Confirmation e-mail : pas d'authentification requise, mais lien à usage unique.
+// La protection CSRF générale reste active dans app.js.
+router.post('/confirmation-lien', require('../middleware/securityMiddleware').limiter({max:8}), demandeController.confirmerDepuisEmail);
+router.put('/:id/confirmer-fin', verifierConnexion, verifierClient, demandeController.confirmerFinClient);
+router.put('/:id/contester-fin', verifierConnexion, verifierClient, demandeController.contesterFinClient);
 module.exports = router;

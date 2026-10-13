@@ -17,18 +17,21 @@ function base() {
     } catch { return ''; }
 }
 
-function modele(subject, message, link = '', button = 'Ouvrir Taskly') {
+function modele(subject, message, link = '', button = 'Ouvrir Taskly', secondaryLink = '', secondaryButton = '') {
     const origin = base();
     const logo = origin ? `<img src="${echapper(origin)}/images/logo/taskly-logo.svg" alt="Taskly" width="126" style="max-width:126px;height:auto">` : '<strong style="font-size:22px">Taskly</strong>';
     const action = link && origin && link.startsWith(origin + '/')
         ? `<p style="margin-top:26px"><a href="${echapper(link)}" style="display:inline-block;padding:14px 22px;background:#007e64;color:#fff;border-radius:10px;text-decoration:none;font-weight:700">${echapper(button)}</a></p>`
         : '<p>Retrouvez votre demande en vous connectant à Taskly depuis votre navigateur.</p>';
-    return `<!doctype html><html lang="fr"><body style="margin:0;padding:32px 12px;background:#f1f7f4;font-family:Arial,sans-serif;color:#163e32"><main style="max-width:570px;margin:auto;background:white;padding:30px;border:1px solid #d9e9e2;border-radius:18px">${logo}<h1 style="font-size:24px;line-height:1.35;margin:28px 0 12px">${echapper(subject)}</h1><p style="font-size:16px;line-height:1.7">${echapper(message)}</p>${action}<hr style="border:0;border-top:1px solid #e3eee8;margin-top:30px"><p style="font-size:12px;color:#526f63">Taskly — Notification liée à votre demande. Ne communiquez jamais vos codes de connexion.</p></main></body></html>`;
+    const secondary = secondaryLink && origin && secondaryLink.startsWith(origin + '/')
+        ? `<p style="margin-top:14px"><a href="${echapper(secondaryLink)}" style="color:#006f57;text-decoration:underline;font-weight:650">${echapper(secondaryButton || 'Autre action')}</a></p>`
+        : '';
+    return `<!doctype html><html lang="fr"><body style="margin:0;padding:32px 12px;background:#f1f7f4;font-family:Arial,sans-serif;color:#163e32"><main style="max-width:570px;margin:auto;background:white;padding:30px;border:1px solid #d9e9e2;border-radius:18px">${logo}<h1 style="font-size:24px;line-height:1.35;margin:28px 0 12px">${echapper(subject)}</h1><p style="font-size:16px;line-height:1.7">${echapper(message)}</p>${action}${secondary}<hr style="border:0;border-top:1px solid #e3eee8;margin-top:30px"><p style="font-size:12px;color:#526f63">Taskly — Notification liée à votre demande. Ne communiquez jamais vos codes de connexion.</p></main></body></html>`;
 }
 
-async function mettreEnFile({userId, to, subject, message, link='', button='Ouvrir Taskly', key}) {
+async function mettreEnFile({userId, to, subject, message, link='', button='Ouvrir Taskly', key, secondaryLink='', secondaryButton=''}) {
     if (!Number.isSafeInteger(Number(userId)) || Number(userId) <= 0 || !to || !key) throw new Error('Notification incomplète.');
-    const html = modele(subject, message, link, button);
+    const html = modele(subject, message, link, button, secondaryLink, secondaryButton);
     await db.query(`INSERT INTO taskly_mail_queue (user_id,destinataire,sujet,corps,html,cle)
         VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE id=id`, [userId,to,subject,message,html,key]);
 }

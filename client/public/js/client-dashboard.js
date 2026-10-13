@@ -17,7 +17,7 @@ function afficherStatsClient() {
 
   const stats = statsDemandes(demandesClient);
   // Données calculées depuis /api/demandes/client, jamais de chiffres de démonstration.
-  const enCours = demandesClient.filter(d => d.statut === 'acceptee' || d.statut === 'en_cours').length;
+  const enCours = demandesClient.filter(d => ['acceptee','en_cours','attente_confirmation','conteste'].includes(d.statut)).length;
   const surPageDemandes = document.body.dataset.workspacePage === 'demandes';
   const compteurs = surPageDemandes
     ? [['Total des demandes', stats.total, 'Toutes les demandes', 'paper'],
@@ -41,6 +41,7 @@ function carteDemandeClient(demande) {
   const peutAnnuler = demande.statut === "en_attente";
   const peutAvis = demande.statut === "terminee" && !demande.avis_id;
   const dejaAvis = demande.avis_id;
+  const aConfirmer = demande.statut === 'attente_confirmation';
 
   return `
     <article class="request-card">
@@ -61,6 +62,8 @@ function carteDemandeClient(demande) {
       ${demande.motif_annulation ? `<p class="alert show warning mt-14">Motif d'annulation : ${echapperHTML(demande.motif_annulation)}</p>` : ""}
       <div class="request-actions">
         ${peutAnnuler ? `<button class="btn outline" type="button" data-cancel-request="${demande.id}">Annuler</button>` : ""}
+        ${aConfirmer ? `<button class="btn primary" type="button" data-confirm-finish="${demande.id}">Oui, prestation terminée</button><button class="btn outline" type="button" data-not-finished="${demande.id}">Non, pas terminée</button>` : ""}
+        ${demande.statut === 'conteste' ? `<span class="badge">Prestation contestée : vous pouvez envoyer un signalement.</span>` : ""}
         ${peutAvis ? `<button class="btn primary" type="button" data-open-review="${demande.id}">Laisser un avis</button>` : ""}
         <button class="btn danger" type="button" data-open-report="${demande.id}">Signaler</button>
       </div>
@@ -77,7 +80,7 @@ function afficherDemandesClient() {
   const filtre = filtres?.dataset.clientFilter || 'toutes';
   const texte = normaliserTexte(document.getElementById('client-request-search')?.value || '');
   const visibles = demandesClient.filter(d => {
-    const statut = filtre === 'annulee' ? ['annulee','refusee'].includes(d.statut) : filtre === 'en_cours' ? ['acceptee','en_cours'].includes(d.statut) : filtre === 'toutes' || d.statut === filtre;
+    const statut = filtre === 'annulee' ? ['annulee','refusee'].includes(d.statut) : filtre === 'en_cours' ? ['acceptee','en_cours','attente_confirmation','conteste'].includes(d.statut) : filtre === 'toutes' || d.statut === filtre;
     const contenu = [d.service_nom, d.message, d.artisan_ville, d.artisan_nom, d.artisan_prenom].join(' ');
     return statut && (!texte || normaliserTexte(contenu).includes(texte));
   });
@@ -104,6 +107,15 @@ async function chargerDemandesClient() {
     afficherStatsClient();
     afficherDemandesClient();
     afficherDemandesRecentesClient();
+    if(document.body.dataset.workspacePage==='demandes') {
+      const requested = Number(new URLSearchParams(location.search).get('signaler') || sessionStorage.getItem('tasklyReportPending'));
+      if(Number.isSafeInteger(requested)&&requested>0) {
+        sessionStorage.removeItem('tasklyReportPending');
+        history.replaceState(null,'',location.pathname);
+        if(demandesClient.some(d=>Number(d.id)===requested)) ouvrirSignalementClient(requested);
+        else afficherToast('Demande inaccessible depuis ce compte client.','error');
+      }
+    }
   } catch (error) {
     if (cible) cible.innerHTML = etatVide(error.message);
   }
@@ -148,10 +160,24 @@ function initialiserActionsClient() {
     const annuler = event.target.closest("[data-cancel-request]");
     const avis = event.target.closest("[data-open-review]");
     const signaler = event.target.closest("[data-open-report]");
+    const confirmer = event.target.closest('[data-confirm-finish]');
+    const refuserFin = event.target.closest('[data-not-finished]');
 
     if (annuler) annulerDemandeClient(annuler.dataset.cancelRequest);
     if (avis) ouvrirAvisClient(avis.dataset.openReview);
     if (signaler) ouvrirSignalementClient(signaler.dataset.openReport);
+    if (confirmer) {
+      if (!confirm('Confirmez-vous que la prestation a réellement été terminée ?')) return;
+      requeteAPI(`/api/demandes/${confirmer.dataset.confirmFinish}/confirmer-fin`,{method:'PUT'})
+        .then(()=>{afficherToast('Prestation confirmée.');chargerDemandesClient();})
+        .catch(e=>afficherToast(e.message,'error'));
+    }
+    if (refuserFin) {
+      if (!confirm('La prestation n’est pas terminée. Souhaitez-vous enregistrer votre contestation ?')) return;
+      requeteAPI(`/api/demandes/${refuserFin.dataset.notFinished}/contester-fin`,{method:'PUT'})
+        .then(()=>{afficherToast('Prestation contestée. Vous pouvez maintenant envoyer un signalement.');chargerDemandesClient();ouvrirSignalementClient(refuserFin.dataset.notFinished);})
+        .catch(e=>afficherToast(e.message,'error'));
+    }
   });
 
   document.getElementById("review-form")?.addEventListener("submit", async (event) => {
@@ -187,10 +213,16 @@ function initialiserActionsClient() {
     bouton.disabled = true;
 
     try {
+      const demandeId = Number(document.getElementById("report-demande-id").value);
+      // Si le client est arrivé depuis l'e-mail "Pas terminée", son signalement
+      // enregistre aussi la contestation sans envoyer quoi que ce soit à son insu.
+      if (demandesClient.find(d => Number(d.id)===demandeId)?.statut === 'attente_confirmation') {
+        await requeteAPI(`/api/demandes/${demandeId}/contester-fin`, {method:'PUT'});
+      }
       await requeteAPI("/api/signalements", {
         method: "POST",
         body: JSON.stringify({
-          demandeId: Number(document.getElementById("report-demande-id").value),
+          demandeId,
           motif: document.getElementById("report-motif").value,
           description: document.getElementById("report-description").value.trim()
         })

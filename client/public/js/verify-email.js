@@ -66,6 +66,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       if(data.supportSeulement){window.location.replace(data.supportUrl);return;}
       notification('Code validé ! Ouverture de votre espace…');
       const role = data.utilisateur?.role;
+      const pending=Number(sessionStorage.getItem('tasklyReportPending'));
+      if(role==='client' && Number.isSafeInteger(pending) && pending>0){
+        window.location.replace('/espace/client/demandes?signaler='+pending);return;
+      }
       window.location.replace(role === 'artisan' ? '/artisan-dashboard.html' : '/client-dashboard.html');
     } catch (error) {
       notification(error.message || 'Le code n’a pas pu être vérifié.',true);

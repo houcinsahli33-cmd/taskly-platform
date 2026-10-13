@@ -129,7 +129,7 @@ async function changerStatutDemande(id, statut) {
 async function terminerDemandeArtisan(id) {
   try {
     await requeteAPI(`/api/demandes/${id}/terminer`, { method: "PUT" });
-    afficherToast("Travail marqué comme terminé.");
+    afficherToast("Le client a reçu une demande de confirmation de fin de prestation.");
     chargerDemandesArtisan();
   } catch (error) {
     afficherToast(error.message, "error");
