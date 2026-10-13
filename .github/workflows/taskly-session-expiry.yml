@@ -1,0 +1,38 @@
+name: Taskly - notifications de sessions expirees
+
+on:
+  schedule:
+    # Horaire en UTC ; les lancements GitHub peuvent etre retardes.
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: taskly-expiration-sessions
+  cancel-in-progress: false
+
+jobs:
+  notifications:
+    name: Verifier les sessions expirees
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Appeler la verification securisee sur Taskly
+        env:
+          TASKLY_CRON_SECRET: ${{ secrets.TASKLY_CRON_SECRET }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${TASKLY_CRON_SECRET}" ]]; then
+            echo 'Le secret GitHub TASKLY_CRON_SECRET est absent.' >&2
+            exit 1
+          fi
+          curl \
+            --fail-with-body --silent --show-error \
+            --connect-timeout 10 --max-time 90 \
+            --retry 2 --retry-delay 5 \
+            --header "Authorization: Bearer ${TASKLY_CRON_SECRET}" \
+            --header 'Accept: application/json' \
+            'https://taskly-platform-sigma.vercel.app/api/internal/expire-sessions'
