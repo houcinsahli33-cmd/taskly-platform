@@ -22,3 +22,26 @@
 #taskly-artisans-map{min-height:460px;border:1px solid #dcecea;border-radius:16px;overflow:hidden}
 .taskly-map-privacy{margin:12px 2px 0;color:#6d8590;font-size:11.5px}
 @media(max-width:740px){.taskly-map-heading{align-items:start;flex-direction:column}.taskly-map-notice{max-width:100%}.taskly-artisans-map-controls{gap:14px}.taskly-map-experience{padding:13px}.taskly-map-view-switch{max-width:100%}.taskly-map-view-switch .btn{white-space:normal}#taskly-artisans-map{min-height:340px}}
+
+/* Rythme, icônes et boutons du bloc carte validé ; pas d'effet sur la liste. */
+.taskly-map-experience{padding:27px 28px;border-radius:23px;box-shadow:0 11px 30px #1243310b}
+.taskly-map-heading{margin-bottom:26px;padding-bottom:16px;border-bottom:1px solid #e1eeea}
+.taskly-map-heading-icon{width:62px;height:62px;border-radius:15px}
+.taskly-map-heading-icon svg{width:28px;height:28px}
+.taskly-map-heading h2{font-size:26px;letter-spacing:-.6px}
+.taskly-map-heading p{font-size:14px}
+.taskly-map-notice{max-width:365px;min-height:78px;padding:13px 18px}
+.taskly-artisans-map-controls{gap:30px;margin-bottom:19px}
+.taskly-map-view-switch .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px!important;padding:11px 19px!important;font-size:13px}
+.taskly-map-view-switch .btn svg{width:19px;height:19px;flex:none}
+.taskly-map-radius-options{min-height:48px}
+.taskly-map-radius-options button{height:42px;min-width:78px;font-family:inherit;font-weight:650}
+.taskly-map-results{min-height:76px;padding:16px 19px;border-radius:15px;margin-bottom:20px}
+.taskly-map-results>span{width:45px;height:45px}
+.taskly-map-results>span svg{width:22px;height:22px}
+#taskly-artisans-map-status{font-size:13px}
+#taskly-artisans-map{min-height:420px;border-radius:16px}
+.taskly-map-privacy{display:flex;align-items:center;gap:12px;font-size:12px;line-height:1.5}
+.taskly-map-privacy svg{width:19px;height:19px;flex:none;color:#008a70}
+.taskly-map-experience .leaflet-container{font-family:inherit}
+@media(max-width:740px){.taskly-map-experience{padding:15px}.taskly-map-heading h2{font-size:20px}.taskly-map-heading-icon{width:50px;height:50px}.taskly-artisans-map-controls{gap:16px}.taskly-map-view-switch .btn{padding:9px 12px!important;font-size:11px}.taskly-map-radius-options button{min-width:65px}#taskly-artisans-map{min-height:330px}}

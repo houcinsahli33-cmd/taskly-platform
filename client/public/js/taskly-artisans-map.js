@@ -12,13 +12,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(!mapPanel.hidden)montrerCarte();
  }
  document.querySelectorAll('[data-map-radius]').forEach(b=>b.addEventListener('click',()=>choisirRayon(b.dataset.mapRadius)));
- let carte=null,markers=null,userPos=null,leafletPromise=null,requeteCourante=0;
+ let carte=null,markers=null,userPos=null,geoAttempted=false,leafletPromise=null,requeteCourante=0;
  function leaflet(){
   if(leafletPromise)return leafletPromise;
   leafletPromise=new Promise((resolve,reject)=>{
    if(window.L)return resolve(window.L);
    const css=document.createElement('link');css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.append(css);
-   const js=document.createElement('script');js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';js.onload=()=>resolve(window.L);js.onerror=()=>reject(Error('Carte indisponible.'));document.head.append(js);
+   const js=document.createElement('script');js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';js.onload=()=>resolve(window.L);js.onerror=()=>{leafletPromise=null;reject(Error('Carte indisponible.'));};document.head.append(js);
   });return leafletPromise;
  }
  const valid=id=>/^[1-9]\d*$/.test(String(id));
@@ -28,15 +28,19 @@ document.addEventListener('DOMContentLoaded',()=>{
   grille.hidden=true;mapPanel.hidden=false;document.querySelector('.load-more-artisans-wrap')?.setAttribute('hidden','');status.textContent='Recherche des artisans proches…';
   try{
    const L=await leaflet();
+   if(numeroRequete!==requeteCourante||mapPanel.hidden)return;
    if(!carte){carte=L.map('taskly-artisans-map').setView([28.03,2.7],5);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(carte);markers=L.layerGroup().addTo(carte);}
-   setTimeout(()=>carte.invalidateSize(),0);
-   if(!userPos&&navigator.geolocation){
+   requestAnimationFrame(()=>{if(!mapPanel.hidden)carte.invalidateSize();});
+   if(!geoAttempted&&navigator.geolocation){
+    geoAttempted=true;
     userPos=await new Promise(resolve=>navigator.geolocation.getCurrentPosition(p=>resolve([p.coords.latitude,p.coords.longitude]),()=>resolve(null),{enableHighAccuracy:false,timeout:5500}));
    }
+   if(numeroRequete!==requeteCourante||mapPanel.hidden)return;
    const params=new URLSearchParams(construireQueryArtisans());
    params.set('rayonKm',document.getElementById('taskly-map-radius').value);
    if(userPos){params.set('lat',userPos[0]);params.set('lon',userPos[1]);}
    const {artisans}=await requeteAPI('/api/artisans/carte?'+params);
+   if(numeroRequete!==requeteCourante||mapPanel.hidden)return;
    markers.clearLayers();const limites=[];
    if(userPos){L.circleMarker(userPos,{radius:7,color:'#2563eb',fillColor:'#3b82f6',fillOpacity:.8}).addTo(markers);limites.push(userPos);}
    (artisans||[]).forEach(a=>{

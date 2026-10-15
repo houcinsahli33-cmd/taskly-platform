@@ -21,3 +21,43 @@ dialog.taskly-detail-dialog::backdrop{background:#102c2680}
 .taskly-route-preview .taskly-detail-actions>.btn{min-height:44px;border-radius:10px;padding:10px 16px;font-weight:700}
 .taskly-route-preview .taskly-detail-actions>.btn.primary{background:#00866d;color:white}
 @media(max-width:690px){.taskly-detail-grid{grid-template-columns:1fr}.taskly-detail-content{padding:18px}.taskly-detail-row{grid-template-columns:30px minmax(78px,95px) minmax(0,1fr);gap:8px}.taskly-route-preview iframe{height:280px}}
+
+/* Ajustements fidèles à la maquette approuvée, strictement locaux à cette modale. */
+dialog.taskly-detail-dialog{width:min(1190px,95vw);max-height:92dvh;border-radius:24px;border-color:#cfdfd9;box-shadow:0 25px 85px #0a292b4a}
+.taskly-detail-content{padding:31px 36px 34px}
+.taskly-detail-content h2{font-size:clamp(27px,3.2vw,42px);letter-spacing:-1px;line-height:1.15;margin:0 0 14px;color:#102e3c;font-weight:850}
+.taskly-detail-close{min-height:45px;padding:9px 21px!important;border-radius:12px!important;border:1px solid #008e73!important;background:#fff!important;color:#007e67!important;font-weight:750}
+.taskly-detail-grid{gap:20px;margin-top:24px}
+.taskly-detail-grid>.taskly-detail-card{border-radius:15px;border:1px solid #d3eae3;padding:0 22px 14px}
+.taskly-detail-card h3{margin:0 -22px 7px;padding:15px 22px;background:#f6fbf9;font-size:19px;gap:15px}
+.taskly-heading-icon{width:44px;height:44px;background:#e1f6ee;border-radius:50%}
+.taskly-heading-icon svg{height:23px;width:23px}
+.taskly-detail-row{grid-template-columns:40px minmax(97px,135px) minmax(0,1fr);gap:11px;min-height:59px;font-size:13.5px}
+.taskly-row-icon{width:36px;height:36px;border-radius:11px;background:#e7f5ef;color:#008c6a}
+.taskly-row-icon svg{height:20px;width:20px;display:block}
+.taskly-row-icon.taskly-picto-user{background:#edf1f5;color:#718399}
+.taskly-row-icon.taskly-picto-mail,.taskly-row-icon.taskly-picto-message{background:#e8f1ff;color:#1479e2}
+.taskly-row-icon.taskly-picto-pin{background:#fce8ec;color:#ef2450}
+.taskly-row-icon.taskly-picto-calendar{background:#f0ebff;color:#7547f9}
+.taskly-row-icon.taskly-picto-created{background:#edf2f8;color:#617790}
+.taskly-row-icon.taskly-picto-check{background:#e2f7ee;color:#067a56}
+.taskly-row-label{font-size:13px;color:#698099;font-weight:650}
+.taskly-row-value{font-size:13.5px;color:#162f4e;line-height:1.45}
+.taskly-row-value a{color:#05876b}
+.taskly-detail-status{padding:6px 16px}
+.taskly-detail-expand{display:grid;place-items:center;background:#edf2f5;min-height:31px}
+.taskly-detail-actions{margin-top:19px}
+.taskly-detail-report{display:inline-flex;align-items:center;gap:9px;background:#e0443c!important;border-color:#e0443c!important;padding:12px 22px!important;border-radius:11px!important;color:#fff!important;box-shadow:0 9px 19px #bb352426}
+.taskly-detail-report svg{width:19px;height:19px}
+.taskly-route-preview{margin-top:22px}
+.taskly-route-preview h3{display:flex;align-items:center;gap:9px;color:#112f3f;font-size:20px;margin-bottom:13px}
+.taskly-location-picto{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;color:#008a6c;background:#e1f6ed}
+.taskly-location-picto svg{width:18px;height:18px}
+.taskly-route-preview iframe{height:295px;display:block;border-radius:13px}
+.taskly-route-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+.taskly-route-preview .taskly-route-actions>.btn{display:flex;justify-content:center;align-items:center;gap:10px;min-height:48px;padding:10px 14px;font-size:13px;border-radius:11px}
+.taskly-route-preview .taskly-route-actions>.btn.outline{background:white;color:#00836a;border:1px solid #008a70}
+.taskly-route-preview .taskly-route-actions>.btn.primary{background:#008a70;color:#fff;border-color:#008a70}
+.taskly-route-actions .btn svg{width:19px;height:19px;flex:none}
+.taskly-detail-loading{padding:40px;text-align:center;color:#607f88}
+@media(max-width:760px){.taskly-detail-content{padding:20px 16px}.taskly-detail-grid{grid-template-columns:1fr;gap:14px}.taskly-detail-grid>.taskly-detail-card{padding:0 13px 10px}.taskly-detail-card h3{margin:0 -13px 6px;padding:12px 13px}.taskly-detail-row{grid-template-columns:35px minmax(80px,118px) minmax(0,1fr);font-size:12px;gap:7px}.taskly-row-value{font-size:12px}.taskly-route-actions{grid-template-columns:1fr}.taskly-route-preview iframe{height:260px}}

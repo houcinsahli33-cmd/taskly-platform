@@ -391,11 +391,15 @@ async function consulterDemandeArtisan(id) {
     });
   }
   const corps = dialogue.querySelector("#taskly-detail-body");
-  corps.textContent = "Chargement des informations…";
+  corps.innerHTML = '<p class="taskly-detail-loading" role="status">Chargement des informations…</p>';
+  corps.setAttribute('aria-busy','true');
+  const ouverture = (dialogue._tasklyOuverture = (dialogue._tasklyOuverture || 0) + 1);
   if (!dialogue.open) dialogue.showModal();
   try {
     const { demande: d } = await requeteAPI("/api/demandes/" + encodeURIComponent(id) + "/details");
     if (!d) throw new Error("Demande indisponible.");
+    if (ouverture !== dialogue._tasklyOuverture || !dialogue.open) return;
+    corps.removeAttribute('aria-busy');
     const autorisee = ["acceptee", "attente_confirmation", "terminee", "conteste"].includes(d.statut);
     const nom = echapperHTML(nomComplet(d, "client_"));
     const commune = echapperHTML(d.client_ville || "Commune non précisée");
@@ -409,38 +413,56 @@ async function consulterDemandeArtisan(id) {
     const googleMaps = "https://www.google.com/maps/dir/?api=1&destination=" + destination;
     const peutTraiter = d.statut === "en_attente";
     const peutTerminer = d.statut === "acceptee";
-    const detailRow=(icon,libelle,valeur,classe='')=>`<div class="taskly-detail-row ${classe}"><span class="taskly-row-icon" aria-hidden="true">${icon}</span><span class="taskly-row-label">${libelle}</span><span class="taskly-row-value">${valeur}</span></div>`;
+    // SVG locaux, identiques pour chaque demande ; seules les données proviennent de l'API.
+    const pictos={
+      user:'<circle cx="12" cy="8" r="3.4"/><path d="M5 21c0-4 2.7-6.5 7-6.5s7 2.5 7 6.5"/>',
+      phone:'<path d="M7 3h3l1.3 4-2 1.7c1.2 2.4 3.1 4.2 5.4 5.4l1.7-2L21 14v3c0 2-1.7 3.5-3.7 3.1A17 17 0 0 1 3.9 6.7C3.5 4.7 5 3 7 3Z"/>',
+      mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+      pin:'<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.4"/>',
+      briefcase:'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 12h18M11 12v2h2v-2"/>',
+      wrench:'<path d="M14 7a5 5 0 0 1 6-4l-4 4 1 3 3 1a5 5 0 0 1-6 4l-8 8-4-4 8-8a5 5 0 0 1 4-4Z"/>',
+      message:'<rect x="3" y="4" width="18" height="15" rx="2"/><path d="M7 9h10M7 13h7M9 19l-3 3v-3"/>',
+      calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01"/>',
+      created:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18m-12 6 2 2 4-4"/>',
+      check:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>',
+      navigate:'<path d="m3 11 18-8-8 18-2-8-8-2Z"/>',
+      external:'<path d="M13 4h7v7M20 4 10 14"/><path d="M20 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/>',
+      flag:'<path d="M5 22V3m0 2c6-4 8 4 15 0v12c-7 4-9-4-15 0"/>'
+    };
+    const picto=nom=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${pictos[nom]}</svg>`;
+    const detailRow=(icon,libelle,valeur,classe='')=>`<div class="taskly-detail-row ${classe}"><span class="taskly-row-icon taskly-picto-${icon}" aria-hidden="true">${picto(icon)}</span><span class="taskly-row-label">${libelle}</span><span class="taskly-row-value">${valeur}</span></div>`;
     corps.innerHTML = `<h2>Demande n° ${numero}</h2>${badgeStatut(d.statut)}
       <section class="taskly-detail-grid">
-        <section class="taskly-detail-card"><h3><span class="taskly-heading-icon" aria-hidden="true">●</span>Informations du client</h3>
-          ${detailRow('♟','Nom complet',nom)}
-          ${detailRow('☎','Téléphone',tel ? `<a href="tel:${telHref}">${echapperHTML(tel)}</a>` : 'Disponible après acceptation')}
-          ${detailRow('✉','Email',email ? `<a href="mailto:${courrielHref}">${echapperHTML(email)}</a>` : 'Disponible après acceptation')}
-          ${detailRow('⌖','Adresse',adresse ? echapperHTML(adresse) : commune)}
+        <section class="taskly-detail-card"><h3><span class="taskly-heading-icon" aria-hidden="true">${picto("user")}</span>Informations du client</h3>
+          ${detailRow('user','Nom complet',nom)}
+          ${detailRow('phone','Téléphone',tel ? `<a href="tel:${telHref}">${echapperHTML(tel)}</a>` : 'Disponible après acceptation')}
+          ${detailRow('mail','Email',email ? `<a href="mailto:${courrielHref}">${echapperHTML(email)}</a>` : 'Disponible après acceptation')}
+          ${detailRow('pin','Adresse',adresse ? echapperHTML(adresse) : commune)}
         </section>
-        <section class="taskly-detail-card"><h3><span class="taskly-heading-icon" aria-hidden="true">▣</span>La prestation</h3>
-          ${detailRow('⚒','Métier',echapperHTML(d.service_nom || 'Non précisé'))}
-          ${detailRow('▤','Demande',`<span class="taskly-detail-message" id="taskly-detail-message-${numero}">${echapperHTML(d.message || 'Aucun message fourni.')}</span><button type="button" class="taskly-detail-expand" aria-expanded="false" aria-label="Afficher la description complète" aria-controls="taskly-detail-message-${numero}" hidden>⌄</button>`,'taskly-detail-message-row')}
-          ${detailRow('▦','Date souhaitée',echapperHTML(formatDate(d.date_souhaitee)))}
-          ${detailRow('◷','Créée le',echapperHTML(formatDate(d.created_at)))}
-          ${detailRow('✓','Statut',`<span class="taskly-detail-status">${echapperHTML(libelleStatut(d.statut))}</span>`)}
+        <section class="taskly-detail-card"><h3><span class="taskly-heading-icon" aria-hidden="true">${picto("briefcase")}</span>La prestation</h3>
+          ${detailRow('wrench','Métier',echapperHTML(d.service_nom || 'Non précisé'))}
+          ${detailRow('message','Demande',`<span class="taskly-detail-message" id="taskly-detail-message-${numero}">${echapperHTML(d.message || 'Aucun message fourni.')}</span><button type="button" class="taskly-detail-expand" aria-expanded="false" aria-label="Afficher la description complète" aria-controls="taskly-detail-message-${numero}" hidden>⌄</button>`,'taskly-detail-message-row')}
+          ${detailRow('calendar','Date souhaitée',echapperHTML(formatDate(d.date_souhaitee)))}
+          ${detailRow('created','Créée le',echapperHTML(formatDate(d.created_at)))}
+          ${detailRow('check','Statut',`<span class="taskly-detail-status">${echapperHTML(libelleStatut(d.statut))}</span>`)}
         </section>
       </section>
       <div class="request-actions taskly-detail-actions">
         ${peutTraiter ? `<button class="btn primary" type="button" data-set-status="${numero}" data-status="acceptee">Accepter</button><button class="btn outline" type="button" data-set-status="${numero}" data-status="refusee">Refuser</button>` : ""}
         ${peutTerminer ? `<button class="btn primary" type="button" data-complete-request="${numero}">Marquer terminée</button><button class="btn outline" type="button" data-open-cancel-artisan="${numero}">Annuler avec motif</button>` : ""}
-        <button class="btn danger" type="button" data-open-report="${numero}">Signaler</button>
+        <button class="btn danger taskly-detail-report" type="button" data-open-report="${numero}">${picto("flag")} Signaler</button>
       </div>
-      ${autorisee && adresse ? `<div class="taskly-route-preview"><h3>Localisation de l'intervention</h3>
+      ${autorisee && adresse ? `<div class="taskly-route-preview"><h3><span class="taskly-location-picto">${picto("pin")}</span>Localisation de l'intervention</h3>
         <iframe title="Carte de l'intervention" referrerpolicy="strict-origin-when-cross-origin" loading="lazy" src="https://maps.google.com/maps?q=${destination}&amp;output=embed" id="taskly-route-map-${numero}"></iframe>
-        <div class="taskly-detail-actions"><button type="button" class="btn outline" data-taskly-route="${numero}">🧭 Calculer le trajet sur cette carte</button>
-        <a class="btn primary" target="_blank" rel="noopener noreferrer" href="${googleMaps}">Ouvrir l'itinéraire Google Maps</a></div>
+        <div class="taskly-detail-actions taskly-route-actions"><a class="btn outline" target="_blank" rel="noopener noreferrer" href="${googleMaps}" data-taskly-route="${numero}">${picto("navigate")} Calculer le trajet sur cette carte</a>
+        <a class="btn primary" target="_blank" rel="noopener noreferrer" href="${googleMaps}">${picto("external")} Ouvrir l'itinéraire Google Maps</a></div>
         <p id="taskly-route-status-${numero}" role="status" class="muted">Le trajet intégré nécessite votre autorisation de localisation et l'activation du service de carte.</p></div>` : ""}`;
     const message = corps.querySelector('.taskly-detail-message');
     const developper = corps.querySelector('.taskly-detail-expand');
     if (message && developper) {
       const ajuster = () => {
-        if (!message.classList.contains('expanded')) developper.hidden = !(message.scrollHeight > message.clientHeight + 2);
+        if (message.classList.contains('expanded')) return;
+        developper.hidden = !(message.scrollHeight > message.clientHeight + 2);
       };
       developper.addEventListener('click', () => {
         const ouvert = message.classList.toggle('expanded');
@@ -453,27 +475,48 @@ async function consulterDemandeArtisan(id) {
     }
     if (autorisee && adresse) {
       const bouton = corps.querySelector('[data-taskly-route]');
-      bouton?.addEventListener('click', async()=>{
-        const status = document.getElementById('taskly-route-status-'+numero);
-        if(!navigator.geolocation){status.textContent='Localisation indisponible. Utilisez le bouton Google Maps.';return;}
-        bouton.disabled=true;status.textContent='Demande de votre position pour calculer le trajet…';
+      // Charger la configuration sans bloquer l'ouverture du dialogue.
+      // Si la clé Embed n'est pas disponible, l'ancre garde le vrai trajet Google Maps.
+      let embedKey = null;
+      requeteAPI('/api/demandes/itineraire/config')
+        .then(res => { embedKey = typeof res.embedKey === 'string' ? res.embedKey : null; })
+        .catch(() => { embedKey = null; });
+      bouton?.addEventListener('click', async event => {
+        const status = corps.querySelector('#taskly-route-status-'+numero);
+        // La vérification est synchrone : la navigation de secours reste fiable.
+        if (!embedKey || !navigator.geolocation) {
+          status.textContent = 'Le trajet intégré n’est pas configuré : ouvrez l’itinéraire dans Google Maps.';
+          return;
+        }
+        event.preventDefault();
+        bouton.setAttribute('aria-disabled','true');
+        status.textContent = 'Localisation en cours : autorisez votre position pour tracer le trajet.';
         try {
-          const {embedKey}=await requeteAPI('/api/demandes/itineraire/config');
-          if(!embedKey)throw new Error('Trajet intégré non configuré. Utilisez Google Maps pour la navigation.');
           const position = await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,
             {enableHighAccuracy:false,timeout:12000,maximumAge:120000}));
-          const orig=position.coords.latitude+','+position.coords.longitude;
+          if (!dialogue.open || ouverture !== dialogue._tasklyOuverture) return;
+          const origine=position.coords.latitude+','+position.coords.longitude;
           const route='https://www.google.com/maps/embed/v1/directions?key='+encodeURIComponent(embedKey)+
-            '&origin='+encodeURIComponent(orig)+'&destination='+destination+'&mode=driving';
-          const iframe=document.getElementById('taskly-route-map-'+numero);
-          if(iframe)iframe.src=route;
-          status.textContent='Itinéraire routier affiché. Durées estimatives selon le fournisseur.';
-        }catch(e){status.textContent=e?.message?.includes('permission')?'Autorisez votre localisation ou utilisez Google Maps.':
-            (e?.message||'Carte indisponible. Utilisez Google Maps.');}
-        finally{bouton.disabled=false;}
+            '&origin='+encodeURIComponent(origine)+'&destination='+destination+'&mode=driving';
+          const iframe=corps.querySelector('#taskly-route-map-'+numero);
+          if (iframe) {
+            iframe.src=route;
+            status.textContent='Chargement du trajet routier sur la carte…';
+            iframe.addEventListener('load',()=>{
+              if(dialogue.open && ouverture === dialogue._tasklyOuverture) status.textContent='Carte d’itinéraire chargée. Si aucun tracé n’apparaît, utilisez Google Maps.';
+            },{once:true});
+          }
+        } catch(e) {
+          status.textContent = 'Position indisponible. Le bouton Google Maps permet de poursuivre le trajet.';
+        } finally {
+          bouton.removeAttribute('aria-disabled');
+        }
       });
     }
   } catch (error) {
-    corps.textContent = error.message || "Détail indisponible.";
+    if (ouverture === dialogue._tasklyOuverture && dialogue.open) {
+      corps.removeAttribute('aria-busy');
+      corps.textContent = error.message || "Détail indisponible.";
+    }
   }
 }

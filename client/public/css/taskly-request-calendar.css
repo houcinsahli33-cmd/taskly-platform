@@ -8,3 +8,7 @@
 .taskly-calendar-grid button:not(:disabled):hover,.taskly-calendar-grid button.chosen{background:#007f66;color:#fff}
 .taskly-calendar-grid button.blocked{background:#f1f2f3;color:#abb3b9;opacity:1;cursor:not-allowed;text-decoration:line-through}
 .taskly-calendar-grid button:focus-visible,.taskly-calendar-launch:focus-visible{outline:2px solid #008a70;outline-offset:2px}.taskly-calendar-hint{font-size:11px;color:#718995;line-height:1.45;margin:12px 0 0}.taskly-calendar-error{font-size:12px;color:#ad332e}.taskly-calendar-loading{font-size:12px;color:#61818c}
+
+/* Icône calendrier de la référence : violet et fond lavande uniquement dans le formulaire. */
+.taskly-calendar-launch{display:grid;place-items:center;color:#7045ed;background:#f0ebff;border:1px solid #e4dbff}
+.taskly-calendar-launch:hover{background:#e7dcff}.taskly-calendar-launch svg{display:block;flex:none}

@@ -101,3 +101,10 @@ body.dashboard-page[data-require-role="artisan"] .taskly-confirm-dialog [data-de
 }
 body.dashboard-page[data-require-role="artisan"] .workspace-dialog .account-danger .btn.danger:hover,
 body.dashboard-page[data-require-role="artisan"] .taskly-confirm-dialog [data-delete]:hover {background:#a91e34!important}
+
+/* Bouton déconnexion artisan = icône et alignement de la navigation client,
+   sans modifier l'action data-logout ni les autres rôles. */
+body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]{display:flex;align-items:center;gap:10px;min-height:42px;width:100%;padding:0 11px;margin-top:auto;border:0;border-top:1px solid #d5fbf038;border-radius:9px;background:transparent;color:#fff;font:700 14px var(--font-main);text-align:left;cursor:pointer}
+body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout] svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]:hover{background:#165b49}
+@media(max-width:800px){body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]{margin-top:0;padding:0 11px;border-top:0}}

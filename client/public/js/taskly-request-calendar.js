@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
  const toISO=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
  let y=0,m=0,booked=new Set(),loadedArtisan=null,loadedOK=false;
  const wrapper=document.createElement('div');wrapper.className='taskly-calendar-field';input.parentNode.insertBefore(wrapper,input);wrapper.append(input);
- const openBtn=document.createElement('button');openBtn.type='button';openBtn.className='taskly-calendar-launch';openBtn.setAttribute('aria-label','Ouvrir le calendrier');openBtn.textContent='▦';wrapper.append(openBtn);
+ const openBtn=document.createElement('button');openBtn.type='button';openBtn.className='taskly-calendar-launch';openBtn.setAttribute('aria-label','Ouvrir le calendrier');openBtn.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>';wrapper.append(openBtn);
  const popup=document.createElement('div');popup.className='taskly-calendar-popover';popup.hidden=true;popup.setAttribute('role','dialog');popup.setAttribute('aria-label','Choisir une date de prestation');wrapper.append(popup);
  const months=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
  const min=()=>today();

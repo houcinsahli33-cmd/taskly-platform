@@ -55,7 +55,7 @@
         </form>
         <section class="taskly-map-experience" aria-label="Carte des artisans proches">
           <div class="taskly-map-heading" id="taskly-map-heading" hidden>
-            <div class="taskly-map-heading-copy"><span class="taskly-map-heading-icon" aria-hidden="true">⌖</span><div>
+            <div class="taskly-map-heading-copy"><span class="taskly-map-heading-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div>
               <h2>Carte des artisans proches</h2>
               <p>Découvrez les artisans situés à proximité de votre zone.</p>
             </div></div>
@@ -63,8 +63,8 @@
           </div>
           <div class="taskly-artisans-map-controls" role="group" aria-label="Affichage de l'annuaire">
             <div class="taskly-map-view-switch">
-              <button class="btn primary" type="button" data-artisan-view="liste" aria-pressed="true">☷ &nbsp; Liste</button>
-              <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel" aria-pressed="false">▣ &nbsp; Carte des artisans proches</button>
+              <button class="btn primary" type="button" data-artisan-view="liste" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Liste</button>
+              <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg> Carte des artisans proches</button>
             </div>
             <fieldset class="taskly-map-radius-fieldset"><legend>Rayon de recherche</legend>
               <div class="taskly-map-radius-options" role="group" aria-label="Rayon de recherche">
@@ -76,9 +76,9 @@
             </fieldset>
           </div>
           <div id="taskly-artisans-map-panel" hidden>
-            <div class="taskly-map-results"><span aria-hidden="true">♟</span><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p></div>
+            <div class="taskly-map-results"><span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2c0-3 3-5 7-5s7 2 7 5v2M17 5a3 3 0 0 1 0 6M18 13c3 0 5 2 5 5v2"/></svg></span><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p></div>
             <div id="taskly-artisans-map"></div>
-            <p class="taskly-map-privacy">⌖ &nbsp; La carte affiche seulement des zones approximatives choisies par les artisans. Votre localisation est facultative et n'est pas partagée.</p>
+            <p class="taskly-map-privacy"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>La carte affiche seulement des zones approximatives choisies par les artisans. Votre localisation est facultative et n'est pas partagée.</span></p>
           </div>
         </section>
         <div class="grid three" id="artisans-grid"></div>
