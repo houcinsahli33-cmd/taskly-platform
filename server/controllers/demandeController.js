@@ -102,6 +102,10 @@ async function creerDemande(req, res) {
             });
         }
 
+        if (dateSouhaitee !== undefined && dateSouhaitee !== null && dateSouhaitee !== '') {
+            const dateVerifiee=require('../helpers/requestDate').verifierDateSouhaitee(dateSouhaitee);
+            if (!dateVerifiee.valide) return res.status(400).json({message:dateVerifiee.raison});
+        }
         const resultat = await demandeModel.creerDemande(
             client.id,
             artisanId,
@@ -118,6 +122,8 @@ async function creerDemande(req, res) {
         });
 
     } catch (error) {
+        if (error.code === 'TASKLY_DATE_OCCUPEE')
+            return res.status(409).json({message:'Cet artisan est déjà occupé à cette date. Choisissez un autre jour.'});
         console.error("Erreur création demande :", error.message);
 
         res.status(500).json({

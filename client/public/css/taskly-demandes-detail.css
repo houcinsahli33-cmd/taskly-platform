@@ -1,11 +1,23 @@
-dialog.taskly-detail-dialog{width:min(900px,95vw);max-height:90dvh;overflow:auto;background:#fff;color:#17392e;padding:0;border:1px solid #cfe7dd;border-radius:20px;box-shadow:0 25px 80px #142d392b}
+/* Styles locaux au dialogue de consultation — la page artisan reste inchangée. */
+dialog.taskly-detail-dialog{width:min(960px,95vw);max-height:90dvh;overflow:auto;background:#fff;color:#183940;padding:0;border:1px solid #d6e8e2;border-radius:20px;box-shadow:0 25px 80px #142d392b}
 dialog.taskly-detail-dialog::backdrop{background:#102c2680}
-.taskly-detail-content{padding:26px}
-.taskly-detail-close{float:right}
-.taskly-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}
-.taskly-detail-grid>div{background:#f6faf8;border:1px solid #dcebe4;border-radius:13px;padding:18px}
-.taskly-detail-grid p{overflow-wrap:anywhere}
-.taskly-detail-actions{margin-top:20px;display:flex;flex-wrap:wrap;gap:10px}
-.taskly-route-preview{margin-top:25px}
-.taskly-route-preview iframe{height:350px;width:100%;border:0;border-radius:14px;background:#e7f0eb}
-@media(max-width:600px){.taskly-detail-grid{grid-template-columns:1fr}.taskly-detail-content{padding:18px}}
+.taskly-detail-content{padding:26px}.taskly-detail-close{float:right}
+.taskly-detail-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin-top:20px}
+.taskly-detail-grid>.taskly-detail-card{background:#fff;border:1px solid #daebe5;border-radius:14px;padding:0 17px 11px;min-width:0;box-shadow:0 4px 15px #143c3207}
+.taskly-detail-card h3{display:flex;align-items:center;gap:12px;font-size:16px;margin:0 -17px 3px;padding:14px 17px;background:#f7fbf9;border-radius:14px 14px 0 0;color:#12343f}
+.taskly-heading-icon{display:grid;place-items:center;width:31px;height:31px;border-radius:50%;background:#d9f4e8;color:#00896d;font-size:16px;flex:none}
+.taskly-detail-row{display:grid;grid-template-columns:32px minmax(84px,115px) minmax(0,1fr);align-items:center;gap:11px;min-height:51px;border-bottom:1px solid #e8efec;font-size:12px}
+.taskly-detail-row:last-child{border-bottom:0}.taskly-row-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:#e5f5ef;color:#00886d;font-size:16px}
+.taskly-detail-row:nth-of-type(2n) .taskly-row-icon{background:#edf3fc;color:#1975c6}
+.taskly-row-label{color:#74899c;font-weight:650}.taskly-row-value{color:#18364a;overflow-wrap:anywhere;min-width:0;line-height:1.45}.taskly-row-value a{color:#007b65}
+.taskly-detail-status{background:#dff6ed;color:#087555;font-weight:750;border-radius:999px;padding:5px 11px;display:inline-block}
+.taskly-detail-message-row .taskly-row-value{display:flex;align-items:flex-start;gap:6px}.taskly-detail-message{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-clamp:2;overflow:hidden;white-space:pre-wrap;flex:1;line-height:1.45;min-width:0}
+.taskly-detail-message.expanded{display:block;overflow:visible;-webkit-line-clamp:unset;line-clamp:unset}
+.taskly-detail-expand{width:29px;height:29px;flex:none;border:0;border-radius:50%;background:#f0f5f6;color:#15374a;font-size:20px;line-height:1;cursor:pointer}
+.taskly-detail-expand[hidden]{display:none!important}.taskly-detail-expand:focus-visible{outline:3px solid #2cb69c}
+.taskly-detail-actions{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.taskly-route-preview{margin-top:24px}.taskly-route-preview h3{color:#133541;font-size:18px;margin:0 0 12px}
+.taskly-route-preview iframe{height:350px;width:100%;border:1px solid #dfebe6;border-radius:14px;background:#e7f0eb}
+.taskly-route-preview .taskly-detail-actions>.btn{min-height:44px;border-radius:10px;padding:10px 16px;font-weight:700}
+.taskly-route-preview .taskly-detail-actions>.btn.primary{background:#00866d;color:white}
+@media(max-width:690px){.taskly-detail-grid{grid-template-columns:1fr}.taskly-detail-content{padding:18px}.taskly-detail-row{grid-template-columns:30px minmax(78px,95px) minmax(0,1fr);gap:8px}.taskly-route-preview iframe{height:280px}}

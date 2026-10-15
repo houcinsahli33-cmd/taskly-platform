@@ -14,7 +14,7 @@ test('le message session expirée et le suivi durable sont présents',()=>{
  assert.match(text('server/services/sessionExpiryNotifier.js'),/notified_at/);
  assert.match(text('database/migration_sessions_expirees.sql'),/CREATE TABLE IF NOT EXISTS/);
  assert.match(text('server/app.js'),/CRON_SECRET/);
- assert.match(text('vercel.json'),/expire-sessions/);
+ assert.match(text('.github/workflows/taskly-session-expiry.yml'),/expire-sessions/);
 });
 test('liste artisan : adresse et téléphone privés avant acceptation',()=>{
  const m=text('server/models/demandeModel.js');

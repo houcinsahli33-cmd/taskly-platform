@@ -16,6 +16,9 @@ router.delete('/ma-zone',require('../middleware/authMiddleware').verifierConnexi
 router.get("/", artisanController.listerArtisans);
 
 // Route pour recuperer un artisan par son id
+// Réponse limitée aux dates : authentification client obligatoire.
+router.get('/:id/dates-indisponibles',require('../middleware/authMiddleware').verifierConnexion,
+ require('../middleware/authMiddleware').verifierClient,artisanController.datesIndisponibles);
 router.get("/:id", artisanController.detailArtisan);
 
 module.exports = router;

@@ -5,6 +5,9 @@ const db = require("../config/db"); // on importe la connexion à la base de don
 
 // Creer une demande par un client à un artisan
 async function creerDemande(clientId, artisanId, message, adresse, dateSouhaitee) {
+    if (dateSouhaitee && await jourReserveArtisan(artisanId,dateSouhaitee)) {
+        const error=new Error('Date déjà réservée.');error.code='TASKLY_DATE_OCCUPEE';throw error;
+    }
     const sql = `
         INSERT INTO demandes (client_id, artisan_id, message, adresse, date_souhaitee)
         VALUES (?, ?, ?, ?, ?)
@@ -21,6 +24,23 @@ async function creerDemande(clientId, artisanId, message, adresse, dateSouhaitee
     return resultat;
 }
 
+
+// Seules les missions déjà acceptées/en cours bloquent un jour. Aucune donnée client n'est exposée.
+async function datesReserveesArtisan(artisanId, aPartirDe) {
+    const [lignes] = await db.promise().query(`
+        SELECT DISTINCT DATE_FORMAT(date_souhaitee, '%Y-%m-%d') AS jour
+        FROM demandes
+        WHERE artisan_id = ? AND date_souhaitee >= ?
+          AND statut IN ('acceptee','attente_confirmation','conteste')
+        ORDER BY jour`, [artisanId, aPartirDe]);
+    return lignes.map(l => String(l.jour));
+}
+async function jourReserveArtisan(artisanId, date) {
+    const [lignes] = await db.promise().query(`
+        SELECT id FROM demandes WHERE artisan_id = ? AND date_souhaitee = ?
+          AND statut IN ('acceptee','attente_confirmation','conteste') LIMIT 1`, [artisanId,date]);
+    return lignes.length > 0;
+}
 // Lister les demandes envoyees par un client
 async function listerDemandesClient(clientId) {
     const sql = `
@@ -232,6 +252,7 @@ async function contesterFinClient(id, clientId) {
     return resultat;
 }
 module.exports = {
+    datesReserveesArtisan, jourReserveArtisan,
     confirmerFinClient,
     contesterFinClient,
     trouverDestinataires,

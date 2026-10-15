@@ -6,9 +6,11 @@
   <title>Artisans - Taskly</title>
   <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/taskly-request-calendar.css">
   <script defer src="/js/api.js"></script>
   <script defer src="/js/algeria-locations.js"></script>
   <script defer src="/js/auth.js"></script>
+  <script defer src="/js/taskly-request-calendar.js"></script>
   <script defer src="/js/artisans.js?v=20261012-2"></script>
 <link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/taskly-artisans-map.css"></head>
 <body data-active="artisans">
@@ -51,13 +53,34 @@
             <button class="btn outline" id="reset-filters" type="button" aria-label="Réinitialiser les filtres">Réinitialiser</button>
           </div>
         </form>
-        <div class="request-actions mt-22 taskly-artisans-map-controls" role="group" aria-label="Affichage de l'annuaire">
-          <button class="btn primary" type="button" data-artisan-view="liste">Liste</button>
-          <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel">Carte des artisans proches</button>
-          <label class="muted" style="align-self:center">Rayon : <select id="taskly-map-radius" class="form-select"><option value="10">10 km</option><option value="25" selected>25 km</option><option value="50">50 km</option><option value="100">100 km</option></select></label>
-        </div>
-        <div id="taskly-artisans-map-panel" hidden><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p><div id="taskly-artisans-map" ></div></div>
-        <p class="muted" style="margin:12px 0">La carte affiche uniquement les zones publiques approximatives partagées volontairement par les artisans. Votre localisation est facultative.</p>
+        <section class="taskly-map-experience" aria-label="Carte des artisans proches">
+          <div class="taskly-map-heading" id="taskly-map-heading" hidden>
+            <div class="taskly-map-heading-copy"><span class="taskly-map-heading-icon" aria-hidden="true">⌖</span><div>
+              <h2>Carte des artisans proches</h2>
+              <p>Découvrez les artisans situés à proximité de votre zone.</p>
+            </div></div>
+            <div class="taskly-map-notice"><span aria-hidden="true">ⓘ</span><div><strong>Zones publiques uniquement</strong><p>Seuls les artisans ayant choisi une zone publique apparaissent sur la carte.</p></div></div>
+          </div>
+          <div class="taskly-artisans-map-controls" role="group" aria-label="Affichage de l'annuaire">
+            <div class="taskly-map-view-switch">
+              <button class="btn primary" type="button" data-artisan-view="liste" aria-pressed="true">☷ &nbsp; Liste</button>
+              <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel" aria-pressed="false">▣ &nbsp; Carte des artisans proches</button>
+            </div>
+            <fieldset class="taskly-map-radius-fieldset"><legend>Rayon de recherche</legend>
+              <div class="taskly-map-radius-options" role="group" aria-label="Rayon de recherche">
+                <button type="button" data-map-radius="5" aria-pressed="false">5 km</button>
+                <button type="button" data-map-radius="10" aria-pressed="true" class="selected">10 km</button>
+                <button type="button" data-map-radius="25" aria-pressed="false">25 km</button>
+              </div>
+              <select id="taskly-map-radius" class="taskly-map-original-select" aria-label="Rayon sélectionné" tabindex="-1"><option value="5">5 km</option><option value="10" selected>10 km</option><option value="25">25 km</option></select>
+            </fieldset>
+          </div>
+          <div id="taskly-artisans-map-panel" hidden>
+            <div class="taskly-map-results"><span aria-hidden="true">♟</span><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p></div>
+            <div id="taskly-artisans-map"></div>
+            <p class="taskly-map-privacy">⌖ &nbsp; La carte affiche seulement des zones approximatives choisies par les artisans. Votre localisation est facultative et n'est pas partagée.</p>
+          </div>
+        </section>
         <div class="grid three" id="artisans-grid"></div>
       </div>
     </section>
@@ -78,7 +101,7 @@
         <label class="field-label" for="request-address">Adresse</label>
         <input class="form-control" id="request-address" required placeholder="Adresse de l'intervention">
         <label class="field-label" for="request-date">Date souhaitée</label>
-        <input class="form-control" id="request-date" type="date">
+        <input class="form-control" id="request-date" type="text" readonly inputmode="none" autocomplete="off" placeholder="Choisir une date" aria-haspopup="dialog">
         <button class="btn primary block mt-18" type="submit">Envoyer</button>
       </form>
     </div>

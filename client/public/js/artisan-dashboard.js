@@ -409,21 +409,22 @@ async function consulterDemandeArtisan(id) {
     const googleMaps = "https://www.google.com/maps/dir/?api=1&destination=" + destination;
     const peutTraiter = d.statut === "en_attente";
     const peutTerminer = d.statut === "acceptee";
+    const detailRow=(icon,libelle,valeur,classe='')=>`<div class="taskly-detail-row ${classe}"><span class="taskly-row-icon" aria-hidden="true">${icon}</span><span class="taskly-row-label">${libelle}</span><span class="taskly-row-value">${valeur}</span></div>`;
     corps.innerHTML = `<h2>Demande n° ${numero}</h2>${badgeStatut(d.statut)}
       <section class="taskly-detail-grid">
-        <div><h3>Informations du client</h3>
-          <p>👤 ${nom}</p>
-          <p>📞 ${tel ? `<a href="tel:${telHref}">${echapperHTML(tel)}</a>` : "Disponible après acceptation"}</p>
-          <p>✉ ${email ? `<a href="mailto:${courrielHref}">${echapperHTML(email)}</a>` : "Disponible après acceptation"}</p>
-          <p>📍 ${adresse ? echapperHTML(adresse) : commune}</p>
-        </div>
-        <div><h3>La prestation</h3>
-          <p><strong>Métier :</strong> ${echapperHTML(d.service_nom || "Non précisé")}</p>
-          <p>${echapperHTML(d.message || "Aucun message fourni.")}</p>
-          <p>📅 Date souhaitée : ${formatDate(d.date_souhaitee)}</p>
-          <p>Créée le : ${formatDate(d.created_at)}</p>
-          <p>Statut : ${echapperHTML(libelleStatut(d.statut))}</p>
-        </div>
+        <section class="taskly-detail-card"><h3><span class="taskly-heading-icon" aria-hidden="true">●</span>Informations du client</h3>
+          ${detailRow('♟','Nom complet',nom)}
+          ${detailRow('☎','Téléphone',tel ? `<a href="tel:${telHref}">${echapperHTML(tel)}</a>` : 'Disponible après acceptation')}
+          ${detailRow('✉','Email',email ? `<a href="mailto:${courrielHref}">${echapperHTML(email)}</a>` : 'Disponible après acceptation')}
+          ${detailRow('⌖','Adresse',adresse ? echapperHTML(adresse) : commune)}
+        </section>
+        <section class="taskly-detail-card"><h3><span class="taskly-heading-icon" aria-hidden="true">▣</span>La prestation</h3>
+          ${detailRow('⚒','Métier',echapperHTML(d.service_nom || 'Non précisé'))}
+          ${detailRow('▤','Demande',`<span class="taskly-detail-message" id="taskly-detail-message-${numero}">${echapperHTML(d.message || 'Aucun message fourni.')}</span><button type="button" class="taskly-detail-expand" aria-expanded="false" aria-label="Afficher la description complète" aria-controls="taskly-detail-message-${numero}" hidden>⌄</button>`,'taskly-detail-message-row')}
+          ${detailRow('▦','Date souhaitée',echapperHTML(formatDate(d.date_souhaitee)))}
+          ${detailRow('◷','Créée le',echapperHTML(formatDate(d.created_at)))}
+          ${detailRow('✓','Statut',`<span class="taskly-detail-status">${echapperHTML(libelleStatut(d.statut))}</span>`)}
+        </section>
       </section>
       <div class="request-actions taskly-detail-actions">
         ${peutTraiter ? `<button class="btn primary" type="button" data-set-status="${numero}" data-status="acceptee">Accepter</button><button class="btn outline" type="button" data-set-status="${numero}" data-status="refusee">Refuser</button>` : ""}
@@ -435,6 +436,21 @@ async function consulterDemandeArtisan(id) {
         <div class="taskly-detail-actions"><button type="button" class="btn outline" data-taskly-route="${numero}">🧭 Calculer le trajet sur cette carte</button>
         <a class="btn primary" target="_blank" rel="noopener noreferrer" href="${googleMaps}">Ouvrir l'itinéraire Google Maps</a></div>
         <p id="taskly-route-status-${numero}" role="status" class="muted">Le trajet intégré nécessite votre autorisation de localisation et l'activation du service de carte.</p></div>` : ""}`;
+    const message = corps.querySelector('.taskly-detail-message');
+    const developper = corps.querySelector('.taskly-detail-expand');
+    if (message && developper) {
+      const ajuster = () => {
+        if (!message.classList.contains('expanded')) developper.hidden = !(message.scrollHeight > message.clientHeight + 2);
+      };
+      developper.addEventListener('click', () => {
+        const ouvert = message.classList.toggle('expanded');
+        developper.setAttribute('aria-expanded', String(ouvert));
+        developper.setAttribute('aria-label', ouvert ? 'Réduire la description' : 'Afficher la description complète');
+        developper.textContent = ouvert ? '⌃' : '⌄';
+      });
+      requestAnimationFrame(ajuster);
+      if (typeof ResizeObserver !== 'undefined') new ResizeObserver(ajuster).observe(message);
+    }
     if (autorisee && adresse) {
       const bouton = corps.querySelector('[data-taskly-route]');
       bouton?.addEventListener('click', async()=>{

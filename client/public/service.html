@@ -6,8 +6,10 @@
   <title>Détail service - Taskly</title>
   <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/taskly-request-calendar.css">
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
+  <script defer src="/js/taskly-request-calendar.js"></script>
   <script defer src="/js/artisans.js"></script>
   <script defer src="/js/services.js"></script>
 </head>
@@ -45,7 +47,7 @@
         <label class="field-label" for="request-address">Adresse</label>
         <input class="form-control" id="request-address" required placeholder="Adresse de l'intervention">
         <label class="field-label" for="request-date">Date souhaitée</label>
-        <input class="form-control" id="request-date" type="date">
+        <input class="form-control" id="request-date" type="text" readonly inputmode="none" autocomplete="off" placeholder="Choisir une date" aria-haspopup="dialog">
         <button class="btn primary block mt-18" type="submit">Envoyer</button>
       </form>
     </div>

@@ -210,6 +210,7 @@ async function ouvrirDemandeArtisan(id) {
     const { artisan } = await requeteAPI(`/api/artisans/${encodeURIComponent(id)}`);
     document.getElementById("request-artisan-name").textContent = nomComplet(artisan);
     document.getElementById("request-artisan-id").value = artisan.id;
+    document.getElementById("request-date").value = '';
     ouvrirModale("request-modal");
   } catch (error) {
     afficherToast(error.message, "error");
@@ -230,6 +231,10 @@ function initialiserDemandeArtisan() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (typeof window.tasklyRequestDateValide === 'function' && !window.tasklyRequestDateValide()) {
+      afficherToast('Choisissez une date valide et disponible dans le calendrier.', 'error');
+      return;
+    }
     const bouton = form.querySelector("button[type='submit']");
     bouton.disabled = true;
 

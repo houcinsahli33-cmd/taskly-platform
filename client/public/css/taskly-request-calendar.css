@@ -1,0 +1,10 @@
+/* Calendrier du seul formulaire de nouvelle demande, sans style global. */
+.taskly-calendar-field{position:relative}.taskly-calendar-field input{padding-right:44px!important;cursor:pointer;background:#fff;caret-color:transparent}.taskly-calendar-field input:focus-visible{outline:2px solid #009a7b}
+.taskly-calendar-launch{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:37px;height:36px;border:0;border-radius:8px;color:#007f67;background:#e5f5ed;cursor:pointer;font-size:22px}
+.taskly-calendar-popover{position:absolute;z-index:1200;top:calc(100% + 7px);left:0;width:min(340px,90vw);background:white;border:1px solid #cfe6df;border-radius:14px;box-shadow:0 20px 50px #0e3b302f;padding:14px;color:#153c41}
+.taskly-calendar-popover[hidden]{display:none!important}.taskly-calendar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;text-transform:capitalize;color:#173b45;font-size:14px}
+.taskly-calendar-header button{width:34px;height:32px;border:1px solid #d4e9e2;background:#fff;border-radius:8px;color:#007f67;font-size:24px;cursor:pointer}.taskly-calendar-header button:disabled{opacity:.35;cursor:not-allowed}
+.taskly-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}.taskly-calendar-weekday{text-align:center;font-size:11px;color:#7d949e;font-weight:750;padding:6px 0}.taskly-calendar-grid button{height:36px;border:0;background:#fff;color:#173d44;font-size:12px;border-radius:7px;cursor:pointer}
+.taskly-calendar-grid button:not(:disabled):hover,.taskly-calendar-grid button.chosen{background:#007f66;color:#fff}
+.taskly-calendar-grid button.blocked{background:#f1f2f3;color:#abb3b9;opacity:1;cursor:not-allowed;text-decoration:line-through}
+.taskly-calendar-grid button:focus-visible,.taskly-calendar-launch:focus-visible{outline:2px solid #008a70;outline-offset:2px}.taskly-calendar-hint{font-size:11px;color:#718995;line-height:1.45;margin:12px 0 0}.taskly-calendar-error{font-size:12px;color:#ad332e}.taskly-calendar-loading{font-size:12px;color:#61818c}

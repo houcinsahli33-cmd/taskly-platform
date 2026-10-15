@@ -91,7 +91,19 @@ async function supprimerZone(req,res){
   res.status(ok?200:404).json({message:ok?'Zone retirée de la carte.':'Profil artisan introuvable.'});
  }catch(e){res.status(503).json({message:'Impossible de retirer la zone.'});}
 }
+// Disponibilités réelles pour le calendrier d'une nouvelle demande client.
+async function datesIndisponibles(req,res){
+ try {
+  if (!/^[1-9]\d*$/.test(String(req.params.id))) return res.status(400).json({message:'Artisan invalide.'});
+  const artisan=await artisanModel.trouverArtisanParId(req.params.id);
+  if (!artisan) return res.status(404).json({message:'Artisan introuvable.'});
+  const {aujourdHuiAlgerie}=require('../helpers/requestDate');
+  const dates=await require('../models/demandeModel').datesReserveesArtisan(req.params.id,aujourdHuiAlgerie());
+  res.set('Cache-Control','no-store');res.json({dates});
+ } catch(e){res.status(503).json({message:'Disponibilités indisponibles. Réessayez.'});}
+}
 module.exports = {
+    datesIndisponibles,
     artisansCarte,enregistrerZone,supprimerZone,
     listerArtisans,
     detailArtisan
