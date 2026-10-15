@@ -45,3 +45,6 @@
 .taskly-map-privacy svg{width:19px;height:19px;flex:none;color:#008a70}
 .taskly-map-experience .leaflet-container{font-family:inherit}
 @media(max-width:740px){.taskly-map-experience{padding:15px}.taskly-map-heading h2{font-size:20px}.taskly-map-heading-icon{width:50px;height:50px}.taskly-artisans-map-controls{gap:16px}.taskly-map-view-switch .btn{padding:9px 12px!important;font-size:11px}.taskly-map-radius-options button{min-width:65px}#taskly-artisans-map{min-height:330px}}
+
+/* Espacement entre les commandes et les cartes artisans */
+.taskly-map-experience { margin-bottom: 44px; }
