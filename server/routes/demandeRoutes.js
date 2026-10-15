@@ -3,6 +3,8 @@
 
 const express = require("express");
 const demandeController = require("../controllers/demandeController");
+const chatController = require("../controllers/chatController");
+const { limiter, verifierCsrf } = require("../middleware/securityMiddleware");
 
 const { verifierConnexion, verifierClient, verifierArtisan, verifierArtisanActif } = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -44,4 +46,7 @@ router.get("/:id/details", verifierConnexion, verifierArtisan, verifierArtisanAc
 router.post('/confirmation-lien', require('../middleware/securityMiddleware').limiter({max:8}), demandeController.confirmerDepuisEmail);
 router.put('/:id/confirmer-fin', verifierConnexion, verifierClient, demandeController.confirmerFinClient);
 router.put('/:id/contester-fin', verifierConnexion, verifierClient, demandeController.contesterFinClient);
+// Messagerie privee liee a une demande.
+router.get("/:id/chat", verifierConnexion, chatController.lireChat);
+router.post("/:id/chat", verifierConnexion, verifierCsrf, limiter({fenetre:60000,max:15}), chatController.envoyerChat);
 module.exports = router;

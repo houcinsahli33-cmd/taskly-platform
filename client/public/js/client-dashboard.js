@@ -65,6 +65,7 @@ function carteDemandeClient(demande) {
         ${aConfirmer ? `<button class="btn primary" type="button" data-confirm-finish="${demande.id}">Oui, prestation terminée</button><button class="btn outline" type="button" data-not-finished="${demande.id}">Non, pas terminée</button>` : ""}
         ${demande.statut === 'conteste' ? `<span class="badge">Prestation contestée : vous pouvez envoyer un signalement.</span>` : ""}
         ${peutAvis ? `<button class="btn primary" type="button" data-open-review="${demande.id}">Laisser un avis</button>` : ""}
+        ${(["acceptee","attente_confirmation","terminee","conteste"].includes(demande.statut) || (demande.statut === "annulee" && demande.date_traitement)) ? `<button class="btn outline" type="button" data-open-taskly-chat="${Number(demande.id)}">Ouvrir le chat</button>` : ""}
         <button class="btn danger" type="button" data-open-report="${demande.id}">Signaler</button>
       </div>
     </article>

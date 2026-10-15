@@ -1,0 +1,167 @@
+/* Taskly Platform - Messagerie privee client / artisan */
+/* Styles limites uniquement a la fenetre de chat. */
+
+.taskly-chat-dialog {
+  width: min(680px, calc(100vw - 24px));
+  height: min(760px, 82vh);
+  max-height: 90vh;
+  padding: 0;
+  border: 1px solid #dcebe6;
+  border-radius: 20px;
+  background: #fff;
+  color: #183b34;
+  box-shadow: 0 20px 65px rgba(0, 35, 28, .20);
+  overflow: hidden;
+}
+
+.taskly-chat-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.taskly-chat-dialog::backdrop {
+  background: rgba(12, 30, 27, .52);
+}
+
+.taskly-chat-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e4eee9;
+}
+
+.taskly-chat-header h2 {
+  margin: 0 0 5px;
+  font-size: 21px;
+  font-weight: 750;
+}
+
+.taskly-chat-header p {
+  margin: 0;
+  color: #64766f;
+  font-size: 13px;
+}
+
+.taskly-chat-status {
+  padding: 8px 24px;
+  color: #657a71;
+  font-size: 13px;
+}
+
+.taskly-chat-status:empty {
+  display: none;
+}
+
+.taskly-chat-messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #f8fbfa;
+}
+
+.taskly-chat-bubble {
+  align-self: flex-start;
+  max-width: 82%;
+  padding: 12px 15px;
+  background: #fff;
+  border: 1px solid #e0ebe6;
+  border-radius: 15px 15px 15px 4px;
+  overflow-wrap: anywhere;
+}
+
+.taskly-chat-bubble.taskly-chat-mine {
+  align-self: flex-end;
+  background: #def4e9;
+  border-color: #c3e8d7;
+  border-radius: 15px 15px 4px 15px;
+}
+
+.taskly-chat-bubble strong {
+  display: block;
+  font-size: 12px;
+  color: #08765c;
+}
+
+.taskly-chat-bubble p {
+  margin: 6px 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.taskly-chat-bubble small {
+  display: block;
+  text-align: right;
+  color: #708279;
+  font-size: 11px;
+}
+
+.taskly-chat-empty {
+  text-align: center;
+  color: #708279;
+  margin: auto;
+}
+
+.taskly-chat-form {
+  display: grid;
+  gap: 10px;
+  padding: 18px 24px;
+  border-top: 1px solid #e4eee9;
+  background: #fff;
+}
+
+.taskly-chat-form label {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.taskly-chat-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 70px;
+  max-height: 160px;
+  padding: 12px;
+  border: 1px solid #cadbd3;
+  border-radius: 11px;
+  font: inherit;
+}
+
+.taskly-chat-form textarea:focus-visible {
+  outline: 2px solid #008a70;
+  outline-offset: 2px;
+}
+
+.taskly-chat-form .btn {
+  justify-self: end;
+}
+
+@media (max-width: 600px) {
+  .taskly-chat-dialog {
+    width: calc(100vw - 12px);
+    height: 90dvh;
+    max-height: 95dvh;
+    border-radius: 15px;
+  }
+
+  .taskly-chat-header,
+  .taskly-chat-messages,
+  .taskly-chat-form {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .taskly-chat-header h2 {
+    font-size: 17px;
+  }
+
+  .taskly-chat-bubble {
+    max-width: 92%;
+  }
+}

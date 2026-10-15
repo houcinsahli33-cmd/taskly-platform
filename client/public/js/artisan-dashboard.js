@@ -62,6 +62,7 @@ function carteDemandeArtisan(demande) {
         ${peutTraiter ? `<button class="btn outline" type="button" data-set-status="${demande.id}" data-status="refusee">Refuser</button>` : ""}
         ${peutTerminer ? `<button class="btn primary" type="button" data-complete-request="${demande.id}">Marquer terminée</button>` : ""}
         ${peutTerminer ? `<button class="btn outline" type="button" data-open-cancel-artisan="${demande.id}">Annuler avec motif</button>` : ""}
+        ${(["acceptee","attente_confirmation","terminee","conteste"].includes(demande.statut) || (demande.statut === "annulee" && demande.date_traitement)) ? `<button class="btn outline" type="button" data-open-taskly-chat="${Number(demande.id)}">Ouvrir le chat</button>` : ""}
         <button class="btn danger" type="button" data-open-report="${demande.id}">Signaler</button>
       </div>
     </article>
