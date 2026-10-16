@@ -82,10 +82,19 @@ async function lireChat(req, res) {
         const messages = await chatModel.listerMessages(acces.demandeId);
 
         return res.json({
-            demandeId: acces.demandeId,
-            lectureSeule: acces.demande.statut !== "acceptee",
-            messages
-        });
+    demandeId: acces.demandeId,
+    lectureSeule: acces.demande.statut !== "acceptee",
+    informations: {
+        clientNom: acces.demande.client_nom || null,
+        artisanNom: acces.demande.artisan_nom || null,
+        serviceNom: acces.demande.service_nom || null,
+        dateSouhaitee: acces.demande.date_souhaitee || null,
+        adresse: acces.demande.adresse || null,
+        clientTelephone: acces.demande.client_telephone || null,
+        artisanTelephone: acces.demande.artisan_telephone || null
+    },
+    messages
+});
     } catch (error) {
         console.error("Erreur lecture chat :", error.message);
         return res.status(500).json({

@@ -1032,3 +1032,47 @@ th {
 .field-error-message {
   margin-top: 8px;
 }
+
+
+/* TASKLY_TOAST_TOP_LAYER_V1 */
+/* Notifications au-dessus des dialogues natifs */
+
+.toast-container[popover] {
+  position: fixed;
+  inset: 18px 18px auto auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: min(360px, calc(100vw - 36px));
+  max-height: calc(100dvh - 36px);
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.toast-container[popover]:not(:popover-open) {
+  display: none !important;
+}
+
+.toast-container[popover]:popover-open {
+  display: grid;
+}
+
+.toast-container[popover] .toast {
+  box-sizing: border-box;
+  width: 100%;
+  pointer-events: auto;
+  overflow-wrap: anywhere;
+}
+
+.toast-container[popover]::backdrop {
+  background: transparent;
+}
+
+@media (max-width: 600px) {
+  .toast-container[popover] {
+    inset: 12px 12px auto auto;
+    width: calc(100vw - 24px);
+  }
+}

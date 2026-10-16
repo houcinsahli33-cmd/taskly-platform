@@ -232,19 +232,62 @@ function masquerAlerte(element) {
 // Afficher une notification courte
 function afficherToast(message, type = "success") {
   let conteneur = document.querySelector(".toast-container");
+
   if (!conteneur) {
     conteneur = document.createElement("div");
     conteneur.className = "toast-container";
+  }
+
+  // Replacer le conteneur hors des panneaux et des dialogues.
+  if (conteneur.parentElement !== document.body) {
     document.body.appendChild(conteneur);
   }
+
+  conteneur.setAttribute("role", "status");
+  conteneur.setAttribute("aria-live", "polite");
 
   const toast = document.createElement("div");
   toast.className = `toast ${type}`;
   toast.textContent = message;
+  toast.setAttribute(
+    "role",
+    type === "error" ? "alert" : "status"
+  );
+
   conteneur.appendChild(toast);
+
+  if (typeof conteneur.showPopover === "function") {
+    conteneur.setAttribute("popover", "manual");
+
+    try {
+      // Replacer au-dessus du dialogue ouvert le plus recemment.
+      if (conteneur.matches(":popover-open")) {
+        conteneur.hidePopover();
+      }
+      conteneur.showPopover();
+    } catch (erreur) {
+      conteneur.removeAttribute("popover");
+      const dialogues = document.querySelectorAll("dialog[open]");
+      const actif = dialogues[dialogues.length - 1];
+      if (actif) actif.appendChild(conteneur);
+    }
+  } else {
+    // Repli pour les navigateurs ne prenant pas en charge Popover.
+    const dialogues = document.querySelectorAll("dialog[open]");
+    const actif = dialogues[dialogues.length - 1];
+    if (actif) actif.appendChild(conteneur);
+  }
 
   window.setTimeout(() => {
     toast.remove();
+
+    if (
+      !conteneur.childElementCount &&
+      typeof conteneur.hidePopover === "function" &&
+      conteneur.matches(":popover-open")
+    ) {
+      conteneur.hidePopover();
+    }
   }, 4200);
 }
 

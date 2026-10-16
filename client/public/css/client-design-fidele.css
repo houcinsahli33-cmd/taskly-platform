@@ -263,11 +263,11 @@ body.dashboard-page[data-require-role="client"] .client-empty-icon {display:grid
 body.dashboard-page[data-require-role="client"] .client-empty-icon svg {width:24px;height:24px}
 body.dashboard-page[data-require-role="client"] .client-profile-fields svg {width:17px;height:17px}
 body.dashboard-page[data-require-role="client"] .client-profile-shield svg {width:19px;height:19px}
-body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action::before {content:"";background-image:url('/images/icons/client-workspace-actions.svg');background-size:215px 43px;background-repeat:no-repeat}
-body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(2)::before {background-position:-43px 0}
-body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(3)::before {background-position:-86px 0}
-body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(4)::before {background-position:-129px 0}
-body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:last-child::before {background-position:-172px 0}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action::before {content:"";background-image:url('/images/icons/artisan-workspace-actions.svg');background-size:258px 43px;background-repeat:no-repeat;background-position:0 0}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(2)::before {content:"";background-image:url('/images/icons/artisan-workspace-actions.svg');background-size:258px 43px;background-repeat:no-repeat;background-position:-43px 0}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(3)::before {content:"";background-image:url('/images/icons/artisan-workspace-actions.svg');background-size:258px 43px;background-repeat:no-repeat;background-position:-129px 0}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:nth-child(4)::before {content:"";background-image:url('/images/icons/artisan-workspace-actions.svg');background-size:258px 43px;background-repeat:no-repeat;background-position:-172px 0}
+body.dashboard-page[data-require-role="client"] #account-profile-editor .workspace-action:last-child::before {content:"";background-image:url('/images/icons/artisan-workspace-actions.svg');background-size:258px 43px;background-repeat:no-repeat;background-position:-215px 0}
 body.dashboard-page[data-require-role="client"] #contact-form input,body.dashboard-page[data-require-role="client"] #contact-form select {padding:10px 12px;min-height:43px}
 @media(max-width:1200px){body.dashboard-page[data-require-role="client"] .dashboard-content{padding:28px 26px}body.dashboard-page[data-require-role="client"] #site-header .header-inner{padding:0 30px}body.dashboard-page[data-require-role="client"] .client-hero h2{font-size:23px}}
 @media(max-width:850px){body.dashboard-page[data-require-role="client"] .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

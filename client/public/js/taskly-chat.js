@@ -36,7 +36,7 @@
               <dd id="taskly-chat-person-name">—</dd>
             </div>
             <div>
-              <dt>Localisation / contact</dt>
+              <dt>Téléphone</dt>
               <dd id="taskly-chat-person-detail">—</dd>
             </div>
           </dl>
@@ -139,42 +139,29 @@
     return dialogue;
   }
 
-  function remplirResume(origine) {
-    const carte = origine?.closest(".request-card");
+  function remplirResume(informations = {}) {
     const role = window.utilisateurCourant?.role;
 
-    const lire = selecteur =>
-      carte?.querySelector(selecteur)?.textContent?.trim() || "";
+    const texte = valeur =>
+      typeof valeur === "string" && valeur.trim()
+        ? valeur.trim()
+        : "Non renseigné";
 
-    const titre = lire(".request-head h3");
-    const sousTitre = lire(".request-head .muted");
-
-    const badges = Array.from(
-      carte?.querySelectorAll(".meta-row .badge") || []
-    ).map(element => element.textContent.trim());
-
-    const valeur = prefixe => {
-      const ligne = badges.find(texte =>
-        texte.startsWith(prefixe)
-      );
-
-      return ligne
-        ? ligne.slice(prefixe.length).trim()
-        : "Non précisé";
+    const remplir = (id, valeur) => {
+      const element = dialogue.querySelector(`#${id}`);
+      if (element) element.textContent = valeur;
     };
 
-    const interlocuteur = role === "artisan"
-      ? titre
-      : sousTitre.replace(/^Avec\s+/i, "").split("·")[0].trim();
+    const nomClient = texte(informations.clientNom);
+    const nomArtisan = texte(informations.artisanNom);
 
-    const complement = sousTitre.includes("·")
-      ? sousTitre.split("·").slice(1).join("·").trim()
-      : sousTitre;
+    const nomInterlocuteur =
+      role === "artisan" ? nomClient : nomArtisan;
 
-    const remplir = (id, texte) => {
-      dialogue.querySelector(`#${id}`).textContent =
-        texte || "Non précisé";
-    };
+    const telephone =
+      role === "artisan"
+        ? informations.clientTelephone
+        : informations.artisanTelephone;
 
     remplir(
       "taskly-chat-person-title",
@@ -183,25 +170,38 @@
         : "Informations de l'artisan"
     );
 
-    remplir("taskly-chat-person-name", interlocuteur);
-    remplir("taskly-chat-person-detail", complement);
+    remplir("taskly-chat-person-name", nomInterlocuteur);
+    remplir("taskly-chat-person-detail", texte(telephone));
 
     remplir(
       "taskly-chat-service",
-      role === "client" ? titre : "Intervention Taskly"
+      texte(informations.serviceNom)
     );
 
-    remplir("taskly-chat-date", valeur("Date souhaitée :"));
-    remplir("taskly-chat-address", valeur("Adresse :"));
+    const dateBrute = String(
+      informations.dateSouhaitee || ""
+    ).slice(0, 10);
+
+    const dateAffichee =
+      /^\d{4}-\d{2}-\d{2}$/.test(dateBrute)
+        ? dateBrute.split("-").reverse().join("/")
+        : "Non renseignée";
+
+    remplir("taskly-chat-date", dateAffichee);
+
+    remplir(
+      "taskly-chat-address",
+      texte(informations.adresse)
+    );
 
     remplir(
       "taskly-chat-client-name",
-      role === "client" ? "Vous" : interlocuteur
+      role === "client" ? "Vous" : nomClient
     );
 
     remplir(
       "taskly-chat-artisan-name",
-      role === "artisan" ? "Vous" : interlocuteur
+      role === "artisan" ? "Vous" : nomArtisan
     );
   }
   function afficherMessages(messages) {
@@ -273,6 +273,7 @@
         return;
       }
 
+      remplirResume(data.informations || {});
       const lectureSeule = Boolean(data.lectureSeule);
 
       dialogue.querySelector("#taskly-chat-title")
@@ -359,7 +360,7 @@
     demandeActive = Number(id);
     boutonOrigine = origine;
     dernierAffichage = "";
-    remplirResume(origine);
+    remplirResume({});
 
     dialogue.querySelector(".taskly-chat-messages")
       .replaceChildren();
