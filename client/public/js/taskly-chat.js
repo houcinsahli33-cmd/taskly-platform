@@ -17,35 +17,100 @@
     dialogue.className = "taskly-chat-dialog";
 
     dialogue.innerHTML = `
-      <div class="taskly-chat-header">
+      <header class="taskly-chat-top">
         <div>
-          <h2 id="taskly-chat-title">Messagerie Taskly</h2>
-          <p>Conversation privée liée à votre demande</p>
+          <p class="taskly-chat-eyebrow">TASKLY · MESSAGERIE PRIVÉE</p>
+          <h2 id="taskly-chat-title">Messagerie</h2>
+          <span class="taskly-chat-pill">Conversation privée</span>
         </div>
         <button type="button" class="btn outline"
           data-taskly-chat-close>Fermer ×</button>
+      </header>
+
+      <div class="taskly-chat-overview">
+        <section class="taskly-chat-info-card">
+          <h3>👤 <span id="taskly-chat-person-title">Interlocuteur</span></h3>
+          <dl>
+            <div>
+              <dt>Nom</dt>
+              <dd id="taskly-chat-person-name">—</dd>
+            </div>
+            <div>
+              <dt>Localisation / contact</dt>
+              <dd id="taskly-chat-person-detail">—</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="taskly-chat-info-card">
+          <h3>◈ La prestation</h3>
+          <dl>
+            <div>
+              <dt>Service</dt>
+              <dd id="taskly-chat-service">—</dd>
+            </div>
+            <div>
+              <dt>Date souhaitée</dt>
+              <dd id="taskly-chat-date">—</dd>
+            </div>
+            <div>
+              <dt>Adresse</dt>
+              <dd id="taskly-chat-address">—</dd>
+            </div>
+          </dl>
+        </section>
       </div>
 
-      <div class="taskly-chat-status"
-        role="status" aria-live="polite"></div>
-
-      <div class="taskly-chat-messages"
-        role="log" aria-label="Messages de la conversation">
+      <div class="taskly-chat-notice">
+        <span>ⓘ Conversation privée liée à cette demande.</span>
+        <button type="button" class="btn outline"
+          data-taskly-chat-view>Voir la demande</button>
       </div>
+
+      <section class="taskly-chat-conversation"
+        aria-label="Conversation client artisan">
+        <div class="taskly-chat-participants">
+          <div class="taskly-chat-avatar">C</div>
+          <div class="taskly-chat-participant">
+            <strong id="taskly-chat-client-name">Client</strong>
+            <small>Client</small>
+          </div>
+
+          <span class="taskly-chat-exchange">⇄</span>
+
+          <div class="taskly-chat-avatar artisan">A</div>
+          <div class="taskly-chat-participant">
+            <strong id="taskly-chat-artisan-name">Artisan</strong>
+            <small>Artisan</small>
+          </div>
+        </div>
+
+        <div class="taskly-chat-status"
+          role="status" aria-live="polite"></div>
+
+        <div class="taskly-chat-messages"
+          role="log" aria-label="Messages de la conversation">
+        </div>
+      </section>
 
       <form class="taskly-chat-form">
         <label for="taskly-chat-input">Votre message</label>
-        <textarea id="taskly-chat-input"
-          maxlength="4000" rows="3"
-          placeholder="Écrire un message..."
-          required></textarea>
+        <div class="taskly-chat-composer">
+          <textarea id="taskly-chat-input"
+            maxlength="4000" rows="2"
+            placeholder="Écrire votre message..."
+            required></textarea>
 
-        <button type="submit" class="btn primary">
-          Envoyer le message
-        </button>
+          <button type="submit" class="btn primary">
+            ➤ Envoyer
+          </button>
+        </div>
       </form>
-    `;
 
+      <p class="taskly-chat-footnote">
+        ⓘ Historique conservé avec cette demande.
+      </p>
+    `;
     document.body.appendChild(dialogue);
 
     dialogue.querySelector("[data-taskly-chat-close]")
@@ -59,12 +124,86 @@
       boutonOrigine?.focus();
     });
 
+    dialogue.querySelector("[data-taskly-chat-view]")
+      .addEventListener("click", () => {
+        const carte = boutonOrigine?.closest(".request-card");
+        dialogue.close();
+        carte?.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      });
     dialogue.querySelector("form")
       .addEventListener("submit", envoyerMessage);
 
     return dialogue;
   }
 
+  function remplirResume(origine) {
+    const carte = origine?.closest(".request-card");
+    const role = window.utilisateurCourant?.role;
+
+    const lire = selecteur =>
+      carte?.querySelector(selecteur)?.textContent?.trim() || "";
+
+    const titre = lire(".request-head h3");
+    const sousTitre = lire(".request-head .muted");
+
+    const badges = Array.from(
+      carte?.querySelectorAll(".meta-row .badge") || []
+    ).map(element => element.textContent.trim());
+
+    const valeur = prefixe => {
+      const ligne = badges.find(texte =>
+        texte.startsWith(prefixe)
+      );
+
+      return ligne
+        ? ligne.slice(prefixe.length).trim()
+        : "Non précisé";
+    };
+
+    const interlocuteur = role === "artisan"
+      ? titre
+      : sousTitre.replace(/^Avec\s+/i, "").split("·")[0].trim();
+
+    const complement = sousTitre.includes("·")
+      ? sousTitre.split("·").slice(1).join("·").trim()
+      : sousTitre;
+
+    const remplir = (id, texte) => {
+      dialogue.querySelector(`#${id}`).textContent =
+        texte || "Non précisé";
+    };
+
+    remplir(
+      "taskly-chat-person-title",
+      role === "artisan"
+        ? "Informations du client"
+        : "Informations de l'artisan"
+    );
+
+    remplir("taskly-chat-person-name", interlocuteur);
+    remplir("taskly-chat-person-detail", complement);
+
+    remplir(
+      "taskly-chat-service",
+      role === "client" ? titre : "Intervention Taskly"
+    );
+
+    remplir("taskly-chat-date", valeur("Date souhaitée :"));
+    remplir("taskly-chat-address", valeur("Adresse :"));
+
+    remplir(
+      "taskly-chat-client-name",
+      role === "client" ? "Vous" : interlocuteur
+    );
+
+    remplir(
+      "taskly-chat-artisan-name",
+      role === "artisan" ? "Vous" : interlocuteur
+    );
+  }
   function afficherMessages(messages) {
     const conteneur = dialogue.querySelector(
       ".taskly-chat-messages"
@@ -219,6 +358,7 @@
     demandeActive = Number(id);
     boutonOrigine = origine;
     dernierAffichage = "";
+    remplirResume(origine);
 
     dialogue.querySelector(".taskly-chat-messages")
       .replaceChildren();
