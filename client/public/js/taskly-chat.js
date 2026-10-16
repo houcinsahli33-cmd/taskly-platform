@@ -97,7 +97,7 @@
         <label for="taskly-chat-input">Votre message</label>
         <div class="taskly-chat-composer">
           <textarea id="taskly-chat-input"
-            maxlength="4000" rows="2"
+            maxlength="4000" rows="1"
             placeholder="Écrire votre message..."
             required></textarea>
 
@@ -227,6 +227,7 @@
     for (const message of messages) {
       const bloc = document.createElement("div");
       bloc.className = "taskly-chat-bubble";
+      bloc.dataset.chatAuteur = message.auteur_type;
 
       if (message.auteur_type === role) {
         bloc.classList.add("taskly-chat-mine");

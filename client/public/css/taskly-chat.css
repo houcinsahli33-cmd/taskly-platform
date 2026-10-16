@@ -422,3 +422,347 @@
     max-width: 90%;
   }
 }
+
+/* TASKLY_CHAT_VISUAL_V3 */
+/* Interface de messagerie fidele a la maquette validee */
+
+.taskly-chat-dialog[open] {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(1040px, calc(100vw - 24px)) !important;
+  height: min(900px, calc(100dvh - 24px)) !important;
+  max-height: calc(100dvh - 24px) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  background: #fff;
+}
+
+.taskly-chat-top {
+  flex: 0 0 auto !important;
+  padding: 16px 22px 10px !important;
+}
+
+.taskly-chat-top h2 {
+  margin: 2px 0 6px !important;
+  font-size: clamp(20px, 2.3vw, 29px);
+  letter-spacing: -0.5px;
+}
+
+.taskly-chat-eyebrow {
+  font-size: 10px;
+}
+
+.taskly-chat-overview {
+  flex: 0 0 auto !important;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px !important;
+  padding: 0 22px 10px !important;
+}
+
+.taskly-chat-info-card {
+  border-radius: 13px;
+}
+
+.taskly-chat-info-card h3 {
+  padding: 10px 14px !important;
+  font-size: 13px;
+}
+
+.taskly-chat-info-card dl {
+  padding: 2px 14px !important;
+}
+
+.taskly-chat-info-card dl > div {
+  padding: 6px 0 !important;
+  font-size: 12px;
+}
+
+.taskly-chat-notice {
+  flex: 0 0 auto !important;
+  min-height: 42px;
+  margin: 0 22px 10px !important;
+  padding: 6px 12px !important;
+  box-sizing: border-box;
+}
+
+.taskly-chat-notice .btn {
+  padding: 7px 12px;
+  font-size: 12px;
+}
+
+/* Zone de conversation prioritaire */
+
+.taskly-chat-conversation {
+  display: flex !important;
+  flex: 1 1 0% !important;
+  flex-direction: column !important;
+  min-height: 150px !important;
+  max-height: none !important;
+  margin: 0 22px !important;
+  overflow: hidden !important;
+  border: 1px solid #dcebe6;
+  border-radius: 14px;
+}
+
+.taskly-chat-participants {
+  flex: 0 0 auto !important;
+  padding: 10px 14px !important;
+  background: #fff;
+}
+
+.taskly-chat-status {
+  flex: 0 0 auto !important;
+  padding: 6px 14px !important;
+}
+
+.taskly-chat-status:empty {
+  display: none !important;
+}
+
+.taskly-chat-messages {
+  display: flex !important;
+  flex: 1 1 0% !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  gap: 23px !important;
+  padding: 20px 55px !important;
+  background: #fcfefd !important;
+  scrollbar-width: thin;
+}
+
+/* Messages et avatars */
+
+.taskly-chat-bubble {
+  position: relative;
+  flex-shrink: 0;
+  align-self: flex-start;
+  max-width: 76%;
+  margin: 0;
+  padding: 11px 14px !important;
+  border: 1px solid #edf0f2;
+  border-radius: 15px 15px 15px 4px;
+  background: #f0f2f5;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.taskly-chat-bubble.taskly-chat-mine {
+  align-self: flex-end;
+  border-color: #d1ece5;
+  border-radius: 15px 15px 4px 15px;
+  background: #dff4ee;
+}
+
+.taskly-chat-bubble::before {
+  position: absolute;
+  top: 2px;
+  left: -39px;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #8093a4;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.taskly-chat-bubble[data-chat-auteur="client"]::before {
+  content: "C";
+}
+
+.taskly-chat-bubble[data-chat-auteur="artisan"]::before {
+  content: "A";
+  background: #008a70;
+}
+
+.taskly-chat-bubble.taskly-chat-mine::before {
+  left: auto;
+  right: -39px;
+}
+
+.taskly-chat-bubble strong {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.taskly-chat-bubble p {
+  margin: 0 !important;
+  color: #213b48;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.taskly-chat-bubble small {
+  display: block;
+  margin-top: 6px;
+  color: #82929f;
+  font-size: 10px;
+  text-align: right;
+}
+
+/* Zone d'envoi compacte */
+
+.taskly-chat-form {
+  display: block !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 10px 22px 5px !important;
+  background: #fff;
+}
+
+.taskly-chat-form > label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.taskly-chat-composer {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  width: 100%;
+}
+
+.taskly-chat-form .taskly-chat-composer textarea {
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 0 !important;
+  padding: 11px 16px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #d5e7e0;
+  border-radius: 24px !important;
+  background: #fff;
+  font: inherit;
+  font-size: 13px !important;
+  line-height: 22px !important;
+  resize: none !important;
+  overflow-y: auto !important;
+}
+
+.taskly-chat-composer .btn {
+  flex: 0 0 auto !important;
+  min-height: 46px;
+  margin: 0 !important;
+  padding: 0 19px !important;
+  border-radius: 24px !important;
+  background: #008a70;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.taskly-chat-footnote {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 4px 22px 10px !important;
+  font-size: 11px;
+}
+
+/* Ordinateurs avec une petite hauteur */
+
+@media (max-height: 740px) {
+  .taskly-chat-top {
+    padding-top: 10px !important;
+    padding-bottom: 7px !important;
+  }
+
+  .taskly-chat-overview {
+    max-height: 137px;
+    overflow-y: auto;
+  }
+
+  .taskly-chat-info-card h3 {
+    padding: 7px 12px !important;
+  }
+
+  .taskly-chat-info-card dl > div {
+    padding: 4px 0 !important;
+  }
+
+  .taskly-chat-notice {
+    margin-bottom: 7px !important;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 650px) {
+  .taskly-chat-dialog[open] {
+    width: calc(100vw - 10px) !important;
+    height: calc(100dvh - 10px) !important;
+    max-height: calc(100dvh - 10px) !important;
+  }
+
+  .taskly-chat-top {
+    padding: 12px 14px 8px !important;
+  }
+
+  .taskly-chat-top h2 {
+    font-size: 19px;
+  }
+
+  .taskly-chat-overview {
+    grid-template-columns: 1fr !important;
+    max-height: 145px !important;
+    overflow-y: auto !important;
+    padding: 0 14px 9px !important;
+  }
+
+  .taskly-chat-notice {
+    margin: 0 14px 9px !important;
+    flex-wrap: wrap;
+  }
+
+  .taskly-chat-conversation {
+    min-height: 110px !important;
+    margin: 0 14px !important;
+  }
+
+  .taskly-chat-participants {
+    gap: 7px;
+  }
+
+  .taskly-chat-participant strong {
+    font-size: 11px;
+  }
+
+  .taskly-chat-messages {
+    padding: 16px 45px !important;
+  }
+
+  .taskly-chat-bubble {
+    max-width: 90%;
+  }
+
+  .taskly-chat-form {
+    padding: 9px 14px 5px !important;
+  }
+
+  .taskly-chat-composer .btn {
+    padding: 0 12px !important;
+  }
+
+  .taskly-chat-footnote {
+    padding: 3px 14px 8px !important;
+  }
+}
