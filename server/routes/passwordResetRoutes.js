@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 
 const passwordReset = require('../services/passwordResetService');
-const { limiter } = require('../middleware/securityMiddleware');
+const { limiter } = require('../middleware/passwordResetLimiter');
 
 const protectionEnvoi = limiter({
     fenetre: 15 * 60 * 1000,
