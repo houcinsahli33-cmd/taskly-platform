@@ -673,6 +673,8 @@
 
     let busy = false;
     let generation = 0;
+    // Mémoire conversationnelle
+    let previousTopic = '';
 
     function scroll() {
       const area = $('.content');
@@ -730,6 +732,55 @@
     async function answer(question) {
 
       const q = norm(question);
+
+// MEMOIRE CONVERSATIONNELLE
+
+if (!admin) {
+
+  const followup = q.trim();
+
+  if (/combien de temps|quelle duree/.test(followup) &&
+      !/code|session|inactivite/.test(followup)) {
+
+    if (previousTopic === 'code') {
+      return [
+        'Votre code de verification est valable pendant 3 minutes.'
+      ];
+    }
+
+    if (previousTopic === 'session') {
+      return [
+        'Votre session expire apres 4 heures consecutives d’inactivite.'
+      ];
+    }
+  }
+
+  if (/combien.*(tentative|essai)/.test(followup) &&
+      previousTopic === 'code') {
+
+    return [
+      'Vous disposez de 3 tentatives de verification.'
+    ];
+  }
+
+  // Memoriser le sujet actuel
+
+  if (/code|spam|verification/.test(q)) {
+
+    previousTopic = 'code';
+
+  } else if (/session|inactivite|deconnect/.test(q)) {
+
+    previousTopic = 'session';
+
+  } else {
+
+    previousTopic = '';
+
+  }
+}
+
+      
 
       // ASSISTANT ADMINISTRATION
 
@@ -1040,6 +1091,7 @@ scroll();
     // NOUVELLE CONVERSATION
 
     function reset() {
+      previousTopic = '';
 
       generation++;
       busy = false;
