@@ -781,6 +781,39 @@
       }
 
       // ASSISTANT CLIENT ET ARTISAN
+      
+// Expiration de session
+if (/session.*expir|deconnecte|inactivite/.test(q)) {
+  return [
+    'Pour votre sécurité, Taskly ferme votre session après 4 heures consécutives d’inactivité. Vous devez vous reconnecter.',
+    ['Se reconnecter', '/login.html']
+  ];
+}
+
+// Code de vérification expiré ou incorrect
+if (/code.*(expir|incorrect|invalide|refus|marche pas)/.test(q)) {
+  return [
+    'Votre code est valable pendant 3 minutes et vous disposez de 3 tentatives. Demandez un nouveau code si nécessaire.'
+  ];
+}
+
+// Mot de passe oublié
+if (/mot de passe/.test(q) &&
+    /oubli|perdu|reinitialis/.test(q)) {
+  return [
+    'Contactez le support Taskly pour obtenir de l’aide. Ne communiquez jamais votre mot de passe.',
+    ['Contacter le support', support]
+  ];
+}
+
+// Compte bloqué
+if (/compte.*(bloqu|suspend|desactiv)/.test(q)) {
+  return [
+    'Si votre compte est bloqué, contactez le support Taskly afin de connaître la procédure à suivre.',
+    ['Contacter le support', support]
+  ];
+}
+
 
       if (/code|spam|verification/.test(q)) {
 
