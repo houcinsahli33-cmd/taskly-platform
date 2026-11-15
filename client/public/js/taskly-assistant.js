@@ -414,6 +414,7 @@
           background: #087e63;
           color: white;
         }
+        
 
         .bubble a {
           display: block;
@@ -911,7 +912,24 @@ if (/compte.*(bloqu|suspend|desactiv)/.test(q)) {
 
       message(q, true);
 
-      const pending = message('Recherche de réponse…');
+     
+const pending = message('');
+
+const typing = pending.querySelector('.bubble');
+
+typing.classList.add('typing');
+
+typing.setAttribute(
+  'aria-label',
+  'Taskly Assistant prépare sa réponse'
+);
+
+typing.innerHTML = '<span></span><span></span><span></span>';
+
+await new Promise(resolve => setTimeout(resolve, 800));
+
+if (current !== generation) return;
+
 
       try {
 
