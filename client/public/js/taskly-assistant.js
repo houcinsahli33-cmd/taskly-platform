@@ -1,4 +1,3 @@
-
 (() => {
   'use strict';
 
@@ -416,6 +415,29 @@
         }
         
 
+        /* Indicateur de rédaction */
+        .typing {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 16px 20px;
+        }
+        .typing span {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #087e63;
+          animation: tasklyTyping 1.2s infinite;
+        }
+        .typing span:nth-child(2) { animation-delay: .15s; }
+        .typing span:nth-child(3) { animation-delay: .3s; }
+        @keyframes tasklyTyping {
+          0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+          30% { transform: translateY(-6px); opacity: 1; }
+        }
+        .panel[dir="rtl"] .topic { text-align: right; }
+        .panel[dir="rtl"] .chevron { transform: scaleX(-1); }
+
         .bubble a {
           display: block;
           margin-top: 9px;
@@ -634,6 +656,7 @@
             <input aria-label="Votre question"
                    placeholder="Écrivez votre message…"
                    maxlength="300"
+                   autocomplete="off"
                    required>
 
             <button type="submit"
@@ -673,8 +696,6 @@
 
     let busy = false;
     let generation = 0;
-    // Mémoire conversationnelle
-    let previousTopic = '';
 
     function scroll() {
       const area = $('.content');
@@ -697,6 +718,7 @@
       const bubble = document.createElement('div');
 
       bubble.className = 'bubble';
+      bubble.dir = 'auto';
       bubble.textContent = text;
 
       if (link) {
@@ -732,55 +754,6 @@
     async function answer(question) {
 
       const q = norm(question);
-
-// MEMOIRE CONVERSATIONNELLE
-
-if (!admin) {
-
-  const followup = q.trim();
-
-  if (/combien de temps|quelle duree/.test(followup) &&
-      !/code|session|inactivite/.test(followup)) {
-
-    if (previousTopic === 'code') {
-      return [
-        'Votre code de verification est valable pendant 3 minutes.'
-      ];
-    }
-
-    if (previousTopic === 'session') {
-      return [
-        'Votre session expire apres 4 heures consecutives d’inactivite.'
-      ];
-    }
-  }
-
-  if (/combien.*(tentative|essai)/.test(followup) &&
-      previousTopic === 'code') {
-
-    return [
-      'Vous disposez de 3 tentatives de verification.'
-    ];
-  }
-
-  // Memoriser le sujet actuel
-
-  if (/code|spam|verification/.test(q)) {
-
-    previousTopic = 'code';
-
-  } else if (/session|inactivite|deconnect/.test(q)) {
-
-    previousTopic = 'session';
-
-  } else {
-
-    previousTopic = '';
-
-  }
-}
-
-      
 
       // ASSISTANT ADMINISTRATION
 
@@ -1073,9 +1046,13 @@ scroll();
           pending.remove();
 
           message(
-            e.status === 401 || e.status === 403
-              ? 'Session expirée ou accès refusé. Reconnectez-vous.'
-              : 'Informations momentanément indisponibles. Réessayez.'
+            /[\u0600-\u06ff]/.test(q)
+              ? (e.status === 401 || e.status === 403
+                ? 'انتهت الجلسة أو تم رفض الوصول. سجل الدخول مجددًا.'
+                : 'المعلومات غير متاحة مؤقتًا. حاول مرة أخرى.')
+              : (e.status === 401 || e.status === 403
+                ? 'Session expirée ou accès refusé. Reconnectez-vous.'
+                : 'Informations momentanément indisponibles. Réessayez.')
           );
         }
 
@@ -1091,7 +1068,6 @@ scroll();
     // NOUVELLE CONVERSATION
 
     function reset() {
-      previousTopic = '';
 
       generation++;
       busy = false;
@@ -1137,12 +1113,10 @@ scroll();
 let assistantLanguage = 'fr';
 let assistantContext = '';
 let assistantHistory = [];
-let recognition = null;
 
 const originalAnswer = answer;
 const originalReset = reset;
 const originalSend = send;
-const originalToggle = toggle;
 
 const frenchTopics = topics.map(t => [...t]);
 
@@ -1195,27 +1169,6 @@ extraStyle.textContent = `
     height: 17px;
   }
 
-  .assistant-mic {
-    background: #e5f2eb;
-    color: #087e63;
-    border: 0;
-    border-radius: 10px;
-    width: 40px;
-    flex: none;
-    display: grid;
-    place-items: center;
-  }
-
-  .assistant-mic.recording {
-    background: #fee2e2;
-    color: #dc2626;
-    animation: micPulse 1s infinite;
-  }
-
-  @keyframes micPulse {
-    50% { opacity: .5; }
-  }
-
   .assistant-history {
     padding: 12px;
     background: white;
@@ -1240,12 +1193,6 @@ extraStyle.textContent = `
     font-weight: 600;
   }
 
-  .assistant-status {
-    font-size: 11px;
-    color: #637c72;
-    text-align: center;
-    margin-top: 6px;
-  }
 `;
 
 root.append(extraStyle);
@@ -1277,138 +1224,6 @@ toolbar.innerHTML = `
 `;
 
 $('footer').prepend(toolbar);
-
-// MICROPHONE
-
-const mic = document.createElement('button');
-
-mic.type = 'button';
-mic.className = 'assistant-mic';
-mic.setAttribute('aria-label', 'Dicter un message');
-
-mic.innerHTML = `
-  <svg viewBox="0 0 24 24"
-       fill="none"
-       stroke="currentColor"
-       stroke-width="1.8"
-       stroke-linecap="round"
-       aria-hidden="true">
-    <rect x="9" y="2" width="6" height="13" rx="3"/>
-    <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/>
-  </svg>
-`;
-
-$('.composer').insertBefore(mic, $('.send'));
-
-const voiceStatus = document.createElement('div');
-
-voiceStatus.className = 'assistant-status';
-voiceStatus.setAttribute('role', 'status');
-
-$('footer').append(voiceStatus);
-
-const SpeechAPI =
-  window.SpeechRecognition ||
-  window.webkitSpeechRecognition;
-
-mic.disabled = !SpeechAPI;
-
-function stopDictation() {
-
-  const active = recognition;
-  recognition = null;
-
-  if (active) {
-    try {
-      active.abort();
-    } catch (e) {}
-  }
-
-  mic.classList.remove('recording');
-  voiceStatus.textContent = '';
-}
-
-mic.addEventListener('click', () => {
-
-  if (!SpeechAPI || busy) return;
-
-  if (recognition) {
-    stopDictation();
-    return;
-  }
-
-  const accepted = window.confirm(
-    assistantLanguage === 'ar'
-      ? 'قد تتم معالجة صوتك عبر خدمة التعرف على الكلام الخاصة بالمتصفح. لا تشارك معلومات حساسة. هل تريد المتابعة؟'
-      : 'Votre voix peut être traitée par le service de reconnaissance vocale du navigateur. Ne communiquez aucune information sensible. Continuer ?'
-  );
-
-  if (!accepted) return;
-
-  try {
-
-    const current = new SpeechAPI();
-
-    recognition = current;
-
-    current.lang =
-      assistantLanguage === 'ar' ? 'ar-DZ' : 'fr-FR';
-
-    current.continuous = false;
-    current.interimResults = false;
-
-    current.onstart = () => {
-
-      if (recognition !== current) return;
-
-      mic.classList.add('recording');
-
-      voiceStatus.textContent =
-        assistantLanguage === 'ar'
-          ? 'أنا أستمع...'
-          : 'Je vous écoute...';
-    };
-
-    current.onresult = event => {
-
-      if (recognition !== current) return;
-
-      input.value =
-        event.results[0][0].transcript.slice(0, 300);
-
-    };
-
-    current.onerror = () => {
-
-      if (recognition !== current) return;
-
-      stopDictation();
-
-      voiceStatus.textContent =
-        assistantLanguage === 'ar'
-          ? 'الميكروفون غير متاح.'
-          : 'Microphone indisponible.';
-    };
-
-    current.onend = () => {
-
-      if (recognition !== current) return;
-
-      recognition = null;
-      mic.classList.remove('recording');
-      voiceStatus.textContent = '';
-    };
-
-    current.start();
-
-  } catch (e) {
-
-    stopDictation();
-
-    voiceStatus.textContent =
-      'Reconnaissance vocale indisponible.';
-  }
-});
 
 // HISTORIQUE TEMPORAIRE
 
@@ -1481,7 +1296,7 @@ function showHistory() {
       p.dir = 'auto';
 
       p.textContent =
-        (item.mine ? 'Vous : ' : 'Taskly : ') +
+        (item.mine ? (assistantLanguage === 'ar' ? 'أنت: ' : 'Vous : ') : 'Taskly : ') +
         item.text;
 
       details.append(p);
@@ -1505,7 +1320,6 @@ function showHistory() {
     assistantHistory = [];
     assistantContext = '';
 
-    stopDictation();
     originalReset();
     showHistory();
   });
@@ -1527,7 +1341,6 @@ $('.history-button').addEventListener('click', () => {
 
 $('.language-button').addEventListener('click', () => {
 
-  stopDictation();
 
   assistantLanguage =
     assistantLanguage === 'fr' ? 'ar' : 'fr';
@@ -1535,6 +1348,17 @@ $('.language-button').addEventListener('click', () => {
   const ar = assistantLanguage === 'ar';
 
   panel.lang = assistantLanguage;
+  $('.brand small').lastChild.textContent = ar
+    ? (admin ? ' مساعد الإدارة' : ' المساعد الافتراضي')
+    : (admin ? ' Assistant de l’administration' : ' Assistant virtuel');
+  $('.credit').lastChild.textContent = ar ? ' Taskly · مساعدك الافتراضي' : ' Taskly · Votre assistant virtuel';
+  $('.reset').setAttribute('aria-label', ar ? 'محادثة جديدة' : 'Nouvelle conversation');
+  $('.reset').title = ar ? 'محادثة جديدة' : 'Nouvelle conversation';
+  $('.expand').setAttribute('aria-label', ar ? 'تكبير أو تصغير' : 'Agrandir ou réduire');
+  $('.expand').title = ar ? 'تكبير أو تصغير' : 'Agrandir ou réduire';
+  $('.close').setAttribute('aria-label', ar ? 'إغلاق' : 'Fermer');
+  $('.send').setAttribute('aria-label', ar ? 'إرسال' : 'Envoyer');
+  input.setAttribute('aria-label', ar ? 'سؤالك' : 'Votre question');
   panel.dir = ar ? 'rtl' : 'ltr';
 
   input.dir = 'auto';
@@ -1592,8 +1416,9 @@ answer = async function(question) {
   const ar = /[\u0600-\u06ff]/.test(question);
 
   const aq = q
+    .replace(/[\u0610-\u061a\u064b-\u065f\u0670\u0640]/g, '')
     .replace(/[أإآ]/g, 'ا')
-    .replace(/[\u064b-\u065f]/g, '');
+    .replace(/ى/g, 'ي');
 
   // ADMINISTRATION EN ARABE
 
@@ -1647,52 +1472,40 @@ answer = async function(question) {
     ];
   }
 
-  // MEMOIRE CONVERSATIONNELLE
-
+  // Une seule mémoire, pour les deux langues.
   if (!admin) {
+    const explicit = /code|spam|verification|رمز|تحقق/.test(aq)
+      ? 'code'
+      : /session|inactivite|deconnect|جلسة|نشاط/.test(aq)
+        ? 'session' : '';
+    if (explicit) assistantContext = explicit;
 
-    if (/combien de temps|quelle duree|كم مدة|كم من الوقت/.test(aq)
-        && !/code|session|رمز|جلسة/.test(aq)) {
-
-      if (assistantContext === 'code') {
-        return [
-          ar
-            ? 'رمز التحقق صالح لمدة 3 دقائق.'
-            : 'Votre code est valable pendant 3 minutes.'
-        ];
-      }
-
-      if (assistantContext === 'session') {
-        return [
-          ar
-            ? 'تنتهي الجلسة بعد 4 ساعات من عدم النشاط.'
-            : 'Votre session expire après 4 heures d’inactivité.'
-        ];
-      }
+    const duration = /combien de temps|quelle duree|duree.*valid|validite|duree.*session|كم مدة|كم من الوقت|مدة صلاحية|مدة الجلسة/.test(aq);
+    const attempts = /combien.*(?:tentative|essai)|nombre.*tentative|كم.*محاول|عدد.*محاول/.test(aq);
+    if (duration && assistantContext === 'code') {
+      return [ar ? 'رمز التحقق صالح لمدة 3 دقائق.' : 'Votre code de vérification est valable pendant 3 minutes.'];
     }
-
-    if (/tentative|essai|محاول/.test(aq)
-        && assistantContext === 'code') {
-
-      return [
-        ar
-          ? 'لديك 3 محاولات للتحقق.'
-          : 'Vous disposez de 3 tentatives.'
-      ];
+    if (duration && assistantContext === 'session') {
+      return [ar ? 'تنتهي الجلسة بعد 4 ساعات من عدم النشاط.' : 'Votre session expire après 4 heures consécutives d’inactivité.'];
     }
-
-    if (/code|spam|verification|رمز/.test(aq)) {
-      assistantContext = 'code';
-    } else if (/session|inactivite|جلسة/.test(aq)) {
-      assistantContext = 'session';
-    } else {
-      assistantContext = '';
+    if (attempts && assistantContext === 'code') {
+      return [ar ? 'لديك 3 محاولات للتحقق.' : 'Vous disposez de 3 tentatives de vérification.'];
     }
+    if (!explicit) assistantContext = '';
   }
 
   // CLIENT ET ARTISAN EN ARABE
 
   if (ar) {
+    if (/رمز/.test(aq) && /انته|خاطئ|خطا|غير صالح|لا يعمل/.test(aq)) {
+      return ['رمز التحقق صالح لمدة 3 دقائق ولديك 3 محاولات. اطلب رمزًا جديدًا عند الحاجة.'];
+    }
+    if (/كلمة المرور/.test(aq) && /نسيت|نسيان|فقد|استعاد/.test(aq)) {
+      return ['تواصل مع فريق الدعم للمساعدة. لا تشارك كلمة المرور.', ['اتصل بالدعم', support]];
+    }
+    if (/حساب/.test(aq) && /محظور|حظر|موقوف|معطل/.test(aq)) {
+      return ['تواصل مع فريق الدعم لمعرفة كيفية معالجة مشكلة حسابك.', ['اتصل بالدعم', support]];
+    }
 
     if (/رمز|بريد|تحقق/.test(aq)) {
 
@@ -1779,7 +1592,6 @@ send = async function(text) {
 
   if (busy || !text.trim()) return;
 
-  stopDictation();
 
   historyBox.hidden = true;
 
@@ -1796,7 +1608,9 @@ send = async function(text) {
 
   if (!/[\u0600-\u06ff]/.test(text)) return;
 
-  messages.querySelector('.assistant-followups')?.remove();
+  const oldFollowups = messages.querySelector('.assistant-followups');
+  if (!oldFollowups) return;
+  oldFollowups.remove();
 
   const suggestions = admin
     ? ['الإحصائيات العامة', 'التحقق من الحرفيين', 'البلاغات']
@@ -1805,8 +1619,12 @@ send = async function(text) {
   const box = document.createElement('div');
 
   box.className = 'topics assistant-followups';
+  const heading = document.createElement('p');
+  heading.className = 'eyebrow';
+  heading.textContent = 'أسئلة مقترحة';
+  box.append(heading);
 
-  suggestions.forEach(question => {
+  suggestions.filter(question => norm(question) !== norm(text)).forEach(question => {
 
     const button = document.createElement('button');
 
@@ -1838,20 +1656,10 @@ reset = function() {
 
   assistantContext = '';
 
-  stopDictation();
 
   historyBox.hidden = true;
 
   originalReset();
-};
-
-// FERMETURE DU CHATBOT
-
-toggle = function(open) {
-
-  if (!open) stopDictation();
-
-  originalToggle(open);
 };
 
 // ========================================
