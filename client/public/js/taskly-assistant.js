@@ -1129,6 +1129,735 @@ scroll();
       if (open) input.focus();
       else launch.focus();
     }
+    
+// ========================================
+// TASKLY ASSISTANT - FONCTIONS AVANCEES
+// ========================================
+
+let assistantLanguage = 'fr';
+let assistantContext = '';
+let assistantHistory = [];
+let recognition = null;
+
+const originalAnswer = answer;
+const originalReset = reset;
+const originalSend = send;
+const originalToggle = toggle;
+
+const frenchTopics = topics.map(t => [...t]);
+
+const arabicTopics = admin ? [
+  ['الإحصائيات العامة', 'عرض إحصائيات المنصة'],
+  ['التحقق من الحرفيين', 'طلبات التحقق المعلقة'],
+  ['المستخدمون', 'عرض عدد المستخدمين'],
+  ['البلاغات', 'عرض عدد البلاغات']
+] : [
+  user?.role === 'artisan'
+    ? ['ملفي المهني', 'إدارة الملف المهني']
+    : ['البحث عن حرفي', 'العثور على محترف'],
+  ['طلباتي', 'متابعة الخدمات'],
+  ['الحساب والأمان', 'تسجيل الدخول والتحقق'],
+  ['المساعدة', 'التواصل مع الدعم']
+];
+
+// STYLE DES NOUVELLES FONCTIONS
+
+const extraStyle = document.createElement('style');
+
+extraStyle.textContent = `
+  .assistant-tools {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .assistant-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: white;
+    color: #087e63;
+    border: 1px solid #d6e5dd;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .assistant-option:hover {
+    background: #e5f2eb;
+  }
+
+  .assistant-option svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .assistant-mic {
+    background: #e5f2eb;
+    color: #087e63;
+    border: 0;
+    border-radius: 10px;
+    width: 40px;
+    flex: none;
+    display: grid;
+    place-items: center;
+  }
+
+  .assistant-mic.recording {
+    background: #fee2e2;
+    color: #dc2626;
+    animation: micPulse 1s infinite;
+  }
+
+  @keyframes micPulse {
+    50% { opacity: .5; }
+  }
+
+  .assistant-history {
+    padding: 12px;
+    background: white;
+    border: 1px solid #d6e5dd;
+    border-radius: 14px;
+    margin-bottom: 16px;
+  }
+
+  .assistant-history p {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+  }
+
+  .assistant-history details {
+    border-bottom: 1px solid #e5eee9;
+    padding: 10px 0;
+  }
+
+  .assistant-history summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .assistant-status {
+    font-size: 11px;
+    color: #637c72;
+    text-align: center;
+    margin-top: 6px;
+  }
+`;
+
+root.append(extraStyle);
+
+// BOUTONS HISTORIQUE ET LANGUE
+
+const toolbar = document.createElement('div');
+
+toolbar.className = 'assistant-tools';
+
+toolbar.innerHTML = `
+  <button type="button"
+          class="assistant-option history-button">
+    <svg viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="1.8"
+         aria-hidden="true">
+      <path d="M3 3v6h6M3 9a9 9 0 1 1 0 6"/>
+      <path d="M12 7v5l3 2"/>
+    </svg>
+    <span>Historique</span>
+  </button>
+
+  <button type="button"
+          class="assistant-option language-button">
+    FR / العربية
+  </button>
+`;
+
+$('footer').prepend(toolbar);
+
+// MICROPHONE
+
+const mic = document.createElement('button');
+
+mic.type = 'button';
+mic.className = 'assistant-mic';
+mic.setAttribute('aria-label', 'Dicter un message');
+
+mic.innerHTML = `
+  <svg viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="1.8"
+       stroke-linecap="round"
+       aria-hidden="true">
+    <rect x="9" y="2" width="6" height="13" rx="3"/>
+    <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3M8 22h8"/>
+  </svg>
+`;
+
+$('.composer').insertBefore(mic, $('.send'));
+
+const voiceStatus = document.createElement('div');
+
+voiceStatus.className = 'assistant-status';
+voiceStatus.setAttribute('role', 'status');
+
+$('footer').append(voiceStatus);
+
+const SpeechAPI =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+mic.disabled = !SpeechAPI;
+
+function stopDictation() {
+
+  const active = recognition;
+  recognition = null;
+
+  if (active) {
+    try {
+      active.abort();
+    } catch (e) {}
+  }
+
+  mic.classList.remove('recording');
+  voiceStatus.textContent = '';
+}
+
+mic.addEventListener('click', () => {
+
+  if (!SpeechAPI || busy) return;
+
+  if (recognition) {
+    stopDictation();
+    return;
+  }
+
+  const accepted = window.confirm(
+    assistantLanguage === 'ar'
+      ? 'قد تتم معالجة صوتك عبر خدمة التعرف على الكلام الخاصة بالمتصفح. لا تشارك معلومات حساسة. هل تريد المتابعة؟'
+      : 'Votre voix peut être traitée par le service de reconnaissance vocale du navigateur. Ne communiquez aucune information sensible. Continuer ?'
+  );
+
+  if (!accepted) return;
+
+  try {
+
+    const current = new SpeechAPI();
+
+    recognition = current;
+
+    current.lang =
+      assistantLanguage === 'ar' ? 'ar-DZ' : 'fr-FR';
+
+    current.continuous = false;
+    current.interimResults = false;
+
+    current.onstart = () => {
+
+      if (recognition !== current) return;
+
+      mic.classList.add('recording');
+
+      voiceStatus.textContent =
+        assistantLanguage === 'ar'
+          ? 'أنا أستمع...'
+          : 'Je vous écoute...';
+    };
+
+    current.onresult = event => {
+
+      if (recognition !== current) return;
+
+      input.value =
+        event.results[0][0].transcript.slice(0, 300);
+
+    };
+
+    current.onerror = () => {
+
+      if (recognition !== current) return;
+
+      stopDictation();
+
+      voiceStatus.textContent =
+        assistantLanguage === 'ar'
+          ? 'الميكروفون غير متاح.'
+          : 'Microphone indisponible.';
+    };
+
+    current.onend = () => {
+
+      if (recognition !== current) return;
+
+      recognition = null;
+      mic.classList.remove('recording');
+      voiceStatus.textContent = '';
+    };
+
+    current.start();
+
+  } catch (e) {
+
+    stopDictation();
+
+    voiceStatus.textContent =
+      'Reconnaissance vocale indisponible.';
+  }
+});
+
+// HISTORIQUE TEMPORAIRE
+
+const historyBox = document.createElement('div');
+
+historyBox.className = 'assistant-history';
+historyBox.hidden = true;
+
+$('.content').prepend(historyBox);
+
+function readConversation() {
+
+  return [...messages.querySelectorAll('.line')]
+    .filter(line => !line.querySelector('.typing'))
+    .map(line => ({
+      mine: line.classList.contains('mine'),
+      text: line.querySelector('.bubble')?.textContent || ''
+    }))
+    .filter(item => item.text.trim())
+    .slice(-30);
+}
+
+function showHistory() {
+
+  historyBox.replaceChildren();
+
+  const title = document.createElement('strong');
+
+  title.textContent =
+    assistantLanguage === 'ar'
+      ? 'سجل المحادثات'
+      : 'Historique des conversations';
+
+  historyBox.append(title);
+
+  const live = readConversation();
+
+  const sessions = live.some(item => item.mine)
+    ? [live, ...assistantHistory]
+    : assistantHistory;
+
+  if (!sessions.length) {
+
+    const empty = document.createElement('p');
+
+    empty.textContent =
+      assistantLanguage === 'ar'
+        ? 'لا توجد محادثات سابقة.'
+        : 'Aucune conversation pour le moment.';
+
+    historyBox.append(empty);
+  }
+
+  sessions.forEach((conversation, index) => {
+
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+
+    summary.textContent =
+      (assistantLanguage === 'ar'
+        ? 'محادثة '
+        : 'Conversation ') + (index + 1);
+
+    details.append(summary);
+
+    conversation.forEach(item => {
+
+      const p = document.createElement('p');
+
+      p.dir = 'auto';
+
+      p.textContent =
+        (item.mine ? 'Vous : ' : 'Taskly : ') +
+        item.text;
+
+      details.append(p);
+    });
+
+    historyBox.append(details);
+  });
+
+  const clear = document.createElement('button');
+
+  clear.type = 'button';
+  clear.className = 'assistant-option';
+
+  clear.textContent =
+    assistantLanguage === 'ar'
+      ? 'حذف السجل'
+      : 'Effacer l’historique';
+
+  clear.addEventListener('click', () => {
+
+    assistantHistory = [];
+    assistantContext = '';
+
+    stopDictation();
+    originalReset();
+    showHistory();
+  });
+
+  historyBox.append(clear);
+}
+
+$('.history-button').addEventListener('click', () => {
+
+  historyBox.hidden = !historyBox.hidden;
+
+  if (!historyBox.hidden) {
+    showHistory();
+    $('.content').scrollTop = 0;
+  }
+});
+
+// CHANGEMENT DE LANGUE
+
+$('.language-button').addEventListener('click', () => {
+
+  stopDictation();
+
+  assistantLanguage =
+    assistantLanguage === 'fr' ? 'ar' : 'fr';
+
+  const ar = assistantLanguage === 'ar';
+
+  panel.lang = assistantLanguage;
+  panel.dir = ar ? 'rtl' : 'ltr';
+
+  input.dir = 'auto';
+
+  input.placeholder = ar
+    ? 'اكتب رسالتك...'
+    : 'Écrivez votre message…';
+
+  $('.welcome h2').textContent = ar
+    ? 'مرحبا بك !'
+    : admin
+      ? 'Bonjour, administrateur !'
+      : 'Bonjour ! 👋';
+
+  $('.welcome p').textContent = ar
+    ? 'كيف يمكنني مساعدتك اليوم؟'
+    : 'Comment puis-je vous aider aujourd’hui ?';
+
+  $('.home .eyebrow').textContent = ar
+    ? 'كيف يمكنني مساعدتك؟'
+    : 'Comment puis-je vous aider ?';
+
+  $('.history-button span').textContent = ar
+    ? 'السجل'
+    : 'Historique';
+
+  root.querySelectorAll('.home .topic')
+    .forEach((button, index) => {
+
+      const label = ar
+        ? arabicTopics[index]
+        : frenchTopics[index].slice(1);
+
+      topics[index][1] = label[0];
+      topics[index][2] = label[1];
+
+      button.querySelector('strong').textContent = label[0];
+      button.querySelector('small').textContent = label[1];
+
+    });
+
+  messages.querySelector('.assistant-followups')?.remove();
+
+  if (!historyBox.hidden) {
+    showHistory();
+  }
+});
+
+// MEMOIRE ET REPONSES BILINGUES
+
+answer = async function(question) {
+
+  const q = norm(question);
+
+  const ar = /[\u0600-\u06ff]/.test(question);
+
+  const aq = q
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/[\u064b-\u065f]/g, '');
+
+  // ADMINISTRATION EN ARABE
+
+  if (admin && ar) {
+
+    if (/تحقق|انتظار|معلق/.test(aq)) {
+
+      const data = await requeteAPI(
+        '/api/admin/stats/inscriptions?periode=7j'
+      );
+
+      const total = count(data.artisansEnAttente);
+
+      return [
+        'الحرفيون في انتظار التحقق: ' +
+        (total === 'indisponible' ? 'غير متاح' : total)
+      ];
+    }
+
+    const fields = [
+      ['العملاء', 'totalClients', /عميل|عملاء|زبون|زبائن/],
+      ['الحرفيون', 'totalArtisans', /حرفي/],
+      ['المستخدمون', 'totalUsers', /مستخدم/],
+      ['الطلبات', 'totalDemandes', /طلب/],
+      ['البلاغات', 'totalSignalements', /بلاغ/]
+    ];
+
+    const selected = fields.filter(f => f[2].test(aq));
+
+    if (selected.length || /احصائ|عدد|كم/.test(aq)) {
+
+      const data = await requeteAPI('/api/admin/stats');
+
+      return [
+        (selected.length ? selected : fields)
+          .map(([label, key]) => {
+
+            const value = count(data.statistiques?.[key]);
+
+            return label + ': ' +
+              (value === 'indisponible'
+                ? 'غير متاح'
+                : value);
+          })
+          .join('\n')
+      ];
+    }
+
+    return [
+      'يمكنني مساعدتك في الاطلاع على إحصائيات المنصة دون تعديل البيانات.'
+    ];
+  }
+
+  // MEMOIRE CONVERSATIONNELLE
+
+  if (!admin) {
+
+    if (/combien de temps|quelle duree|كم مدة|كم من الوقت/.test(aq)
+        && !/code|session|رمز|جلسة/.test(aq)) {
+
+      if (assistantContext === 'code') {
+        return [
+          ar
+            ? 'رمز التحقق صالح لمدة 3 دقائق.'
+            : 'Votre code est valable pendant 3 minutes.'
+        ];
+      }
+
+      if (assistantContext === 'session') {
+        return [
+          ar
+            ? 'تنتهي الجلسة بعد 4 ساعات من عدم النشاط.'
+            : 'Votre session expire après 4 heures d’inactivité.'
+        ];
+      }
+    }
+
+    if (/tentative|essai|محاول/.test(aq)
+        && assistantContext === 'code') {
+
+      return [
+        ar
+          ? 'لديك 3 محاولات للتحقق.'
+          : 'Vous disposez de 3 tentatives.'
+      ];
+    }
+
+    if (/code|spam|verification|رمز/.test(aq)) {
+      assistantContext = 'code';
+    } else if (/session|inactivite|جلسة/.test(aq)) {
+      assistantContext = 'session';
+    } else {
+      assistantContext = '';
+    }
+  }
+
+  // CLIENT ET ARTISAN EN ARABE
+
+  if (ar) {
+
+    if (/رمز|بريد|تحقق/.test(aq)) {
+
+      return [
+        'تحقق من بريدك الإلكتروني والرسائل غير المرغوب فيها. رمز التحقق صالح لمدة 3 دقائق.'
+      ];
+    }
+
+    if (/جلسة|انتهت|نشاط/.test(aq)) {
+
+      return [
+        'تنتهي جلسة Taskly بعد 4 ساعات من عدم النشاط.',
+        ['تسجيل الدخول', '/login.html']
+      ];
+    }
+
+    if (/مساعدة|دعم|تواصل|مشكلة/.test(aq)) {
+
+      return [
+        'يمكنك التواصل مع فريق الدعم.',
+        ['اتصل بالدعم', support]
+      ];
+    }
+
+    if (/طلباتي|طلب|متابعة/.test(aq)) {
+
+      return [
+        'يمكنك متابعة طلباتك من حسابك الشخصي.',
+        [
+          'عرض طلباتي',
+          workspace
+            ? workspace + '/demandes'
+            : '/login.html'
+        ]
+      ];
+    }
+
+    if (/ملفي|ملف مهني/.test(aq)
+        && user?.role === 'artisan') {
+
+      return [
+        'يمكنك إدارة ملفك المهني من حسابك.',
+        ['ملفي المهني', workspace + '/profil']
+      ];
+    }
+
+    if (/حرفي|بحث|سباك|كهربائي/.test(aq)) {
+
+      return [
+        'يمكنك البحث عن حرفي حسب نوع الخدمة والولاية والبلدية.',
+        ['البحث عن حرفي', '/artisans.html']
+      ];
+    }
+
+    if (/حساب|امان|كلمة المرور|دخول/.test(aq)) {
+
+      return [
+        'لا تشارك كلمة المرور أو رمز التحقق مع أي شخص.',
+        ['مركز المساعدة', '/help.html']
+      ];
+    }
+
+    if (/مرحبا|سلام|شكرا/.test(aq)) {
+
+      return [
+        'مرحبا بك في Taskly! كيف يمكنني مساعدتك؟'
+      ];
+    }
+
+    return [
+      'لم أفهم سؤالك. يمكنك التواصل مع فريق الدعم.',
+      ['الدعم', support]
+    ];
+  }
+
+  // CONSERVER LES REPONSES FRANCAISES
+
+  return originalAnswer(question);
+};
+
+// CONVERSATION ET SUGGESTIONS
+
+send = async function(text) {
+
+  if (busy || !text.trim()) return;
+
+  stopDictation();
+
+  historyBox.hidden = true;
+
+  messages.querySelector('.assistant-followups')?.remove();
+
+  const expected = generation + 1;
+
+  await originalSend(text);
+
+  if (generation !== expected) return;
+
+  messages.querySelectorAll('.bubble')
+    .forEach(bubble => bubble.dir = 'auto');
+
+  if (!/[\u0600-\u06ff]/.test(text)) return;
+
+  messages.querySelector('.assistant-followups')?.remove();
+
+  const suggestions = admin
+    ? ['الإحصائيات العامة', 'التحقق من الحرفيين', 'البلاغات']
+    : ['البحث عن حرفي', 'طلباتي', 'المساعدة'];
+
+  const box = document.createElement('div');
+
+  box.className = 'topics assistant-followups';
+
+  suggestions.forEach(question => {
+
+    const button = document.createElement('button');
+
+    button.type = 'button';
+    button.className = 'topic';
+    button.textContent = question;
+
+    button.addEventListener('click', () => send(question));
+
+    box.append(button);
+  });
+
+  messages.append(box);
+  scroll();
+};
+
+// NOUVELLE CONVERSATION
+
+reset = function() {
+
+  const conversation = readConversation();
+
+  if (conversation.some(item => item.mine)) {
+
+    assistantHistory.unshift(conversation);
+
+    assistantHistory = assistantHistory.slice(0, 5);
+  }
+
+  assistantContext = '';
+
+  stopDictation();
+
+  historyBox.hidden = true;
+
+  originalReset();
+};
+
+// FERMETURE DU CHATBOT
+
+toggle = function(open) {
+
+  if (!open) stopDictation();
+
+  originalToggle(open);
+};
+
+// ========================================
+// FIN DES FONCTIONS AVANCEES
+// ========================================
+
 
     root.querySelectorAll('.topic')
       .forEach((b, i) => {
