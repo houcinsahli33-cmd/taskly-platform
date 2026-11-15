@@ -1,59 +1,35 @@
-'use strict';
-
 const session = require('express-session');
 
-let redisClient = null;
+module.exports = function configurerSession(store, admin = false) {
 
-async function creerSessionStore() {
-
-    if (process.env.REDIS_URL) {
-
-        const { createClient } = require('redis');
-        const { RedisStore } = require('connect-redis');
-
-        const client = createClient({
-            url: process.env.REDIS_URL
-        });
-
-        client.on('error', () => {
-            console.error('Redis : erreur de connexion.');
-        });
-
-        await client.connect();
-
-        const store = new RedisStore({
-            client,
-            prefix: 'taskly:sess:'
-        });
-
-        redisClient = client;
-
-        return store;
-    }
-
-    if (process.env.NODE_ENV === 'production') {
+    if (
+        !process.env.SESSION_SECRET ||
+        process.env.SESSION_SECRET.length < 32
+    ) {
         throw new Error(
-            'REDIS_URL obligatoire en production.'
+            'SESSION_SECRET doit contenir au moins 32 caracteres aleatoires.'
         );
     }
 
-    console.warn(
-        'Mode local uniquement : sessions en memoire.'
-    );
+    return session({
 
-    return new session.MemoryStore();
-}
+        name: admin ? 'taskly.admin.sid' : 'artisans.sid',
 
-function obtenirClientRedis() {
+        store,
 
-    if (!redisClient || !redisClient.isReady) {
-        return null;
-    }
+        secret: process.env.SESSION_SECRET,
 
-    return redisClient;
-}
+        resave: false,
 
-module.exports = {
-    creerSessionStore,
-    obtenirClientRedis
+        saveUninitialized: false,
+
+        cookie: {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 4 * 60 * 60 * 1000
+        }
+
+    });
+
 };
