@@ -915,6 +915,85 @@ if (/compte.*(bloqu|suspend|desactiv)/.test(q)) {
         ['Contacter le support', support]
       ];
     }
+    
+// ========================================
+// TASKLY ASSISTANT - INTELLIGENCE ARTIFICIELLE
+// ========================================
+
+async function answerAvecIA(question) {
+
+  const resultat = await answer(question);
+
+  // Conserver les statistiques administratives en interne
+
+  if (admin || !['client', 'artisan'].includes(user?.role)) {
+    return resultat;
+  }
+
+  // Thèmes généraux autorisés
+
+  const themes = new Map([
+
+    ['Choisissez le métier et la localisation pour trouver un professionnel.', 'recherche'],
+
+    ['يمكنك البحث عن حرفي حسب نوع الخدمة والولاية والبلدية.', 'recherche'],
+
+    ['Consultez vos prestations et leurs statuts depuis votre espace.', 'demandes'],
+
+    ['يمكنك متابعة طلباتك من حسابك الشخصي.', 'demandes'],
+
+    ['Notre équipe peut vous aider.', 'support'],
+
+    ['يمكنك التواصل مع فريق الدعم.', 'support'],
+
+    ['Créez votre compte Taskly.', 'inscription']
+
+  ]);
+
+  const theme = themes.get(resultat[0]);
+
+  if (!theme) return resultat;
+
+  const langue = /[\u0600-\u06ff]/.test(question)
+    ? 'ar'
+    : 'fr';
+
+  try {
+
+    const data = await requeteAPI(
+      '/api/taskly-assistant',
+      {
+        method: 'POST',
+
+        body: JSON.stringify({
+          theme,
+          langue
+        })
+      }
+    );
+
+    if (
+      typeof data.reponse === 'string' &&
+      data.reponse.trim()
+    ) {
+
+      return [
+        data.reponse.trim(),
+        resultat[1]
+      ];
+
+    }
+
+  } catch (e) {
+
+    // Conserver le chatbot classique
+    // si Groq est indisponible.
+
+  }
+
+  return resultat;
+}
+
 
     // ENVOI DES MESSAGES
 
@@ -957,7 +1036,7 @@ if (current !== generation) return;
 
       try {
 
-        const [reply, link] = await answer(q);
+        const [reply, link] = await answerAvecIA(q);
 
         if (current === generation) {
           pending.remove();
