@@ -822,13 +822,15 @@ if (/code.*(expir|incorrect|invalide|refus|marche pas)/.test(q)) {
   ];
 }
 
-// Mot de passe oublié
+// Mot de passe oublié - récupération sécurisée
 if (/mot de passe/.test(q) &&
-    /oubli|perdu|reinitialis/.test(q)) {
+    /oubli|perdu|reinitialis|recuper/.test(q)) {
+
   return [
-    'Contactez le support Taskly pour obtenir de l’aide. Ne communiquez jamais votre mot de passe.',
-    ['Contacter le support', support]
+    'Vous pouvez récupérer votre compte Taskly grâce à notre système sécurisé. Ne communiquez jamais votre mot de passe, votre adresse e-mail ou votre code de vérification dans le chatbot.',
+    ['Récupérer mon compte', '/forgot-password.html']
   ];
+
 }
 
 // Compte bloqué
