@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,44 +11,306 @@
   <script defer src="/js/algeria-locations.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/auth-pages.js"></script>
-<link rel="stylesheet" href="/css/login-password.css"></head>
+  <link rel="stylesheet" href="/css/login-password.css">
+
+  <style>
+    /* Design réservé à l'expiration de session */
+
+    body.auth-page.taskly-session-expired {
+      min-height: 100dvh;
+      padding: clamp(16px, 4vw, 50px);
+      background:
+        radial-gradient(ellipse at 105% 0%, #d8e2d4 0 20%, transparent 20.2%),
+        radial-gradient(ellipse at 0% 100%, #e9dfd1 0 20%, transparent 20.2%),
+        #f6f0e8;
+    }
+
+    .taskly-session-expired .auth-card {
+      width: min(1160px, 100%);
+      display: grid;
+      grid-template-columns: .93fr 1.07fr;
+      border-radius: 28px;
+      background: #faf8f4;
+      box-shadow: 0 25px 60px #24372b26;
+      overflow: hidden;
+    }
+
+    .taskly-session-expired .auth-aside {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: clamp(30px, 5vw, 65px);
+      background:
+        radial-gradient(circle at 110% -20%, #175c4e 0 39%, transparent 39.3%),
+        linear-gradient(145deg, #063b30, #06342b);
+    }
+
+    .taskly-session-expired .auth-logo img {
+      width: 210px;
+      max-width: 100%;
+    }
+
+    .taskly-session-expired .auth-aside h1 {
+      font-size: clamp(42px, 5.8vw, 82px);
+      line-height: 1.04;
+      max-width: 7ch;
+      margin: 42px 0 22px;
+      color: #fff;
+      overflow-wrap: normal;
+    }
+
+    .taskly-session-expired .auth-aside p {
+      color: #e8f3ed;
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .taskly-session-expired .auth-body {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: clamp(24px, 4vw, 54px);
+      background: #faf8f4;
+    }
+
+    .taskly-session-expired .auth-panel {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .taskly-session-expired .auth-panel h2 {
+      font-size: clamp(30px, 4vw, 48px);
+      color: #112f29;
+      margin-bottom: 10px;
+    }
+
+    .taskly-session-expired .session-expiry-notice {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      align-items: start;
+      gap: 14px;
+      padding: 18px;
+      margin: 0 0 25px;
+      border: 1px solid #edc77e;
+      border-radius: 14px;
+      background: #fff1d8;
+      color: #935700;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .session-expiry-notice svg {
+      width: 30px;
+      height: 30px;
+      margin-top: 4px;
+    }
+
+    .session-expiry-content {
+      border-left: 1px solid #efd4a1;
+      padding-left: 14px;
+    }
+
+    .session-expiry-content p {
+      margin: 0;
+    }
+
+    .session-expiry-content a {
+      display: inline-block;
+      margin-top: 10px;
+      font-weight: 700;
+      color: #07513f;
+    }
+
+    .session-expiry-content a:hover {
+      text-decoration: underline;
+    }
+
+    .taskly-session-expired #login-form {
+      gap: 20px;
+    }
+
+    .taskly-session-expired #login-form .form-control {
+      min-height: 52px;
+      border-radius: 10px;
+    }
+
+    .taskly-session-expired #login-form .btn.primary {
+      min-height: 54px;
+      border-radius: 30px;
+    }
+
+    .taskly-session-expired .auth-small-link {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .taskly-session-expired .auth-card {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 550px;
+        border-radius: 18px;
+      }
+
+      .taskly-session-expired .auth-aside {
+        padding: 25px;
+      }
+
+      .taskly-session-expired .auth-aside h1 {
+        font-size: 36px;
+        max-width: none;
+        margin: 20px 0 12px;
+      }
+
+      .taskly-session-expired .auth-logo img {
+        width: 160px;
+      }
+
+      .taskly-session-expired .auth-body {
+        padding: 22px;
+      }
+
+      .taskly-session-expired .session-expiry-notice {
+        padding: 12px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
 <body class="auth-page" data-auth-page="true">
-  <!-- Carte connexion -->
+
   <main class="auth-card">
+
     <section class="auth-aside">
-      <a class="brand auth-logo" href="/index.html"><img src="/images/logo/taskly-logo.svg" alt="Taskly"></a>
+
+      <a class="brand auth-logo" href="/index.html">
+        <img src="/images/logo/taskly-logo.svg" alt="Taskly">
+      </a>
+
       <h1>Votre espace Taskly</h1>
-      <p class="muted text-soft-green mt-22">Vous êtes artisan ? Utilisez la page dédiée pour créer un profil professionnel.</p>
-      <a class="btn light mt-22" href="/become-artisan.html">Devenir artisan</a>
+
+      <p class="muted text-soft-green mt-22">
+        Vous êtes artisan ? Utilisez la page dédiée pour créer un profil professionnel.
+      </p>
+
+      <a class="btn light mt-22" href="/become-artisan.html">
+        Devenir artisan
+      </a>
+
     </section>
 
     <section class="auth-body">
       <div class="auth-panel active">
+
         <h2>Connexion</h2>
-        <p class="muted mb-20">Accédez à votre espace client ou artisan.</p>
+
+        <p class="muted mb-20">
+          Accédez à votre espace client ou artisan.
+        </p>
+
         <div id="login-alert" class="alert"></div>
+
         <form id="login-form" class="grid" novalidate>
+
           <label>
             <span class="field-label">Email</span>
-            <input class="form-control" id="login-email" type="email" required placeholder="Adresse e-mail">
+            <input class="form-control"
+                   id="login-email"
+                   type="email"
+                   required
+                   placeholder="Adresse e-mail">
           </label>
+
           <label>
             <span class="field-label">Mot de passe</span>
-            <span class="login-password-wrap"><input class="form-control" id="login-password" type="password" autocomplete="current-password" required placeholder="Mot de passe"><button type="button" class="taskly-eye" data-password-toggle="login-password" aria-label="Afficher le mot de passe" aria-pressed="false"></button></span>
+
+            <span class="login-password-wrap">
+              <input class="form-control"
+                     id="login-password"
+                     type="password"
+                     autocomplete="current-password"
+                     required
+                     placeholder="Mot de passe">
+
+              <button type="button"
+                      class="taskly-eye"
+                      data-password-toggle="login-password"
+                      aria-label="Afficher le mot de passe"
+                      aria-pressed="false">
+              </button>
+            </span>
+
           </label>
-          <button class="btn primary block" type="submit">Se connecter</button>
+
+          <button class="btn primary block" type="submit">
+            Se connecter
+          </button>
+
         </form>
-        <p class="auth-small-link">Vous n'avez pas encore de compte ? <a href="/register.html">S'inscrire</a></p>
+
+        <p class="auth-small-link">
+          Vous n'avez pas encore de compte ?
+          <a href="/register.html">S'inscrire</a>
+        </p>
+
       </div>
     </section>
+
   </main>
-<script>
-if(new URLSearchParams(location.search).get('session')==='expiree'){
- const info=document.createElement('div'); info.setAttribute('role','status'); info.className='alert show warning';
- info.style.cssText='max-width:560px;margin:16px auto;padding:16px;border-radius:12px';
- info.textContent='Votre session Taskly a expiré après 4 heures consécutives d’inactivité. Reconnectez-vous ou retournez à l’accueil du site.';
- const main=document.querySelector('main');if(main) main.prepend(info);
-}
-</script>
+
+  <script>
+    // Activer le nouveau design uniquement après expiration.
+    if (
+      new URLSearchParams(location.search)
+        .get('session') === 'expiree'
+    ) {
+      const panel = document.querySelector('.auth-panel');
+
+      if (panel) {
+        document.body.classList.add('taskly-session-expired');
+
+        const info = document.createElement('div');
+
+        info.className = 'session-expiry-notice';
+        info.setAttribute('role', 'status');
+
+        info.innerHTML = `
+          <svg viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="1.8"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               aria-hidden="true">
+            <path d="M10.3 3.9 2.5 18a1.8 1.8 0 0 0 1.6 2.6h15.8a1.8 1.8 0 0 0 1.6-2.6L13.7 3.9a1.9 1.9 0 0 0-3.4 0Z"/>
+            <path d="M12 9v4.5M12 17h.01"/>
+          </svg>
+
+          <div class="session-expiry-content">
+            <p>
+              Votre session Taskly a expiré après
+              4 heures consécutives d’inactivité.
+              Reconnectez-vous ou retournez à l’accueil du site.
+            </p>
+
+            <a href="/index.html">
+              Retour à l’accueil ↗
+            </a>
+          </div>
+        `;
+
+        panel.prepend(info);
+
+        const intro = document.querySelector('.auth-aside p');
+
+        if (intro) {
+          intro.textContent =
+            'Accédez à votre espace client ou artisan et gérez vos demandes en toute simplicité.';
+        }
+      }
+    }
+  </script>
+
 </body>
 </html>
