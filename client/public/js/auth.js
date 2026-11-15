@@ -350,3 +350,32 @@ function installerActiviteSession() {
   // Surveillance locale d'affichage ; ce controle n'envoie AUCUNE requete au serveur.
   window.setInterval(verifierExpirationLocale, 60 * 1000);
 }
+
+
+// ==============================
+// TASKLY ASSISTANT
+// ==============================
+
+function chargerTasklyAssistant() {
+  if (window.self !== window.top) return;
+
+  if (document.getElementById('taskly-assistant-script')) return;
+
+  const script = document.createElement('script');
+
+  script.id = 'taskly-assistant-script';
+  script.src = '/js/taskly-assistant.js?v=2';
+
+  document.body.appendChild(script);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener(
+    'DOMContentLoaded',
+    chargerTasklyAssistant,
+    { once: true }
+  );
+} else {
+  chargerTasklyAssistant();
+}
+
