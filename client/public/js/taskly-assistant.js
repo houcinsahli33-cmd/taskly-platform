@@ -919,7 +919,82 @@ if (/compte.*(bloqu|suspend|desactiv)/.test(q)) {
 
         if (current === generation) {
           pending.remove();
-          message(reply, false, link);
+          
+message(reply, false, link);
+
+// Suggestions contextuelles
+messages.querySelector('.assistant-followups')?.remove();
+
+let suggestions;
+
+if (admin) {
+
+  suggestions = [
+    'Statistiques générales',
+    'Nombre de clients',
+    'Artisans en attente de validation',
+    'Nombre de signalements'
+  ];
+
+} else if (/connexion|securite|code|compte|session|mot de passe/.test(norm(q))) {
+
+  suggestions = [
+    'Je ne reçois pas mon code',
+    'Mon code a expiré',
+    'Mot de passe oublié'
+  ];
+
+} else if (/artisan|recherche|trouver/.test(norm(q))) {
+
+  suggestions = [
+    'Comment trouver un artisan ?',
+    'Comment suivre ma demande ?',
+    'Contacter le support'
+  ];
+
+} else {
+
+  suggestions = [
+    'Comment suivre ma demande ?',
+    'Pourquoi ma session a expiré ?',
+    'Contacter le support'
+  ];
+
+}
+
+const followups = document.createElement('div');
+followups.className = 'topics assistant-followups';
+
+const title = document.createElement('p');
+title.className = 'eyebrow';
+title.textContent = 'Questions suggérées';
+
+followups.appendChild(title);
+
+suggestions
+  .filter(s => norm(s) !== norm(q))
+  .forEach(s => {
+
+    const button = document.createElement('button');
+
+    button.type = 'button';
+    button.className = 'topic';
+
+    button.textContent = s;
+
+    button.addEventListener('click', () => {
+      if (busy) return;
+      followups.remove();
+      send(s);
+    });
+
+    followups.appendChild(button);
+
+  });
+
+messages.appendChild(followups);
+scroll();
+
         }
 
       } catch (e) {
