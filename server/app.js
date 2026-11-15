@@ -122,6 +122,17 @@ app.use("/api/services", serviceRoutes); // routes liees aux services
 app.use("/api/artisans", artisanRoutes); // routes liees aux artisans
 app.use("/api/demandes", demandeRoutes); // routes liees aux demandes
 app.use("/api/avis", avisRoutes); // routes liees aux avis
+  // Assistant des clients et des artisans
+app.use(
+  '/api/taskly-assistant',
+  require('./routes/tasklyAssistantRoutes')
+);
+
+// Assistant de l'administration
+app.use(
+  '/api/admin/taskly-assistant',
+  require('./routes/tasklyAssistantRoutes')
+);
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
 app.use("/api/contact", contactRoutes); // routes liÃƒÂ©es au contact/support
