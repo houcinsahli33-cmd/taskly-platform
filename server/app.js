@@ -118,6 +118,9 @@ app.use('/api/admin-verification',adminVerificationRoutes);
 app.use('/api/account',require('./routes/accountRoutes'));
 app.use('/api/artisan-support',require('./routes/artisanSupportRoutes'));
 app.use("/api/auth", authRoutes); // routes liees a l'authentification
+  if (process.env.PASSWORD_RESET_ENABLED === 'true') {
+    app.use('/api/password-reset', require('./routes/passwordResetRoutes'));
+}
 app.use("/api/services", serviceRoutes); // routes liees aux services
 app.use("/api/artisans", artisanRoutes); // routes liees aux artisans
 app.use("/api/demandes", demandeRoutes); // routes liees aux demandes
