@@ -16,14 +16,37 @@ function csrfToken(req,res) {
   if (!req.session.csrfToken) req.session.csrfToken=crypto.randomBytes(32).toString('hex');
   res.json({csrfToken:req.session.csrfToken});
 }
-function verifierCsrf(req,res,next) {
-  if (['GET','HEAD','OPTIONS'].includes(req.method) || !req.originalUrl.startsWith('/api/')) return next();
-  const attendu=req.session && req.session.csrfToken;
-  const fourni=req.get('X-CSRF-Token');
-  if (!attendu || !fourni || attendu.length!==fourni.length ||
-      !crypto.timingSafeEqual(Buffer.from(attendu),Buffer.from(fourni))) {
-    return res.status(403).json({message:'Jeton de securite manquant ou expire. Actualisez la page.'});
-  }
-  next();
+function verifierCsrf(req, res, next) {
+
+    if (
+        ['GET', 'HEAD', 'OPTIONS'].includes(req.method) ||
+        !req.originalUrl.startsWith('/api/')
+    ) {
+        return next();
+    }
+
+    const attendu = req.session?.csrfToken;
+    const fourni = req.get('X-CSRF-Token');
+
+    // Validation du format des jetons
+    const jetonValide = token =>
+        typeof token === 'string' &&
+        token.length === 64 &&
+        /^[a-f0-9]{64}$/.test(token);
+
+    if (
+        !jetonValide(attendu) ||
+        !jetonValide(fourni) ||
+        !crypto.timingSafeEqual(
+            Buffer.from(attendu, 'hex'),
+            Buffer.from(fourni, 'hex')
+        )
+    ) {
+        return res.status(403).json({
+            message: 'Jeton de securite manquant ou expire. Actualisez la page.'
+        });
+    }
+
+    next();
 }
 module.exports={limiter,csrfToken,verifierCsrf};
