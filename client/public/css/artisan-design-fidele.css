@@ -73,9 +73,9 @@ body.dashboard-page[data-require-role="artisan"] #account-profile-editor .worksp
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(3)::before{background-position:-86px 0}
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(4)::before{background-position:-129px 0;background-color:#fff3e7}
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(5)::before{background-position:-172px 0;background-color:#f0ecfe}
-body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:last-child{grid-column:1/-1;min-height:85px;background:#fffafa;border-color:#f4dddd}
-body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:last-child::before{background-position:-215px 0;background-color:#ffeeee}
-body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:last-child strong{color:#b73e42}
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor.workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor.workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:hover{transform:translateY(-3px);box-shadow:0 12px 24px #123c2c12}
 .artisan-document{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #deebe5;background:#f8fcfa;border-radius:12px;padding:16px;margin-top:12px;flex-wrap:wrap}
 .artisan-document>div:first-child{min-width:0;overflow-wrap:anywhere;flex:1}
@@ -90,10 +90,8 @@ body.dashboard-page[data-require-role="artisan"] .dashboard-hero>div:first-child
 @media(prefers-reduced-motion:reduce){body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action{transition:none}body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:hover{transform:none}}
 
 /* Profil artisan : les six actions restent dans la grille, avec suppression apr├¿s mot de passe. */
-body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-actions > .workspace-action:last-child {
-  grid-column:auto!important; min-height:135px; background:#fffafa; border-color:#f4dddd;
-}
-body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-action:last-child strong {color:#b73e42}
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-actions > .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor.workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
 /* LÔÇÖaction dangereuse et la confirmation explicite sont rouges, non vertes. */
 body.dashboard-page[data-require-role="artisan"] .workspace-dialog .account-danger .btn.danger,
 body.dashboard-page[data-require-role="artisan"] .taskly-confirm-dialog [data-delete] {
@@ -106,5 +104,31 @@ body.dashboard-page[data-require-role="artisan"] .taskly-confirm-dialog [data-de
    sans modifier l'action data-logout ni les autres rôles. */
 body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]{display:flex;align-items:center;gap:10px;min-height:42px;width:100%;padding:0 11px;margin-top:auto;border:0;border-top:1px solid #d5fbf038;border-radius:9px;background:transparent;color:#fff;font:700 14px var(--font-main);text-align:left;cursor:pointer}
 body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout] svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]:hover{background:#165b49}
+body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]:hover{background:#165b49}  
 @media(max-width:800px){body.dashboard-page[data-require-role="artisan"] .side-nav button[data-logout]{margin-top:0;padding:0 11px;border-top:0}}
+/* Carte de confidentialite artisan */
+
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"]
+#account-profile-editor .workspace-actions > .workspace-action-privacy {
+    grid-column: 1 / -1;
+    min-height: 100px;
+    background: #f0f9f5;
+    border-color: #b8dfd0;
+}
+
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"]
+#account-profile-editor .workspace-action-privacy::before {
+    background: #e1f3eb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23087f63' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E") no-repeat center;
+    background-size: 23px 23px;
+}
+
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"]
+#account-profile-editor .workspace-action-privacy strong {
+    color: #087f63;
+}
+
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"]
+#account-profile-editor .workspace-action-privacy:hover {
+    background: #e7f5ee;
+    border-color: #087f63;
+}
