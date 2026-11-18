@@ -136,6 +136,6 @@ test('Le guide Nouvelle demande s’affiche seulement sur l’annuaire avec le p
 
 test('Les fichiers admin, le vrai logo et la logique de session ne sont pas concernés', () => {
   assert.match(read('client/public/js/auth.js'), /\/images\/logo\/taskly-logo\.svg/);
-  assert.match(read('server/config/sessionConfig.js'), /maxAge:4\*60\*60\*1000/);
+  assert.match(read('server/config/sessionConfig.js'), /maxAge\s*:\s*4\s*\*\s*60\s*\*\s*60\s*\*\s*1000\b/);
   assert.match(read('client/private/client/accueil.html'), /Comment ça marche \?/);
 });
