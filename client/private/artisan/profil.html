@@ -71,6 +71,99 @@
                 <button class="btn danger outline" type="button" id="artisan-photo-delete">Supprimer</button>
               </div>
             </form></div><div id="account-profile-editor" class="mt-22"></div>
+            <!-- Confidentialite du profil artisan -->
+
+<section id="artisan-privacy-panel"
+         class="panel mt-22"
+         hidden>
+
+  <div class="panel-header">
+    <h2>Confidentialité de mon profil</h2>
+  </div>
+
+  <div class="panel-body">
+
+    <p class="muted">
+      Contrôlez la visibilité de vos coordonnées.
+    </p>
+
+    <!-- Visibilite du telephone -->
+
+    <div class="privacy-option">
+
+      <div class="privacy-info">
+        <h3>Numéro de téléphone</h3>
+
+        <p class="muted">
+          Autoriser uniquement les clients connectés
+          et vérifiés à consulter mon numéro.
+        </p>
+
+        <p id="privacy-phone-status"
+           class="muted">
+          Chargement des préférences...
+        </p>
+      </div>
+
+      <label class="privacy-switch">
+        <input type="checkbox"
+               id="privacy-show-phone"
+               aria-label="Afficher mon téléphone"
+               disabled>
+        <span class="privacy-slider"></span>
+      </label>
+
+    </div>
+
+    <!-- Email professionnel -->
+
+    <div class="privacy-option">
+
+      <div class="privacy-info">
+        <h3>Adresse e-mail professionnelle</h3>
+
+        <p class="muted">
+          Taskly Mail — prochainement.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Messagerie Taskly -->
+
+    <div class="privacy-option">
+
+      <div class="privacy-info">
+        <h3>Messagerie Taskly</h3>
+
+        <p class="muted">
+          Paramètres supplémentaires à venir.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Enregistrement -->
+
+    <div class="request-actions mt-22">
+
+      <button type="button"
+              class="btn primary"
+              id="privacy-save-button"
+              disabled>
+        Enregistrer mes préférences
+      </button>
+
+    </div>
+
+    <p id="privacy-message"
+       class="muted"
+       role="status"
+       aria-live="polite"></p>
+
+  </div>
+
+</section>
           </div>
         </section>
       </div>
