@@ -97,4 +97,59 @@ router.delete('/',sensible,async(req,res)=>{
   await conn.commit();req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Compte et données liées supprimés.'});
  }catch(e){if(conn)await conn.rollback();fail(res,e);}finally{conn?.release();}
 });
-module.exports=router;
+// Récupération des préférences de confidentialité
+
+router.get('/confidentialite', async (req, res) => {
+
+    res.set('Cache-Control', 'private, no-store');
+
+    try {
+
+        const user = req.session.utilisateur;
+
+        if (user.role !== 'artisan') {
+            return res.status(403).json({
+                message: 'Accès réservé aux artisans.'
+            });
+        }
+
+        const [profils] = await db.query(`
+            SELECT
+                id AS artisan_id,
+                telephone,
+                email_professionnel,
+                afficher_telephone,
+                afficher_email,
+                autoriser_messagerie
+            FROM artisans
+            WHERE user_id = ?
+            LIMIT 2
+        `, [user.id]);
+
+        if (profils.length === 0) {
+            return res.status(404).json({
+                message: 'Profil artisan introuvable.'
+            });
+        }
+
+        if (profils.length !== 1) {
+            return res.status(409).json({
+                message: 'Impossible de déterminer le profil actif.'
+            });
+        }
+
+        return res.json({
+            confidentialite: profils[0]
+        });
+
+    } catch (error) {
+
+        console.error('Erreur confidentialité artisan.');
+
+        return res.status(500).json({
+            message: 'Paramètres temporairement indisponibles.'
+        });
+    }
+});
+
+module.exports = router;
