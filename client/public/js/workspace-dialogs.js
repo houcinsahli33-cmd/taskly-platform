@@ -34,7 +34,38 @@
    const label=detail.classList.contains('account-danger')?'Supprimer mon compte':title;
    actions.append(action(detail,title,label,detail.classList.contains('account-danger')?'Mot de passe puis confirmation obligatoire':'Ouvrir le formulaire sécurisé'));
   });
-  target.append(actions);
+ // Confidentialite reservee a l'espace artisan
+
+const privacyPanel = document.getElementById('artisan-privacy-panel');
+
+if (
+    window.utilisateurCourant?.role === 'artisan' &&
+    document.body.dataset.requireRole === 'artisan' &&
+    privacyPanel &&
+    typeof window.initialiserConfidentialiteArtisan === 'function'
+) {
+
+    const privacyButton = action(
+        privacyPanel,
+        'Confidentialité et sécurité',
+        'Confidentialité et sécurité',
+        'Gérer la visibilité de mes coordonnées'
+    );
+
+    privacyButton.classList.add('workspace-action-privacy');
+
+    privacyPanel.hidden = false;
+
+    actions.append(privacyButton);
+
+    window.initialiserConfidentialiteArtisan(
+        privacyPanel,
+        privacyButton
+    );
+
+}
+
+target.append(actions);
  };
  document.addEventListener('DOMContentLoaded',()=>{
   const grid=document.querySelector('[data-workspace-page="account"] .admin-settings-grid');
