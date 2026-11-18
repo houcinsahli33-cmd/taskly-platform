@@ -152,4 +152,173 @@ router.get('/confidentialite', async (req, res) => {
     }
 });
 
+// Enregistrement des preferences de confidentialite
+
+router.put('/confidentialite', limiter({max:20}), async (req, res) => {
+
+    res.set('Cache-Control', 'private, no-store');
+
+    let conn;
+
+    try {
+
+        const user = req.session.utilisateur;
+
+        if (user.role !== 'artisan') {
+
+            return res.status(403).json({
+                message: 'Accès réservé aux artisans.'
+            });
+
+        }
+
+        const b = req.body || {};
+
+        // Validation des preferences
+
+        if (
+            ![0, 1].includes(b.afficher_telephone) ||
+            ![0, 1].includes(b.afficher_email) ||
+            typeof b.email_professionnel !== 'string' ||
+            !Number.isSafeInteger(b.artisan_id) ||
+            b.artisan_id <= 0
+        ) {
+
+            return res.status(400).json({
+                message: 'Paramètres invalides.'
+            });
+
+        }
+
+        const email = b.email_professionnel.trim();
+
+        if (
+            email.length > 254 ||
+            (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/.test(email))
+        ) {
+
+            return res.status(400).json({
+                message: 'Adresse e-mail professionnelle invalide.'
+            });
+
+        }
+
+        if (b.afficher_email === 1 && !email) {
+
+            return res.status(400).json({
+                message: 'Renseignez votre e-mail professionnel.'
+            });
+
+        }
+     if (b.afficher_email === 1) {
+        return res.status(400).json({
+            message: 'La verification de votre e-mail professionnel est necessaire avant sa publication.'
+        });
+      }
+
+        conn = await db.getConnection();
+        await conn.beginTransaction();
+
+        const [users] = await conn.query(`
+            SELECT id, email
+            FROM users
+            WHERE id = ?
+              AND role = 'artisan'
+              AND statut_compte = 'actif'
+              AND email_verified = 1
+            FOR UPDATE
+        `, [user.id]);
+
+        if (users.length !== 1) {
+
+            await conn.rollback();
+
+            return res.status(403).json({
+                message: 'Compte non autorisé.'
+            });
+
+        }
+
+        // Protection de l'adresse de connexion
+
+        if (
+            email &&
+            email.toLowerCase() === users[0].email.toLowerCase()
+        ) {
+
+            await conn.rollback();
+
+            return res.status(400).json({
+                message: 'Utilisez une adresse professionnelle différente de votre e-mail de connexion.'
+            });
+
+        }
+
+        // Identification du profil artisan actif
+
+        const [profils] = await conn.query(`
+            SELECT id
+            FROM artisans
+            WHERE user_id = ?
+            LIMIT 2
+            FOR UPDATE
+        `, [user.id]);
+
+        if (
+            profils.length !== 1 ||
+            Number(profils[0].id) !== b.artisan_id
+        ) {
+
+            await conn.rollback();
+
+            return res.status(409).json({
+                message: 'Profil artisan incorrect. Actualisez la page.'
+            });
+
+        }
+
+        // Mise a jour du profil autorise
+
+        await conn.query(`
+            UPDATE artisans
+            SET
+                afficher_telephone = ?,
+                email_professionnel = ?,
+                afficher_email = ?
+            WHERE id = ?
+              AND user_id = ?
+        `, [
+            b.afficher_telephone,
+            email || null,
+            b.afficher_email,
+            profils[0].id,
+            user.id
+        ]);
+
+        await conn.commit();
+
+        return res.status(200).json({
+            message: 'Préférences de confidentialité enregistrées.'
+        });
+
+    } catch (error) {
+
+        if (conn) {
+            await conn.rollback();
+        }
+
+        console.error('Erreur enregistrement confidentialité.');
+
+        return res.status(500).json({
+            message: 'Impossible d’enregistrer vos préférences.'
+        });
+
+    } finally {
+
+        conn?.release();
+
+    }
+
+});
+
 module.exports = router;
