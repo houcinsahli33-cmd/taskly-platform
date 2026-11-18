@@ -83,7 +83,7 @@ test('L’inactivité est mesurée sans être prolongée par les chargements pas
  assert.match(js,/pointerdown/);assert.match(js,/keydown/);assert.match(js,/visibilityState/);
  assert.match(js,/\/api\/auth\/activity/);
  assert.doesNotMatch(read('server/config/sessionConfig.js'),/rolling:true/);
- assert.match(read('server/config/sessionConfig.js'),/maxAge:4\*60\*60\*1000/);
+ assert.match(read('server/config/sessionConfig.js'), /maxAge\s*:\s*4\s*\*\s*60\s*\*\s*60\s*\*\s*1000\b/);
 });
 
 test('Activite dans le cadre client et dans la rubrique : relais bidirectionnel de meme origine',()=>{
@@ -113,7 +113,7 @@ test('Plusieurs onglets : un minuteur local ne deconnecte pas une autre session 
 test('Pas de renouvèlement du cookie lors des requêtes passives',()=>{
  const config=read('server/config/sessionConfig.js');
  assert.doesNotMatch(config,/rolling\s*:\s*true/);
- assert.match(config,/maxAge:4\*60\*60\*1000/);
+ assert.match(config, /maxAge\s*:\s*4\s*\*\s*60\s*\*\s*60\s*\*\s*1000\b/);
  const activity=read('server/services/sessionActivity.js');
  assert.match(activity,/req\.session\.lastUserActivityAt\s*=\s*Date\.now\(\)/);
  assert.match(activity,/req\.session\.save/);
