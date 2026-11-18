@@ -73,9 +73,21 @@ body.dashboard-page[data-require-role="artisan"] #account-profile-editor .worksp
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(3)::before{background-position:-86px 0}
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(4)::before{background-position:-129px 0;background-color:#fff3e7}
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-child(5)::before{background-position:-172px 0;background-color:#f0ecfe}
-body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
-body.dashboard-page[data-require-role="artisan"] #account-profile-editor.workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
-body.dashboard-page[data-require-role="artisan"] #account-profile-editor.workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy)) {
+    grid-column: 1 / -1;
+    min-height: 85px;
+    background: #fffafa;
+    border-color: #f4dddd;
+}
+
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))::before {
+    background-position: -215px 0;
+    background-color: #ffeeee;
+}
+
+body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy)) strong {
+    color: #b73e42;
+}
 body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:hover{transform:translateY(-3px);box-shadow:0 12px 24px #123c2c12}
 .artisan-document{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #deebe5;background:#f8fcfa;border-radius:12px;padding:16px;margin-top:12px;flex-wrap:wrap}
 .artisan-document>div:first-child{min-width:0;overflow-wrap:anywhere;flex:1}
@@ -90,8 +102,16 @@ body.dashboard-page[data-require-role="artisan"] .dashboard-hero>div:first-child
 @media(prefers-reduced-motion:reduce){body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action{transition:none}body.dashboard-page[data-require-role="artisan"] #account-profile-editor .workspace-action:hover{transform:none}}
 
 /* Profil artisan : les six actions restent dans la grille, avec suppression apr├¿s mot de passe. */
-body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-actions > .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
-body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor.workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy))
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-actions > .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy)) {
+    grid-column: auto !important;
+    min-height: 135px;
+    background: #fffafa;
+    border-color: #f4dddd;
+}
+
+body.dashboard-page[data-require-role="artisan"][data-workspace-page="profil"] #account-profile-editor .workspace-action:nth-last-child(1 of .workspace-action:not(.workspace-action-privacy)) strong {
+    color: #b73e42;
+}
 /* LÔÇÖaction dangereuse et la confirmation explicite sont rouges, non vertes. */
 body.dashboard-page[data-require-role="artisan"] .workspace-dialog .account-danger .btn.danger,
 body.dashboard-page[data-require-role="artisan"] .taskly-confirm-dialog [data-delete] {
