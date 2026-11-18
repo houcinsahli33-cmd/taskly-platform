@@ -22,7 +22,40 @@
  }
  function canClick(e,a){return !e.defaultPrevented&&e.button===0&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey&&!e.altKey&&!a.hasAttribute('download')&&(!a.target||a.target==='_self');}
  document.querySelector('.sidebar')?.addEventListener('click',e=>{const a=e.target.closest('a[data-dashboard-link]');if(!a||!canClick(e,a)||!validated(a.href))return;e.preventDefault();navigate(a.href);});
- function modal(doc){const open=!!doc.querySelector('dialog[open],.modal-backdrop.show,.modal.show');iframe.classList.toggle('artisan-modal-visible',open);}
+// Garder les dimensions originales de l'interface
+const elementsVerrouilles = new Set();
+
+function modal(doc) {
+    const open = !!doc?.querySelector(
+        'dialog[open],.modal-backdrop.show,.modal.show'
+    );
+
+    iframe.classList.remove('artisan-modal-visible');
+
+    if (open) {
+        let element = iframe;
+
+        while (element && element !== document.body) {
+            const parent = element.parentElement;
+            if (!parent) break;
+
+            for (const voisin of parent.children) {
+                if (voisin !== element && !voisin.inert) {
+                    voisin.inert = true;
+                    elementsVerrouilles.add(voisin);
+                }
+            }
+
+            element = parent;
+        }
+    } else {
+        elementsVerrouilles.forEach(el => {
+            el.inert = false;
+        });
+
+        elementsVerrouilles.clear();
+    }
+}
  iframe.addEventListener('load',()=>{
   observer?.disconnect();observer=null;
   let doc,url;try{doc=iframe.contentDocument;url=new URL(iframe.contentWindow.location.href);}catch{return location.assign(selected);}
