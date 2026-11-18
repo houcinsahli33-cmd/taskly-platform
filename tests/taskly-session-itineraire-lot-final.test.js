@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
 const text=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 test('4 heures actives et cookies administrateur / public isolés',()=>{
- assert.match(text('server/config/sessionConfig.js'),/maxAge:4\*60\*60\*1000/);
+assert.match(text('server/config/sessionConfig.js'), /maxAge\s*:\s*4\s*\*\s*60\s*\*\s*60\s*\*\s*1000\b/);
  assert.match(text('server/config/sessionConfig.js'),/taskly\.admin\.sid/);
  assert.match(text('server/app.js'),/const sessionAdmin/);
  assert.match(text('client/public/js/api.js'),/X-Taskly-Admin/);
