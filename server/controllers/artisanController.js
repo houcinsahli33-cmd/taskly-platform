@@ -102,9 +102,58 @@ async function datesIndisponibles(req,res){
   res.set('Cache-Control','no-store');res.json({dates});
  } catch(e){res.status(503).json({message:'Disponibilités indisponibles. Réessayez.'});}
 }
+// Consultation des coordonnées autorisées
+async function coordonneesArtisan(req, res) {
+
+    res.set('Cache-Control', 'private, no-store');
+
+    try {
+
+        const user = req.session?.utilisateur;
+
+        if (!user?.id) {
+            return res.status(401).json({
+                message: "Vous devez être connecté."
+            });
+        }
+
+        const id = String(req.params.id);
+
+        if (!/^[1-9]\d*$/.test(id) ||
+            !Number.isSafeInteger(Number(id))) {
+
+            return res.status(400).json({
+                message: "Identifiant artisan invalide."
+            });
+        }
+
+        const coordonnees =
+            await artisanModel.trouverCoordonneesAutorisees(id);
+
+        if (!coordonnees) {
+            return res.status(404).json({
+                message: "Artisan introuvable."
+            });
+        }
+
+        return res.status(200).json({
+            coordonnees
+        });
+
+    } catch (error) {
+
+        console.error("Erreur récupération coordonnées.");
+
+        return res.status(500).json({
+            message: "Coordonnées temporairement indisponibles."
+        });
+    }
+}
+
 module.exports = {
     datesIndisponibles,
     artisansCarte,enregistrerZone,supprimerZone,
     listerArtisans,
-    detailArtisan
+    detailArtisan,
+    coordonneesArtisan
 };
