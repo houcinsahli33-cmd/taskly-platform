@@ -64,8 +64,12 @@
 .account-danger form {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end}
 .account-danger form > [role=status] {grid-column:1/-1}
 .taskly-confirm-dialog {width:min(520px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;padding:30px;border:1px solid var(--line);border-radius:18px;color:var(--ink);font-family:var(--font-main);box-shadow:var(--shadow)}
-.taskly-confirm-dialog::backdrop {background:rgba(7,35,27,.55);backdrop-filter:blur(3px)}
-.taskly-confirm-dialog h2 {font-size:1.5rem;line-height:1.4;margin:12px 0}
+/* Confirmation sans flou ni assombrissement */
+.taskly-confirm-dialog::backdrop {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
 .taskly-confirm-dialog p {color:var(--muted);line-height:1.7}
 .taskly-danger-label {font-size:.8rem;text-transform:uppercase;font-weight:700;color:#ad2b42}
 .pending-page {background:var(--soft)}
