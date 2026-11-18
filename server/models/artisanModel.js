@@ -426,7 +426,40 @@ async function supprimerZone(userId) {
     return result.affectedRows === 1;
 }
 
-// EXPORTATION DES FONCTIONS
+async function trouverCoordonneesAutorisees(id) {
+
+    const sql = `
+        SELECT
+            a.id,
+            CASE
+                WHEN a.afficher_telephone = 1
+                THEN a.telephone
+                ELSE NULL
+            END AS telephone,
+
+            CASE
+                WHEN a.afficher_email = 1
+                THEN a.email_professionnel
+                ELSE NULL
+            END AS email,
+
+            a.autoriser_messagerie
+
+        FROM artisans a
+        JOIN users u ON a.user_id = u.id
+
+        WHERE a.id = ?
+          AND a.verification_statut = 'approuve'
+          AND u.statut_compte = 'actif'
+          AND u.email_verified = 1
+
+        LIMIT 1
+    `;
+
+    const [resultats] = await db.promise().query(sql, [id]);
+
+    return resultats[0];
+}
 
 module.exports = {
     artisansPourCarte,
@@ -435,5 +468,6 @@ module.exports = {
     creerProfilArtisan,
     trouverTousLesArtisans,
     trouverArtisanParId,
-    trouverArtisanParUserId
+    trouverArtisanParUserId,
+    trouverCoordonneesAutorisees
 };
