@@ -194,7 +194,7 @@ function afficherModaleDeconnexion() {
           <p>Voulez-vous vraiment vous déconnecter ?</p>
           <div class="request-actions mt-22 justify-end">
             <button class="btn outline" type="button" data-close-modal="logout-modal">Annuler</button>
-            <button class="btn primary" type="button" data-confirm-logout>Se déconnecter</button>
+            <button class="btn danger" type="button" data-confirm-logout>Se déconnecter</button>
           </div>
         </div>
       </div>
