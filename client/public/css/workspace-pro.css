@@ -22,7 +22,14 @@ body.dashboard-page[data-require-role] .dashboard-grid {display:grid;grid-templa
 .workspace-action span {font-size:.83rem;color:#647b6e;line-height:1.6}
 .workspace-action:hover,.workspace-action:focus-visible {background:#f3faf6;border-color:#087f63;box-shadow:0 3px 15px rgba(8,127,99,.08);outline:2px solid #c5e9d8;outline-offset:2px}
 .workspace-dialog,.taskly-confirm-dialog {position:fixed;inset:0;margin:auto;height:fit-content;box-sizing:border-box;width:min(540px,calc(100vw - 28px));max-height:calc(100dvh - 32px);padding:0;border:1px solid #d8e7df;border-radius:17px;background:#fff;color:#193c2e;font-family:var(--font-main);box-shadow:0 22px 80px rgba(7,40,27,.25);overflow:auto}
-.workspace-dialog::backdrop,.taskly-confirm-dialog::backdrop {background:rgba(6,35,25,.52);backdrop-filter:blur(4px)}
+/* Fenetres sans flou ni assombrissement */
+
+.workspace-dialog::backdrop,
+.taskly-confirm-dialog::backdrop {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
 .workspace-dialog-header {display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;background:#eaf6ef;border-bottom:1px solid #d8e7df}
 .workspace-dialog-header h2 {margin:0;font:700 1.15rem/1.5 var(--font-main);color:#075d45}
 .workspace-close {width:34px;height:34px;flex-shrink:0;border:0;border-radius:8px;font-size:24px;background:white;color:#11634a;cursor:pointer}
