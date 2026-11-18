@@ -1,24 +1,55 @@
-// Ce fichier contient les routes liées aux artisans.
-// Il définit les chemins permettant de récupérer les artisans.
+// Routes liées aux artisans
 
 const express = require("express");
 const artisanController = require("../controllers/artisanController");
 
+const {
+    verifierConnexion,
+    verifierClient,
+    verifierArtisan
+} = require("../middleware/authMiddleware");
+
+const {
+    limiterCoordonneesArtisan
+} = require("../middleware/artisanContactLimiter");
+
 const router = express.Router();
 
-// La carte ne présente que des emplacements publics approximatifs.
-router.get('/carte',artisanController.artisansCarte);
-router.put('/ma-zone',require('../middleware/authMiddleware').verifierConnexion,
- require('../middleware/authMiddleware').verifierArtisan,artisanController.enregistrerZone);
-router.delete('/ma-zone',require('../middleware/authMiddleware').verifierConnexion,
- require('../middleware/authMiddleware').verifierArtisan,artisanController.supprimerZone);
-// Route pour récupérer tous les artisans
+// Carte publique
+router.get('/carte', artisanController.artisansCarte);
+
+// Gestion de la zone publique
+router.put('/ma-zone',
+    verifierConnexion,
+    verifierArtisan,
+    artisanController.enregistrerZone
+);
+
+router.delete('/ma-zone',
+    verifierConnexion,
+    verifierArtisan,
+    artisanController.supprimerZone
+);
+
+// Liste publique des artisans
 router.get("/", artisanController.listerArtisans);
 
-// Route pour recuperer un artisan par son id
-// Réponse limitée aux dates : authentification client obligatoire.
-router.get('/:id/dates-indisponibles',require('../middleware/authMiddleware').verifierConnexion,
- require('../middleware/authMiddleware').verifierClient,artisanController.datesIndisponibles);
+// Disponibilités de l'artisan
+router.get('/:id/dates-indisponibles',
+    verifierConnexion,
+    verifierClient,
+    artisanController.datesIndisponibles
+);
+
+// Consultation sécurisée des coordonnées
+router.get('/:id/coordonnees',
+    verifierConnexion,
+    verifierClient,
+    limiterCoordonneesArtisan,
+    artisanController.coordonneesArtisan
+);
+
+// Détails publics de l'artisan
 router.get("/:id", artisanController.detailArtisan);
 
 module.exports = router;
