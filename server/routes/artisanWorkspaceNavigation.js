@@ -33,12 +33,21 @@ function preparerCadreArtisan(original,id) {
  const body=original.match(/<body\b[^>]*>/i)?.[0];
  const aside=original.match(/<aside\b[^>]*class="[^"]*sidebar[^"]*"[^>]*>[\s\S]*?<\/aside>/i)?.[0];
  if(!head||!body||!aside)throw new Error('Document artisan non reconnu.');
+ const maison='<svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></svg>';
+
+ const grille='<svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+
+ const menuAside=chatEnabled?aside
+  .replace(/(<p\b[^>]*class="[^"]*\bsidebar-title\b[^"]*"[^>]*>)\s*Espace artisan/i,'$1'+maison+'<span>Espace artisan</span>')
+  .replace(/(<a\b[^>]*data-dashboard-link="accueil"[^>]*>)\s*(?:<svg\b[^>]*>[\s\S]*?<\/svg>\s*)?/i,'$1'+grille)
+  :aside;
+
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<\/head>/i,
   '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat2"></script></head>');
  const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=4"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
  const shellBody=body.replace(/>$/, ' data-taskly-artisan-shell="1">');
  return '<!doctype html><html lang="fr">'+finalHead+shellBody+
-  '<div id="site-header"></div><main class="dashboard-shell">'+aside+
+  '<div id="site-header"></div><main class="dashboard-shell">'+menuAside+
   '<section class="artisan-frame-container" aria-label="Rubrique artisan"><iframe id="taskly-artisan-content-frame" title="Contenu de l’espace artisan"></iframe></section></main></body></html>';
 }
 function preparerPageArtisanIntegree(original,id){
