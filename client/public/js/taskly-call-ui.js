@@ -1,0 +1,636 @@
+'use strict';
+
+(function () {
+
+    class TasklyCallUI {
+
+        constructor(api, role) {
+
+            this.api = api;
+            this.role = role;
+            this.context = null;
+            this.active = null;
+            this.polling = false;
+
+            this.audio = document.getElementById('cw-call-audio');
+            this.video = document.getElementById('cw-call-video');
+
+            this.dialog = document.createElement('dialog');
+            this.dialog.className = 'taskly-call-dialog';
+
+            this.dialog.innerHTML = `
+                <div class="tc-panel">
+                    <h2>Appel Taskly</h2>
+                    <p data-tc="name"></p>
+                    <p data-tc="status" role="status"></p>
+                    <div class="tc-videos">
+                        <video data-tc="remote" autoplay playsinline></video>
+                        <video data-tc="local" autoplay muted playsinline></video>
+                    </div>
+                    <div class="tc-actions">
+                        <button type="button" data-tc="ring" hidden>Activer la sonnerie</button>
+                        <button type="button" data-tc="accept" hidden>Accepter</button>
+                        <button type="button" data-tc="reject" hidden>Refuser</button>
+                        <button type="button" data-tc="mic" hidden>Micro</button>
+                        <button type="button" data-tc="camera" hidden>Camera</button>
+                        <button type="button" data-tc="sound" hidden>Activer le son</button>
+                        <button type="button" data-tc="end">Raccrocher</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.append(this.dialog);
+
+            this.audio?.addEventListener('click', () => this.start('audio'));
+            this.video?.addEventListener('click', () => this.start('video'));
+
+            this.get('accept').onclick = () => this.accept();
+            this.get('reject').onclick = () => this.finish('reject');
+            this.get('end').onclick = () => this.finish('end');
+
+            this.get('mic').onclick = () => this.toggleMicrophone();
+            this.get('camera').onclick = () => this.toggleCamera();
+
+            this.get('sound').onclick = async () => {
+                try {
+                    await this.get('remote').play();
+                    this.get('sound').hidden = true;
+                } catch {
+                    this.status('Lecture audio indisponible.');
+                }
+            };
+
+            this.dialog.addEventListener('cancel', e => {
+                e.preventDefault();
+                this.finish(
+                    this.active?.incoming && !this.active?.accepted
+                    ? 'reject' : 'end'
+                );
+            });
+
+            this.ringTimer = null;
+            this.ringOsc = null;
+            this.audioContext = null;
+
+            this.unlockHandler = () => this.unlockRing();
+
+            document.addEventListener('pointerdown', this.unlockHandler);
+            document.addEventListener('keydown', this.unlockHandler);
+
+            this.get('ring').onclick = () => this.unlockRing();
+
+            this.timer = setInterval(() => this.poll(), 2500);
+
+            window.addEventListener('pagehide', () => {
+                clearInterval(this.timer);
+                this.stopRing();
+
+                document.removeEventListener(
+                    'pointerdown', this.unlockHandler
+                );
+
+                document.removeEventListener(
+                    'keydown', this.unlockHandler
+                );
+
+                this.audioContext?.close().catch(() => {});
+
+                if (this.active) {
+                    this.cleanup(this.active);
+                }
+            }, { once: true });
+
+            this.updateButtons();
+        }
+
+        async unlockRing() {
+            try {
+                const Audio = window.AudioContext ||
+                    window.webkitAudioContext;
+
+                if (!Audio) return;
+
+                if (!this.audioContext) {
+                    this.audioContext = new Audio();
+                }
+
+                if (this.audioContext.state === 'suspended') {
+                    await this.audioContext.resume();
+                }
+
+                this.startRing();
+
+            } catch {
+                // La notification visuelle reste disponible.
+            }
+        }
+
+        startRing() {
+
+            const call = this.active;
+
+            if (!call?.incoming || call.accepted || call.pending) {
+                return;
+            }
+
+            const ctx = this.audioContext;
+
+            if (!ctx || ctx.state !== 'running') {
+                this.get('ring').hidden = false;
+                return;
+            }
+
+            this.get('ring').hidden = true;
+
+            if (this.ringTimer !== null) return;
+
+            const beep = () => {
+
+                if (this.active !== call ||
+                    call.accepted || call.pending) {
+                    this.stopRing();
+                    return;
+                }
+
+                if (ctx.state !== 'running') return;
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                this.ringOsc = osc;
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(
+                    660, ctx.currentTime
+                );
+
+                osc.frequency.setValueAtTime(
+                    880, ctx.currentTime + 0.15
+                );
+
+                gain.gain.setValueAtTime(
+                    0.0001, ctx.currentTime
+                );
+
+                gain.gain.exponentialRampToValueAtTime(
+                    0.12, ctx.currentTime + 0.03
+                );
+
+                gain.gain.exponentialRampToValueAtTime(
+                    0.0001, ctx.currentTime + 0.35
+                );
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.onended = () => {
+                    osc.disconnect();
+                    gain.disconnect();
+                    if (this.ringOsc === osc) {
+                        this.ringOsc = null;
+                    }
+                };
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.36);
+            };
+
+            this.ringTimer = setInterval(beep, 2000);
+            beep();
+        }
+
+        stopRing() {
+
+            clearInterval(this.ringTimer);
+            this.ringTimer = null;
+
+            if (this.ringOsc) {
+                try { this.ringOsc.stop(); } catch {}
+                this.ringOsc = null;
+            }
+
+            this.get('ring').hidden = true;
+        }
+
+        get(name) {
+            return this.dialog.querySelector('[data-tc="' + name + '"]');
+        }
+
+        select(id, name, enabled) {
+
+            this.context = enabled && Number.isSafeInteger(id) && id > 0
+                ? { id, name }
+                : null;
+
+            document.body.dataset.tasklyCallConversation =
+                this.context ? String(this.context.id) : '';
+
+            this.updateButtons();
+        }
+
+        updateButtons() {
+            const disabled = !this.context || Boolean(this.active);
+
+            if (this.audio) this.audio.disabled = disabled;
+            if (this.video) this.video.disabled = disabled;
+        }
+
+        status(message) {
+            this.get('status').textContent = message;
+        }
+
+        notify(message) {
+            const status = document.getElementById('cw-status');
+            if (status) status.textContent = message;
+        }
+
+        async request(id, body) {
+            const url = '/api/demandes/' + id + '/chat/call';
+
+            return body
+                ? this.api(url, {
+                    method: 'POST',
+                    body: JSON.stringify(body)
+                })
+                : this.api(url);
+        }
+
+        show(context, mode, incoming) {
+
+            const call = {
+                context,
+                mode,
+                incoming,
+                accepted: false,
+                pending: false,
+                microphone: true,
+                camera: true,
+                answerApplied: false,
+                lastSignalAt: Date.now(),
+                lastHeartbeatAt: 0,
+                disconnectedAt: null,
+                createdAt: Date.now(),
+                id: null
+            };
+
+            call.media = new window.TasklyCallMedia(
+                stream => {
+                    if (this.active !== call) return;
+
+                    const remote = this.get('remote');
+                    remote.srcObject = stream;
+
+                    remote.play().catch(() => {
+                        if (this.active === call) {
+                            this.get('sound').hidden = false;
+                        }
+                    });
+                },
+                state => {
+                    if (this.active !== call) return;
+
+                    if (state === 'connected') {
+                        call.disconnectedAt = null;
+                        this.status('Appel en cours');
+                    } else if (state === 'disconnected') {
+                        call.disconnectedAt = Date.now();
+                        this.status('Reconnexion en cours...');
+                    } else if (state === 'failed') {
+                        this.finish('end', 'Connexion impossible.');
+                    }
+                }
+            );
+
+            this.active = call;
+            document.body.dataset.tasklyCallActive = '1';
+            this.get('name').textContent = context.name;
+            this.dialog.dataset.mode = mode;
+
+            this.get('accept').hidden = !incoming;
+            this.get('reject').hidden = !incoming;
+            this.get('end').hidden = incoming;
+            this.get('mic').hidden = true;
+            this.get('camera').hidden = true;
+            this.get('sound').hidden = true;
+
+            this.status(incoming
+                ? 'Appel ' + (mode === 'video' ? 'video' : 'audio') + ' entrant'
+                : 'Preparation de votre appel...');
+
+            if (!this.dialog.open) this.dialog.showModal();
+
+            if (incoming) this.startRing();
+
+            this.updateButtons();
+
+            return call;
+        }
+
+        async start(mode) {
+
+            if (!this.context || this.active) return;
+
+            const call = this.show(this.context, mode, false);
+            call.pending = true;
+
+            try {
+                const stream = await call.media.prepare(mode);
+
+                if (this.active !== call) return;
+
+                this.get('local').srcObject = stream;
+
+                const sdp = await call.media.createOffer();
+
+                if (this.active !== call) return;
+
+                const data = await this.request(call.context.id, {
+                    action: 'start',
+                    mode,
+                    sdp
+                });
+
+                if (!data.call?.id) {
+                    throw new Error('Invitation non confirmee.');
+                }
+
+                call.id = data.call.id;
+                call.lastSignalAt = Date.now();
+
+                if (this.active !== call) {
+                    await this.request(call.context.id, {
+                        action: 'end',
+                        id: call.id
+                    }).catch(() => {});
+
+                    return;
+                }
+
+                this.status('En attente de votre interlocuteur...');
+                this.get('mic').hidden = false;
+                this.get('camera').hidden = mode !== 'video';
+
+            } catch (error) {
+                if (this.active === call) {
+                    this.cleanup(call);
+                    this.notify(error.message || 'Appel impossible.');
+                }
+            } finally {
+                call.pending = false;
+            }
+        }
+
+        async accept() {
+
+            const call = this.active;
+
+            if (!call?.incoming || call.pending || call.accepted) return;
+
+            call.pending = true;
+
+            this.get('accept').hidden = true;
+            this.get('reject').hidden = true;
+            this.get('end').hidden = false;
+            this.stopRing();
+            this.status('Connexion en cours...');
+
+            try {
+                const stream = await call.media.prepare(call.mode);
+
+                if (this.active !== call) return;
+
+                this.get('local').srcObject = stream;
+
+                const sdp = await call.media.createAnswer(call.offer);
+
+                if (this.active !== call) return;
+
+                await this.request(call.context.id, {
+                    action: 'accept',
+                    id: call.id,
+                    sdp
+                });
+
+                if (this.active !== call) return;
+
+                call.accepted = true;
+                call.lastSignalAt = Date.now();
+
+                this.get('mic').hidden = false;
+                this.get('camera').hidden = call.mode !== 'video';
+
+            } catch (error) {
+                if (this.active === call) {
+                    await this.finish('end', error.message);
+                }
+            } finally {
+                call.pending = false;
+            }
+        }
+
+        async poll() {
+
+            const current = this.active;
+            const now = Date.now();
+
+            if (current) {
+
+                if (current.pending &&
+                    now - current.createdAt > 120000) {
+
+                    this.finish('end', 'Preparation expiree.');
+                    return;
+                }
+
+                if (!current.pending &&
+                    current.disconnectedAt !== null &&
+                    now - current.disconnectedAt > 20000) {
+
+                    this.finish('end', 'Connexion perdue.');
+                    return;
+                }
+
+                if (!current.pending && current.id &&
+                    now - current.lastSignalAt > 45000) {
+
+                    this.finish('end', 'Signalisation perdue.');
+                    return;
+                }
+            }
+
+            if (this.polling || this.active?.pending) return;
+
+            const active = this.active;
+            const context = active?.context || this.context;
+
+            if (!context) return;
+
+            this.polling = true;
+
+            try {
+
+                const heartbeatDue = active?.accepted &&
+                    active.id &&
+                    Date.now() - active.lastHeartbeatAt >= 15000;
+
+                const data = heartbeatDue
+                    ? await this.request(context.id, {
+                        action: 'heartbeat',
+                        id: active.id
+                    })
+                    : await this.request(context.id);
+
+                if (active && this.active === active) {
+                    active.lastSignalAt = Date.now();
+
+                    if (heartbeatDue) {
+                        active.lastHeartbeatAt = Date.now();
+                    }
+                }
+                const remote = data.call;
+
+                if (this.active !== active) return;
+
+                if (!active && this.context?.id !== context.id) return;
+
+                if (!active) {
+
+                    if (remote?.state === 'ringing' &&
+                        remote.callerRole !== this.role) {
+
+                        const incoming = this.show(
+                            context, remote.mode, true
+                        );
+
+                        incoming.id = remote.id;
+                        incoming.offer = remote.offer;
+                    }
+
+                    return;
+                }
+
+                if (active.pending || !active.id) return;
+
+                if (!remote || remote.id !== active.id ||
+                    ['ended', 'rejected'].includes(remote.state)) {
+
+                    this.cleanup(active);
+
+                    this.notify(remote?.state === 'rejected'
+                        ? 'Appel refuse.'
+                        : 'Appel termine.');
+
+                    return;
+                }
+
+                if (active.incoming &&
+                    remote.state === 'accepted' && !active.accepted) {
+
+                    this.cleanup(active);
+                    this.notify('Appel pris sur un autre appareil.');
+                    return;
+                }
+
+                if (!active.incoming &&
+                    remote.state === 'accepted' &&
+                    !active.answerApplied) {
+
+                    active.answerApplied = true;
+                    active.accepted = true;
+
+                    this.stopRing();
+            this.status('Connexion en cours...');
+
+                    try {
+                        await active.media.applyAnswer(remote.answer);
+                    } catch {
+                        await this.finish('end', 'Connexion impossible.');
+                    }
+                }
+
+            } catch (error) {
+
+                if (active && this.active === active) {
+
+                    if ([401, 403, 404, 409].includes(error.status)) {
+                        this.cleanup(active);
+                        this.notify('Appel indisponible.');
+                    } else {
+                        this.status('Signalisation indisponible...');
+                    }
+                }
+
+            } finally {
+                this.polling = false;
+            }
+        }
+
+        toggleMicrophone() {
+            const call = this.active;
+            if (!call) return;
+
+            call.microphone = !call.microphone;
+            call.media.setMicrophone(call.microphone);
+
+            this.get('mic').textContent = call.microphone
+                ? 'Micro' : 'Reactiver le micro';
+        }
+
+        toggleCamera() {
+            const call = this.active;
+            if (!call || call.mode !== 'video') return;
+
+            call.camera = !call.camera;
+            call.media.setCamera(call.camera);
+
+            this.get('camera').textContent = call.camera
+                ? 'Camera' : 'Reactiver la camera';
+        }
+
+        async finish(action, message) {
+
+            const call = this.active;
+            if (!call) return;
+
+            this.cleanup(call);
+
+            this.notify(message || 'Appel termine.');
+
+            if (call.id) {
+                try {
+                    await this.request(call.context.id, {
+                        action,
+                        id: call.id
+                    });
+                } catch {
+                    this.notify(
+                        'Appel local termine, confirmation serveur indisponible.'
+                    );
+                }
+            }
+        }
+
+        cleanup(call) {
+
+            call.media.close();
+
+            if (this.active !== call) return;
+
+            this.stopRing();
+            delete document.body.dataset.tasklyCallActive;
+            this.active = null;
+            this.get('local').srcObject = null;
+            this.get('remote').srcObject = null;
+
+            this.get('mic').textContent = 'Micro';
+            this.get('camera').textContent = 'Camera';
+
+            if (this.dialog.open) this.dialog.close();
+
+            this.updateButtons();
+        }
+    }
+
+    window.TasklyCallUI = TasklyCallUI;
+
+})();

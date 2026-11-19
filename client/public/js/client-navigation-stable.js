@@ -90,6 +90,14 @@ function modal(doc) {
   navActive(target);document.title=doc.title||document.title;modal(doc);
   observer=new MutationObserver(()=>modal(doc));observer.observe(doc.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['open','class','hidden']});
  });
+ addEventListener('taskly:open-call', e => {
+    const id = e.detail?.demandeId;
+
+    if (!Number.isSafeInteger(id) ||
+        id < 1 || id > 2147483647) return;
+
+    navigate(base + 'messagerie?conversation=' + id);
+ });
  addEventListener('popstate',()=>navigate(location.href,'none'));
  const initial=validated(location.href);if(initial)navigate(initial,'none');
 })();

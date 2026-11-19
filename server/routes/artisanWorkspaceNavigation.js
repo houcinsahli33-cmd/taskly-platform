@@ -4,6 +4,7 @@ const fs=require('node:fs/promises');
 const {verifierConnexion}=require('../middleware/authMiddleware');
 const pages=new Set(['accueil','demandes','avis','profil','support']);
 if(process.env.TASKLY_MAIL_PILOT_ENABLED==='true')pages.add('taskly-mail');
+const callsPilot=require('../services/chatCallPilot');
 const chatEnabled=process.env.TASKLY_CHAT_WORKSPACE_ENABLED==='true';
 if(chatEnabled)pages.add('messagerie');
 function menuChat(original){
@@ -43,19 +44,22 @@ function preparerCadreArtisan(original,id) {
   :aside;
 
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<\/head>/i,
-  '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat2"></script></head>');
+  '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat-calls1"></script></head>');
  const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=4"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
+ const callHead=chatEnabled&&callsPilot.autoriseCompte('artisan',id)
+  ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=1"></script></head>')
+  :finalHead;
  const shellBody=body.replace(/>$/, ' data-taskly-artisan-shell="1">');
- return '<!doctype html><html lang="fr">'+finalHead+shellBody+
+ return '<!doctype html><html lang="fr">'+callHead+shellBody+
   '<div id="site-header"></div><main class="dashboard-shell">'+menuAside+
-  '<section class="artisan-frame-container" aria-label="Rubrique artisan"><iframe id="taskly-artisan-content-frame" title="Contenu de l’espace artisan"></iframe></section></main></body></html>';
+  '<section class="artisan-frame-container" aria-label="Rubrique artisan"><iframe id="taskly-artisan-content-frame"'+(chatEnabled&&callsPilot.autoriseCompte('artisan',id)?' allow="camera \'self\'; microphone \'self\'"':'')+' title="Contenu de l’espace artisan"></iframe></section></main></body></html>';
 }
 function preparerPageArtisanIntegree(original,id){
  original=menuChat(original);
  original=menuMail(original,id);
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw new Error('Document artisan invalide.');
  return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/artisan-navigation-embedded.css?v=20261012-navigation-11"></head>')
-  .replace(/<body\b([^>]*)>/i,'<body$1 data-taskly-artisan-embedded="1"'+(chatEnabled?' data-taskly-chat-workspace="1"':'')+'>');
+  .replace(/<body\b([^>]*)>/i,'<body$1 data-taskly-artisan-embedded="1"'+(chatEnabled?' data-taskly-chat-workspace="1"':'')+(chatEnabled&&callsPilot.autoriseCompte('artisan',id)?' data-taskly-chat-calls="1" data-taskly-chat-call-demande="'+callsPilot.demandeId()+'"':'')+'>');
 }
 function monterNavigationArtisan(app){
  app.get('/espace/artisan/:page',verifierConnexion,async(req,res,next)=>{

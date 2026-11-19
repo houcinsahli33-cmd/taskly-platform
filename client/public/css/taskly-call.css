@@ -1,0 +1,174 @@
+.taskly-call-dialog {
+    width: min(650px, 94vw);
+    max-height: 92vh;
+    overflow: auto;
+    padding: 0;
+    border: 1px solid #286153;
+    border-radius: 24px;
+    background: #06382f;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    box-shadow: 0 24px 80px #001d1b55;
+}
+
+.taskly-call-dialog::backdrop {
+    background: #061d19b0;
+}
+
+.taskly-call-dialog [hidden] {
+    display: none !important;
+}
+
+.taskly-call-dialog .tc-panel {
+    padding: 24px;
+    text-align: center;
+}
+
+.taskly-call-dialog h2 {
+    color: #fff;
+    font-size: 23px;
+    margin: 0 0 16px;
+}
+
+.taskly-call-dialog p {
+    color: #d2eee5;
+    margin: 10px 0;
+}
+
+.taskly-call-dialog [data-tc="name"] {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.taskly-call-dialog .tc-videos {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    margin: 20px 0;
+    background: #082923;
+    border-radius: 18px;
+}
+
+.taskly-call-dialog [data-tc="remote"] {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.taskly-call-dialog [data-tc="local"] {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 27%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background: #163e35;
+    border: 2px solid #93caba;
+    border-radius: 12px;
+}
+
+.taskly-call-dialog[data-mode="audio"] .tc-videos {
+    height: 1px;
+    width: 1px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.taskly-call-dialog .tc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.taskly-call-dialog .tc-actions button {
+    padding: 12px 19px;
+    border: 0;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    color: white;
+    background: #286153;
+}
+
+.taskly-call-dialog [data-tc="accept"] {
+    background: #159b64 !important;
+}
+
+.taskly-call-dialog [data-tc="reject"],
+.taskly-call-dialog [data-tc="end"] {
+    background: #dc3545 !important;
+}
+
+.taskly-call-dialog button:focus-visible {
+    outline: 3px solid #b8eee0;
+    outline-offset: 3px;
+}
+
+@media(max-width: 600px) {
+    .taskly-call-dialog .tc-panel {
+        padding: 15px;
+    }
+}
+.taskly-global-call {
+    position: fixed;
+    top: 88px;
+    right: 18px;
+    z-index: 10000;
+    width: min(340px, calc(100vw - 36px));
+    box-sizing: border-box;
+    padding: 20px;
+    border-radius: 18px;
+    background: #06382f;
+    color: white;
+    box-shadow: 0 12px 40px #00271e55;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.taskly-global-call[hidden] {
+    display: none !important;
+}
+
+.taskly-global-call strong {
+    font-size: 16px;
+    color: white;
+}
+
+.taskly-global-call p {
+    margin: 12px 0;
+    color: #d4eee6;
+    overflow-wrap: anywhere;
+}
+
+.taskly-global-call [data-call="name"] {
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.tgc-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.tgc-actions button {
+    flex: 1;
+    padding: 11px;
+    border: 0;
+    border-radius: 24px;
+    color: white;
+    font-weight: 700;
+    background: #159b64;
+    cursor: pointer;
+}
+
+.tgc-actions [data-call="reject"] {
+    background: #dc3545;
+}
+
+.tgc-actions button:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+}

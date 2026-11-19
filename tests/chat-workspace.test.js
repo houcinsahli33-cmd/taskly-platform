@@ -1,6 +1,6 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
-function load(file,mocks){const module={exports:{}};vm.runInNewContext(fs.readFileSync(file,'utf8'),{module,require:n=>{if(n in mocks)return mocks[n];throw Error(n);},console});return module.exports;}
+function load(file,mocks){const module={exports:{}};vm.runInNewContext(fs.readFileSync(file,'utf8'),{module,require:n=>{if(n in mocks)return mocks[n];if(n==='../services/chatCallPilot')return require('../server/services/chatCallPilot');throw Error(n);},console});return module.exports;}
 function response(){return {code:200,status(n){this.code=n;return this;},set(){},json(v){this.body=v;return this;}};}
 function controller(){const calls=[];const model={trouverDemande:async()=>({client_id:2,artisan_id:3,statut:'acceptee'}),listerMessages:async()=>[{id:'99',auteur_type:'artisan'},{id:'100',auteur_type:'client'}],marquerLus:async(...args)=>{calls.push(args);return 1;},conversations:async(...args)=>{calls.push(args);return {conversations:[],next:null};},compterNonLus:async(...args)=>{calls.push(args);return 2;}};const c=load('server/controllers/chatController.js',{'../models/chatModel':model,'../models/clientModel':{trouverClientParUserId:async id=>({id})},'../models/artisanModel':{trouverArtisanParUserId:async id=>({id,verification_statut:'approuve'})}});return {c,calls};}
 function req(role='client',id=2,throughId='99'){return {session:{utilisateur:{role,id}},params:{id:'1'},query:{q:'abc',unread:'1',offset:'0'},body:{throughId}};}

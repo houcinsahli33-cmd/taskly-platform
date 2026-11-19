@@ -52,6 +52,33 @@ if(process.env.TASKLY_CHAT_WORKSPACE_ENABLED==='true'){
  router.get('/chat/unread',verifierConnexion,limiter({fenetre:60000,max:30}),chatController.nonLus);
  router.post('/:id/chat/read',verifierConnexion,verifierCsrf,limiter({fenetre:60000,max:60}),chatController.confirmerLecture);
 }
+
+if (
+    process.env.TASKLY_CHAT_WORKSPACE_ENABLED === 'true' &&
+    process.env.TASKLY_CHAT_CALLS_ENABLED === 'true'
+) {
+    router.get(
+        '/chat/calls/incoming',
+        verifierConnexion,
+        limiter({fenetre:60000,max:20}),
+        chatController.appelsEntrants
+    );
+
+    router.get(
+        '/:id/chat/call',
+        verifierConnexion,
+        limiter({fenetre:60000,max:90}),
+        chatController.gererAppel
+    );
+
+    router.post(
+        '/:id/chat/call',
+        verifierConnexion,
+        verifierCsrf,
+        limiter({fenetre:60000,max:20}),
+        chatController.gererAppel
+    );
+}
 router.get("/:id/chat", verifierConnexion, chatController.lireChat);
 router.post("/:id/chat", verifierConnexion, verifierCsrf, limiter({fenetre:60000,max:15}), chatController.envoyerChat);
 module.exports = router;

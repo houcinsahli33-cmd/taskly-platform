@@ -1,6 +1,7 @@
 "use strict";
 
 const chatModel = require("../models/chatModel");
+const callsPilot = require("../services/chatCallPilot");
 const clientModel = require("../models/clientModel");
 const artisanModel = require("../models/artisanModel");
 
@@ -187,4 +188,190 @@ async function confirmerLecture(req,res){
   return res.json({lus:await chatModel.marquerLus(a.demandeId,a.role,a.profilId,id)});
  }catch(e){return res.status(503).json({message:'Lecture non enregistrée.'});}
 }
-module.exports = { lireChat, envoyerChat,listerConversations,nonLus,confirmerLecture };
+
+async function gererAppel(req, res) {
+    try {
+        res.set('Cache-Control', 'private, no-store');
+
+        if (!callsPilot.autoriseCompte(
+            req.session?.utilisateur?.role,
+            req.session?.utilisateur?.id
+        )) {
+            return res.status(404).json({
+                message: 'Service indisponible.'
+            });
+        }
+
+        const acces = await verifierParticipant(req, res);
+
+        if (!acces) return;
+
+        if (acces.demande.statut !== 'acceptee') {
+            return res.status(403).json({
+                message: 'Les appels necessitent une demande acceptee.'
+            });
+        }
+
+        if (!callsPilot.autoriseDemande(acces.demandeId)) {
+            return res.status(404).json({
+                message: 'Appel indisponible.'
+            });
+        }
+
+        const action = req.method === 'GET'
+            ? 'read'
+            : req.body?.action;
+
+        if (req.method !== 'GET' &&
+            !['start', 'accept', 'reject', 'end', 'heartbeat'].includes(action)) {
+            return res.status(400).json({
+                message: 'Action invalide.'
+            });
+        }
+
+        if (action === 'start') {
+
+            const [client, artisan] = await Promise.all([
+                clientModel.trouverClientParUserId(
+                    callsPilot.compteId('client')
+                ),
+                artisanModel.trouverArtisanParUserId(
+                    callsPilot.compteId('artisan')
+                )
+            ]);
+
+            if (!client || !artisan ||
+                artisan.verification_statut !== 'approuve' ||
+                Number(client.id) !== Number(acces.demande.client_id) ||
+                Number(artisan.id) !== Number(acces.demande.artisan_id)) {
+                return res.status(404).json({
+                    message: 'Appel indisponible.'
+                });
+            }
+        }
+
+        const service = require('../services/chatCallService');
+
+        const result = await service.signaler({
+            demandeId: acces.demandeId,
+            role: acces.role,
+            clientId: acces.demande.client_id,
+            artisanId: acces.demande.artisan_id
+        }, action, req.method === 'GET' ? {} : req.body);
+
+        if (action === 'start' &&
+            result.code === 201 &&
+            result.call?.id) {
+
+            try {
+                await require('../services/chatCallInbox')
+                    .indexerInvitation({
+                        demandeId: acces.demandeId,
+                        role: acces.role,
+                        clientId: acces.demande.client_id,
+                        artisanId: acces.demande.artisan_id
+                    });
+
+            } catch {
+                await service.signaler({
+                    demandeId: acces.demandeId,
+                    role: acces.role,
+                    clientId: acces.demande.client_id,
+                    artisanId: acces.demande.artisan_id
+                }, 'end', {
+                    id: result.call.id
+                }).catch(() => {});
+
+                return res.status(503).json({
+                    message: 'Invitation indisponible.'
+                });
+            }
+        }
+
+        return res.status(result.code).json({
+            message: result.message,
+            call: result.call
+        });
+
+    } catch (error) {
+        console.error('Taskly appels : erreur interne.');
+
+        return res.status(503).json({
+            message: 'Service appels temporairement indisponible.'
+        });
+    }
+}
+
+
+async function appelsEntrants(req, res) {
+
+    try {
+
+        res.set('Cache-Control', 'private, no-store');
+
+        if (!callsPilot.autoriseCompte(
+            req.session?.utilisateur?.role,
+            req.session?.utilisateur?.id
+        )) {
+            return res.status(404).json({
+                message: 'Service indisponible.'
+            });
+        }
+
+        const profil = await profilChat(req, res);
+
+        if (!profil) return;
+
+        const candidates = await require(
+            '../services/chatCallInbox'
+        ).invitations(profil.role, profil.id);
+
+        const appels = [];
+
+        for (const call of candidates) {
+
+            if (!callsPilot.autoriseDemande(call.demandeId)) {
+                continue;
+            }
+
+            const demande = await chatModel.trouverDemande(
+                call.demandeId
+            );
+
+            if (!demande ||
+                demande.statut !== 'acceptee' ||
+                Number(demande.client_id) !== call.clientId ||
+                Number(demande.artisan_id) !== call.artisanId) {
+                continue;
+            }
+
+            appels.push({
+                id: call.id,
+                demandeId: call.demandeId,
+                mode: call.mode,
+                startedAt: call.startedAt,
+                nom: (
+                    profil.role === 'client'
+                    ? demande.artisan_nom
+                    : demande.client_nom
+                ) || 'Interlocuteur'
+            });
+        }
+
+        return res.json({ appels });
+
+    } catch {
+        return res.status(503).json({
+            message: 'Notifications appels indisponibles.'
+        });
+    }
+}
+module.exports = {
+    lireChat,
+    envoyerChat,
+    listerConversations,
+    nonLus,
+    confirmerLecture,
+    gererAppel,
+    appelsEntrants
+};
