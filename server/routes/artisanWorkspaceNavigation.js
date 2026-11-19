@@ -5,12 +5,22 @@ const {verifierConnexion}=require('../middleware/authMiddleware');
 const pages=new Set(['accueil','demandes','avis','profil','support']);
 if(process.env.TASKLY_MAIL_PILOT_ENABLED==='true')pages.add('taskly-mail');
 const dossier=path.join(__dirname,'../../client/private/artisan');
-function menuMail(original) {
- if(process.env.TASKLY_MAIL_PILOT_ENABLED!=='true')return original;
+function mailAutorise(id){
+ if(process.env.TASKLY_MAIL_PILOT_ENABLED!=='true')return false;
+ if(process.env.TASKLY_MAIL_INTERNAL_ENABLED!=='true')return true;
+ return String(process.env.TASKLY_MAIL_PILOT_USER_IDS||'')
+  .split(',')
+  .map(v=>v.trim())
+  .filter(v=>/^[1-9][0-9]*$/.test(v))
+  .includes(String(id));
+}
+
+function menuMail(original,id) {
+ if(!mailAutorise(id))return original;
  return original.replace(/<a href="\/espace\/artisan\/support"/, '<a href="/espace/artisan/taskly-mail" data-dashboard-link="taskly-mail"><svg class="artisan-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>Taskly Mail</a><a href="/espace/artisan/support"').replace('Taskly Mail — prochainement.', '<a href="/espace/artisan/taskly-mail">Taskly Mail — demande d’adresse</a>');
 }
-function preparerCadreArtisan(original) {
- original=menuMail(original);
+function preparerCadreArtisan(original,id) {
+ original=menuMail(original,id);
  const head=original.match(/<head\b[^>]*>[\s\S]*?<\/head>/i)?.[0];
  const body=original.match(/<body\b[^>]*>/i)?.[0];
  const aside=original.match(/<aside\b[^>]*class="[^"]*sidebar[^"]*"[^>]*>[\s\S]*?<\/aside>/i)?.[0];
@@ -22,8 +32,8 @@ function preparerCadreArtisan(original) {
   '<div id="site-header"></div><main class="dashboard-shell">'+aside+
   '<section class="artisan-frame-container" aria-label="Rubrique artisan"><iframe id="taskly-artisan-content-frame" title="Contenu de l’espace artisan"></iframe></section></main></body></html>';
 }
-function preparerPageArtisanIntegree(original){
- original=menuMail(original);
+function preparerPageArtisanIntegree(original,id){
+ original=menuMail(original,id);
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw new Error('Document artisan invalide.');
  return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/artisan-navigation-embedded.css?v=20261012-navigation-11"></head>')
   .replace(/<body\b([^>]*)>/i,'<body$1 data-taskly-artisan-embedded="1">');
@@ -33,14 +43,17 @@ function monterNavigationArtisan(app){
   const {page}=req.params;
   if(!pages.has(page))return next();
   if(req.session.utilisateur.role!=='artisan')return res.status(403).json({message:'Accès refusé.'});
+  if(page==='taskly-mail'&&!mailAutorise(req.session.utilisateur.id)){
+   return res.status(403).send('Taskly Mail : test prive.');
+  }
   try {
    const original=await fs.readFile(path.join(dossier,page+'.html'),'utf8');
    res.set('Cache-Control','no-store, private');
    if(req.query.taskly_artisan_embed==='1'||req.get('Sec-Fetch-Dest')==='iframe'){
     res.set('X-Frame-Options','SAMEORIGIN');res.set('Content-Security-Policy',"frame-ancestors 'self'");
-    return res.type('html').send(preparerPageArtisanIntegree(original));
+    return res.type('html').send(preparerPageArtisanIntegree(original,req.session.utilisateur.id));
    }
-   return res.type('html').send(preparerCadreArtisan(original));
+   return res.type('html').send(preparerCadreArtisan(original,req.session.utilisateur.id));
   }catch(error){return res.status(503).send('Espace artisan temporairement indisponible.');}
  });
 }

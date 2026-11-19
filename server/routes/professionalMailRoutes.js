@@ -13,10 +13,28 @@ const {createInternalGateway,internalAddress}=internalMode
 const colonnes='user_id,artisan_id,service_id,proposed_address,status,requested_at,confirmed_at,decided_at,refusal_reason';
 function erreur(message,status=409){return Object.assign(new Error(message),{status});}
 const actif=(req,res,next)=>process.env.TASKLY_MAIL_PILOT_ENABLED==='true'?next():res.status(404).json({message:'Taskly Mail n’est pas encore disponible.'});
-artisan.use(actif,verifierConnexion,verifierArtisan);admin.use(actif,verifierConnexion,verifierAdmin);
+const pilotIds=new Set(
+ String(process.env.TASKLY_MAIL_PILOT_USER_IDS||'')
+ .split(',')
+ .map(id=>id.trim())
+ .filter(id=>/^[1-9][0-9]*$/.test(id))
+);
+
+const piloteAutorise=id=>!internalMode||pilotIds.has(String(id));
+
+function accesPilote(req,res,next){
+ if(!piloteAutorise(req.session.utilisateur.id)){
+  return res.status(403).json({message:'Taskly Mail est actuellement en test prive.'});
+ }
+ next();
+}
+
+artisan.use(actif,verifierConnexion,verifierArtisan,accesPilote);
+admin.use(actif,verifierConnexion,verifierAdmin);
 const sensible=limiter({max:12});
 async function transaction(fn){let conn;try{conn=await db.getConnection();await conn.beginTransaction();const value=await fn(conn);await conn.commit();return value;}catch(e){if(conn)await conn.rollback();throw e;}finally{conn?.release();}}
-async function profil(conn,id){const [rows]=await conn.query(`SELECT u.id,u.nom,u.prenom,u.email,u.role,u.statut_compte,u.email_verified,a.id AS artisan_id,a.service_id,a.verification_statut,s.nom AS service_nom FROM users u JOIN artisans a ON a.user_id=u.id JOIN services s ON s.id=a.service_id WHERE u.id=? FOR UPDATE`,[id]);const p=rows[0];if(!p||p.role!=='artisan'||p.statut_compte!=='actif'||!p.email_verified||p.verification_statut!=='approuve')throw erreur('Profil artisan non autorisé.',403);return p;}
+async function profil(conn,id){
+ if(!piloteAutorise(id))throw erreur('Profil non autorise pour le pilote.',403);const [rows]=await conn.query(`SELECT u.id,u.nom,u.prenom,u.email,u.role,u.statut_compte,u.email_verified,a.id AS artisan_id,a.service_id,a.verification_statut,s.nom AS service_nom FROM users u JOIN artisans a ON a.user_id=u.id JOIN services s ON s.id=a.service_id WHERE u.id=? FOR UPDATE`,[id]);const p=rows[0];if(!p||p.role!=='artisan'||p.statut_compte!=='actif'||!p.email_verified||p.verification_statut!=='approuve')throw erreur('Profil artisan non autorisé.',403);return p;}
 const correspond=(p,r)=>Number(p.artisan_id)===Number(r.artisan_id)&&Number(p.service_id)===Number(r.service_id)&&p.email===r.personal_email;
 const gateway=internalMode
  ? createInternalGateway({transaction,profil,correspond})
