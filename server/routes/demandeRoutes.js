@@ -60,14 +60,14 @@ if (
     router.get(
         '/chat/calls/incoming',
         verifierConnexion,
-        limiter({fenetre:60000,max:20}),
+        limiter({fenetre:60000,max:20,parCompte:true}),
         chatController.appelsEntrants
     );
 
     router.get(
         '/:id/chat/call',
         verifierConnexion,
-        limiter({fenetre:60000,max:90}),
+        limiter({fenetre:60000,max:90,parCompte:true}),
         chatController.gererAppel
     );
 
@@ -75,7 +75,7 @@ if (
         '/:id/chat/call',
         verifierConnexion,
         verifierCsrf,
-        limiter({fenetre:60000,max:20}),
+        limiter({fenetre:60000,max:20,parCompte:true}),
         chatController.gererAppel
     );
 }

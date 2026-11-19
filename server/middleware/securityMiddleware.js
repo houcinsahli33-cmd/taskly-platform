@@ -4,12 +4,39 @@ const buckets=new Map();
 const SCRIPT=`local n=redis.call('INCR',KEYS[1]);
 if n==1 or redis.call('PTTL',KEYS[1])<0 then redis.call('PEXPIRE',KEYS[1],ARGV[1]) end;
 return {n,redis.call('PTTL',KEYS[1])}`;
-function limiter({fenetre=15*60*1000,max=15}={}) {
+function limiter({fenetre=15*60*1000,max=15,parCompte=false}={}) {
   if(!Number.isSafeInteger(fenetre)||fenetre<=0||!Number.isSafeInteger(max)||max<=0)throw new Error('Limiteur invalide');
   return async (req,res,next) => {
     const ip=req.ip || req.socket?.remoteAddress || 'unknown';
     // Express accepte les variantes de casse : elles doivent partager le même quota.
-    const source=JSON.stringify([String(req.baseUrl||'').toLowerCase(),String(req.route?.path||req.path||'').toLowerCase(),ip]);
+    const base = String(req.baseUrl || '').toLowerCase();
+    const route = String(req.route?.path || req.path || '').toLowerCase();
+
+    let source;
+
+    if (parCompte) {
+        const user = req.session?.utilisateur;
+
+        if (!user ||
+            !['client','artisan'].includes(user.role) ||
+            !/^[1-9]\d{0,9}$/.test(String(user.id)) ||
+            Number(user.id) > 2147483647) {
+            return res.status(403).json({
+                message: 'Acces refuse.'
+            });
+        }
+
+        source = JSON.stringify([
+            'compte-v1',
+            base,
+            route,
+            String(req.method).toUpperCase(),
+            user.role,
+            Number(user.id)
+        ]);
+    } else {
+        source = JSON.stringify([base,route,ip]);
+    }
     let count,ttl;
     try {
       if(process.env.REDIS_URL || process.env.NODE_ENV==='production') {

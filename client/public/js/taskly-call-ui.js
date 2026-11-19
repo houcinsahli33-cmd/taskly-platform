@@ -484,6 +484,10 @@
                     active.id &&
                     Date.now() - active.lastHeartbeatAt >= 15000;
 
+                if (heartbeatDue) {
+                    active.lastHeartbeatAt = Date.now();
+                }
+
                 const data = heartbeatDue
                     ? await this.request(context.id, {
                         action: 'heartbeat',
