@@ -35,7 +35,7 @@ function preparerCadreArtisan(original,id) {
  if(!head||!body||!aside)throw new Error('Document artisan non reconnu.');
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<\/head>/i,
   '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat2"></script></head>');
- const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=3"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
+ const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=4"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
  const shellBody=body.replace(/>$/, ' data-taskly-artisan-shell="1">');
  return '<!doctype html><html lang="fr">'+finalHead+shellBody+
   '<div id="site-header"></div><main class="dashboard-shell">'+aside+

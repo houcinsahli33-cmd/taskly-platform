@@ -102,3 +102,21 @@ body.dashboard-page[data-taskly-artisan-shell] .sidebar-title .chat-nav-icon,
 body.dashboard-page[data-taskly-artisan-shell] .side-nav a .chat-nav-icon {
     display: inline-flex !important;
 }
+/* TASKLY SIDEBAR LARGEUR UNIQUE */
+
+@media (min-width: 1101px) {
+
+    body.dashboard-page[data-taskly-client-shell] .dashboard-shell,
+    body.dashboard-page[data-taskly-artisan-shell] .dashboard-shell {
+        display: grid !important;
+        grid-template-columns: 230px minmax(0,1fr) !important;
+    }
+
+    body.dashboard-page[data-taskly-client-shell] .dashboard-shell > .sidebar,
+    body.dashboard-page[data-taskly-artisan-shell] .dashboard-shell > .sidebar {
+        width: 230px !important;
+        min-width: 230px !important;
+        max-width: 230px !important;
+        box-sizing: border-box;
+    }
+}
