@@ -47,6 +47,11 @@ router.post('/confirmation-lien', require('../middleware/securityMiddleware').li
 router.put('/:id/confirmer-fin', verifierConnexion, verifierClient, demandeController.confirmerFinClient);
 router.put('/:id/contester-fin', verifierConnexion, verifierClient, demandeController.contesterFinClient);
 // Messagerie privee liee a une demande.
+if(process.env.TASKLY_CHAT_WORKSPACE_ENABLED==='true'){
+ router.get('/chat/conversations',verifierConnexion,limiter({fenetre:60000,max:60}),chatController.listerConversations);
+ router.get('/chat/unread',verifierConnexion,limiter({fenetre:60000,max:30}),chatController.nonLus);
+ router.post('/:id/chat/read',verifierConnexion,verifierCsrf,limiter({fenetre:60000,max:60}),chatController.confirmerLecture);
+}
 router.get("/:id/chat", verifierConnexion, chatController.lireChat);
 router.post("/:id/chat", verifierConnexion, verifierCsrf, limiter({fenetre:60000,max:15}), chatController.envoyerChat);
 module.exports = router;

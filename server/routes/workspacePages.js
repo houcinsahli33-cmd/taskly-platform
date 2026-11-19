@@ -3,6 +3,7 @@ const path=require('path');
 const fs=require('node:fs/promises');
 const {verifierConnexion,verifierAdmin}=require('../middleware/authMiddleware');
 const pages={client:['accueil','demandes','profil','support'],artisan:['accueil','demandes','avis','profil','support'],admin:['overview','users','reports','contacts','services','verification','account','admins','site']};
+if(process.env.TASKLY_CHAT_WORKSPACE_ENABLED==='true'){pages.client.push('messagerie');pages.artisan.push('messagerie');}
 if(process.env.TASKLY_MAIL_PILOT_ENABLED==='true')pages.admin.push('taskly-mail');
 function menuMailAdmin(original){
  if(process.env.TASKLY_MAIL_PILOT_ENABLED!=='true')return original;

@@ -16,6 +16,7 @@ window.afficherTasklyMailbox=async function(root,status){
    section.append(text('h3','Activer votre boîte professionnelle'),button('Envoyer le code',()=>run(async()=>{const r=await request('/activation/request',{});message(r.message);}), 'primary'),code.l,button('Activer mon accès',()=>run(async()=>{const r=await request('/activation/confirm',{code:code.e.value.trim()});await state();message(r.message);}),'primary'));return;
   }
   if(result.state!=='active')throw Error('État de la messagerie inconnu.');
+  if(result.foldersEnabled&&typeof window.afficherTasklyMailFolders==='function'){await window.afficherTasklyMailFolders(section,status,result);return;}
   section.append(text('h3','Votre boîte professionnelle'),text('p',result.address),text('p','Accès réservé à ce profil Artisan.'));
   const nav=document.createElement('div');nav.className='taskly-mailbox-nav';const content=document.createElement('div');content.className='taskly-mailbox-content';section.append(nav,content);
   nav.append(button('Boîte de réception',()=>run(()=>list('inbox'))),button('Messages envoyés',()=>run(()=>list('sent'))),button('Rédiger / brouillon',()=>run(compose),'primary'));

@@ -66,7 +66,8 @@ test('« Nouvelle demande » lance la sélection d’un artisan sans recréer le
     assert.ok(publicForm.includes(`id="${id}"`), `Formulaire ou filtre manquant : ${id}`);
   const publicJs = read('client/public/js/artisans.js');
   assert.match(publicJs, /ouvrirDemandeArtisan/);
-  assert.match(publicJs, /requeteAPI\("\/api\/demandes",\s*\{/);
+  assert.match(publicJs, /window\.tasklyRequestWizard\.open\(artisan\)/);
+  assert.match(read('client/public/js/taskly-request-wizard.js'), /requeteAPI\('\/api\/demandes',\s*\{/);
   assert.match(read('server/routes/demandeRoutes.js'), /router\.post\("\/", verifierConnexion, verifierClient, demandeController\.creerDemande\)/);
 });
 

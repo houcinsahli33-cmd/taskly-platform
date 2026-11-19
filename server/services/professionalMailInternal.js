@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const crypto = require('node:crypto');
 const {email, validateSend, folder, messageId} =
@@ -19,6 +19,9 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
         env.TASKLY_MAIL_INTERNAL_ENABLED === 'true' &&
         env.TASKLY_MAIL_GATEWAY_ENABLED !== 'true';
 
+    const foldersEnabled = configured && env.TASKLY_MAIL_FOLDERS_ENABLED === 'true';
+    const copyId = v => {if(typeof v!=='string'||!/^[1-9][0-9]{0,19}$/.test(v)||BigInt(v)>18446744073709551615n)throw error('Identifiant invalide.',400);return v;};
+    const filters = {inbox:"folder='inbox' AND archived_at IS NULL AND trashed_at IS NULL",sent:"folder='sent' AND archived_at IS NULL AND trashed_at IS NULL",favorites:"is_starred=1 AND trashed_at IS NULL",archive:'archived_at IS NOT NULL AND trashed_at IS NULL',trash:'trashed_at IS NOT NULL'};
     async function active(conn, id) {
         const p = await profil(conn, id);
 
@@ -66,12 +69,37 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
             subject: m.subject,
             body: m.body,
             date: new Date(m.created_at).toISOString(),
-            isRead: Boolean(m.is_read)
+            isRead: Boolean(m.is_read),
+            ...(m.sequence_id?{copyId:String(m.sequence_id),folder:m.folder,starred:Boolean(m.is_starred),archived:Boolean(m.archived_at),trashed:Boolean(m.trashed_at)}:{})
         };
     }
 
     return {
-        configured,
+        configured, foldersEnabled,
+        async listCopies(mailbox, box, next, q='') {
+            if(!foldersEnabled)throw error('Dossiers indisponibles.',503);
+            if(!Object.hasOwn(filters,box)||typeof q!=='string'||q.length>100)throw error('Recherche invalide.',400);
+            if(next)copyId(next);
+            return transaction(async conn=>{
+                const m=await own(conn,mailbox),params=[m.user_id,q,q];if(next)params.push(next);
+                const [rows]=await conn.query(`SELECT CAST(id AS CHAR) AS sequence_id,message_id,folder,from_address,to_address,subject,created_at,is_read,is_starred,archived_at,trashed_at FROM taskly_professional_mail_messages WHERE owner_user_id=? AND ${filters[box]} AND (?='' OR LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',from_address,to_address,subject,body)))>0) ${next?'AND id<CAST(? AS UNSIGNED)':''} ORDER BY id DESC LIMIT 26`,params);
+                const page=rows.slice(0,25);return {messages:page.map(format),next:rows.length>25?page.at(-1).sequence_id:null};
+            });
+        },
+        async readCopy(mailbox,id) {
+            if(!foldersEnabled)throw error('Dossiers indisponibles.',503);copyId(id);
+            return transaction(async conn=>{const m=await own(conn,mailbox);const [rows]=await conn.query('SELECT *,CAST(id AS CHAR) AS sequence_id FROM taskly_professional_mail_messages WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED) FOR UPDATE',[m.user_id,id]);if(!rows[0])throw error('Message introuvable.',404);if(rows[0].folder==='inbox')await conn.query('UPDATE taskly_professional_mail_messages SET is_read=1 WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED)',[m.user_id,id]);return format({...rows[0],is_read:1});});
+        },
+        async changeCopy(mailbox,id,action) {
+            if(!foldersEnabled)throw error('Dossiers indisponibles.',503);copyId(id);
+            const updates={star:'is_starred=1',unstar:'is_starred=0',archive:'archived_at=NOW()',unarchive:'archived_at=NULL',trash:'trashed_at=NOW()',restore:'trashed_at=NULL'};
+            if(!Object.hasOwn(updates,action))throw error('Action invalide.',400);
+            return transaction(async conn=>{const m=await own(conn,mailbox);const [rows]=await conn.query('SELECT trashed_at FROM taskly_professional_mail_messages WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED) FOR UPDATE',[m.user_id,id]);if(!rows[0])throw error('Message introuvable.',404);if(rows[0].trashed_at&&!['restore','trash'].includes(action))throw error('Restaurez le message auparavant.',409);await conn.query(`UPDATE taskly_professional_mail_messages SET ${updates[action]} WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED)`,[m.user_id,id]);return {ok:true};});
+        },
+        async counts(mailbox) {
+            if(!foldersEnabled)throw error('Dossiers indisponibles.',503);
+            return transaction(async conn=>{const m=await own(conn,mailbox);const [rows]=await conn.query("SELECT COUNT(*) AS total FROM taskly_professional_mail_messages WHERE owner_user_id=? AND folder='inbox' AND is_read=0 AND archived_at IS NULL AND trashed_at IS NULL",[m.user_id]);return {unread:Number(rows[0].total)};});
+        },
 
         async provision(address, key) {
             if (!configured || !internalAddress(address) ||

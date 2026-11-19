@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
  if(!input)return;
  const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Africa/Algiers',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
  const toISO=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
- let y=0,m=0,booked=new Set(),loadedArtisan=null,loadedOK=false;
+ let y=0,m=0,booked=new Set(),loadedArtisan=null,loadedOK=false, generation=0;
  const wrapper=document.createElement('div');wrapper.className='taskly-calendar-field';input.parentNode.insertBefore(wrapper,input);wrapper.append(input);
  const openBtn=document.createElement('button');openBtn.type='button';openBtn.className='taskly-calendar-launch';openBtn.setAttribute('aria-label','Ouvrir le calendrier');openBtn.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>';wrapper.append(openBtn);
  const popup=document.createElement('div');popup.className='taskly-calendar-popover';popup.hidden=true;popup.setAttribute('role','dialog');popup.setAttribute('aria-label','Choisir une date de prestation');wrapper.append(popup);
  const months=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
  const min=()=>today();
- const isValid=(value)=>!value||(/^\d{4}-\d{2}-\d{2}$/.test(value)&&value>=min()&&loadedOK&&!booked.has(value));
+ const isValid=(value)=>!value||(/^\d{4}-\d{2}-\d{2}$/.test(value)&&value>=min()&&loadedOK&&loadedArtisan===document.getElementById('request-artisan-id')?.value&&!booked.has(value));
  window.tasklyRequestDateValide=()=>isValid(input.value);
  function draw(error=''){
   if(error){popup.innerHTML='<p class="taskly-calendar-error" role="alert">Disponibilités indisponibles. Réessayez dans un instant.</p><button type="button" data-calendar-close>Fermer</button>';return;}
@@ -33,19 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if(!/^[1-9]\d*$/.test(String(artisanId||'')))return;
   const selected=input.value||min(); y=Number(selected.slice(0,4));m=Number(selected.slice(5,7))-1;
   if(!Number.isInteger(m)||m<0||m>11){y=Number(min().slice(0,4));m=Number(min().slice(5,7))-1;}
+  const requestGeneration=++generation;
   popup.hidden=false;openBtn.setAttribute('aria-expanded','true');
   popup.innerHTML='<p class="taskly-calendar-loading" role="status">Chargement des disponibilités…</p>';
   loadedOK=false;booked.clear();loadedArtisan=null;
   try{
    const response=await requeteAPI('/api/artisans/'+encodeURIComponent(artisanId)+'/dates-indisponibles');
-   if(popup.hidden||document.getElementById('request-artisan-id')?.value!==artisanId)return;
+   if(requestGeneration!==generation||popup.hidden||document.getElementById('request-artisan-id')?.value!==artisanId)return;
    booked=new Set((Array.isArray(response.dates)?response.dates:[]).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)));
    loadedOK=true;loadedArtisan=artisanId;
-   if(input.value && !isValid(input.value))input.value='';
+   if(input.value && !isValid(input.value)){input.value='';input.dispatchEvent(new Event('change',{bubbles:true}));}
    draw();
-  }catch(e){if(!popup.hidden)draw('error');}
+  }catch(e){if(requestGeneration===generation&&!popup.hidden)draw('error');}
  }
- function close(){popup.hidden=true;openBtn.setAttribute('aria-expanded','false');}
+ function close(){generation++;popup.hidden=true;openBtn.setAttribute('aria-expanded','false');}
  openBtn.addEventListener('click',()=>popup.hidden?open():close());
  input.addEventListener('click',open);
  input.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});

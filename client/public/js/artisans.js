@@ -195,6 +195,7 @@ function afficherGuideNouvelleDemande() {
 }
 
 // Ouvrir la modale de demande
+let demandeOuvertureEnCours=false;
 async function ouvrirDemandeArtisan(id) {
   if (!window.utilisateurCourant) {
     window.location.href = `/login.html?redirect=${encodeURIComponent(`/artisan-profile.html?id=${id}`)}`;
@@ -206,15 +207,15 @@ async function ouvrirDemandeArtisan(id) {
     return;
   }
 
+  if(demandeOuvertureEnCours)return;
+  demandeOuvertureEnCours=true;
   try {
     const { artisan } = await requeteAPI(`/api/artisans/${encodeURIComponent(id)}`);
-    document.getElementById("request-artisan-name").textContent = nomComplet(artisan);
-    document.getElementById("request-artisan-id").value = artisan.id;
-    document.getElementById("request-date").value = '';
-    ouvrirModale("request-modal");
+    if(!artisan||Number(artisan.id)!==Number(id))throw new Error("Artisan introuvable.");
+    window.tasklyRequestWizard.open(artisan);
   } catch (error) {
     afficherToast(error.message, "error");
-  }
+  } finally {demandeOuvertureEnCours=false;}
 }
 
 // Envoyer la demande au backend
@@ -226,39 +227,7 @@ function initialiserDemandeArtisan() {
     }
   });
 
-  const form = document.getElementById("request-form");
-  if (!form) return;
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (typeof window.tasklyRequestDateValide === 'function' && !window.tasklyRequestDateValide()) {
-      afficherToast('Choisissez une date valide et disponible dans le calendrier.', 'error');
-      return;
-    }
-    const bouton = form.querySelector("button[type='submit']");
-    bouton.disabled = true;
-
-    const payload = {
-      artisanId: Number(document.getElementById("request-artisan-id").value),
-      message: document.getElementById("request-message").value.trim(),
-      adresse: document.getElementById("request-address").value.trim(),
-      dateSouhaitee: document.getElementById("request-date").value || null
-    };
-
-    try {
-      await requeteAPI("/api/demandes", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      afficherToast("Votre demande a été envoyée avec succès.");
-      form.reset();
-      fermerModale("request-modal");
-    } catch (error) {
-      afficherToast(error.message, "error");
-    } finally {
-      bouton.disabled = false;
-    }
-  });
+  window.tasklyRequestWizard?.init();
 }
 
 // Charger le profil public d'un artisan

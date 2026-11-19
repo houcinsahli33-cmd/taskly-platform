@@ -10,7 +10,7 @@ function pagePriveeHTML(req) {
   if (req.tasklyAdminContext)
     return !!portail && (chemin === portail + '/dashboard' || chemin.startsWith(portail + '/dashboard/'));
   return /^\/(?:client|artisan)-dashboard\.html$/.test(chemin) ||
-    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support|taskly-mail)$/.test(chemin);
+    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support|taskly-mail|messagerie)$/.test(chemin);
 }
 
 // L'inactivite expire sur le serveur, meme si un onglet effectue des requetes passives.

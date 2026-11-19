@@ -396,6 +396,11 @@
     if (!bouton) return;
 
     event.preventDefault();
+    if(document.body.dataset.tasklyChatWorkspace==='1'){
+      const role=window.utilisateurCourant?.role,id=bouton.dataset.openTasklyChat;
+      if(['client','artisan'].includes(role)&&/^[1-9]\d*$/.test(id))location.assign('/espace/'+role+'/messagerie?conversation='+encodeURIComponent(id));
+      return;
+    }
     ouvrirChat(bouton.dataset.openTasklyChat, bouton);
   });
 })();

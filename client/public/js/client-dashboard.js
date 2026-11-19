@@ -44,7 +44,7 @@ function carteDemandeClient(demande) {
   const aConfirmer = demande.statut === 'attente_confirmation';
 
   return `
-    <article class="request-card">
+    <article class="request-card" id="demande-${Number(demande.id)}">
       <div class="request-head">
         <div>
           <h3>${echapperHTML(demande.service_nom || "Service")}</h3>
@@ -108,6 +108,7 @@ async function chargerDemandesClient() {
     afficherStatsClient();
     afficherDemandesClient();
     afficherDemandesRecentesClient();
+    if(document.body.dataset.workspacePage==='demandes'){const target=Number(new URLSearchParams(location.search).get('demande'));if(Number.isSafeInteger(target)&&target>0)document.getElementById('demande-'+target)?.scrollIntoView({block:'center'});}
     if(document.body.dataset.workspacePage==='demandes') {
       const requested = Number(new URLSearchParams(location.search).get('signaler') || sessionStorage.getItem('tasklyReportPending'));
       if(Number.isSafeInteger(requested)&&requested>0) {

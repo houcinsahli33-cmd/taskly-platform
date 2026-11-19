@@ -7,6 +7,7 @@ const {domaine,adresse,empreinte,codeValide,peutDemander}=require('../services/p
 const artisan=express.Router(),admin=express.Router();
 const {createGateway}=require('../services/professionalMailGateway');
 const internalMode=process.env.TASKLY_MAIL_INTERNAL_ENABLED==='true';
+const autoInternal=internalMode&&process.env.TASKLY_MAIL_AUTO_ACTIVATION==='true';
 const {createInternalGateway,internalAddress}=internalMode
  ? require('../services/professionalMailInternal')
  : {};
@@ -41,7 +42,7 @@ const gateway=internalMode
  : createGateway();
 
 function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
-artisan.get('/',wrap(async(req,res)=>{const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured});}));
+artisan.get('/',wrap(async(req,res)=>{const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal});}));
 artisan.post('/request',sensible,wrap(async(req,res)=>{
  if(internalMode&&!gateway.configured)throw erreur('Configuration interne invalide.',503);
  const domain=domaine(internalMode?'taskly.test':process.env.TASKLY_MAIL_DOMAIN);if(!domain||!require('../services/emailService').estConfigure())throw erreur('Domaine ou service de confirmation non configuré.',503);
@@ -49,7 +50,12 @@ artisan.post('/request',sensible,wrap(async(req,res)=>{
  const data=await transaction(async conn=>{
   const p=await profil(conn,uid);
   const [rows]=await conn.query('SELECT *, TIMESTAMPDIFF(SECOND,requested_at,NOW()) AS age FROM taskly_professional_mail_requests WHERE user_id=? FOR UPDATE',[uid]);const old=rows[0];
-  peutDemander(old,!old||correspond(p,old));
+  let previous=old;
+  if(autoInternal&&old&&['pending_admin','approved_pending_provider'].includes(old.status)){
+   const [boxes]=await conn.query('SELECT user_id FROM taskly_professional_mailboxes WHERE user_id=? FOR UPDATE',[uid]);
+   if(!boxes.length)previous={...old,status:'pending_confirmation'};
+  }
+  peutDemander(previous,!old||correspond(p,old));
   let candidate=old?.proposed_address||adresse(p,domain);
   if(!old){const [occupied]=await conn.query('SELECT user_id FROM taskly_professional_mail_requests WHERE proposed_address=?',[candidate]);if(occupied.length)candidate=adresse(p,domain,true);}
   if(internalMode&&!internalAddress(candidate))throw erreur('Adresse interne invalide.',409);
@@ -68,13 +74,24 @@ artisan.post('/confirm',sensible,wrap(async(req,res)=>{
   const p=await profil(conn,uid);const [rows]=await conn.query("SELECT * FROM taskly_professional_mail_requests WHERE user_id=? AND status='pending_confirmation' AND expires_at>NOW() FOR UPDATE",[uid]);const row=rows[0];
   if(!row||row.attempts>=3||!correspond(p,row))return false;
   if(!codeValide(process.env.SESSION_SECRET,row,code)){await conn.query('UPDATE taskly_professional_mail_requests SET attempts=attempts+1 WHERE user_id=?',[uid]);return false;}
+  if(autoInternal&&decision==='confirm'){
+   if(!gateway.configured||!internalAddress(row.proposed_address))throw erreur('Configuration interne invalide.',503);
+   const [boxes]=await conn.query('SELECT user_id FROM taskly_professional_mailboxes WHERE user_id=? FOR UPDATE',[uid]);
+   if(boxes.length)throw erreur('Une boîte existe déjà. Contactez le support.',409);
+   const key=require('./professionalMailboxRoutes').provisionKey(uid,row.proposed_address);
+   const providerId=await gateway.provision(row.proposed_address,key);
+   await conn.query("UPDATE taskly_professional_mail_requests SET status='approved_pending_provider',code_hash=NULL,expires_at=NULL,confirmed_at=NOW(),decided_at=NOW(),decided_by=NULL,refusal_reason=NULL WHERE user_id=?",[uid]);
+   await conn.query('INSERT INTO taskly_professional_mailboxes (user_id,address,provider_id,activated_at) VALUES (?,?,?,NOW())',[uid,row.proposed_address,providerId]);
+   return true;
+  }
   await conn.query('UPDATE taskly_professional_mail_requests SET status=?,code_hash=NULL,expires_at=NULL,confirmed_at=NOW() WHERE user_id=?',[decision==='confirm'?'pending_admin':'cancelled',uid]);return true;
  });
  if(!ok)throw erreur('Code incorrect, expiré ou tentatives épuisées.',400);
- res.json({message:decision==='confirm'?'Demande transmise à l’administration.':'Demande annulée.'});
+ res.json({message:decision==='confirm'?(autoInternal?'Votre boîte interne est créée et activée.':'Demande transmise à l’administration.'):'Demande annulée.',activated:autoInternal&&decision==='confirm'});
 }));
-admin.get('/',wrap(async(req,res)=>{const after=Number(req.query.after||0);if(!Number.isSafeInteger(after)||after<0)throw erreur('Pagination invalide.',400);const joined=gateway.configured;const fields=colonnes.split(',').map(c=>'r.'+c).join(',');const [rows]=await db.query(`SELECT ${fields}${joined?", CASE WHEN m.activated_at IS NOT NULL THEN 'active' WHEN m.user_id IS NOT NULL THEN 'activation_required' ELSE 'waiting_provider' END AS mailbox_state":''} FROM taskly_professional_mail_requests r ${joined?'LEFT JOIN taskly_professional_mailboxes m ON m.user_id=r.user_id AND m.address=r.proposed_address':''} WHERE r.user_id>? AND r.status IN ('pending_admin','approved_pending_provider','rejected') ORDER BY r.user_id LIMIT 50`,[after]);res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,gatewayConfigured:gateway.configured});}));
+admin.get('/',wrap(async(req,res)=>{const after=Number(req.query.after||0);if(!Number.isSafeInteger(after)||after<0)throw erreur('Pagination invalide.',400);const joined=gateway.configured;const fields=colonnes.split(',').map(c=>'r.'+c).join(',');const [rows]=await db.query(`SELECT ${fields}${joined?", CASE WHEN m.activated_at IS NOT NULL THEN 'active' WHEN m.user_id IS NOT NULL THEN 'activation_required' ELSE 'waiting_provider' END AS mailbox_state":''} FROM taskly_professional_mail_requests r ${joined?'LEFT JOIN taskly_professional_mailboxes m ON m.user_id=r.user_id AND m.address=r.proposed_address':''} WHERE r.user_id>? AND r.status IN ('pending_admin','approved_pending_provider','rejected') ORDER BY r.user_id LIMIT 50`,[after]);res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,gatewayConfigured:gateway.configured,internalMode,autoInternal});}));
 admin.post('/:id/decision',sensible,wrap(async(req,res)=>{
+ if(autoInternal)throw erreur('Activation automatique : aucune décision manuelle.',409);
  const id=Number(req.params.id),{decision,motif}=req.body||{};
  if(!Number.isSafeInteger(id)||id<1||!['approve','reject'].includes(decision)||decision==='reject'&&(typeof motif!=='string'||motif.trim().length<3||motif.length>500))throw erreur('Décision invalide. Motif exigé en cas de refus.',400);
  await transaction(async conn=>{const p=await profil(conn,id);const [rows]=await conn.query("SELECT * FROM taskly_professional_mail_requests WHERE user_id=? AND status='pending_admin' FOR UPDATE",[id]);const row=rows[0];if(!row||!correspond(p,row))throw erreur('Demande non confirmée, déjà traitée ou profil modifié.');await conn.query('UPDATE taskly_professional_mail_requests SET status=?,decided_by=?,decided_at=NOW(),refusal_reason=? WHERE user_id=?',[decision==='approve'?'approved_pending_provider':'rejected',req.session.utilisateur.id,decision==='reject'?motif.trim():null,id]);});

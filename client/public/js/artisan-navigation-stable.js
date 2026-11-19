@@ -5,6 +5,7 @@
  if(!iframe)return;
  const pages=new Set(['accueil','demandes','avis','profil','support']);
  pages.add('taskly-mail');
+ pages.add('messagerie');
  const base='/espace/artisan/';
  let selected=location.pathname+location.search+location.hash;
  let observer;
@@ -14,7 +15,7 @@
  }
  function clean(url){const copy=new URL(url.href);copy.searchParams.delete('taskly_artisan_embed');return copy.pathname+copy.search+copy.hash;}
  function embedded(url){const copy=new URL(url.href);copy.searchParams.set('taskly_artisan_embed','1');return copy.href;}
- function navActive(url){const page=url.pathname.slice(base.length);document.querySelectorAll('.sidebar [data-dashboard-link]').forEach(a=>{const active=a.dataset.dashboardLink===page;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
+ function navActive(url){const page=url.pathname.slice(base.length);document.body?.classList?.toggle('taskly-chat-shell-active',page==='messagerie');document.querySelectorAll('.sidebar [data-dashboard-link]').forEach(a=>{const active=a.dataset.dashboardLink===page;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});}
  function navigate(input,mode='push'){
   const url=validated(input);if(!url)return false;
   const target=clean(url);

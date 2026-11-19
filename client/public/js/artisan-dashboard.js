@@ -41,7 +41,7 @@ function carteDemandeArtisan(demande) {
   const donneesPrivees = ['acceptee','attente_confirmation','terminee','conteste'].includes(demande.statut);
 
   return `
-    <article class="request-card">
+    <article class="request-card" id="demande-${Number(demande.id)}">
       <div class="request-head">
         <div>
           <h3>${echapperHTML(nomComplet(demande, "client_"))}</h3>
@@ -107,6 +107,7 @@ async function chargerDemandesArtisan() {
     afficherStatsArtisan();
     afficherDemandesArtisan();
     afficherDernieresDemandesArtisan();
+    if(document.body.dataset.workspacePage==='demandes'){const target=Number(new URLSearchParams(location.search).get('demande'));if(Number.isSafeInteger(target)&&target>0)document.getElementById('demande-'+target)?.scrollIntoView({block:'center'});}
   } catch (error) {
     if (cible) cible.innerHTML = etatVide(error.message);
     if (recentes) recentes.innerHTML = etatVide(error.message);

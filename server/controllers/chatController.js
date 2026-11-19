@@ -87,7 +87,9 @@ async function lireChat(req, res) {
     informations: {
         clientNom: acces.demande.client_nom || null,
         artisanNom: acces.demande.artisan_nom || null,
+        artisanId: acces.demande.artisan_id || null,
         serviceNom: acces.demande.service_nom || null,
+        statut: acces.demande.statut,
         dateSouhaitee: acces.demande.date_souhaitee || null,
         adresse: acces.demande.adresse || null,
         clientTelephone: acces.demande.client_telephone || null,
@@ -156,4 +158,33 @@ async function envoyerChat(req, res) {
     }
 }
 
-module.exports = { lireChat, envoyerChat };
+// Accès au catalogue privé (ni recherche globale de personnes, ni contact hors demande).
+async function profilChat(req,res){
+ const role=req.session?.utilisateur?.role,id=req.session?.utilisateur?.id;
+ if(!['client','artisan'].includes(role)||!id){res.status(403).json({message:'Accès refusé.'});return null;}
+ const p=role==='client'?await clientModel.trouverClientParUserId(id):await artisanModel.trouverArtisanParUserId(id);
+ if(!p||(role==='artisan'&&p.verification_statut!=='approuve')){res.status(403).json({message:'Profil non autorisé.'});return null;}
+ return {role,id:p.id};
+}
+async function listerConversations(req,res){
+ try{res.set('Cache-Control','private, no-store');const p=await profilChat(req,res);if(!p)return;
+  const q=req.query.q??'',offset=Number(req.query.offset??0),unread=req.query.unread??'0';
+  if(typeof q!=='string'||q.length>100||!Number.isSafeInteger(offset)||offset<0||offset>100000||!['0','1'].includes(unread))return res.status(400).json({message:'Recherche invalide.'});
+  return res.json(await chatModel.conversations(p.role,p.id,{q:q.trim(),offset,unread:unread==='1'}));
+ }catch(e){console.error('Conversations :',e.code||e.name);return res.status(503).json({message:'Conversations indisponibles.'});}
+}
+async function nonLus(req,res){
+ try{res.set('Cache-Control','private, no-store');const p=await profilChat(req,res);if(!p)return;return res.json({total:await chatModel.compterNonLus(p.role,p.id)});}
+ catch(e){return res.status(503).json({message:'Notifications indisponibles.'});}
+}
+async function confirmerLecture(req,res){
+ try{res.set('Cache-Control','private, no-store');const id=req.body?.throughId;
+  if(typeof id!=='string'||!/^[1-9][0-9]{0,18}$/.test(id)||BigInt(id)>9223372036854775807n)return res.status(400).json({message:'Message invalide.'});
+  const a=await verifierParticipant(req,res);if(!a)return;if(!historiqueAutorise(a.demande))return res.status(403).json({message:'Conversation indisponible.'});
+  // Le curseur doit désigner un message réel de cette conversation, jamais une valeur arbitraire.
+  const messages=await chatModel.listerMessages(a.demandeId);
+  if(!messages.some(m=>String(m.id)===id&&m.auteur_type!==a.role))return res.status(409).json({message:'Actualisez la conversation.'});
+  return res.json({lus:await chatModel.marquerLus(a.demandeId,a.role,a.profilId,id)});
+ }catch(e){return res.status(503).json({message:'Lecture non enregistrée.'});}
+}
+module.exports = { lireChat, envoyerChat,listerConversations,nonLus,confirmerLecture };

@@ -7,10 +7,12 @@
   <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/taskly-request-calendar.css">
+  <link rel="stylesheet" href="/css/taskly-request-wizard.css?v=1">
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/taskly-request-calendar.js"></script>
-  <script defer src="/js/artisans.js"></script>
+  <script defer src="/js/taskly-request-wizard.js?v=1"></script>
+  <script defer src="/js/artisans.js?v=wizard1"></script>
 </head>
 <body data-active="artisans">
   <div id="site-header"></div>
@@ -30,26 +32,56 @@
       </div>
     </section>
   </main>
-  <!-- Modale demande -->
-  <div id="request-modal" class="modal-backdrop">
-    <div class="modal" role="dialog" aria-modal="true">
-      <div class="modal-header">
-        <h2>Envoyer une demande</h2>
-        <button class="modal-close" type="button" data-close-modal="request-modal">×</button>
+  <dialog id="request-modal" class="request-wizard" aria-labelledby="request-title">
+    <header class="rw-header">
+      <img src="/images/logo/taskly-logo.svg" class="rw-logo" alt="Taskly">
+      <div class="rw-heading"><h2 id="request-title">Envoyer une demande à un artisan</h2><p>Décrivez votre besoin, indiquez l’adresse et choisissez une date d’intervention.</p></div>
+      <button class="rw-close" type="button" data-rw-close aria-label="Fermer">×</button>
+    </header>
+    <ol class="rw-steps" aria-label="Progression">
+      <li data-rw-step="0" aria-current="step"><span>1</span> Besoin</li><li data-rw-step="1"><span>2</span> Adresse</li><li data-rw-step="2"><span>3</span> Date &amp; validation</li>
+    </ol>
+    <form id="request-form" class="rw-layout" novalidate>
+      <input type="hidden" id="request-artisan-id">
+      <aside class="rw-artisan">
+        <img id="request-artisan-photo" src="/images/defaults/avatar.png" alt="" class="rw-avatar">
+        <div class="rw-name"><h3 id="request-artisan-name"></h3><span id="rw-new" hidden>Nouveau</span></div><p id="request-artisan-service"></p>
+        <div class="rw-stats"><span id="request-artisan-experience"></span><span id="request-artisan-missions" hidden></span></div>
+        <hr><h4>ⓘ &nbsp;À propos de cet artisan</h4><p id="request-artisan-description"></p>
+        <div class="rw-trust"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v5c0 5-8 9-8 9s-8-4-8-9V7zM9 12l2 2 4-4"/></svg><span>Demande liée à cet artisan</span></div>
+      </aside>
+      <div class="rw-main">
+        <section data-rw-panel="0">
+          <div class="rw-section-title"><span class="rw-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5H5v14h14v-7M15 4l5 5-9 9H7v-4zM13 6l5 5"/></svg></span><div><h3>1. Décrivez votre besoin</h3><p>Expliquez brièvement le type d’intervention, le problème rencontré et tout détail utile pour que l’artisan puisse préparer son intervention.</p></div></div>
+          <label for="request-message">Votre besoin <span class="rw-required">*</span></label>
+          <textarea id="request-message" required maxlength="500" rows="4" placeholder="Ex. : Mon compteur disjoncte régulièrement, je souhaite un diagnostic et une réparation si nécessaire."></textarea><p class="rw-count" id="rw-count">0 / 500</p>
+          <fieldset class="rw-types"><legend>Type d’intervention <span>(optionnel)</span></legend><div>
+            <label><input type="radio" name="rw-type" value="Dépannage"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 2-9 12h7l-1 8 10-12h-7z"/></svg> Dépannage</span></label>
+            <label><input type="radio" name="rw-type" value="Installation"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6a5 5 0 0 0-6 6L3 17a3 3 0 0 0 4 4l5-5a5 5 0 0 0 6-6l-3 3-4-4z"/></svg> Installation</span></label>
+            <label><input type="radio" name="rw-type" value="Réparation"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m9 3 1 3h4l1-3 3 2-1 3 3 2 2 1-1 4-3-1-2 3v3h-4l-1-3-3-1-3 1-2-3 2-2v-4l-2-2 3-3 3 2z"/></svg> Réparation</span></label>
+            <label><input type="radio" name="rw-type" value="Autre"><span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg> Autre</span></label>
+          </div></fieldset>
+          <div class="rw-tip"><span>ⓘ</span><div><strong>Bon à savoir</strong><p>Plus votre demande est précise, plus l’artisan peut vous proposer une intervention adaptée.</p></div></div>
+        </section>
+        <section data-rw-panel="1" hidden>
+          <div class="rw-section-title"><span class="rw-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><div><h3>2. Indiquez l’adresse</h3><p>Précisez le lieu où vous souhaitez faire intervenir cet artisan.</p></div></div>
+          <label for="request-address">Adresse de l’intervention <span class="rw-required">*</span></label>
+          <input id="request-address" required maxlength="255" autocomplete="street-address" placeholder="Numéro, rue, commune, wilaya…">
+          <div class="rw-tip"><span>ⓘ</span><div><strong>Votre confidentialité</strong><p>Votre adresse accompagne cette demande de service. Vérifiez qu’elle est correcte avant de continuer.</p></div></div>
+        </section>
+        <section data-rw-panel="2" hidden>
+          <div class="rw-section-title"><span class="rw-symbol"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg></span><div><h3>3. Date &amp; validation</h3><p>Choisissez une date souhaitée et vérifiez le récapitulatif avant d’envoyer.</p></div></div>
+          <label for="request-date">Date souhaitée <span class="rw-optional">(optionnel)</span></label>
+          <input class="form-control" id="request-date" type="text" readonly inputmode="none" autocomplete="off" placeholder="Choisir une date" aria-haspopup="dialog">
+          <button type="button" class="rw-date-clear" id="rw-date-clear">Retirer la date</button>
+          <dl class="rw-summary"><dt>Votre besoin</dt><dd id="rw-summary-message"></dd><dt>Adresse</dt><dd id="rw-summary-address"></dd><dt>Date souhaitée</dt><dd id="rw-summary-date"></dd></dl>
+        </section>
+        <p id="rw-error" role="alert" hidden></p>
+        <footer class="rw-actions"><button type="button" class="rw-secondary" data-rw-close>Annuler</button><button type="button" class="rw-secondary" id="rw-back" hidden>← Précédent</button><button type="button" class="rw-primary" id="rw-next">Continuer →</button><button type="submit" class="rw-primary" id="rw-submit" hidden>Envoyer la demande</button></footer>
       </div>
-      <form class="modal-body" id="request-form">
-        <input type="hidden" id="request-artisan-id">
-        <p class="muted mb-18">Artisan : <strong id="request-artisan-name"></strong></p>
-        <label class="field-label" for="request-message">Message</label>
-        <textarea class="form-textarea" id="request-message" required placeholder="Décrivez votre besoin"></textarea>
-        <label class="field-label" for="request-address">Adresse</label>
-        <input class="form-control" id="request-address" required placeholder="Adresse de l'intervention">
-        <label class="field-label" for="request-date">Date souhaitée</label>
-        <input class="form-control" id="request-date" type="text" readonly inputmode="none" autocomplete="off" placeholder="Choisir une date" aria-haspopup="dialog">
-        <button class="btn primary block mt-18" type="submit">Envoyer</button>
-      </form>
-    </div>
-  </div>
+    </form>
+    <section class="rw-success" id="rw-success" hidden><div class="rw-success-icon">✓</div><h3>Votre demande a été envoyée !</h3><p>Retrouvez votre demande et suivez son avancement dans votre espace client.</p><a class="rw-primary" href="/espace/client/demandes">Voir mes demandes</a><button type="button" class="rw-secondary" data-rw-close>Fermer</button></section>
+  </dialog>
   <div id="site-footer"></div>
 </body>
 </html>
