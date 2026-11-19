@@ -2,8 +2,8 @@
 -- Aucune modification ou suppression de comptes existants.
 CREATE TABLE IF NOT EXISTS taskly_professional_mailboxes (
  user_id INT NOT NULL PRIMARY KEY,
- address VARCHAR(254) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
- provider_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+ address VARCHAR(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+ provider_id VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
  provisioned_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
  activated_at DATETIME NULL,
  activation_hash CHAR(64) NULL,

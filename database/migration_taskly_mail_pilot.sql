@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS taskly_professional_mail_requests (
  artisan_id INT NOT NULL,
  service_id INT NOT NULL,
  personal_email VARCHAR(255) NOT NULL,
- proposed_address VARCHAR(254) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
+ proposed_address VARCHAR(254) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
  status ENUM('pending_confirmation','pending_admin','cancelled','rejected','approved_pending_provider') NOT NULL DEFAULT 'pending_confirmation',
  code_hash CHAR(64) NULL,
  expires_at DATETIME NULL,
