@@ -5,7 +5,11 @@ const {verifierConnexion,verifierArtisan,verifierAdmin}=require('../middleware/a
 const {limiter}=require('../middleware/securityMiddleware');
 const {domaine,adresse,empreinte,codeValide,peutDemander}=require('../services/professionalMailPolicy');
 const artisan=express.Router(),admin=express.Router();
-const gateway=require('../services/professionalMailGateway').createGateway();
+const {createGateway}=require('../services/professionalMailGateway');
+const internalMode=process.env.TASKLY_MAIL_INTERNAL_ENABLED==='true';
+const {createInternalGateway,internalAddress}=internalMode
+ ? require('../services/professionalMailInternal')
+ : {};
 const colonnes='user_id,artisan_id,service_id,proposed_address,status,requested_at,confirmed_at,decided_at,refusal_reason';
 function erreur(message,status=409){return Object.assign(new Error(message),{status});}
 const actif=(req,res,next)=>process.env.TASKLY_MAIL_PILOT_ENABLED==='true'?next():res.status(404).json({message:'Taskly Mail n’est pas encore disponible.'});
@@ -14,10 +18,15 @@ const sensible=limiter({max:12});
 async function transaction(fn){let conn;try{conn=await db.getConnection();await conn.beginTransaction();const value=await fn(conn);await conn.commit();return value;}catch(e){if(conn)await conn.rollback();throw e;}finally{conn?.release();}}
 async function profil(conn,id){const [rows]=await conn.query(`SELECT u.id,u.nom,u.prenom,u.email,u.role,u.statut_compte,u.email_verified,a.id AS artisan_id,a.service_id,a.verification_statut,s.nom AS service_nom FROM users u JOIN artisans a ON a.user_id=u.id JOIN services s ON s.id=a.service_id WHERE u.id=? FOR UPDATE`,[id]);const p=rows[0];if(!p||p.role!=='artisan'||p.statut_compte!=='actif'||!p.email_verified||p.verification_statut!=='approuve')throw erreur('Profil artisan non autorisé.',403);return p;}
 const correspond=(p,r)=>Number(p.artisan_id)===Number(r.artisan_id)&&Number(p.service_id)===Number(r.service_id)&&p.email===r.personal_email;
+const gateway=internalMode
+ ? createInternalGateway({transaction,profil,correspond})
+ : createGateway();
+
 function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
 artisan.get('/',wrap(async(req,res)=>{const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured});}));
 artisan.post('/request',sensible,wrap(async(req,res)=>{
- const domain=domaine(process.env.TASKLY_MAIL_DOMAIN);if(!domain||!require('../services/emailService').estConfigure())throw erreur('Domaine ou service de confirmation non configuré.',503);
+ if(internalMode&&!gateway.configured)throw erreur('Configuration interne invalide.',503);
+ const domain=domaine(internalMode?'taskly.test':process.env.TASKLY_MAIL_DOMAIN);if(!domain||!require('../services/emailService').estConfigure())throw erreur('Domaine ou service de confirmation non configuré.',503);
  const code=crypto.randomInt(0,1000000).toString().padStart(6,'0'),uid=req.session.utilisateur.id;
  const data=await transaction(async conn=>{
   const p=await profil(conn,uid);
@@ -25,6 +34,7 @@ artisan.post('/request',sensible,wrap(async(req,res)=>{
   peutDemander(old,!old||correspond(p,old));
   let candidate=old?.proposed_address||adresse(p,domain);
   if(!old){const [occupied]=await conn.query('SELECT user_id FROM taskly_professional_mail_requests WHERE proposed_address=?',[candidate]);if(occupied.length)candidate=adresse(p,domain,true);}
+  if(internalMode&&!internalAddress(candidate))throw erreur('Adresse interne invalide.',409);
   const hash=empreinte(process.env.SESSION_SECRET,uid,candidate,code);
   if(old)await conn.query("UPDATE taskly_professional_mail_requests SET status='pending_confirmation',code_hash=?,attempts=0,expires_at=DATE_ADD(NOW(),INTERVAL 10 MINUTE),requested_at=NOW(),confirmed_at=NULL WHERE user_id=?",[hash,uid]);
   else await conn.query(`INSERT INTO taskly_professional_mail_requests (user_id,artisan_id,service_id,personal_email,proposed_address,code_hash,expires_at) VALUES (?,?,?,?,?,?,DATE_ADD(NOW(),INTERVAL 10 MINUTE))`,[uid,p.artisan_id,p.service_id,p.email,candidate,hash]);
