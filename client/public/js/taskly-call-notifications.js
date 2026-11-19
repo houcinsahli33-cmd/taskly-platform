@@ -35,6 +35,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         <p data-call="name"></p>
         <p data-call="type" role="status"></p>
         <div class="tgc-actions">
+            <button type="button" data-call="ring" hidden>
+                Activer la sonnerie
+            </button>
             <button type="button" data-call="reject">
                 Refuser
             </button>
@@ -82,9 +85,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function ring() {
 
-        if (!current || !audio ||
-            audio.state !== 'running' ||
-            ringTimer !== null) return;
+        if (!current) return;
+
+        if (!audio || audio.state !== 'running') {
+            stopRing();
+            get('ring').hidden = false;
+            return;
+        }
+
+        get('ring').hidden = true;
+
+        if (ringTimer !== null) return;
 
         const beep = () => {
 
@@ -147,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (!audio) audio = new Audio();
 
-            if (audio.state === 'suspended') {
+            if (audio.state !== 'running' && audio.state !== 'closed') {
                 await audio.resume();
             }
 
@@ -161,11 +172,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const doc = frame.contentDocument;
 
             doc?.addEventListener('pointerdown', unlock);
+            doc?.addEventListener('click', unlock);
             doc?.addEventListener('keydown', unlock);
         } catch {}
     }
 
     document.addEventListener('pointerdown', unlock);
+    document.addEventListener('click', unlock);
+    get('ring').onclick = unlock;
     document.addEventListener('keydown', unlock);
 
     frame.addEventListener('load', bindFrame);

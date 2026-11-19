@@ -75,6 +75,7 @@
             this.unlockHandler = () => this.unlockRing();
 
             document.addEventListener('pointerdown', this.unlockHandler);
+            document.addEventListener('click', this.unlockHandler);
             document.addEventListener('keydown', this.unlockHandler);
 
             this.get('ring').onclick = () => this.unlockRing();
@@ -83,6 +84,7 @@
 
             window.addEventListener('pagehide', () => {
                 clearInterval(this.timer);
+                document.removeEventListener('click', this.unlockHandler);
                 this.stopRing();
 
                 document.removeEventListener(
@@ -114,7 +116,7 @@
                     this.audioContext = new Audio();
                 }
 
-                if (this.audioContext.state === 'suspended') {
+                if (this.audioContext.state !== 'running' && this.audioContext.state !== 'closed') {
                     await this.audioContext.resume();
                 }
 
@@ -129,7 +131,7 @@
 
             const call = this.active;
 
-            if (!call?.incoming || call.accepted || call.pending) {
+            if (!call || call.accepted || call.pending || (!call.incoming && !call.id)) {
                 return;
             }
 
@@ -152,7 +154,11 @@
                     return;
                 }
 
-                if (ctx.state !== 'running') return;
+                if (ctx.state !== 'running') {
+                    this.stopRing();
+                    this.get('ring').hidden = false;
+                    return;
+                }
 
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
@@ -161,11 +167,11 @@
 
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(
-                    660, ctx.currentTime
+                    call.incoming ? 660 : 440, ctx.currentTime
                 );
 
                 osc.frequency.setValueAtTime(
-                    880, ctx.currentTime + 0.15
+                    call.incoming ? 880 : 480, ctx.currentTime + 0.15
                 );
 
                 gain.gain.setValueAtTime(
@@ -373,10 +379,18 @@
             } catch (error) {
                 if (this.active === call) {
                     this.cleanup(call);
+                    console.warn('Taskly appel sortant', {
+                        name: error.name,
+                        status: error.status || null
+                    });
                     this.notify(error.message || 'Appel impossible.');
                 }
             } finally {
                 call.pending = false;
+
+                if (this.active === call && call.id) {
+                    this.startRing();
+                }
             }
         }
 
@@ -421,6 +435,10 @@
 
             } catch (error) {
                 if (this.active === call) {
+                    console.warn('Taskly appel entrant', {
+                        name: error.name,
+                        status: error.status || null
+                    });
                     await this.finish('end', error.message);
                 }
             } finally {
