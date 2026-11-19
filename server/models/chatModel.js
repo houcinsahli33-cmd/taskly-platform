@@ -94,12 +94,21 @@ async function conversations(role,profilId,{q='',unread=false,offset=0}={}){
   m.contenu AS dernier_message, m.created_at AS dernier_at,
   (SELECT COUNT(*) FROM taskly_chat_messages n WHERE n.demande_id=d.id AND n.auteur_type=? AND n.auteur_profil_id=${a.otherId} AND n.lu_at IS NULL) AS non_lus
   FROM demandes d ${a.join} JOIN artisans ap ON ap.id=d.artisan_id JOIN services s ON s.id=ap.service_id
-  LEFT JOIN taskly_chat_messages m ON m.id=(SELECT x.id FROM taskly_chat_messages x WHERE x.demande_id=d.id ORDER BY x.created_at DESC,x.id DESC LIMIT 1)
+  LEFT JOIN (
+    SELECT x.id, x.demande_id, x.contenu, x.created_at,
+           ROW_NUMBER() OVER (
+               PARTITION BY x.demande_id
+               ORDER BY x.created_at DESC, x.id DESC
+           ) AS rn
+    FROM taskly_chat_messages x
+    JOIN demandes dx ON dx.id=x.demande_id
+    WHERE ${a.owner.replace('d.','dx.')}=?
+) m ON m.demande_id=d.id AND m.rn=1
   WHERE ${a.owner}=? AND ${historiqueSQL}
   AND (?='' OR LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',u.prenom,u.nom,s.nom,d.id,m.contenu)))>0)
   HAVING (?=0 OR non_lus>0)
   ORDER BY COALESCE(m.created_at,d.created_at) DESC,d.id DESC LIMIT 51 OFFSET ?`,
-  [a.other,profilId,q,q,unread?1:0,offset]);
+  [a.other,profilId,profilId,q,q,unread?1:0,offset]);
  return {conversations:rows.slice(0,50).map(r=>({...r,non_lus:Number(r.non_lus)})),next:rows.length>50?offset+50:null};
 }
 async function compterNonLus(role,profilId){
