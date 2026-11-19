@@ -6,6 +6,7 @@ const assert = require('node:assert/strict');
 let redis;
 let operations;
 let demande;
+let participantsActifs;
 
 function fake(path, exports) {
     const id = require.resolve(path);
@@ -22,7 +23,7 @@ fake('../server/config/sessionStore', {
 });
 
 fake('../server/models/chatModel', {
-    trouverDemande: async () => demande
+    trouverDemande: async () => demande, participantsAppelActifs: async () => participantsActifs
 });
 
 fake('../server/models/clientModel', {
@@ -78,6 +79,8 @@ beforeEach(() => {
 
     process.env.TASKLY_CHAT_WORKSPACE_ENABLED = 'true';
     process.env.TASKLY_CHAT_CALLS_ENABLED = 'true';
+    process.env.TASKLY_CHAT_CALLS_GENERAL_ENABLED = 'false';
+    participantsActifs = true;
     process.env.TASKLY_CHAT_CALLS_PILOT_CLIENT_ID = '42';
     process.env.TASKLY_CHAT_CALLS_PILOT_ARTISAN_ID = '43';
     process.env.TASKLY_CHAT_CALLS_PILOT_DEMANDE_ID = '100';
@@ -396,4 +399,57 @@ test('Pilote : configuration incomplete refusee', async () => {
 
     assert.equal(res.statusCode, 404);
     assert.equal(operations.length, 0);
+});
+function activerGeneral() {
+    process.env.TASKLY_CHAT_CALLS_GENERAL_ENABLED = 'true';
+    delete process.env.TASKLY_CHAT_CALLS_PILOT_CLIENT_ID;
+    delete process.env.TASKLY_CHAT_CALLS_PILOT_ARTISAN_ID;
+    delete process.env.TASKLY_CHAT_CALLS_PILOT_DEMANDE_ID;
+}
+
+test('General : fonctionnement sans comptes pilotes', async () => {
+    activerGeneral();
+    const res = response();
+    await controller.gererAppel(request(), res);
+    assert.equal(res.statusCode, 200);
+});
+
+test('General : participant etranger interdit', async () => {
+    activerGeneral();
+    const res = response();
+    await controller.gererAppel(request(99), res);
+    assert.equal(res.statusCode, 404);
+    assert.equal(operations.length, 0);
+});
+
+test('General : demande terminee interdite', async () => {
+    activerGeneral();
+    demande.statut = 'terminee';
+    const res = response();
+    await controller.gererAppel(request(), res);
+    assert.equal(res.statusCode, 403);
+});
+
+test('General : participant non actif interdit', async () => {
+    activerGeneral();
+    participantsActifs = false;
+    const res = response();
+    await controller.gererAppel(request(), res);
+    assert.equal(res.statusCode, 403);
+    assert.equal(operations.length, 0);
+});
+
+test('General : administrateur interdit', async () => {
+    activerGeneral();
+    const res = response();
+    await controller.gererAppel(request(42, 'admin'), res);
+    assert.equal(res.statusCode, 404);
+});
+
+test('General : interrupteur principal prioritaire', async () => {
+    activerGeneral();
+    process.env.TASKLY_CHAT_CALLS_ENABLED = 'false';
+    const res = response();
+    await controller.gererAppel(request(), res);
+    assert.equal(res.statusCode, 404);
 });

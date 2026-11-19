@@ -465,6 +465,17 @@
 
             if (!context) return;
 
+            if (!active) {
+
+                if (document.visibilityState !== 'visible')
+                    return;
+
+                if (Date.now() - (this.lastIdlePoll || 0) < 10000)
+                    return;
+
+                this.lastIdlePoll = Date.now();
+            }
+
             this.polling = true;
 
             try {

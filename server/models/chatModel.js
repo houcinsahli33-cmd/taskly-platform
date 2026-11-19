@@ -124,4 +124,28 @@ async function marquerLus(demandeId,role,profilId,throughId){
  AND m.auteur_type=? AND m.auteur_profil_id=${a.otherId} AND m.id<=CAST(? AS UNSIGNED) AND m.lu_at IS NULL`,[demandeId,profilId,a.other,throughId]);
  return Number(result.affectedRows||0);
 }
-module.exports = { trouverDemande,listerMessages,envoyerMessage,conversations,compterNonLus,marquerLus };
+
+async function participantsAppelActifs(demandeId) {
+
+    const [rows] = await db.promise().query(
+        `SELECT d.id
+         FROM demandes d
+         JOIN clients c ON c.id=d.client_id
+         JOIN artisans a ON a.id=d.artisan_id
+         JOIN users uc ON uc.id=c.user_id
+         JOIN users ua ON ua.id=a.user_id
+         WHERE d.id=?
+         AND d.statut='acceptee'
+         AND a.verification_statut='approuve'
+         AND uc.statut_compte='actif'
+         AND ua.statut_compte='actif'
+         AND uc.email_verified=1
+         AND ua.email_verified=1
+         LIMIT 1`,
+        [demandeId]
+    );
+
+    return rows.length === 1;
+}
+
+module.exports = { participantsAppelActifs, trouverDemande,listerMessages,envoyerMessage,conversations,compterNonLus,marquerLus };

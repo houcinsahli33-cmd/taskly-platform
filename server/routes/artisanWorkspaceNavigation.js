@@ -47,7 +47,7 @@ function preparerCadreArtisan(original,id) {
   '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat-calls1"></script></head>');
  const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=4"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
  const callHead=chatEnabled&&callsPilot.autoriseCompte('artisan',id)
-  ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=1"></script></head>')
+  ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=2"></script></head>')
   :finalHead;
  const shellBody=body.replace(/>$/, ' data-taskly-artisan-shell="1">');
  return '<!doctype html><html lang="fr">'+callHead+shellBody+
@@ -59,7 +59,7 @@ function preparerPageArtisanIntegree(original,id){
  original=menuMail(original,id);
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw new Error('Document artisan invalide.');
  return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/artisan-navigation-embedded.css?v=20261012-navigation-11"></head>')
-  .replace(/<body\b([^>]*)>/i,'<body$1 data-taskly-artisan-embedded="1"'+(chatEnabled?' data-taskly-chat-workspace="1"':'')+(chatEnabled&&callsPilot.autoriseCompte('artisan',id)?' data-taskly-chat-calls="1" data-taskly-chat-call-demande="'+callsPilot.demandeId()+'"':'')+'>');
+  .replace(/<body\b([^>]*)>/i,'<body$1 data-taskly-artisan-embedded="1"'+(chatEnabled?' data-taskly-chat-workspace="1"':'')+(chatEnabled&&callsPilot.autoriseCompte('artisan',id)?' data-taskly-chat-calls="1" data-taskly-chat-call-demande="'+callsPilot.interfaceDemande()+'"':'')+'>');
 }
 function monterNavigationArtisan(app){
  app.get('/espace/artisan/:page',verifierConnexion,async(req,res,next)=>{

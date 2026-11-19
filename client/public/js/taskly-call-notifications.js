@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    const timer = setInterval(refresh, 6000);
+    const timer = setInterval(refresh, 15000);
 
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') {

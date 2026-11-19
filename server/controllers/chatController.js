@@ -229,7 +229,16 @@ async function gererAppel(req, res) {
             });
         }
 
-        if (action === 'start') {
+        if (callsPilot.modeGeneral() &&
+            !(await chatModel.participantsAppelActifs(
+                acces.demandeId
+            ))) {
+            return res.status(403).json({
+                message: 'Participants non autorises.'
+            });
+        }
+
+        if (action === 'start' && !callsPilot.modeGeneral()) {
 
             const [client, artisan] = await Promise.all([
                 clientModel.trouverClientParUserId(
@@ -344,6 +353,11 @@ async function appelsEntrants(req, res) {
                 Number(demande.artisan_id) !== call.artisanId) {
                 continue;
             }
+
+            if (callsPilot.modeGeneral() &&
+                !(await chatModel.participantsAppelActifs(
+                    call.demandeId
+                ))) continue;
 
             appels.push({
                 id: call.id,
