@@ -1,0 +1,22 @@
+'use strict';
+// Gestion des demandes, et accès à la boîte seulement si la passerelle est configurée.
+document.addEventListener('DOMContentLoaded',async()=>{
+ await attendreSession();
+ const root=document.getElementById('mail-pilot-content'),status=document.getElementById('mail-pilot-status');
+ if(!root||!status||!window.utilisateurCourant)return;
+ const admin=window.utilisateurCourant.role==='admin',base=admin?'/api/admin/taskly-mail':'/api/taskly-mail';
+ const labels={pending_confirmation:'Confirmation personnelle requise',pending_admin:'En attente de validation administrative',cancelled:'Annulée',rejected:'Refusée',approved_pending_provider:'Approuvée — état de la boîte à vérifier'};
+ let busy=false,after=0;
+ function text(tag,value){const e=document.createElement(tag);e.textContent=value;return e;}
+ function button(label,fn,cls='primary'){const e=text('button',label);e.type='button';e.className='btn '+cls;e.addEventListener('click',fn);return e;}
+ function message(value){status.textContent=value;}
+ async function action(url,payload){if(busy)return;busy=true;root.querySelectorAll('button').forEach(e=>e.disabled=true);try{const r=await requeteAPI(url,{method:'POST',body:JSON.stringify(payload)});await load();message(r.message);}catch(e){message(e.message);}finally{busy=false;root.querySelectorAll('button').forEach(e=>e.disabled=false);}}
+ async function artisanPage(d,gatewayConfigured){root.replaceChildren();if(!d){root.append(text('p','Une adresse sera proposée selon votre identité et votre métier.'),button('Demander mon adresse Taskly Mail',()=>action(base+'/request',{})));return;}
+  root.append(text('h2',d.proposed_address),text('p',labels[d.status]||d.status));if(d.refusal_reason)root.append(text('p','Motif : '+d.refusal_reason));
+  if(d.status==='approved_pending_provider'&&gatewayConfigured&&typeof window.afficherTasklyMailbox==='function'){await window.afficherTasklyMailbox(root,status);return;}
+  if(d.status==='cancelled'){root.append(button('Déposer une nouvelle demande',()=>action(base+'/request',{})));return;}
+  if(d.status==='pending_confirmation'){const code=document.createElement('input');code.className='form-control';code.inputMode='numeric';code.maxLength=6;code.autocomplete='one-time-code';code.setAttribute('aria-label','Code reçu par e-mail');code.placeholder='Code à six chiffres';root.append(code,button('Confirmer la demande',()=>action(base+'/confirm',{code:code.value.trim(),decision:'confirm'})),button('Annuler la demande',()=>action(base+'/confirm',{code:code.value.trim(),decision:'cancel'}),'danger'),button('Renvoyer le code',()=>action(base+'/request',{}),'outline'));}}
+ function adminPage(data){root.replaceChildren();if(!data.demandes.length)root.append(text('p','Aucune demande sur cette page.'));for(const d of data.demandes){const card=document.createElement('section');card.className='panel mt-22';const body=document.createElement('div');body.className='panel-body';card.append(body);body.append(text('h2',d.proposed_address),text('p','Profil artisan : '+d.artisan_id+' · '+(labels[d.status]||d.status)));if(d.refusal_reason)body.append(text('p','Motif : '+d.refusal_reason));if(d.status==='approved_pending_provider'&&data.gatewayConfigured){const mailboxLabels={waiting_provider:'Création en attente',activation_required:'Boîte créée — activation personnelle requise',active:'Accès activé'};body.append(text('p',mailboxLabels[d.mailbox_state]||'État inconnu'));if(d.mailbox_state==='waiting_provider')body.append(button('Provisionner la boîte',()=>action(base+'/'+d.user_id+'/provision',{})));}if(d.status==='pending_admin'){const motif=document.createElement('textarea');motif.className='form-control';motif.maxLength=500;motif.placeholder='Motif du refus';motif.setAttribute('aria-label','Motif du refus');body.append(motif,button('Approuver',()=>action(base+'/'+d.user_id+'/decision',{decision:'approve'})),button('Refuser',()=>action(base+'/'+d.user_id+'/decision',{decision:'reject',motif:motif.value}),'danger'));}root.append(card);}if(after!==0)root.append(button('Première page',()=>{after=0;load();},'outline'));if(data.next)root.append(button('Page suivante',()=>{after=data.next;load();},'outline'));}
+ async function load(){try{const data=await requeteAPI(base+(admin?'?after='+after:''));message('Demandes professionnelles — phase pilote.');if(admin)adminPage(data);else await artisanPage(data.demande,data.gatewayConfigured);}catch(e){message(e.message);}}
+ await load();
+});

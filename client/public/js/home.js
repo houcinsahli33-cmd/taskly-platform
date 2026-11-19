@@ -36,7 +36,7 @@ async function chargerServicesAccueil() {
 
     piste.innerHTML = services.map((service) => `
       <article class="card service-card">
-        <img class="service-image" src="${echapperHTML(imageService(service))}" alt="${echapperHTML(service.nom)}" data-service-image="${echapperHTML(service.nom)}">
+        <img class="service-image" loading="lazy" decoding="async" src="${echapperHTML(imageService(service))}" alt="${echapperHTML(service.nom)}" data-service-image="${echapperHTML(service.nom)}">
         <div class="card-body">
           <div>
             <h3>${echapperHTML(service.nom)}</h3>
@@ -100,6 +100,7 @@ function initialiserRechercheAccueil() {
   if (!form || !input) return;
 
   input.addEventListener("input", () => {
+    serviceChoisiAccueil = null;
     afficherSuggestionsAccueil(input.value);
   });
 
@@ -108,6 +109,7 @@ function initialiserRechercheAccueil() {
     if (!bouton) return;
 
     serviceChoisiAccueil = servicesAccueil.find((service) => String(service.id) === String(bouton.dataset.suggestionService));
+    if (!serviceChoisiAccueil) return;
     input.value = serviceChoisiAccueil.nom;
     suggestions.classList.remove("show");
   });
@@ -116,7 +118,7 @@ function initialiserRechercheAccueil() {
     event.preventDefault();
 
     const recherche = input.value.trim();
-    const service = serviceChoisiAccueil || servicesAccueil.find((item) => normaliserTexte(item.nom) === normaliserTexte(recherche));
+    const service = (serviceChoisiAccueil && normaliserTexte(serviceChoisiAccueil.nom) === normaliserTexte(recherche) ? serviceChoisiAccueil : null) || servicesAccueil.find((item) => normaliserTexte(item.nom) === normaliserTexte(recherche));
 
     if (service) {
       window.location.href = `/service.html?id=${service.id}`;

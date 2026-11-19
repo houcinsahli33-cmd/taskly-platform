@@ -110,10 +110,10 @@ router.get('/documents/:id',async(req,res)=>{
     const doc=rows[0];if(!doc)return sansCache(res).status(404).end();
     if(!/^[a-f0-9]{64}$/.test(doc.stored_name))return sansCache(res).status(400).end();
     const stored=await require('../services/fileStorage').lire(doc.stored_name,true);
-    sansCache(res).set('Content-Type',doc.media_type);
+    const visualisable=['application/pdf','image/png','image/jpeg'].includes(doc.media_type);
+    sansCache(res).set('Content-Type',visualisable?doc.media_type:'application/octet-stream');
     res.set('X-Content-Type-Options','nosniff');
     // Seuls les PDF et images sûres sont présentés dans le navigateur. Jamais de SVG/HTML.
-    const visualisable=['application/pdf','image/png','image/jpeg'].includes(doc.media_type);
     const afficher=req.query?.afficher==='1' && visualisable;
     if(afficher)res.set('Content-Security-Policy',"sandbox; default-src 'none'; style-src 'unsafe-inline'");
     res.set('Content-Disposition',`${afficher?'inline':'attachment'}; filename="justificatif-${id}"`);

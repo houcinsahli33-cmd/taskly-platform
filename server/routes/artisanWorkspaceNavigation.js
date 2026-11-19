@@ -3,20 +3,27 @@ const path=require('node:path');
 const fs=require('node:fs/promises');
 const {verifierConnexion}=require('../middleware/authMiddleware');
 const pages=new Set(['accueil','demandes','avis','profil','support']);
+if(process.env.TASKLY_MAIL_PILOT_ENABLED==='true')pages.add('taskly-mail');
 const dossier=path.join(__dirname,'../../client/private/artisan');
+function menuMail(original) {
+ if(process.env.TASKLY_MAIL_PILOT_ENABLED!=='true')return original;
+ return original.replace(/<a href="\/espace\/artisan\/support"/, '<a href="/espace/artisan/taskly-mail" data-dashboard-link="taskly-mail"><svg class="artisan-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>Taskly Mail</a><a href="/espace/artisan/support"').replace('Taskly Mail — prochainement.', '<a href="/espace/artisan/taskly-mail">Taskly Mail — demande d’adresse</a>');
+}
 function preparerCadreArtisan(original) {
+ original=menuMail(original);
  const head=original.match(/<head\b[^>]*>[\s\S]*?<\/head>/i)?.[0];
  const body=original.match(/<body\b[^>]*>/i)?.[0];
  const aside=original.match(/<aside\b[^>]*class="[^"]*sidebar[^"]*"[^>]*>[\s\S]*?<\/aside>/i)?.[0];
  if(!head||!body||!aside)throw new Error('Document artisan non reconnu.');
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<\/head>/i,
-  '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261012-navigation-11"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js"></script></head>');
+  '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=20261119-audit3"></script></head>');
  const shellBody=body.replace(/>$/, ' data-taskly-artisan-shell="1">');
  return '<!doctype html><html lang="fr">'+shellHead+shellBody+
   '<div id="site-header"></div><main class="dashboard-shell">'+aside+
   '<section class="artisan-frame-container" aria-label="Rubrique artisan"><iframe id="taskly-artisan-content-frame" title="Contenu de l’espace artisan"></iframe></section></main></body></html>';
 }
 function preparerPageArtisanIntegree(original){
+ original=menuMail(original);
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw new Error('Document artisan invalide.');
  return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/artisan-navigation-embedded.css?v=20261012-navigation-11"></head>')
   .replace(/<body\b([^>]*)>/i,'<body$1 data-taskly-artisan-embedded="1">');

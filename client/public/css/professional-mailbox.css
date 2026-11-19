@@ -1,0 +1,7 @@
+.taskly-mailbox { display:grid; gap:1rem; margin-top:1rem; min-width:0; }
+.taskly-mailbox-nav { display:flex; flex-wrap:wrap; gap:.5rem; }
+.taskly-mailbox-content { display:grid; gap:.75rem; min-width:0; }
+.taskly-mailbox label { display:grid; gap:.35rem; min-width:0; }
+.taskly-mailbox .form-control { width:100%; box-sizing:border-box; }
+.taskly-mailbox .taskly-mail-row { display:block; text-align:left; white-space:normal; overflow-wrap:anywhere; }
+.taskly-mail-body { white-space:pre-wrap; overflow-wrap:anywhere; font:inherit; max-width:100%; margin:0; }

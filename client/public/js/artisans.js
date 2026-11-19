@@ -4,7 +4,7 @@ function carteArtisan(artisan) {
     <article class="card artisan-card">
       <div class="card-body">
         <div class="artisan-top">
-          <img class="avatar large" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.src='${DEFAULT_AVATAR}'">
+          <img class="avatar large" loading="lazy" decoding="async" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
           <div>
             <h3>${echapperHTML(nomComplet(artisan))}</h3>
             <p class="muted">${echapperHTML(artisan.service_nom || "Service")} · ${echapperHTML(artisan.ville || "Commune non précisée")}</p>
@@ -288,7 +288,7 @@ async function chargerProfilArtisan() {
 
     cible.innerHTML = `
       <div class="profile-hero">
-        <img class="avatar large" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.src='${DEFAULT_AVATAR}'">
+        <img class="avatar large" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
         <div>
           <p class="eyebrow">Profil artisan</p>
           <h1>${echapperHTML(nomComplet(artisan))}</h1>

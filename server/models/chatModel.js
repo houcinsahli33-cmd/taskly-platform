@@ -16,7 +16,9 @@ async function trouverDemande(demandeId) {
             NULLIF(TRIM(CONCAT_WS(' ', uc.prenom, uc.nom)), '') AS client_nom,
             NULLIF(TRIM(CONCAT_WS(' ', ua.prenom, ua.nom)), '') AS artisan_nom,
             c.telephone AS client_telephone,
-            a.telephone AS artisan_telephone,
+            CASE WHEN a.afficher_telephone = 1 AND a.verification_statut = 'approuve'
+                  AND ua.statut_compte = 'actif' AND ua.email_verified = 1
+                 THEN a.telephone ELSE NULL END AS artisan_telephone,
             s.nom AS service_nom
          FROM demandes d
          LEFT JOIN clients c ON c.id = d.client_id

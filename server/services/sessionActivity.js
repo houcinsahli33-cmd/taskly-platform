@@ -1,4 +1,5 @@
 'use strict';
+const {mesurer}=require('../helpers/performanceTiming');
 function pagePriveeHTML(req) {
   // Express peut considérer Accept: */* comme HTML ; ce n'est pas une navigation.
   if (req.method !== 'GET') return false;
@@ -9,7 +10,7 @@ function pagePriveeHTML(req) {
   if (req.tasklyAdminContext)
     return !!portail && (chemin === portail + '/dashboard' || chemin.startsWith(portail + '/dashboard/'));
   return /^\/(?:client|artisan)-dashboard\.html$/.test(chemin) ||
-    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support)$/.test(chemin);
+    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support|taskly-mail)$/.test(chemin);
 }
 
 // L'inactivite expire sur le serveur, meme si un onglet effectue des requetes passives.
@@ -39,7 +40,9 @@ function verifierInactivite(req, res, next) {
 function confirmerActivite(req, res) {
   if (!req.session?.utilisateur) return res.status(401).json({message:'Connexion requise.'});
   req.session.lastUserActivityAt = Date.now();
+  const debut=process.hrtime.bigint();
   req.session.save(err => {
+    mesurer(res,'session_save',debut);
     if (err) return res.status(503).json({message:'Session indisponible.'});
     require('./sessionExpiryNotifier').enregistrerActivite(req.sessionID,req.session.utilisateur,
       req.session.lastUserActivityAt,req.tasklyAdminContext,true).catch(()=>{});

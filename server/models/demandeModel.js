@@ -63,7 +63,9 @@ async function listerDemandesClient(clientId) {
             users.photo_profil AS artisan_photo_profil,
 
             artisans.ville AS artisan_ville,
-            artisans.telephone AS artisan_telephone,
+            CASE WHEN artisans.afficher_telephone = 1 AND artisans.verification_statut = 'approuve'
+                 AND users.statut_compte = 'actif' AND users.email_verified = 1
+                 THEN artisans.telephone ELSE NULL END AS artisan_telephone,
             artisans.experience AS artisan_experience,
 
             services.nom AS service_nom,

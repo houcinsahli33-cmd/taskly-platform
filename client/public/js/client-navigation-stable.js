@@ -17,14 +17,52 @@
  function navigate(input,mode='push'){
   const url=validated(input);if(!url)return false;
   const target=clean(url);
+  // Ne pas recréer une rubrique déjà chargée : conserver son formulaire et ses données.
+  if(target===selected && mode==='push') {
+   try{if(iframe.contentWindow.location.href===embedded(url) && iframe.contentDocument?.readyState==='complete' && iframe.contentDocument.querySelector('.dashboard-shell > .dashboard-content')){navActive(url);return true;}}catch{/* Recharger si le document n'est pas accessible. */}
+  }
   if(target!==selected){if(mode==='push')history.pushState(null,'',target);else if(mode==='replace')history.replaceState(null,'',target);}
-  selected=target;navActive(url);iframe.classList.remove('client-modal-visible');iframe.src=embedded(url);return true;
+  selected=target;navActive(url);observer?.disconnect();observer=null;modal(null);iframe.src=embedded(url);return true;
  }
  function canClick(e,a){return !e.defaultPrevented&&e.button===0&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey&&!e.altKey&&!a.hasAttribute('download')&&(!a.target||a.target==='_self');}
  document.querySelector('.sidebar')?.addEventListener('click',e=>{const a=e.target.closest('a[data-dashboard-link]');if(!a||!canClick(e,a)||!validated(a.href))return;e.preventDefault();navigate(a.href);});
- function modal(doc){const open=!!doc.querySelector('dialog[open],.modal-backdrop.show');iframe.classList.toggle('client-modal-visible',open);}
+// Garder les dimensions originales de l'interface
+const elementsVerrouilles = new Set();
+
+function modal(doc) {
+    const open = !!doc?.querySelector(
+        'dialog[open],.modal-backdrop.show,.modal.show'
+    );
+
+    iframe.classList.remove('client-modal-visible');
+
+    if (open) {
+        let element = iframe;
+
+        while (element && element !== document.body) {
+            const parent = element.parentElement;
+            if (!parent) break;
+
+            for (const voisin of parent.children) {
+                if (voisin !== element && !voisin.inert) {
+                    voisin.inert = true;
+                    elementsVerrouilles.add(voisin);
+                }
+            }
+
+            element = parent;
+        }
+    } else {
+        elementsVerrouilles.forEach(el => {
+            el.inert = false;
+        });
+
+        elementsVerrouilles.clear();
+    }
+}
+
  iframe.addEventListener('load',()=>{
-  observer?.disconnect();observer=null;
+  observer?.disconnect();observer=null;modal(null);
   let doc,url;try{doc=iframe.contentDocument;url=new URL(iframe.contentWindow.location.href);}catch{return location.assign(selected);}
   if(url.protocol==='about:')return;
   if(!doc||url.origin!==location.origin)return location.assign(selected);

@@ -18,7 +18,7 @@ function statsService(service) {
 function carteService(service) {
   return `
     <article class="card service-card">
-      <img class="service-image" src="${echapperHTML(imageService(service))}" alt="${echapperHTML(service.nom)}" data-service-image="${echapperHTML(service.nom)}">
+      <img class="service-image" loading="lazy" decoding="async" src="${echapperHTML(imageService(service))}" alt="${echapperHTML(service.nom)}" data-service-image="${echapperHTML(service.nom)}">
       <div class="card-body">
         <div>
           <h3>${echapperHTML(service.nom)}</h3>

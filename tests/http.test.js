@@ -23,6 +23,13 @@ test('HTTP : CSRF, pages privées, médias et inscription sans pièce',async()=>
   assert.equal((await request('/artisan-dashboard.html')).status,401);
   assert.equal((await request('/api/media/'+'a'.repeat(64))).status,404);
   assert.equal((await request('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,403);
+  // Regression V5 : Express accepte les chemins API sans distinction de casse.
+  for(const url of ['/API/auth/register','/Api/Auth/Logout/']){
+    const result=await request(url,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    assert.equal(result.status,403);assert.match(result.headers.get('cache-control'),/no-store/);
+  }
+  const malformed=await request('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:'{'});
+  assert.equal(malformed.status,400);assert.match(malformed.headers.get('cache-control'),/no-store/);
   const csrf=await request('/api/auth/csrf');const cookie=csrf.headers.get('set-cookie').split(';')[0];const {csrfToken}=await csrf.json();
   process.env.SMTP_HOST='test';process.env.SMTP_USER='test';process.env.SMTP_PASS='test';process.env.MAIL_FROM='test@example.com';
   const result=await request('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json',Cookie:cookie,'X-CSRF-Token':csrfToken},body:JSON.stringify({role:'artisan',nom:'Test',prenom:'Test',email:'test@gmail.com',motDePasse:'LongPassword1!',telephone:'0551234567',serviceId:1,ville:'Alger',experience:1})});

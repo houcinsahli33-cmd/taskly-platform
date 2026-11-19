@@ -60,7 +60,7 @@ function limiter({
             }
 
             const ip = req.ip ||
-                req.socket.remoteAddress ||
+                req.socket?.remoteAddress ||
                 'unknown';
 
             const route = req.route.path;
@@ -101,6 +101,10 @@ function limiter({
 
                 const count = Number(resultat[0]);
                 const ttl = Number(resultat[1]);
+
+                if (!Number.isSafeInteger(count) || count < 1 || !Number.isFinite(ttl) || ttl < 0) {
+                    throw new Error('Compteur Redis invalide');
+                }
 
                 if (count > max) {
 

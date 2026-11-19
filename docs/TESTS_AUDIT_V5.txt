@@ -1,0 +1,2019 @@
+
+> taskly-platform@1.1.0 check
+> node scripts/check-syntax.js
+
+Syntaxe JS : 187 fichiers verifies, 0 erreur(s).
+
+> taskly-platform@1.1.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: autorisation complète artisan en_attente
+ok 1 - autorisation complète artisan en_attente
+  ---
+  duration_ms: 1.16822
+  type: 'test'
+  ...
+# Subtest: autorisation complète artisan refuse
+ok 2 - autorisation complète artisan refuse
+  ---
+  duration_ms: 0.144508
+  type: 'test'
+  ...
+# Subtest: autorisation complète artisan a_completer
+ok 3 - autorisation complète artisan a_completer
+  ---
+  duration_ms: 0.071647
+  type: 'test'
+  ...
+# Subtest: autorisation complète artisan approuve
+ok 4 - autorisation complète artisan approuve
+  ---
+  duration_ms: 0.06609
+  type: 'test'
+  ...
+# Subtest: client sans validation artisan
+ok 5 - client sans validation artisan
+  ---
+  duration_ms: 0.138499
+  type: 'test'
+  ...
+# Subtest: artisan bloqué même avec dossier approuvé
+ok 6 - artisan bloqué même avec dossier approuvé
+  ---
+  duration_ms: 0.250968
+  type: 'test'
+  ...
+# Subtest: code e-mail : session limitée ou complète en_attente
+ok 7 - code e-mail : session limitée ou complète en_attente
+  ---
+  duration_ms: 2.261548
+  type: 'test'
+  ...
+# Subtest: code e-mail : session limitée ou complète a_completer
+ok 8 - code e-mail : session limitée ou complète a_completer
+  ---
+  duration_ms: 0.782749
+  type: 'test'
+  ...
+# Subtest: code e-mail : session limitée ou complète refuse
+ok 9 - code e-mail : session limitée ou complète refuse
+  ---
+  duration_ms: 0.991714
+  type: 'test'
+  ...
+# Subtest: code e-mail : session limitée ou complète approuve
+ok 10 - code e-mail : session limitée ou complète approuve
+  ---
+  duration_ms: 1.356053
+  type: 'test'
+  ...
+# Subtest: suppression exclut admin avant toute écriture
+ok 11 - suppression exclut admin avant toute écriture
+  ---
+  duration_ms: 2.197531
+  type: 'test'
+  ...
+# Subtest: suppression requiert mot de passe et retire pièces privées
+ok 12 - suppression requiert mot de passe et retire pièces privées
+  ---
+  duration_ms: 2.638595
+  type: 'test'
+  ...
+# node:internal/modules/cjs/loader:1404
+#   throw err;
+#   ^
+# Error: Cannot find module 'express'
+# Require stack:
+# - /mnt/data/taskly-v5-work/taskly-platform-main/tests/account-profile.test.js
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+#     at Function._load (node:internal/modules/cjs/loader:1211:37)
+#     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+#     at Module.require (node:internal/modules/cjs/loader:1487:12)
+#     at require (node:internal/modules/helpers:135:16)
+#     at Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/tests/account-profile.test.js:1:150)
+#     at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/tests/account-profile.test.js'
+#   ]
+# }
+# Node.js v22.16.0
+# Subtest: tests/account-profile.test.js
+not ok 2 - tests/account-profile.test.js
+  ---
+  duration_ms: 40.423164
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/account-profile.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/cjs/loader:1404
+#   throw err;
+#   ^
+# Error: Cannot find module 'bcrypt'
+# Require stack:
+# - /mnt/data/taskly-v5-work/taskly-platform-main/server/services/accountSpaces.js
+# - /mnt/data/taskly-v5-work/taskly-platform-main/tests/account-spaces.test.js
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+#     at Function._load (node:internal/modules/cjs/loader:1211:37)
+#     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+#     at Module.require (node:internal/modules/cjs/loader:1487:12)
+#     at require (node:internal/modules/helpers:135:16)
+#     at Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/server/services/accountSpaces.js:2:14)
+#     at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/server/services/accountSpaces.js',
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/tests/account-spaces.test.js'
+#   ]
+# }
+# Node.js v22.16.0
+# Subtest: tests/account-spaces.test.js
+not ok 3 - tests/account-spaces.test.js
+  ---
+  duration_ms: 40.491126
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/account-spaces.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# node:internal/modules/cjs/loader:1404
+#   throw err;
+#   ^
+# Error: Cannot find module 'express'
+# Require stack:
+# - /mnt/data/taskly-v5-work/taskly-platform-main/tests/admin-decision.test.js
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+#     at Function._load (node:internal/modules/cjs/loader:1211:37)
+#     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+#     at Module.require (node:internal/modules/cjs/loader:1487:12)
+#     at require (node:internal/modules/helpers:135:16)
+#     at Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/tests/admin-decision.test.js:1:150)
+#     at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/tests/admin-decision.test.js'
+#   ]
+# }
+# Node.js v22.16.0
+# Subtest: tests/admin-decision.test.js
+not ok 4 - tests/admin-decision.test.js
+  ---
+  duration_ms: 41.928982
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/admin-decision.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: Examiner ouvre immédiatement une vraie fenêtre avant la réponse du serveur
+ok 16 - Examiner ouvre immédiatement une vraie fenêtre avant la réponse du serveur
+  ---
+  duration_ms: 7.630807
+  type: 'test'
+  ...
+# Subtest: les pages privées sont dans client/private et absentes du public
+ok 17 - les pages privées sont dans client/private et absentes du public
+  ---
+  duration_ms: 0.442727
+  type: 'test'
+  ...
+# Subtest: Les neuf rubriques et les espaces utilisateur gardent les mêmes routes
+ok 18 - Les neuf rubriques et les espaces utilisateur gardent les mêmes routes
+  ---
+  duration_ms: 1.41392
+  type: 'test'
+  ...
+# Subtest: Le menu original est repris sans changer un seul de ses éléments
+ok 19 - Le menu original est repris sans changer un seul de ses éléments
+  ---
+  duration_ms: 2.906409
+  type: 'test'
+  ...
+# Subtest: La page complète originale est rendue dans un cadre de taille identique
+ok 20 - La page complète originale est rendue dans un cadre de taille identique
+  ---
+  duration_ms: 0.195935
+  type: 'test'
+  ...
+# Subtest: Les véritables scripts métier, fenêtres et CSS des pages ne sont pas remplacés
+ok 21 - Les véritables scripts métier, fenêtres et CSS des pages ne sont pas remplacés
+  ---
+  duration_ms: 1.61952
+  type: 'test'
+  ...
+# Subtest: Chaque rubrique reste contrôlée par la session et les autorisations principales
+ok 22 - Chaque rubrique reste contrôlée par la session et les autorisations principales
+  ---
+  duration_ms: 0.253262
+  type: 'test'
+  ...
+# Subtest: Le menu ne se recrée pas et la navigation gère retour et avance
+ok 23 - Le menu ne se recrée pas et la navigation gère retour et avance
+  ---
+  duration_ms: 0.2322
+  type: 'test'
+  ...
+# Subtest: Les modales ouvertes retrouvent la fenêtre entière, les fermées ne changent rien
+ok 24 - Les modales ouvertes retrouvent la fenêtre entière, les fermées ne changent rien
+  ---
+  duration_ms: 0.259911
+  type: 'test'
+  ...
+# Subtest: Un lien externe, non administrateur ou une action modificatrice ne déclenche pas la navigation interne
+ok 25 - Un lien externe, non administrateur ou une action modificatrice ne déclenche pas la navigation interne
+  ---
+  duration_ms: 0.30542
+  type: 'test'
+  ...
+# Subtest: Clic réel simulé : même menu, scroll conservé, seul le cadre change
+ok 26 - Clic réel simulé : même menu, scroll conservé, seul le cadre change
+  ---
+  duration_ms: 3.0463
+  type: 'test'
+  ...
+# Subtest: Document embarqué : copie de menu invisible, géométrie intacte et pages inchangées
+ok 27 - Document embarqué : copie de menu invisible, géométrie intacte et pages inchangées
+  ---
+  duration_ms: 1.171284
+  type: 'test'
+  ...
+# Subtest: Accès Paramètres du site conservé dans le vrai menu et gestion des droits existante
+ok 28 - Accès Paramètres du site conservé dans le vrai menu et gestion des droits existante
+  ---
+  duration_ms: 0.929901
+  type: 'test'
+  ...
+# Subtest: Vue ensemble : sept jours complets, dates vides à zéro et rôles séparés
+ok 29 - Vue ensemble : sept jours complets, dates vides à zéro et rôles séparés
+  ---
+  duration_ms: 2.859439
+  type: 'test'
+  ...
+# Subtest: Vue ensemble : trente jours consécutifs, y compris changement de mois
+ok 30 - Vue ensemble : trente jours consécutifs, y compris changement de mois
+  ---
+  duration_ms: 0.755208
+  type: 'test'
+  ...
+# Subtest: Vue ensemble : douze mois sur une année glissante
+ok 31 - Vue ensemble : douze mois sur une année glissante
+  ---
+  duration_ms: 1.825661
+  type: 'test'
+  ...
+# Subtest: Vue ensemble : aucune période arbitraire injectable en SQL
+ok 32 - Vue ensemble : aucune période arbitraire injectable en SQL
+  ---
+  duration_ms: 1.159918
+  type: 'test'
+  ...
+# Subtest: Vue ensemble : API valide la période et garde la panne de vérification isolée
+ok 33 - Vue ensemble : API valide la période et garde la panne de vérification isolée
+  ---
+  duration_ms: 1.157634
+  type: 'test'
+  ...
+# Subtest: Vue ensemble : barre latérale identique à Utilisateurs, API protégée
+ok 34 - Vue ensemble : barre latérale identique à Utilisateurs, API protégée
+  ---
+  duration_ms: 0.379762
+  type: 'test'
+  ...
+# Subtest: administration : plus de 200 artisans accessibles et filtres paramétrés
+ok 35 - administration : plus de 200 artisans accessibles et filtres paramétrés
+  ---
+  duration_ms: 2.683463
+  type: 'test'
+  ...
+# Subtest: dossier admin : justificatifs, support, notifications et historique
+ok 36 - dossier admin : justificatifs, support, notifications et historique
+  ---
+  duration_ms: 1.058104
+  type: 'test'
+  ...
+# Subtest: filtre des dossiers par statut et recherche via API sans altérer le tableau
+ok 37 - filtre des dossiers par statut et recherche via API sans altérer le tableau
+  ---
+  duration_ms: 5.157411
+  type: 'test'
+  ...
+# Subtest: échappe les champs de dossier, les motifs et les noms des admins
+ok 38 - échappe les champs de dossier, les motifs et les noms des admins
+  ---
+  duration_ms: 2.680949
+  type: 'test'
+  ...
+# Subtest: API admin : les pièces, le support et les décisions sont liés au bon dossier
+ok 39 - API admin : les pièces, le support et les décisions sont liés au bon dossier
+  ---
+  duration_ms: 2.125021
+  type: 'test'
+  ...
+# Subtest: Services : barre latérale identique à Signalements et seul onglet Services actif
+ok 40 - Services : barre latérale identique à Signalements et seul onglet Services actif
+  ---
+  duration_ms: 1.150283
+  type: 'test'
+  ...
+# Subtest: Services : affichage de données réelles, filtres et formulaires accessibles
+ok 41 - Services : affichage de données réelles, filtres et formulaires accessibles
+  ---
+  duration_ms: 0.317999
+  type: 'test'
+  ...
+# Subtest: Services : recherche accentuée et tri réels par nom, artisans et demandes
+ok 42 - Services : recherche accentuée et tri réels par nom, artisans et demandes
+  ---
+  duration_ms: 9.466863
+  type: 'test'
+  ...
+# Subtest: Services : protection des photos, chemins et taille
+ok 43 - Services : protection des photos, chemins et taille
+  ---
+  duration_ms: 0.738673
+  type: 'test'
+  ...
+# Subtest: Services : réutilise les API admin protégées et refuse la suppression liée à un artisan
+ok 44 - Services : réutilise les API admin protégées et refuse la suppression liée à un artisan
+  ---
+  duration_ms: 0.28528
+  type: 'test'
+  ...
+# Subtest: Signalement : Voir les détails charge la demande liée et son annulation
+ok 45 - Signalement : Voir les détails charge la demande liée et son annulation
+  ---
+  duration_ms: 3.516128
+  type: 'test'
+  ...
+# Subtest: Signalement : les deux sens client/artisan sont valides
+ok 46 - Signalement : les deux sens client/artisan sont valides
+  ---
+  duration_ms: 1.721153
+  type: 'test'
+  ...
+# Subtest: Signalement : une personne hors demande ne doit pas être confirmée
+ok 47 - Signalement : une personne hors demande ne doit pas être confirmée
+  ---
+  duration_ms: 4.734313
+  type: 'test'
+  ...
+# Subtest: Signalements : Voir les détails expose les vrais statuts, motif et historique de dates
+ok 48 - Signalements : Voir les détails expose les vrais statuts, motif et historique de dates
+  ---
+  duration_ms: 0.739975
+  type: 'test'
+  ...
+# Subtest: Signalements : page indépendante, même barre latérale, route protégée
+ok 49 - Signalements : page indépendante, même barre latérale, route protégée
+  ---
+  duration_ms: 1.220849
+  type: 'test'
+  ...
+# Subtest: Signalements : Examiner charge la vraie demande et propose de vérifier une annulation
+ok 50 - Signalements : Examiner charge la vraie demande et propose de vérifier une annulation
+  ---
+  duration_ms: 13.877698
+  type: 'test'
+  ...
+# Subtest: Support : meme barre laterale que Signalements et seulement Support actif
+ok 51 - Support : meme barre laterale que Signalements et seulement Support actif
+  ---
+  duration_ms: 1.313079
+  type: 'test'
+  ...
+# Subtest: Support : API admin protege par les middlewares existants
+ok 52 - Support : API admin protege par les middlewares existants
+  ---
+  duration_ms: 0.89658
+  type: 'test'
+  ...
+# Subtest: Support : recherches et statuts strictement limites
+ok 53 - Support : recherches et statuts strictement limites
+  ---
+  duration_ms: 2.366575
+  type: 'test'
+  ...
+# Subtest: Support : recherche paginee avec requetes parametrees, vrais compteurs
+ok 54 - Support : recherche paginee avec requetes parametrees, vrais compteurs
+  ---
+  duration_ms: 1.604057
+  type: 'test'
+  ...
+# Subtest: Support : confirmation administrative, mais aucun changement de statut de compte
+ok 55 - Support : confirmation administrative, mais aucun changement de statut de compte
+  ---
+  duration_ms: 1.9641
+  type: 'test'
+  ...
+# Subtest: Support : aucun e-mail autorise pour un visiteur sans compte
+ok 56 - Support : aucun e-mail autorise pour un visiteur sans compte
+  ---
+  duration_ms: 1.262522
+  type: 'test'
+  ...
+# Subtest: Support : e-mail seulement confirme apres succes SMTP, cle anti-doublon
+ok 57 - Support : e-mail seulement confirme apres succes SMTP, cle anti-doublon
+  ---
+  duration_ms: 1.275742
+  type: 'test'
+  ...
+# Subtest: Support : interface connectee, pas de donnees fictives ni simulation email
+ok 58 - Support : interface connectee, pas de donnees fictives ni simulation email
+  ---
+  duration_ms: 0.331539
+  type: 'test'
+  ...
+# Subtest: Support : la meme cle idempotente ne redemarre jamais un envoi
+ok 59 - Support : la meme cle idempotente ne redemarre jamais un envoi
+  ---
+  duration_ms: 1.325847
+  type: 'test'
+  ...
+# Subtest: Support : un refus SMTP est enregistre en echec et non en succes
+ok 60 - Support : un refus SMTP est enregistre en echec et non en succes
+  ---
+  duration_ms: 6.878463
+  type: 'test'
+  ...
+# Subtest: Support : un visiteur anonyme ne peut pas etre mis en cours via API
+ok 61 - Support : un visiteur anonyme ne peut pas etre mis en cours via API
+  ---
+  duration_ms: 0.938424
+  type: 'test'
+  ...
+# Subtest: Trois rubriques distinctes, sidebar identique, onglet actif seulement
+ok 62 - Trois rubriques distinctes, sidebar identique, onglet actif seulement
+  ---
+  duration_ms: 3.20624
+  type: 'test'
+  ...
+# Subtest: Parametres : champs conserves pour la logique locale, apercu non persistant et liens HTTPS uniquement
+ok 63 - Parametres : champs conserves pour la logique locale, apercu non persistant et liens HTTPS uniquement
+  ---
+  duration_ms: 0.374565
+  type: 'test'
+  ...
+# Subtest: Mon compte : toutes les operations sensibles utilisent encore les API existantes
+ok 64 - Mon compte : toutes les operations sensibles utilisent encore les API existantes
+  ---
+  duration_ms: 0.304258
+  type: 'test'
+  ...
+# Subtest: Administrateurs : compteurs reelles donnees API, invitation et protection du principal
+ok 65 - Administrateurs : compteurs reelles donnees API, invitation et protection du principal
+  ---
+  duration_ms: 0.436157
+  type: 'test'
+  ...
+# Subtest: Code d interface limite aux pages admin et sans ecriture SQL ni simulation de success
+ok 66 - Code d interface limite aux pages admin et sans ecriture SQL ni simulation de success
+  ---
+  duration_ms: 0.913376
+  type: 'test'
+  ...
+# Subtest: Presentation fidele : pictogrammes SVG, badges et journal reels, sans texte demo
+ok 67 - Presentation fidele : pictogrammes SVG, badges et journal reels, sans texte demo
+  ---
+  duration_ms: 0.363137
+  type: 'test'
+  ...
+# Subtest: Regressions : zero reste zero et le placeholder social reste un noeud sur
+ok 68 - Regressions : zero reste zero et le placeholder social reste un noeud sur
+  ---
+  duration_ms: 0.195224
+  type: 'test'
+  ...
+# Subtest: Vérification : barre latérale exactement identique à Signalements, onglet actif adapté
+ok 69 - Vérification : barre latérale exactement identique à Signalements, onglet actif adapté
+  ---
+  duration_ms: 2.503091
+  type: 'test'
+  ...
+# Subtest: Vérification : statistiques, cinq filtres, tri, tableau réel et modale présents
+ok 70 - Vérification : statistiques, cinq filtres, tri, tableau réel et modale présents
+  ---
+  duration_ms: 0.441164
+  type: 'test'
+  ...
+# Subtest: Vérification : pagination et tri serveur validés et paramétrés
+ok 71 - Vérification : pagination et tri serveur validés et paramétrés
+  ---
+  duration_ms: 2.702151
+  type: 'test'
+  ...
+# Subtest: Vérification : seuls PDF/PNG/JPEG en prévisualisation ; téléchargements protégés
+ok 72 - Vérification : seuls PDF/PNG/JPEG en prévisualisation ; téléchargements protégés
+  ---
+  duration_ms: 0.18583
+  type: 'test'
+  ...
+# Subtest: Vérification : choix notification relié à la décision et conservant l’ancien comportement
+ok 73 - Vérification : choix notification relié à la décision et conservant l’ancien comportement
+  ---
+  duration_ms: 0.571586
+  type: 'test'
+  ...
+# Subtest: Vérification : décision sans notification est persistée sans créer ni envoyer un e-mail
+ok 74 - Vérification : décision sans notification est persistée sans créer ni envoyer un e-mail
+  ---
+  duration_ms: 1.707763
+  type: 'test'
+  ...
+# Subtest: le détail masque coordonnées avant acceptation
+ok 75 - le détail masque coordonnées avant acceptation
+  ---
+  duration_ms: 2.245984
+  type: 'test'
+  ...
+# Subtest: le détail montre les coordonnées après acceptation
+ok 76 - le détail montre les coordonnées après acceptation
+  ---
+  duration_ms: 0.895469
+  type: 'test'
+  ...
+# Subtest: une demande non accessible renvoie 404
+ok 77 - une demande non accessible renvoie 404
+  ---
+  duration_ms: 0.882499
+  type: 'test'
+  ...
+# Subtest: la liste masque les coordonnées des demandes en attente
+ok 78 - la liste masque les coordonnées des demandes en attente
+  ---
+  duration_ms: 0.870532
+  type: 'test'
+  ...
+# Subtest: la route détails vérifie connexion, rôle artisan et statut actif
+ok 79 - la route détails vérifie connexion, rôle artisan et statut actif
+  ---
+  duration_ms: 0.17919
+  type: 'test'
+  ...
+# Subtest: annuaire public paginé : 37 artisans accessibles, jamais limités aux six premières cartes
+ok 80 - annuaire public paginé : 37 artisans accessibles, jamais limités aux six premières cartes
+  ---
+  duration_ms: 2.658115
+  type: 'test'
+  ...
+# Subtest: filtres envoyés avec paramètres SQL sans interpolation directe
+ok 81 - filtres envoyés avec paramètres SQL sans interpolation directe
+  ---
+  duration_ms: 0.850021
+  type: 'test'
+  ...
+# node:internal/modules/cjs/loader:1404
+#   throw err;
+#   ^
+# Error: Cannot find module 'express'
+# Require stack:
+# - /mnt/data/taskly-v5-work/taskly-platform-main/tests/artisan-document-read.test.js
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+#     at Function._load (node:internal/modules/cjs/loader:1211:37)
+#     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+#     at Module.require (node:internal/modules/cjs/loader:1487:12)
+#     at require (node:internal/modules/helpers:135:16)
+#     at Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/tests/artisan-document-read.test.js:2:15)
+#     at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/tests/artisan-document-read.test.js'
+#   ]
+# }
+# Node.js v22.16.0
+# Subtest: tests/artisan-document-read.test.js
+not ok 17 - tests/artisan-document-read.test.js
+  ---
+  duration_ms: 39.625541
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/artisan-document-read.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: recherche artisan combine statut, nom et message sans modifier les données reçues
+ok 83 - recherche artisan combine statut, nom et message sans modifier les données reçues
+  ---
+  duration_ms: 1.939503
+  type: 'test'
+  ...
+# Subtest: statut utilisateur : compte bloqué prioritaire, dossier en attente non traité, validé actif
+ok 84 - statut utilisateur : compte bloqué prioritaire, dossier en attente non traité, validé actif
+  ---
+  duration_ms: 1.401972
+  type: 'test'
+  ...
+# Subtest: support artisan : mêmes formulaires et mêmes points d’accès au suivi que le client
+ok 85 - support artisan : mêmes formulaires et mêmes points d’accès au suivi que le client
+  ---
+  duration_ms: 1.963879
+  type: 'test'
+  ...
+# Subtest: support artisan : CSS exclusivement dans la page artisan/support et suppression rouge
+ok 86 - support artisan : CSS exclusivement dans la page artisan/support et suppression rouge
+  ---
+  duration_ms: 2.995874
+  type: 'test'
+  ...
+# Subtest: fenêtre suivi support : client peut ouvrir et fermer sans nouvelle API
+ok 87 - fenêtre suivi support : client peut ouvrir et fermer sans nouvelle API
+  ---
+  duration_ms: 1.293699
+  type: 'test'
+  ...
+# Subtest: fenêtre suivi support : artisan peut ouvrir et fermer sans nouvelle API
+ok 88 - fenêtre suivi support : artisan peut ouvrir et fermer sans nouvelle API
+  ---
+  duration_ms: 0.555917
+  type: 'test'
+  ...
+# Subtest: Modale client: cadre intact, menu verrouillé puis restauré
+ok 89 - Modale client: cadre intact, menu verrouillé puis restauré
+  ---
+  duration_ms: 3.072188
+  type: 'test'
+  ...
+# Subtest: Modale artisan: cadre intact, menu verrouillé puis restauré
+ok 90 - Modale artisan: cadre intact, menu verrouillé puis restauré
+  ---
+  duration_ms: 1.29407
+  type: 'test'
+  ...
+# Subtest: API privée et jetons: no-store avant contrôle de session, pas d’ETag automatique
+ok 91 - API privée et jetons: no-store avant contrôle de session, pas d’ETag automatique
+  ---
+  duration_ms: 0.33812
+  type: 'test'
+  ...
+# Subtest: La récupération des paramètres publics est ignorée si la page ne les affiche pas
+ok 92 - La récupération des paramètres publics est ignorée si la page ne les affiche pas
+  ---
+  duration_ms: 0.333202
+  type: 'test'
+  ...
+# Subtest: Artisan : une lecture utilisateur + une lecture profil par requête, révocation recontrôlée à la suivante
+ok 93 - Artisan : une lecture utilisateur + une lecture profil par requête, révocation recontrôlée à la suivante
+  ---
+  duration_ms: 2.719057
+  type: 'test'
+  ...
+# Subtest: Admin : une lecture utilisateur, deuxième requête contrôle la révocation et adminVerified reste exigé
+ok 94 - Admin : une lecture utilisateur, deuxième requête contrôle la révocation et adminVerified reste exigé
+  ---
+  duration_ms: 0.915449
+  type: 'test'
+  ...
+# Subtest: Limiteur distribué : quota commun entre instances simulées et identifiants de route variables
+ok 95 - Limiteur distribué : quota commun entre instances simulées et identifiants de route variables
+  ---
+  duration_ms: 5.425695
+  type: 'test'
+  ...
+# Subtest: Limiteur production : panne Redis, compteur invalide ou secret absent refusent la requête
+ok 96 - Limiteur production : panne Redis, compteur invalide ou secret absent refusent la requête
+  ---
+  duration_ms: 2.396841
+  type: 'test'
+  ...
+# Subtest: Limiteur local : le quota est conservé sans Redis en développement
+ok 97 - Limiteur local : le quota est conservé sans Redis en développement
+  ---
+  duration_ms: 0.827807
+  type: 'test'
+  ...
+# Subtest: Ressources publiques : seules les ressources fixes passent avant la session locale
+ok 98 - Ressources publiques : seules les ressources fixes passent avant la session locale
+  ---
+  duration_ms: 1.79175
+  type: 'test'
+  ...
+# Subtest: Confidentialité : SQL des demandes et du chat ne renvoie le téléphone artisan que si autorisé
+ok 99 - Confidentialité : SQL des demandes et du chat ne renvoie le téléphone artisan que si autorisé
+  ---
+  duration_ms: 2.101987
+  type: 'test'
+  ...
+# Subtest: Deux lectures simultanées du profil partagent une requête, pas une lecture ultérieure
+ok 100 - Deux lectures simultanées du profil partagent une requête, pas une lecture ultérieure
+  ---
+  duration_ms: 1.627903
+  type: 'test'
+  ...
+# Subtest: Assistant: aucune requête externe avec thème non autorisé, texte libre ou langue invalide
+ok 101 - Assistant: aucune requête externe avec thème non autorisé, texte libre ou langue invalide
+  ---
+  duration_ms: 1.760873
+  type: 'test'
+  ...
+# Subtest: Assistant: partage des requêtes simultanées, cache borné dans le temps, séparation thème/langue
+ok 102 - Assistant: partage des requêtes simultanées, cache borné dans le temps, séparation thème/langue
+  ---
+  duration_ms: 2.294838
+  type: 'test'
+  ...
+# Subtest: Assistant: échec non caché, réponse non vide limitée, clef absente désactive le service
+ok 103 - Assistant: échec non caché, réponse non vide limitée, clef absente désactive le service
+  ---
+  duration_ms: 1.397055
+  type: 'test'
+  ...
+# Subtest: Navigation client: cliquer de nouveau sur la page chargée ne recrée pas le cadre
+ok 104 - Navigation client: cliquer de nouveau sur la page chargée ne recrée pas le cadre
+  ---
+  duration_ms: 2.193565
+  type: 'test'
+  ...
+# Subtest: Navigation artisan: cliquer de nouveau sur la page chargée ne recrée pas le cadre
+ok 105 - Navigation artisan: cliquer de nouveau sur la page chargée ne recrée pas le cadre
+  ---
+  duration_ms: 1.534512
+  type: 'test'
+  ...
+# Subtest: Recherche accueil: une saisie après sélection ne redirige pas vers ancien métier
+ok 106 - Recherche accueil: une saisie après sélection ne redirige pas vers ancien métier
+  ---
+  duration_ms: 1.448231
+  type: 'test'
+  ...
+# Subtest: Images de service: une erreur déjà survenue déclenche le fallback une seule fois
+ok 107 - Images de service: une erreur déjà survenue déclenche le fallback une seule fois
+  ---
+  duration_ms: 1.404827
+  type: 'test'
+  ...
+# Subtest: Hero: sources WebP présentes avec PNG de repli et signature valide
+ok 108 - Hero: sources WebP présentes avec PNG de repli et signature valide
+  ---
+  duration_ms: 0.463228
+  type: 'test'
+  ...
+# Subtest: Gateway: disabled and invalid config never call external service
+ok 109 - Gateway: disabled and invalid config never call external service
+  ---
+  duration_ms: 2.190441
+  type: 'test'
+  ...
+# Subtest: Gateway: provision requires matching ready mailbox and stable idempotency key
+ok 110 - Gateway: provision requires matching ready mailbox and stable idempotency key
+  ---
+  duration_ms: 26.444542
+  type: 'test'
+  ...
+# Subtest: Gateway: list/read strictly scope provider identity and return only permitted fields
+ok 111 - Gateway: list/read strictly scope provider identity and return only permitted fields
+  ---
+  duration_ms: 2.264491
+  type: 'test'
+  ...
+# Subtest: Gateway: send does not trust caller sender or mailbox; accepts a single address and safe idempotency key
+ok 112 - Gateway: send does not trust caller sender or mailbox; accepts a single address and safe idempotency key
+  ---
+  duration_ms: 2.01781
+  type: 'test'
+  ...
+# Subtest: Gateway: refuses non-JSON, excessive data, HTTP errors and unexpected accepted state
+ok 113 - Gateway: refuses non-JSON, excessive data, HTTP errors and unexpected accepted state
+  ---
+  duration_ms: 4.227509
+  type: 'test'
+  ...
+# Subtest: Activation: purpose/profile/address binding and constant time validation
+ok 114 - Activation: purpose/profile/address binding and constant time validation
+  ---
+  duration_ms: 0.80972
+  type: 'test'
+  ...
+# Subtest: Routes: fail closed without gateway, approval, matching profile or activation
+ok 115 - Routes: fail closed without gateway, approval, matching profile or activation
+  ---
+  duration_ms: 2.267656
+  type: 'test'
+  ...
+# Subtest: Routes: activation expired or exhausted does not update state; incorrect code increments attempts
+ok 116 - Routes: activation expired or exhausted does not update state; incorrect code increments attempts
+  ---
+  duration_ms: 1.361191
+  type: 'test'
+  ...
+# Subtest: Routes: draft uses authenticated profile, never a submitted owner; admin provision needs approved profile
+ok 117 - Routes: draft uses authenticated profile, never a submitted owner; admin provision needs approved profile
+  ---
+  duration_ms: 1.366839
+  type: 'test'
+  ...
+# Subtest: Routes: approved profile can provision exactly its address and request activation separately
+ok 118 - Routes: approved profile can provision exactly its address and request activation separately
+  ---
+  duration_ms: 1.434442
+  type: 'test'
+  ...
+# Taskly : protection Redis indisponible.
+# Taskly : protection Redis indisponible.
+# Taskly : protection Redis indisponible.
+# Taskly : protection Redis indisponible.
+# Taskly : protection Redis indisponible.
+# Subtest: CSRF : toutes les variantes de casse et chemins mutants sont contrôlés une fois montés
+ok 119 - CSRF : toutes les variantes de casse et chemins mutants sont contrôlés une fois montés
+  ---
+  duration_ms: 3.040842
+  type: 'test'
+  ...
+# Subtest: CSRF : jeton non conforme, erroné, absent et non hexadécimal refusés
+ok 120 - CSRF : jeton non conforme, erroné, absent et non hexadécimal refusés
+  ---
+  duration_ms: 0.253091
+  type: 'test'
+  ...
+# Subtest: CSRF : réponse explicite non cachable, jeton stable dans la même session
+ok 121 - CSRF : réponse explicite non cachable, jeton stable dans la même session
+  ---
+  duration_ms: 0.370098
+  type: 'test'
+  ...
+# Subtest: Limiteur : montages et routes équivalents en casse ont un quota commun
+ok 122 - Limiteur : montages et routes équivalents en casse ont un quota commun
+  ---
+  duration_ms: 2.105101
+  type: 'test'
+  ...
+# Subtest: Récupération de mot de passe : compteurs Redis invalides bloquent la requête
+ok 123 - Récupération de mot de passe : compteurs Redis invalides bloquent la requête
+  ---
+  duration_ms: 4.422332
+  type: 'test'
+  ...
+# Subtest: Récupération de mot de passe : compteur valide et limite de débit
+ok 124 - Récupération de mot de passe : compteur valide et limite de débit
+  ---
+  duration_ms: 2.450182
+  type: 'test'
+  ...
+# Subtest: SMTP : STARTTLS imposé en production et délais bornés, sans contact réseau
+ok 125 - SMTP : STARTTLS imposé en production et délais bornés, sans contact réseau
+  ---
+  duration_ms: 4.885931
+  type: 'test'
+  ...
+# Subtest: Charge : exige consentement et refuse production, redirections et montée excessive
+ok 126 - Charge : exige consentement et refuse production, redirections et montée excessive
+  ---
+  duration_ms: 6.681656
+  type: 'test'
+  ...
+# Subtest: La page client accueil applique le nouveau style sans remplacer ses scripts
+ok 127 - La page client accueil applique le nouveau style sans remplacer ses scripts
+  ---
+  duration_ms: 1.459529
+  type: 'test'
+  ...
+# Subtest: La page client demandes applique le nouveau style sans remplacer ses scripts
+ok 128 - La page client demandes applique le nouveau style sans remplacer ses scripts
+  ---
+  duration_ms: 0.384239
+  type: 'test'
+  ...
+# Subtest: La page client profil applique le nouveau style sans remplacer ses scripts
+ok 129 - La page client profil applique le nouveau style sans remplacer ses scripts
+  ---
+  duration_ms: 0.222125
+  type: 'test'
+  ...
+# Subtest: La page client support applique le nouveau style sans remplacer ses scripts
+ok 130 - La page client support applique le nouveau style sans remplacer ses scripts
+  ---
+  duration_ms: 0.254554
+  type: 'test'
+  ...
+# Subtest: Le design ne contient pas de modifications aux fichiers de rôle admin ou artisan
+ok 131 - Le design ne contient pas de modifications aux fichiers de rôle admin ou artisan
+  ---
+  duration_ms: 1.882486
+  type: 'test'
+  ...
+# Subtest: Les véritables champs du support et les trois points d ouverture restent présents
+ok 132 - Les véritables champs du support et les trois points d ouverture restent présents
+  ---
+  duration_ms: 0.516228
+  type: 'test'
+  ...
+# Subtest: Le suivi reutilise exactement la route securisee id et e-mail du PFE
+ok 133 - Le suivi reutilise exactement la route securisee id et e-mail du PFE
+  ---
+  duration_ms: 0.396878
+  type: 'test'
+  ...
+# Subtest: Les fonctions originelles de demandes, avis, annulation et signalements ne disparaissent pas
+ok 134 - Les fonctions originelles de demandes, avis, annulation et signalements ne disparaissent pas
+  ---
+  duration_ms: 0.41815
+  type: 'test'
+  ...
+# Subtest: Le profil affiche de vraies données compte et preserve ses formulaires de sécurité
+ok 135 - Le profil affiche de vraies données compte et preserve ses formulaires de sécurité
+  ---
+  duration_ms: 0.941388
+  type: 'test'
+  ...
+# Subtest: La navigation persistante existante reste dans client-navigation-stable.js
+ok 136 - La navigation persistante existante reste dans client-navigation-stable.js
+  ---
+  duration_ms: 0.58366
+  type: 'test'
+  ...
+# Subtest: « Nouvelle demande » lance la sélection d’un artisan sans recréer le formulaire métier
+ok 137 - « Nouvelle demande » lance la sélection d’un artisan sans recréer le formulaire métier
+  ---
+  duration_ms: 1.237084
+  type: 'test'
+  ...
+# Subtest: Le lien Nouvelle demande ouvre l’annuaire en haut de fenêtre, pas dans l’iframe interdite
+ok 138 - Le lien Nouvelle demande ouvre l’annuaire en haut de fenêtre, pas dans l’iframe interdite
+  ---
+  duration_ms: 3.406423
+  type: 'test'
+  ...
+# Subtest: Explorer les artisans utilise la même sortie de cadre, sans démarrer une demande
+ok 139 - Explorer les artisans utilise la même sortie de cadre, sans démarrer une demande
+  ---
+  duration_ms: 0.940967
+  type: 'test'
+  ...
+# Subtest: Les liens du support sortent aussi du cadre ; les rubriques client y restent
+ok 140 - Les liens du support sortent aussi du cadre ; les rubriques client y restent
+  ---
+  duration_ms: 1.393019
+  type: 'test'
+  ...
+# Subtest: Ancres locales, clics avec Ctrl et handlers spécifiques ne sont pas interceptés
+ok 141 - Ancres locales, clics avec Ctrl et handlers spécifiques ne sont pas interceptés
+  ---
+  duration_ms: 0.682418
+  type: 'test'
+  ...
+# Subtest: Un lien vers un autre site reste sous le contrôle normal du navigateur
+ok 142 - Un lien vers un autre site reste sous le contrôle normal du navigateur
+  ---
+  duration_ms: 0.725053
+  type: 'test'
+  ...
+# Subtest: Le guide Nouvelle demande s’affiche seulement sur l’annuaire avec le paramètre dédié
+ok 143 - Le guide Nouvelle demande s’affiche seulement sur l’annuaire avec le paramètre dédié
+  ---
+  duration_ms: 1.279588
+  type: 'test'
+  ...
+# Subtest: Les fichiers admin, le vrai logo et la logique de session ne sont pas concernés
+ok 144 - Les fichiers admin, le vrai logo et la logique de session ne sont pas concernés
+  ---
+  duration_ms: 0.31845
+  type: 'test'
+  ...
+# Subtest: profil : aucun affichage intermédiaire si carte charge en premier
+ok 145 - profil : aucun affichage intermédiaire si carte charge en premier
+  ---
+  duration_ms: 1.873813
+  type: 'test'
+  ...
+# Subtest: profil : aucun affichage intermédiaire si actions charge en premier
+ok 146 - profil : aucun affichage intermédiaire si actions charge en premier
+  ---
+  duration_ms: 0.600184
+  type: 'test'
+  ...
+# Subtest: profil : erreur de carte visible après la préparation des actions, sans chargement infini
+ok 147 - profil : erreur de carte visible après la préparation des actions, sans chargement infini
+  ---
+  duration_ms: 2.173584
+  type: 'test'
+  ...
+# Subtest: autres rubriques : aucun changement de visibilité
+ok 148 - autres rubriques : aucun changement de visibilité
+  ---
+  duration_ms: 0.585522
+  type: 'test'
+  ...
+# Subtest: Client accueil: cadre reprenant logo vrai et menu original, document métier complet
+ok 149 - Client accueil: cadre reprenant logo vrai et menu original, document métier complet
+  ---
+  duration_ms: 2.636052
+  type: 'test'
+  ...
+# Subtest: Client demandes: cadre reprenant logo vrai et menu original, document métier complet
+ok 150 - Client demandes: cadre reprenant logo vrai et menu original, document métier complet
+  ---
+  duration_ms: 0.31888
+  type: 'test'
+  ...
+# Subtest: Client profil: cadre reprenant logo vrai et menu original, document métier complet
+ok 151 - Client profil: cadre reprenant logo vrai et menu original, document métier complet
+  ---
+  duration_ms: 0.164679
+  type: 'test'
+  ...
+# Subtest: Client support: cadre reprenant logo vrai et menu original, document métier complet
+ok 152 - Client support: cadre reprenant logo vrai et menu original, document métier complet
+  ---
+  duration_ms: 0.368125
+  type: 'test'
+  ...
+# Subtest: Les vrais formulaires et APIs de la page demandes sont preservés
+ok 153 - Les vrais formulaires et APIs de la page demandes sont preservés
+  ---
+  duration_ms: 0.308715
+  type: 'test'
+  ...
+# Subtest: Le support et les formulaires du compte utilisent leurs vraies APIs
+ok 154 - Le support et les formulaires du compte utilisent leurs vraies APIs
+  ---
+  duration_ms: 0.246892
+  type: 'test'
+  ...
+# Subtest: Le vrai logo original n’est pas remplacé par la maquette
+ok 155 - Le vrai logo original n’est pas remplacé par la maquette
+  ---
+  duration_ms: 0.160211
+  type: 'test'
+  ...
+# Subtest: La suppression reste réelle ; seulement les boutons de suppression deviennent rouges
+ok 156 - La suppression reste réelle ; seulement les boutons de suppression deviennent rouges
+  ---
+  duration_ms: 0.199861
+  type: 'test'
+  ...
+# Subtest: La nouvelle route concerne exclusivement les 4 pages client
+ok 157 - La nouvelle route concerne exclusivement les 4 pages client
+  ---
+  duration_ms: 1.650226
+  type: 'test'
+  ...
+# Subtest: Expiration serveur exactement à 4 heures d’inactivité
+ok 158 - Expiration serveur exactement à 4 heures d’inactivité
+  ---
+  duration_ms: 0.65705
+  type: 'test'
+  ...
+# Subtest: Une session encore active reste valide, et une activité explicite la renouvelle
+ok 159 - Une session encore active reste valide, et une activité explicite la renouvelle
+  ---
+  duration_ms: 3.145209
+  type: 'test'
+  ...
+# Subtest: L’inactivité est mesurée sans être prolongée par les chargements passifs
+ok 160 - L’inactivité est mesurée sans être prolongée par les chargements passifs
+  ---
+  duration_ms: 0.392481
+  type: 'test'
+  ...
+# Subtest: Activite dans le cadre client et dans la rubrique : relais bidirectionnel de meme origine
+ok 161 - Activite dans le cadre client et dans la rubrique : relais bidirectionnel de meme origine
+  ---
+  duration_ms: 0.15953
+  type: 'test'
+  ...
+# Subtest: Expiration : la porte d entree admin privee ne devient jamais /login.html
+ok 162 - Expiration : la porte d entree admin privee ne devient jamais /login.html
+  ---
+  duration_ms: 0.122745
+  type: 'test'
+  ...
+# Subtest: Plusieurs onglets : un minuteur local ne deconnecte pas une autre session active
+ok 163 - Plusieurs onglets : un minuteur local ne deconnecte pas une autre session active
+  ---
+  duration_ms: 0.130687
+  type: 'test'
+  ...
+# Subtest: Pas de renouvèlement du cookie lors des requêtes passives
+ok 164 - Pas de renouvèlement du cookie lors des requêtes passives
+  ---
+  duration_ms: 0.203026
+  type: 'test'
+  ...
+# Subtest: support public : migration partielle conserve le filtre de confidentialité
+ok 165 - support public : migration partielle conserve le filtre de confidentialité
+  ---
+  duration_ms: 2.632466
+  type: 'test'
+  ...
+# Subtest: suppression : enfants retirés avant profils et utilisateur, sans cascades
+ok 166 - suppression : enfants retirés avant profils et utilisateur, sans cascades
+  ---
+  duration_ms: 1.603195
+  type: 'test'
+  ...
+# Subtest: nettoyage : le script exécuté utilise le ciblage testé et restaure la visibilité du seul instantané
+ok 167 - nettoyage : le script exécuté utilise le ciblage testé et restaure la visibilité du seul instantané
+  ---
+  duration_ms: 0.26508
+  type: 'test'
+  ...
+# node:internal/modules/cjs/loader:1404
+#   throw err;
+#   ^
+# Error: Cannot find module 'express'
+# Require stack:
+# - /mnt/data/taskly-v5-work/taskly-platform-main/tests/dedicated-pages.test.js
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+#     at Function._load (node:internal/modules/cjs/loader:1211:37)
+#     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+#     at Module.require (node:internal/modules/cjs/loader:1487:12)
+#     at require (node:internal/modules/helpers:135:16)
+#     at Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/tests/dedicated-pages.test.js:2:150)
+#     at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/tests/dedicated-pages.test.js'
+#   ]
+# }
+# Node.js v22.16.0
+# Subtest: tests/dedicated-pages.test.js
+not ok 30 - tests/dedicated-pages.test.js
+  ---
+  duration_ms: 41.288593
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/dedicated-pages.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: HTTP : CSRF, pages privées, médias et inscription sans pièce
+not ok 169 - HTTP : CSRF, pages privées, médias et inscription sans pièce
+  ---
+  duration_ms: 1.628273
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/http.test.js:10:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Cannot find module 'express'
+    Require stack:
+    - /mnt/data/taskly-v5-work/taskly-platform-main/server/app.js
+    - /mnt/data/taskly-v5-work/taskly-platform-main/tests/http.test.js
+  code: 'MODULE_NOT_FOUND'
+  stack: |-
+    Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    Function._load (node:internal/modules/cjs/loader:1211:37)
+    TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    Module.require (node:internal/modules/cjs/loader:1487:12)
+    require (node:internal/modules/helpers:135:16)
+    Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/server/app.js:5:17)
+    Module._compile (node:internal/modules/cjs/loader:1730:14)
+  ...
+# Subtest: Nodemailer : composition locale du message sans SMTP
+not ok 170 - Nodemailer : composition locale du message sans SMTP
+  ---
+  duration_ms: 0.320713
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/http.test.js:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Cannot find module 'nodemailer'
+    Require stack:
+    - /mnt/data/taskly-v5-work/taskly-platform-main/tests/http.test.js
+  code: 'MODULE_NOT_FOUND'
+  stack: |-
+    Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    Function._load (node:internal/modules/cjs/loader:1211:37)
+    TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    Module.require (node:internal/modules/cjs/loader:1487:12)
+    require (node:internal/modules/helpers:135:16)
+    TestContext.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/tests/http.test.js:41:18)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+  ...
+# Subtest: entrée Vercel : accueil et styles disponibles sans démarrage Redis
+not ok 171 - entrée Vercel : accueil et styles disponibles sans démarrage Redis
+  ---
+  duration_ms: 0.533864
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/http.test.js:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Cannot find module 'express'
+    Require stack:
+    - /mnt/data/taskly-v5-work/taskly-platform-main/index.js
+    - /mnt/data/taskly-v5-work/taskly-platform-main/tests/http.test.js
+  code: 'MODULE_NOT_FOUND'
+  stack: |-
+    Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    Function._load (node:internal/modules/cjs/loader:1211:37)
+    TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    Module.require (node:internal/modules/cjs/loader:1487:12)
+    require (node:internal/modules/helpers:135:16)
+    Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/index.js:2:17)
+    Module._compile (node:internal/modules/cjs/loader:1730:14)
+  ...
+# Subtest: annuaire : 37 artisans visibles par pages de 12 et restriction des comptes
+ok 172 - annuaire : 37 artisans visibles par pages de 12 et restriction des comptes
+  ---
+  duration_ms: 2.059433
+  type: 'test'
+  ...
+# Subtest: support : anciens champs MySQL acceptés en lecture sans révéler les données privées
+ok 173 - support : anciens champs MySQL acceptés en lecture sans révéler les données privées
+  ---
+  duration_ms: 0.336687
+  type: 'test'
+  ...
+# Subtest: support : une vraie panne DB ne doit pas être transformée en liste vide
+ok 174 - support : une vraie panne DB ne doit pas être transformée en liste vide
+  ---
+  duration_ms: 0.544711
+  type: 'test'
+  ...
+# Subtest: sidebar : position stable sur ordinateur, barre horizontale sur petit écran
+ok 175 - sidebar : position stable sur ordinateur, barre horizontale sur petit écran
+  ---
+  duration_ms: 0.3251
+  type: 'test'
+  ...
+# Subtest: statistiques : si le support échoue, les compteurs de base restent consultables
+ok 176 - statistiques : si le support échoue, les compteurs de base restent consultables
+  ---
+  duration_ms: 5.709607
+  type: 'test'
+  ...
+# Subtest: nettoyage : uniquement les trois identifiants autorisés
+ok 177 - nettoyage : uniquement les trois identifiants autorisés
+  ---
+  duration_ms: 1.031985
+  type: 'test'
+  ...
+# Subtest: nettoyage : administrateurs exclus
+ok 178 - nettoyage : administrateurs exclus
+  ---
+  duration_ms: 0.256126
+  type: 'test'
+  ...
+# Subtest: adresse automatique par métier, normalisée, collision isolée
+ok 179 - adresse automatique par métier, normalisée, collision isolée
+  ---
+  duration_ms: 1.862095
+  type: 'test'
+  ...
+# Subtest: domaine configuré obligatoire; refuse URL et caractères invalides
+ok 180 - domaine configuré obligatoire; refuse URL et caractères invalides
+  ---
+  duration_ms: 1.176212
+  type: 'test'
+  ...
+# Subtest: code lié au profil et à l’adresse; rejette mauvais code ou compte
+ok 181 - code lié au profil et à l’adresse; rejette mauvais code ou compte
+  ---
+  duration_ms: 1.12828
+  type: 'test'
+  ...
+# Subtest: photo : suppression atomique et ancienne image retirée
+ok 182 - photo : suppression atomique et ancienne image retirée
+  ---
+  duration_ms: 2.669031
+  type: 'test'
+  ...
+# Subtest: photo : remplacement atomique et ancienne image retirée
+ok 183 - photo : remplacement atomique et ancienne image retirée
+  ---
+  duration_ms: 0.705553
+  type: 'test'
+  ...
+# Subtest: photo : échec d’UPDATE annule la transaction sans retirer l’ancienne image
+ok 184 - photo : échec d’UPDATE annule la transaction sans retirer l’ancienne image
+  ---
+  duration_ms: 2.021746
+  type: 'test'
+  ...
+# Subtest: une panne de services ne retire pas la suppression et le clic envoie son mot de passe
+ok 185 - une panne de services ne retire pas la suppression et le clic envoie son mot de passe
+  ---
+  duration_ms: 6.204868
+  type: 'test'
+  ...
+# Subtest: architecture client : un seul public et pages privées protégées
+ok 186 - architecture client : un seul public et pages privées protégées
+  ---
+  duration_ms: 1.70634
+  type: 'test'
+  ...
+# Subtest: fichiers publics : parcours privés, traversée et dotfiles refusés
+ok 187 - fichiers publics : parcours privés, traversée et dotfiles refusés
+  ---
+  duration_ms: 0.527915
+  type: 'test'
+  ...
+# Subtest: fichiers publics : une requête POST passe aux routes applicatives
+ok 188 - fichiers publics : une requête POST passe aux routes applicatives
+  ---
+  duration_ms: 0.173291
+  type: 'test'
+  ...
+# Subtest: Un artisan passe obligatoirement par Examiner : bloquerUtilisateur
+ok 189 - Un artisan passe obligatoirement par Examiner : bloquerUtilisateur
+  ---
+  duration_ms: 2.785627
+  type: 'test'
+  ...
+# Subtest: Un artisan passe obligatoirement par Examiner : debloquerUtilisateur
+ok 190 - Un artisan passe obligatoirement par Examiner : debloquerUtilisateur
+  ---
+  duration_ms: 0.965936
+  type: 'test'
+  ...
+# Subtest: Les clients peuvent encore être modérés par les actions classiques
+ok 191 - Les clients peuvent encore être modérés par les actions classiques
+  ---
+  duration_ms: 2.068447
+  type: 'test'
+  ...
+# Subtest: Le motif de blocage doit être une chaîne de 5 à 500 caractères
+ok 192 - Le motif de blocage doit être une chaîne de 5 à 500 caractères
+  ---
+  duration_ms: 1.056562
+  type: 'test'
+  ...
+# Subtest: Dossier de vérification : l’historique des décisions est retourné de façon privée
+ok 193 - Dossier de vérification : l’historique des décisions est retourné de façon privée
+  ---
+  duration_ms: 2.106804
+  type: 'test'
+  ...
+# Subtest: Le formulaire support artisan n’ajoute pas plusieurs écouteurs de suppression
+ok 194 - Le formulaire support artisan n’ajoute pas plusieurs écouteurs de suppression
+  ---
+  duration_ms: 8.56845
+  type: 'test'
+  ...
+# Subtest: client actif
+ok 195 - client actif
+  ---
+  duration_ms: 3.159691
+  type: 'test'
+  ...
+# Subtest: client bloqué avec session
+ok 196 - client bloqué avec session
+  ---
+  duration_ms: 1.013157
+  type: 'test'
+  ...
+# Subtest: email non confirmé
+ok 197 - email non confirmé
+  ---
+  duration_ms: 2.593328
+  type: 'test'
+  ...
+# Subtest: session admin révoquée
+ok 198 - session admin révoquée
+  ---
+  duration_ms: 0.634055
+  type: 'test'
+  ...
+# Subtest: session admin courante
+ok 199 - session admin courante
+  ---
+  duration_ms: 0.606383
+  type: 'test'
+  ...
+# Subtest: activité artisan en_attente
+ok 200 - activité artisan en_attente
+  ---
+  duration_ms: 0.783961
+  type: 'test'
+  ...
+# Subtest: activité artisan refuse
+ok 201 - activité artisan refuse
+  ---
+  duration_ms: 0.561816
+  type: 'test'
+  ...
+# Subtest: activité artisan a_completer
+ok 202 - activité artisan a_completer
+  ---
+  duration_ms: 0.794487
+  type: 'test'
+  ...
+# Subtest: activité artisan approuve
+ok 203 - activité artisan approuve
+  ---
+  duration_ms: 0.830911
+  type: 'test'
+  ...
+# Subtest: signatures de fichiers et faux MIME
+not ok 204 - signatures de fichiers et faux MIME
+  ---
+  duration_ms: 1.018605
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/security.test.js:13:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Cannot find module 'multer'
+    Require stack:
+    - /mnt/data/taskly-v5-work/taskly-platform-main/server/middleware/documentUpload.js
+    - /mnt/data/taskly-v5-work/taskly-platform-main/tests/security.test.js
+  code: 'MODULE_NOT_FOUND'
+  stack: |-
+    Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    Function._load (node:internal/modules/cjs/loader:1211:37)
+    TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    Module.require (node:internal/modules/cjs/loader:1487:12)
+    require (node:internal/modules/helpers:135:16)
+    Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/server/middleware/documentUpload.js:2:16)
+    Module._compile (node:internal/modules/cjs/loader:1730:14)
+  ...
+# Subtest: lecture publique filtrée et identifiant invalide
+ok 205 - lecture publique filtrée et identifiant invalide
+  ---
+  duration_ms: 3.914688
+  type: 'test'
+  ...
+# Subtest: photo PDF refusée avant stockage
+ok 206 - photo PDF refusée avant stockage
+  ---
+  duration_ms: 0.987648
+  type: 'test'
+  ...
+# node:internal/modules/cjs/loader:1404
+#   throw err;
+#   ^
+# Error: Cannot find module 'express'
+# Require stack:
+# - /mnt/data/taskly-v5-work/taskly-platform-main/tests/site-settings.test.js
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+#     at Function._load (node:internal/modules/cjs/loader:1211:37)
+#     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+#     at Module.require (node:internal/modules/cjs/loader:1487:12)
+#     at require (node:internal/modules/helpers:135:16)
+#     at Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/tests/site-settings.test.js:3:85)
+#     at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/tests/site-settings.test.js'
+#   ]
+# }
+# Node.js v22.16.0
+# Subtest: tests/site-settings.test.js
+not ok 40 - tests/site-settings.test.js
+  ---
+  duration_ms: 31.60674
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/site-settings.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: historique support: acces seulement par la session authentifiee
+ok 208 - historique support: acces seulement par la session authentifiee
+  ---
+  duration_ms: 0.864162
+  type: 'test'
+  ...
+# Subtest: messages: rattachement au compte authentifie, formulaire public conserve
+ok 209 - messages: rattachement au compte authentifie, formulaire public conserve
+  ---
+  duration_ms: 0.519232
+  type: 'test'
+  ...
+# Subtest: support client: petite carte historique accessible et suivi precedent maintenu
+ok 210 - support client: petite carte historique accessible et suivi precedent maintenu
+  ---
+  duration_ms: 0.267703
+  type: 'test'
+  ...
+# Subtest: support artisan: petite carte historique accessible et suivi precedent maintenu
+ok 211 - support artisan: petite carte historique accessible et suivi precedent maintenu
+  ---
+  duration_ms: 0.287864
+  type: 'test'
+  ...
+# Subtest: UI: les informations sont toujours du texte, jamais du HTML non nettoye
+ok 212 - UI: les informations sont toujours du texte, jamais du HTML non nettoye
+  ---
+  duration_ms: 0.223257
+  type: 'test'
+  ...
+# node:internal/modules/cjs/loader:1404
+#   throw err;
+#   ^
+# Error: Cannot find module 'express'
+# Require stack:
+# - /mnt/data/taskly-v5-work/taskly-platform-main/tests/support-session.test.js
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+#     at Function._load (node:internal/modules/cjs/loader:1211:37)
+#     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+#     at Module.require (node:internal/modules/cjs/loader:1487:12)
+#     at require (node:internal/modules/helpers:135:16)
+#     at Object.<anonymous> (/mnt/data/taskly-v5-work/taskly-platform-main/tests/support-session.test.js:1:124)
+#     at Module._compile (node:internal/modules/cjs/loader:1730:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/mnt/data/taskly-v5-work/taskly-platform-main/tests/support-session.test.js'
+#   ]
+# }
+# Node.js v22.16.0
+# Subtest: tests/support-session.test.js
+not ok 42 - tests/support-session.test.js
+  ---
+  duration_ms: 31.262075
+  type: 'test'
+  location: '/mnt/data/taskly-v5-work/taskly-platform-main/tests/support-session.test.js:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: annuaire inchangé et vues carte/liste additionnelles
+ok 214 - annuaire inchangé et vues carte/liste additionnelles
+  ---
+  duration_ms: 0.834837
+  type: 'test'
+  ...
+# Subtest: filtrage côté serveur : artisans approuvés, actifs et e-mail vérifié
+ok 215 - filtrage côté serveur : artisans approuvés, actifs et e-mail vérifié
+  ---
+  duration_ms: 0.32516
+  type: 'test'
+  ...
+# Subtest: une position ne se publie qu’après choix actif de son artisan, avec arrondi kilométrique
+ok 216 - une position ne se publie qu’après choix actif de son artisan, avec arrondi kilométrique
+  ---
+  duration_ms: 0.269797
+  type: 'test'
+  ...
+# Subtest: route de carte publique avant la route /:id ; édition réservée au profil connecté
+ok 217 - route de carte publique avant la route /:id ; édition réservée au profil connecté
+  ---
+  duration_ms: 0.253902
+  type: 'test'
+  ...
+# Subtest: migration isolée et rejouable sans effacer les positions existantes
+ok 218 - migration isolée et rejouable sans effacer les positions existantes
+  ---
+  duration_ms: 0.369056
+  type: 'test'
+  ...
+# Subtest: le détail artisan conserve la navigation vers le client accepté
+ok 219 - le détail artisan conserve la navigation vers le client accepté
+  ---
+  duration_ms: 0.373523
+  type: 'test'
+  ...
+# Subtest: demande en attente : chat refuse
+ok 220 - demande en attente : chat refuse
+  ---
+  duration_ms: 1.030072
+  type: 'test'
+  ...
+# Subtest: autre client : acces interdit
+ok 221 - autre client : acces interdit
+  ---
+  duration_ms: 0.262916
+  type: 'test'
+  ...
+# Subtest: autre artisan : acces interdit
+ok 222 - autre artisan : acces interdit
+  ---
+  duration_ms: 0.154653
+  type: 'test'
+  ...
+# Subtest: demande acceptee : lecture autorisee
+ok 223 - demande acceptee : lecture autorisee
+  ---
+  duration_ms: 1.129531
+  type: 'test'
+  ...
+# Subtest: demande acceptee : envoi autorise
+ok 224 - demande acceptee : envoi autorise
+  ---
+  duration_ms: 1.079787
+  type: 'test'
+  ...
+# Subtest: demande terminee : lecture seule
+ok 225 - demande terminee : lecture seule
+  ---
+  duration_ms: 0.292831
+  type: 'test'
+  ...
+# Subtest: message vide ou trop long : refuse
+ok 226 - message vide ou trop long : refuse
+  ---
+  duration_ms: 0.427454
+  type: 'test'
+  ...
+# Subtest: insertion SQL protegee par statut et profil
+ok 227 - insertion SQL protegee par statut et profil
+  ---
+  duration_ms: 0.269706
+  type: 'test'
+  ...
+# Subtest: artisan clôture : demande de confirmation, e-mail seulement au client
+ok 228 - artisan clôture : demande de confirmation, e-mail seulement au client
+  ---
+  duration_ms: 4.166167
+  type: 'test'
+  ...
+# Subtest: demande ne pouvant être clôturée : aucun jeton ni e-mail
+ok 229 - demande ne pouvant être clôturée : aucun jeton ni e-mail
+  ---
+  duration_ms: 2.046503
+  type: 'test'
+  ...
+# Subtest: confirmation et contestation depuis le compte client passent par vérification de propriété
+ok 230 - confirmation et contestation depuis le compte client passent par vérification de propriété
+  ---
+  duration_ms: 1.693552
+  type: 'test'
+  ...
+# Subtest: le lien e-mail invalide, expiré ou consommé n’accepte pas la confirmation
+ok 231 - le lien e-mail invalide, expiré ou consommé n’accepte pas la confirmation
+  ---
+  duration_ms: 1.010583
+  type: 'test'
+  ...
+# Subtest: les routes confirment le rôle client pour les actions compte
+ok 232 - les routes confirment le rôle client pour les actions compte
+  ---
+  duration_ms: 0.296457
+  type: 'test'
+  ...
+# Subtest: formulaire signalement reste lié au compte et n’est pas soumis automatiquement
+ok 233 - formulaire signalement reste lié au compte et n’est pas soumis automatiquement
+  ---
+  duration_ms: 1.08185
+  type: 'test'
+  ...
+# Subtest: titre de chaque demande dynamique et maintien des actions originales
+ok 234 - titre de chaque demande dynamique et maintien des actions originales
+  ---
+  duration_ms: 1.32744
+  type: 'test'
+  ...
+# Subtest: flèche visible seulement en cas de débordement
+ok 235 - flèche visible seulement en cas de débordement
+  ---
+  duration_ms: 0.463008
+  type: 'test'
+  ...
+# Subtest: déconnexion artisan reprend les pictogrammes client sans modifier la session
+ok 236 - déconnexion artisan reprend les pictogrammes client sans modifier la session
+  ---
+  duration_ms: 1.641523
+  type: 'test'
+  ...
+# Subtest: calendrier conserve ses validations et l’icône demandée
+ok 237 - calendrier conserve ses validations et l’icône demandée
+  ---
+  duration_ms: 0.314985
+  type: 'test'
+  ...
+# Subtest: nouvelle demande : e-mail seulement à l’artisan concerné
+ok 238 - nouvelle demande : e-mail seulement à l’artisan concerné
+  ---
+  duration_ms: 3.260492
+  type: 'test'
+  ...
+# Subtest: acceptation : e-mail uniquement au client
+ok 239 - acceptation : e-mail uniquement au client
+  ---
+  duration_ms: 2.17073
+  type: 'test'
+  ...
+# Subtest: refus : e-mail au client avec proposition d’autre artisan
+ok 240 - refus : e-mail au client avec proposition d’autre artisan
+  ---
+  duration_ms: 0.919655
+  type: 'test'
+  ...
+# Subtest: statut déjà traité : pas de notification
+ok 241 - statut déjà traité : pas de notification
+  ---
+  duration_ms: 0.825884
+  type: 'test'
+  ...
+# Subtest: statut non permis : pas de notification
+ok 242 - statut non permis : pas de notification
+  ---
+  duration_ms: 0.759785
+  type: 'test'
+  ...
+# Subtest: 4 heures actives et cookies administrateur / public isolés
+ok 243 - 4 heures actives et cookies administrateur / public isolés
+  ---
+  duration_ms: 1.134129
+  type: 'test'
+  ...
+# Subtest: le message session expirée et le suivi durable sont présents
+ok 244 - le message session expirée et le suivi durable sont présents
+  ---
+  duration_ms: 0.602017
+  type: 'test'
+  ...
+# Subtest: liste artisan : adresse et téléphone privés avant acceptation
+ok 245 - liste artisan : adresse et téléphone privés avant acceptation
+  ---
+  duration_ms: 1.057884
+  type: 'test'
+  ...
+# Subtest: l itinéraire intégré est réservé à la demande acceptée et propose un secours
+ok 246 - l itinéraire intégré est réservé à la demande acceptée et propose un secours
+  ---
+  duration_ms: 0.409717
+  type: 'test'
+  ...
+# Subtest: les accès admin publics restent sans lien d espace admin
+ok 247 - les accès admin publics restent sans lien d espace admin
+  ---
+  duration_ms: 0.224959
+  type: 'test'
+  ...
+# Subtest: route /verification/documents/7 avec Accept=text/html : 401
+ok 248 - route /verification/documents/7 avec Accept=text/html : 401
+  ---
+  duration_ms: 1.837098
+  type: 'test'
+  ...
+# Subtest: route /api/account avec Accept=text/html : 401
+ok 249 - route /api/account avec Accept=text/html : 401
+  ---
+  duration_ms: 0.340022
+  type: 'test'
+  ...
+# Subtest: route /api/admin/users avec Accept=text/html : 401
+ok 250 - route /api/admin/users avec Accept=text/html : 401
+  ---
+  duration_ms: 0.213201
+  type: 'test'
+  ...
+# Subtest: route /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard avec Accept=absent : 401
+ok 251 - route /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard avec Accept=absent : 401
+  ---
+  duration_ms: 0.182976
+  type: 'test'
+  ...
+# Subtest: route /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard avec Accept=text/html : 302
+ok 252 - route /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard avec Accept=text/html : 302
+  ---
+  duration_ms: 0.182114
+  type: 'test'
+  ...
+# Subtest: route /artisan-dashboard.html avec Accept=absent : 401
+ok 253 - route /artisan-dashboard.html avec Accept=absent : 401
+  ---
+  duration_ms: 0.121944
+  type: 'test'
+  ...
+# Subtest: route /artisan-dashboard.html avec Accept=text/html,application/xhtml+xml : 302
+ok 254 - route /artisan-dashboard.html avec Accept=text/html,application/xhtml+xml : 302
+  ---
+  duration_ms: 0.241614
+  type: 'test'
+  ...
+# Subtest: route /espace/client/demandes avec Accept=text/html : 302
+ok 255 - route /espace/client/demandes avec Accept=text/html : 302
+  ---
+  duration_ms: 0.141133
+  type: 'test'
+  ...
+# Subtest: route /espace/artisan/demandes avec Accept=text/html : 302
+ok 256 - route /espace/artisan/demandes avec Accept=text/html : 302
+  ---
+  duration_ms: 0.413063
+  type: 'test'
+  ...
+# Subtest: route /espace/artisan/demandes avec Accept=*/* : 401
+ok 257 - route /espace/artisan/demandes avec Accept=*/* : 401
+  ---
+  duration_ms: 0.466834
+  type: 'test'
+  ...
+# Subtest: session inactive /verification/documents/7 : 401
+ok 258 - session inactive /verification/documents/7 : 401
+  ---
+  duration_ms: 1.115861
+  type: 'test'
+  ...
+# Subtest: session inactive /api/account : 401
+ok 259 - session inactive /api/account : 401
+  ---
+  duration_ms: 0.145629
+  type: 'test'
+  ...
+# Subtest: session inactive /api/admin/users : 401
+ok 260 - session inactive /api/admin/users : 401
+  ---
+  duration_ms: 0.126991
+  type: 'test'
+  ...
+# Subtest: session inactive /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard : 401
+ok 261 - session inactive /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard : 401
+  ---
+  duration_ms: 0.103486
+  type: 'test'
+  ...
+# Subtest: session inactive /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard : 302
+ok 262 - session inactive /entree-privee-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/dashboard : 302
+  ---
+  duration_ms: 0.189085
+  type: 'test'
+  ...
+# Subtest: session inactive /artisan-dashboard.html : 401
+ok 263 - session inactive /artisan-dashboard.html : 401
+  ---
+  duration_ms: 0.107412
+  type: 'test'
+  ...
+# Subtest: session inactive /artisan-dashboard.html : 302
+ok 264 - session inactive /artisan-dashboard.html : 302
+  ---
+  duration_ms: 0.166121
+  type: 'test'
+  ...
+# Subtest: session inactive /espace/client/demandes : 302
+ok 265 - session inactive /espace/client/demandes : 302
+  ---
+  duration_ms: 0.133902
+  type: 'test'
+  ...
+# Subtest: session inactive /espace/artisan/demandes : 302
+ok 266 - session inactive /espace/artisan/demandes : 302
+  ---
+  duration_ms: 0.18548
+  type: 'test'
+  ...
+# Subtest: session inactive /espace/artisan/demandes : 401
+ok 267 - session inactive /espace/artisan/demandes : 401
+  ---
+  duration_ms: 0.124257
+  type: 'test'
+  ...
+# Subtest: le calendrier refuse dates passées, impossibles, et accepte la date du jour
+ok 268 - le calendrier refuse dates passées, impossibles, et accepte la date du jour
+  ---
+  duration_ms: 1.961065
+  type: 'test'
+  ...
+# Subtest: la saisie manuelle est impossible dans chaque formulaire actuel de demande
+ok 269 - la saisie manuelle est impossible dans chaque formulaire actuel de demande
+  ---
+  duration_ms: 1.164214
+  type: 'test'
+  ...
+# Subtest: la date n’est acceptée par le serveur que si elle est valide et non réservée
+ok 270 - la date n’est acceptée par le serveur que si elle est valide et non réservée
+  ---
+  duration_ms: 0.562638
+  type: 'test'
+  ...
+# Subtest: la nouvelle présentation conserve la modale artisan et ses boutons
+ok 271 - la nouvelle présentation conserve la modale artisan et ses boutons
+  ---
+  duration_ms: 1.480791
+  type: 'test'
+  ...
+# Subtest: le bloc carte conserve l’annuaire et les boutons liste/carte
+ok 272 - le bloc carte conserve l’annuaire et les boutons liste/carte
+  ---
+  duration_ms: 0.315766
+  type: 'test'
+  ...
+# Subtest: heure d’Algérie sans décalage vers le jour précédent
+ok 273 - heure d’Algérie sans décalage vers le jour précédent
+  ---
+  duration_ms: 16.567586
+  type: 'test'
+  ...
+# Subtest: actions de compte : même formulaire déplacé dans une fenêtre modale, retour et mot de passe effacé
+ok 274 - actions de compte : même formulaire déplacé dans une fenêtre modale, retour et mot de passe effacé
+  ---
+  duration_ms: 3.275816
+  type: 'test'
+  ...
+# Subtest: HTML : blocs fermés et rubriques administrateur indépendantes
+ok 275 - HTML : blocs fermés et rubriques administrateur indépendantes
+  ---
+  duration_ms: 12.042213
+  type: 'test'
+  ...
+# Subtest: navigation native client : lien actif accueil
+ok 276 - navigation native client : lien actif accueil
+  ---
+  duration_ms: 0.347003
+  type: 'test'
+  ...
+# Subtest: navigation native client : lien actif demandes
+ok 277 - navigation native client : lien actif demandes
+  ---
+  duration_ms: 0.160693
+  type: 'test'
+  ...
+# Subtest: navigation native client : lien actif profil
+ok 278 - navigation native client : lien actif profil
+  ---
+  duration_ms: 0.138809
+  type: 'test'
+  ...
+# Subtest: navigation native client : lien actif support
+ok 279 - navigation native client : lien actif support
+  ---
+  duration_ms: 0.302976
+  type: 'test'
+  ...
+# Subtest: navigation native artisan : lien actif accueil
+ok 280 - navigation native artisan : lien actif accueil
+  ---
+  duration_ms: 0.189656
+  type: 'test'
+  ...
+# Subtest: navigation native artisan : lien actif demandes
+ok 281 - navigation native artisan : lien actif demandes
+  ---
+  duration_ms: 0.26559
+  type: 'test'
+  ...
+# Subtest: navigation native artisan : lien actif profil
+ok 282 - navigation native artisan : lien actif profil
+  ---
+  duration_ms: 0.184618
+  type: 'test'
+  ...
+# Subtest: navigation native artisan : lien actif support
+ok 283 - navigation native artisan : lien actif support
+  ---
+  duration_ms: 0.577981
+  type: 'test'
+  ...
+# Subtest: navigation native artisan : lien actif avis
+ok 284 - navigation native artisan : lien actif avis
+  ---
+  duration_ms: 0.715789
+  type: 'test'
+  ...
+# Subtest: confirmation accessible : Annuler, Échap et confirmation explicite
+ok 285 - confirmation accessible : Annuler, Échap et confirmation explicite
+  ---
+  duration_ms: 2.221047
+  type: 'test'
+  ...
+# Subtest: artisan en attente : Annuler ne supprime rien, confirmer envoie le mot de passe
+ok 286 - artisan en attente : Annuler ne supprime rien, confirmer envoie le mot de passe
+  ---
+  duration_ms: 18.879264
+  type: 'test'
+  ...
+# Subtest: navigation admin : adresse propre et une seule section active
+ok 287 - navigation admin : adresse propre et une seule section active
+  ---
+  duration_ms: 1.029671
+  type: 'test'
+  ...
+1..287
+# tests 287
+# suites 0
+# pass 276
+# fail 11
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1099.307906

@@ -13,7 +13,7 @@ function resolvePublicPath(urlPath){
  return file;
 }
 function publicFiles(req,res,next){
- if(!['GET','HEAD'].includes(req.method))return next();
+ if(!['GET','HEAD'].includes(req.method)||req.path.startsWith('/api/'))return next();
  const file=resolvePublicPath(req.path);if(!file)return next();
  res.setHeader('X-Content-Type-Options','nosniff');
  res.setHeader('X-Frame-Options','DENY');
@@ -26,4 +26,11 @@ function publicFiles(req,res,next){
   next(error);
  });
 }
-module.exports={publicFiles,resolvePublicPath};
+function publicAssets(req,res,next){
+ // HTML, JSON et chemins API exclus.
+ if(!/^\/(?:css|js|images|fonts)\//.test(req.path))return next();
+ const file=resolvePublicPath(req.path);
+ if(!file||['.html','.json'].includes(path.extname(file).toLowerCase()))return next();
+ return publicFiles(req,res,next);
+}
+module.exports={publicFiles,resolvePublicPath,publicAssets};

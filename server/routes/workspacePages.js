@@ -3,9 +3,15 @@ const path=require('path');
 const fs=require('node:fs/promises');
 const {verifierConnexion,verifierAdmin}=require('../middleware/authMiddleware');
 const pages={client:['accueil','demandes','profil','support'],artisan:['accueil','demandes','avis','profil','support'],admin:['overview','users','reports','contacts','services','verification','account','admins','site']};
+if(process.env.TASKLY_MAIL_PILOT_ENABLED==='true')pages.admin.push('taskly-mail');
+function menuMailAdmin(original){
+ if(process.env.TASKLY_MAIL_PILOT_ENABLED!=='true')return original;
+ return original.replace(/<button type="button" class="admin-nav-logout"/, '<a data-admin-tab="taskly-mail" href="taskly-mail"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg><span>Demandes Taskly Mail</span></a><button type="button" class="admin-nav-logout"');
+}
 // Navigation persistante : la page d'origine reste la source unique du design.
 // On reprend son <head> et son <aside> SANS en modifier le contenu.
 function preparerCadreAdmin(original) {
+ original=menuMailAdmin(original);
  const head=original.match(/<head\b[^>]*>[\s\S]*?<\/head>/i)?.[0];
  const body=original.match(/<body\b[^>]*>/i)?.[0];
  const aside=original.match(/<aside\b[^>]*class="[^"]*admin-sidebar[^"]*"[^>]*>[\s\S]*?<\/aside>/i)?.[0];
@@ -72,6 +78,7 @@ module.exports.pages=pages;
 
 // Les documents administrateur originaux ne sont pas edites.
 function preparerPageIntegree(original) {
+ original=menuMailAdmin(original);
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw Error('Document admin invalide.');
  return original.replace(/<\/head>/i,
   '<link rel="stylesheet" href="/css/admin-navigation-embedded.css"></head>')

@@ -5,6 +5,7 @@
   const iframe = document.getElementById('taskly-admin-content-frame');
   if (!iframe) return;
   const pages = new Set(['overview','users','reports','contacts','services','verification','account','admins','site']);
+ pages.add('taskly-mail');
   const pathMatch = location.pathname.match(/^(.*\/dashboard\/)([^/]+)$/);
   if (!pathMatch || !pages.has(pathMatch[2])) return;
   const base = pathMatch[1];

@@ -1,6 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const express=require('express'),request=require('./helpers/request');
-function load(file,mocks){const module={exports:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),{module,exports:module.exports,require:n=>n in mocks?mocks[n]:require(n),console,Number,String,Buffer});return module.exports;}
+function load(file,mocks){const module={exports:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'..',file),'utf8'),{module,exports:module.exports,require:n=>n in mocks?mocks[n]:require(n),console,Number,String,Buffer,process:{env:{},hrtime:process.hrtime}});return module.exports;}
 function application({userId=42,role='artisan',approved=true,media='application/pdf',name='a'.repeat(64)}={}){
  const queries=[],reads=[];
  const user={id:userId,role,statut_compte:'actif',email_verified:1,admin_session_version:0};

@@ -16,7 +16,9 @@
     "demo:preview": "node scripts/prepare-pfe-demo.js",
     "demo:prepare": "node scripts/prepare-pfe-demo.js --prepare",
     "demo:apply": "node scripts/prepare-pfe-demo.js --apply",
-    "db:diagnostic": "node scripts/diagnostic-pfe-db.js"
+    "db:diagnostic": "node scripts/diagnostic-pfe-db.js",
+    "preview:check": "node scripts/check-preview-config.js",
+    "perf:budget": "node scripts/performance-budget.js"
   },
   "keywords": [],
   "author": "",
@@ -30,7 +32,7 @@
     "express-session": "^1.19.0",
     "multer": "^2.1.1",
     "mysql2": "^3.22.3",
-    "nodemailer": "10.1.0",
+    "nodemailer": "10.6.0",
     "redis": "^5.0.0"
   },
   "engines": {

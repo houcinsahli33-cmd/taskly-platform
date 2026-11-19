@@ -1,0 +1,50 @@
+
+> taskly-platform@1.1.0 check
+> node scripts/check-syntax.js
+
+Syntaxe JS : 180 fichiers verifies, 0 erreur(s).
+
+Suite originale
+1..246
+# tests 246
+# suites 0
+# pass 231
+# fail 15
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 982.877404
+
+Suite candidate
+1..253
+# tests 253
+# suites 0
+# pass 242
+# fail 11
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 901.413519
+
+# Error: Cannot find module 'express'
+not ok 2 - tests/account-profile.test.js
+# Error: Cannot find module 'bcrypt'
+not ok 3 - tests/account-spaces.test.js
+# Error: Cannot find module 'express'
+not ok 4 - tests/admin-decision.test.js
+# Error: Cannot find module 'express'
+not ok 17 - tests/artisan-document-read.test.js
+# Error: Cannot find module 'express'
+not ok 26 - tests/dedicated-pages.test.js
+not ok 135 - HTTP : CSRF, pages privées, médias et inscription sans pièce
+    Cannot find module 'express'
+not ok 136 - Nodemailer : composition locale du message sans SMTP
+    Cannot find module 'nodemailer'
+not ok 137 - entrée Vercel : accueil et styles disponibles sans démarrage Redis
+    Cannot find module 'express'
+not ok 170 - signatures de fichiers et faux MIME
+    Cannot find module 'multer'
+# Error: Cannot find module 'express'
+not ok 36 - tests/site-settings.test.js
+# Error: Cannot find module 'express'
+not ok 38 - tests/support-session.test.js

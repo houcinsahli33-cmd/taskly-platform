@@ -21,9 +21,10 @@ app.use(async (req, res) => {
     const taskly = await initialisation;
     taskly(req, res);
   } catch (err) {
-    console.error("Erreur de démarrage Taskly :", err.message);
+    console.error("Erreur de démarrage Taskly :", err.code || err.name);
 
     if (!res.headersSent) {
+      res.setHeader("Cache-Control", "private, no-store");
       res.status(503).json({
         message: "Service temporairement indisponible"
       });

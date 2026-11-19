@@ -1,0 +1,28 @@
+# Taskly V6 — Justificatifs et préparation de la préproduction
+
+Version cumulative issue de l'archive V5. Aucun changement en production, aucune connexion aux services réels, aucun déploiement. Les limites des audits précédents demeurent.
+
+## Corrections
+
+- `server/routes/verificationRoutes.js` : le POST de dépôt/remplacement référençait quatre noms inexistants (`sansCache`, `types`, `enregistrer`, `nomFichier`). Le dépôt pouvait donc échouer dès la validation ou avant l'enregistrement. Rétablissement des fonctions de réponse privée, des quatre types autorisés par le schéma (`identite`, `diplome`, `certificat`, `qualification`), du stockage privé sur la connexion transactionnelle et du nettoyage du nom de fichier (chemins Windows/Unix, caractères de contrôle, 255 caractères). L'identifiant de remplacement doit être un entier positif en écriture décimale ; les contrôles de propriété, rollback, libération de la connexion et remise en attente du dossier sont conservés. Un ancien blob remplacé reste conservé selon le comportement précédent : pas de purge automatique sans politique de conservation et vérification des références. La durée de conservation des blobs orphelins reste à arbitrer. Il n'y a pas de nouvelle migration SQL V6.
+- `server/middleware/documentUpload.js` : vérification du type Buffer et de la limite de 3 Mio au niveau de la fonction de validation, même appelée hors middleware Multer. Il s'agit toujours d'une validation de signature minimale, pas d'un décodage exhaustif ni d'un antivirus : scanner les documents et limiter les dimensions des images restent à réaliser.
+- `server/app.js` : le point public `/api/media/:id` ne sert que JPEG et PNG même si un type différent est présent dans les métadonnées historiques. Le filtrage `prive=0` reste obligatoire dans la couche stockage.
+- `server/routes/adminVerificationRoutes.js` : un type de document historique non autorisé est téléchargé en `application/octet-stream`, non affiché en ligne. Aucun changement des permissions ou de la prévisualisation PDF/JPEG/PNG.
+- `scripts/check-preview-config.js` et commande `npm run preview:check` : contrôle hors réseau de la forme des paramètres de préproduction, sans impression de leurs valeurs. Exige TLS pour TiDB/Redis, les variables essentielles, une URL HTTPS différente de l'hôte de production connu et les deux flags Taskly Mail explicitement à false ; refuse `VERCEL_ENV=production`. Propose de vérifier le proxy et les workers/cron. Il ne peut pas confirmer que les comptes, bases et hôtes sont réellement isolés, qu'un alias ne pointe pas vers la production, ou que les secrets sont forts/uniques. Contrôle indicatif, non une certification. Aucun fichier de secrets ajouté. Pour utiliser un fichier local de test non versionné : `node --env-file=server/.env.preview scripts/check-preview-config.js` (Node 22, fichier à créer localement, ne jamais l'envoyer ni l'ajouter au dépôt). Ou lancer `npm run preview:check` avec des variables de test déjà chargées.
+
+## Tests exécutés
+
+- `npm ci --offline --no-audit --no-fund` : ENOTCACHED (wrappy absent), le dossier node_modules partiel a été supprimé. Pas de contournement en substituant des paquets factices à la suite d'intégration.
+- `npm run check` : 189 fichiers JS contrôlés, 0 erreur de syntaxe.
+- `npm test` : 284 réussites / 295 résultats ; 11 échecs `MODULE_NOT_FOUND` identiques à la V5 (Express, bcrypt, Nodemailer, multer). Huit nouveaux tests V6 réussissent : ajout, remplacement, droits de propriété, validation, rollback, taille/type de buffer et deux contrôles de configuration. Tests des routes via mocks de stockage/SQL et routeur, pas de base réelle. Les tests HTTP existants sont toujours bloqués.
+- Les tests de navigateur, les mesures de charge et la vérification du comportement après déploiement n'ont pas été réalisés. Le rapport `AUDIT_V5.md` contient la marche à suivre complète.
+
+## Ordre de validation avant mise en ligne
+
+1. Conserver le ZIP et le commit GitHub actuels. Comparer les changements V6 à la branche actuelle, créer `audit/taskly-v6`, ne pas fusionner. Si le dépôt a évolué depuis le ZIP initial, réconcilier les différences.
+2. Installer les dépendances sur une machine connectée avec Node 22, relancer `npm ci`, `npm run check`, `npm test`, `npm audit --omit=dev --audit-level=high`. Vérifier le CI. Ne pas masquer les tests bloqués.
+3. Créer des services de test distincts et configurer les variables de préproduction. Contrôler avec le nouveau script et confirmer manuellement l'isolation de chaque service, workers et cron. Garder Taskly Mail désactivé. Sauvegarde avant migrations ; appliquer uniquement les migrations nécessaires sur une copie de test (voir V1–V5).
+4. Ouvrir une Preview Vercel. Procéder aux tests navigateur des quatre espaces, modales et formulaires, notamment ajout/remplacement de justificatif, passage en attente de validation, consultation via le support, refus d'accès croisé. Vérifier SMTP/Brevo sur adresses de test uniquement.
+5. Vérifier les régions de Vercel, Redis, TiDB et les métriques de latence avant toute modification, tester la charge sur environnement isolé avec accord explicite. Le scénario k6 V5 n'est qu'un premier essai de lecture publique. Objectif 1 million de comptes enregistrés non démontré.
+6. Taskly Mail reste incomplet : passerelle réelle, domaine/DNS, stockage, mot de passe indépendant, pièces jointes, recherche, corbeille, antispam et cycle de vie des boîtes. Ne pas activer en production. Pas d'application mobile à cette étape.
+7. Une fois les contrôles réussis, accord du propriétaire et plan de retour arrière avant production. Aucune garantie zéro bug.

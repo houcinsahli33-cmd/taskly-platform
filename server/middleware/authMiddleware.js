@@ -1,3 +1,15 @@
+// Résultat vérifié uniquement pour la requête HTTP en cours.
+const verification = new WeakMap();
+function contexteVerifie(req) {
+  const contexte = verification.get(req);
+  return contexte && contexte.id === req.session?.utilisateur?.id &&
+    contexte.role === req.session?.utilisateur?.role ? contexte : null;
+}
+function mesurer(res, nom, debut) {
+  if (process.env.TASKLY_PERF_TIMING === 'true' && typeof res.append === 'function') {
+    res.append('Server-Timing', `${nom};dur=${(Number(process.hrtime.bigint()-debut)/1e6).toFixed(2)}`);
+  }
+}
 function pagePriveeHTML(req) {
   // Express peut considérer Accept: */* comme HTML ; ce n'est pas une navigation.
   if (req.method !== 'GET') return false;
@@ -8,7 +20,7 @@ function pagePriveeHTML(req) {
   if (req.tasklyAdminContext)
     return !!portail && (chemin === portail + '/dashboard' || chemin.startsWith(portail + '/dashboard/'));
   return /^\/(?:client|artisan)-dashboard\.html$/.test(chemin) ||
-    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support)$/.test(chemin);
+    /^\/espace\/(?:client|artisan)\/(?:accueil|demandes|avis|profil|support|taskly-mail)$/.test(chemin);
 }
 
 // Ce fichier contient les middlewares d'authentification.
@@ -22,7 +34,10 @@ async function verifierConnexion(req,res,next) {
     return res.status(401).json({code:'SESSION_EXPIREE',message:'Vous devez être connecté.'});
   }
   try {
+    verification.delete(req);
+    const debut=process.hrtime.bigint();
     const user=await require('../models/userModel').trouverUtilisateurParId(req.session.utilisateur.id);
+    mesurer(res,'auth_user_sql',debut);
     if (!user || user.statut_compte !== 'actif' || !user.email_verified || user.role!==req.session.utilisateur?.role ||
         (user.role==='admin' && user.admin_session_version!==req.session.adminSessionVersion)) {
       req.session.destroy(()=>{});
@@ -31,18 +46,23 @@ async function verifierConnexion(req,res,next) {
     if(user.role!=='admin' && Number(user.admin_session_version||0)!==Number(req.session.accountSessionVersion||0)) {
       req.session.destroy(()=>{});return res.status(401).json({message:'Session expirée. Reconnectez-vous.'});
     }
+    let artisan;
     if(user.role==='artisan') {
-      const artisan=await require('../models/artisanModel').trouverArtisanParUserId(user.id);
+      const debutArtisan=process.hrtime.bigint();
+      artisan=await require('../models/artisanModel').trouverArtisanParUserId(user.id);
+      mesurer(res,'auth_artisan_sql',debutArtisan);
       if(!require('../services/accountAccess').autoriserEspace(user,artisan)) {
         req.session.destroy(()=>{});return res.status(403).json({message:'Votre compte artisan doit être activé. Reconnectez-vous pour contacter le support.'});
       }
     }
+    verification.set(req,{id:req.session.utilisateur.id,role:user.role,user,artisan});
     next();
   } catch(e) {res.status(503).json({message:'Vérification de session indisponible.'});}
 }
 async function verifierArtisanActif(req,res,next) {
   try {
-    const artisan=await require('../models/artisanModel').trouverArtisanParUserId(req.session.utilisateur.id);
+    const contexte=contexteVerifie(req);
+    const artisan=contexte?.role==='artisan' ? contexte.artisan : await require('../models/artisanModel').trouverArtisanParUserId(req.session.utilisateur.id);
     if (!artisan || artisan.verification_statut!=='approuve') return res.status(403).json({message:'Votre dossier doit être approuvé par un administrateur.'});
     next();
   } catch(e) {res.status(503).json({message:'Vérification du dossier indisponible.'});}
@@ -79,8 +99,10 @@ async function verifierAdmin(req, res, next) {
     }
 
     try {
-      const user = await require('../models/userModel').trouverUtilisateurParId(req.session.utilisateur.id);
-      if (!user || user.role !== 'admin' || user.statut_compte === 'bloque') {
+      const contexte=contexteVerifie(req);
+      const user = contexte?.user || await require('../models/userModel').trouverUtilisateurParId(req.session.utilisateur.id);
+      if (!user || user.role !== 'admin' || user.statut_compte !== 'actif' || !user.email_verified ||
+          user.admin_session_version !== req.session.adminSessionVersion) {
         return res.status(403).json({message:'Session admin non autorisee.'});
       }
       next();

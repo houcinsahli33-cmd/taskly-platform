@@ -41,7 +41,7 @@ test('support artisan : CSS exclusivement dans la page artisan/support et suppre
     }
   }
   const profile = read('client/public/css/artisan-design-fidele.css');
-  assert.match(profile, /#account-profile-editor \.workspace-actions > \.workspace-action:last-child\s*\{\s*grid-column:auto!important/);
+  assert.match(profile, /#account-profile-editor \.workspace-actions > \.workspace-action:nth-last-child\(1 of \.workspace-action:not\(\.workspace-action-privacy\)\)\s*\{\s*grid-column:\s*auto\s*!important/);
   assert.match(profile, /\.workspace-dialog \.account-danger \.btn\.danger[\s\S]*background:#c72e44!important/);
   assert.match(profile, /\.taskly-confirm-dialog \[data-delete\]/);
   assert.match(read('client/public/js/account-profile.js'), /confirmation:'SUPPRIMER'/);

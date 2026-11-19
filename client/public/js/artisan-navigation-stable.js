@@ -4,6 +4,7 @@
  const iframe=document.getElementById('taskly-artisan-content-frame');
  if(!iframe)return;
  const pages=new Set(['accueil','demandes','avis','profil','support']);
+ pages.add('taskly-mail');
  const base='/espace/artisan/';
  let selected=location.pathname+location.search+location.hash;
  let observer;
@@ -17,6 +18,10 @@
  function navigate(input,mode='push'){
   const url=validated(input);if(!url)return false;
   const target=clean(url);
+  // Ne pas recréer une rubrique déjà chargée : conserver son formulaire et ses données.
+  if(target===selected && mode==='push') {
+   try{if(iframe.contentWindow.location.href===embedded(url) && iframe.contentDocument?.readyState==='complete' && iframe.contentDocument.querySelector('.dashboard-shell > .dashboard-content')){navActive(url);return true;}}catch{/* Recharger si le document n'est pas accessible. */}
+  }
   if(target!==selected){if(mode==='push')history.pushState(null,'',target);else if(mode==='replace')history.replaceState(null,'',target);}
   selected = target;
 navActive(url);

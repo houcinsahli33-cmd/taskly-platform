@@ -25,6 +25,7 @@ const upload = multer({
 });
 
 function formatValide(buffer, mime) {
+  if (!Buffer.isBuffer(buffer) || buffer.length > 3 * 1024 * 1024) return false;
   if (mime === "application/pdf")
     return buffer.subarray(0, 5).toString("ascii") === "%PDF-";
 

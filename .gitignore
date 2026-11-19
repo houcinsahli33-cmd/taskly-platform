@@ -26,3 +26,12 @@ server/private_uploads/
 /*_pour_commit*.zip
 /*.patch
 /*.ps1
+
+# Protection supplementaire des fichiers sensibles
+.vercel/
+*.pem
+*.key
+*.p12
+*.pfx
+*.bak
+*.dump

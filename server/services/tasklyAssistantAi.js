@@ -38,6 +38,12 @@ const LANGUES = Object.freeze({
   dz: 'darija algérienne'
 });
 
+// Seules les 18 combinaisons publiques thème/langue sont mémorisées.
+// Aucun identifiant, texte libre ou résultat personnel n'entre dans ce cache.
+const CACHE_TTL = 5 * 60 * 1000;
+const cache = new Map();
+const enCours = new Map();
+
 // GENERATION SECURISEE DES REPONSES
 
 async function genererReponse(theme, langue = 'fr') {
@@ -57,6 +63,21 @@ async function genererReponse(theme, langue = 'fr') {
 
   if (!cle) return null;
 
+  const key = `${theme}:${langue}`;
+  const precedent = cache.get(key);
+  if (precedent && precedent.expire > Date.now()) return precedent.texte;
+  cache.delete(key);
+  if (enCours.has(key)) return enCours.get(key);
+
+  const travail = interrogerGroq(theme, langue, cle).then(texte => {
+    if (texte) cache.set(key, { texte, expire: Date.now() + CACHE_TTL });
+    return texte;
+  }).finally(() => enCours.delete(key));
+  enCours.set(key, travail);
+  return travail;
+}
+
+async function interrogerGroq(theme, langue, cle) {
   try {
 
     const response = await fetch(

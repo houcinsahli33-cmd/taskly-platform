@@ -30,7 +30,7 @@ function appFor(role,niveau='secondaire'){
   },
   '../config/db':{promise:()=>({query:async()=>[[{niveau}]]})}
  };
- vm.runInNewContext(fs.readFileSync(path.join(root,'server/routes/workspacePages.js'),'utf8'),{module,require:n=>mocks[n]||require(n),__dirname:path.join(root,'server/routes')});
+ vm.runInNewContext(fs.readFileSync(path.join(root,'server/routes/workspacePages.js'),'utf8'),{module,require:n=>mocks[n]||require(n),__dirname:path.join(root,'server/routes'),process:{env:{TASKLY_MAIL_PILOT_ENABLED:'false'}}});
  const app=express();app.use((req,res,next)=>{req.session={utilisateur:{id:7,role}};next();});
  module.exports(app,{adminEntryPath:'/prive-test',headersAdminPrive:(req,res,next)=>next()});
  app.use((req,res)=>res.status(404).end());return app;

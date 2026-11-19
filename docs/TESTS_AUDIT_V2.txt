@@ -1,0 +1,36 @@
+V2 - Node:
+v22.16.0
+
+
+> taskly-platform@1.1.0 check
+> node scripts/check-syntax.js
+
+Syntaxe JS : 181 fichiers verifies, 0 erreur(s).
+
+  ...
+1..261
+# tests 261
+# suites 0
+# pass 250
+# fail 11
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1011.001688
+
+not ok 2 - tests/account-profile.test.js
+not ok 3 - tests/account-spaces.test.js
+not ok 4 - tests/admin-decision.test.js
+not ok 17 - tests/artisan-document-read.test.js
+not ok 27 - tests/dedicated-pages.test.js
+not ok 143 - HTTP : CSRF, pages privées, médias et inscription sans pièce
+not ok 144 - Nodemailer : composition locale du message sans SMTP
+not ok 145 - entrée Vercel : accueil et styles disponibles sans démarrage Redis
+not ok 178 - signatures de fichiers et faux MIME
+not ok 37 - tests/site-settings.test.js
+not ok 39 - tests/support-session.test.js
+
+      1 bcrypt
+      8 express
+      1 multer
+      1 nodemailer

@@ -30,6 +30,28 @@ async function lire(sql) {
   // Même les valeurs insérées hors de l'application passent la validation.
   return valider(settings);
 }
+// Cache borné, uniquement pour les coordonnées publiques. Pas de données de compte.
+function creerCachePublic(lireSource, maintenant = Date.now, ttl = 10000) {
+  let valeur, expiration = 0, enCours = null, generation = 0;
+  return {
+    lire(sql) {
+      if (valeur && maintenant() < expiration) return Promise.resolve({...valeur});
+      if (!enCours) {
+        const g = generation;
+        const p = Promise.resolve().then(() => lireSource(sql)).then(resultat => {
+          if (g === generation) { valeur = {...resultat}; expiration = maintenant() + ttl; }
+          return resultat;
+        });
+        enCours = p;
+        const liberer = () => { if (enCours === p) enCours = null; };
+        p.then(liberer, liberer);
+      }
+      return enCours.then(resultat => ({...resultat}));
+    },
+    invalider() { generation++; valeur = undefined; expiration = 0; enCours = null; }
+  };
+}
+const cachePublic = creerCachePublic(lire);
 async function enregistrer(pool, settings, adminId) {
   const values = valider(settings);
   const conn = await pool.getConnection();
@@ -40,8 +62,9 @@ async function enregistrer(pool, settings, adminId) {
     await conn.query('INSERT INTO admin_audit_logs (admin_user_id,action,detail) VALUES (?,?,?)',
       [adminId,'site_settings_update','Coordonnées publiques du site modifiées.']);
     await conn.commit();
+    cachePublic.invalider();
     return values;
   } catch (error) {await conn.rollback(); throw error;}
   finally {conn.release();}
 }
-module.exports = {keys, defaults, valider, lire, enregistrer};
+module.exports = {keys, defaults, valider, lire, enregistrer, lirePublic: sql => cachePublic.lire(sql), creerCachePublic};

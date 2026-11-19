@@ -10,13 +10,13 @@ test('annuaire inchangé et vues carte/liste additionnelles',()=>{
 test('filtrage côté serveur : artisans approuvés, actifs et e-mail vérifié',()=>{
  const model=read('server/models/artisanModel.js');
  for(const x of ["verification_statut = 'approuve'","statut_compte = 'actif'",'email_verified = 1','a.public_lat IS NOT NULL'])assert.ok(model.includes(x),x);
- assert.match(model,/SELECT a\.id,a\.ville,a\.public_lat/);
+ assert.match(model,/SELECT\s+a\.id,\s*a\.ville,\s*a\.public_lat/);
 });
 test('une position ne se publie qu’après choix actif de son artisan, avec arrondi kilométrique',()=>{
  const front=read('client/public/js/taskly-artisan-zone.js'),model=read('server/models/artisanModel.js');
  assert.match(front,/Partager uniquement votre zone approximative/);
  assert.match(front,/data-zone-remove/);
- assert.match(model,/Math\.round\(lat\*20\)\/20/);
+ assert.match(model,/Math\.round\(lat\s*\*\s*20\)\s*\/\s*20/);
 });
 test('route de carte publique avant la route /:id ; édition réservée au profil connecté',()=>{
  const routes=read('server/routes/artisanRoutes.js');

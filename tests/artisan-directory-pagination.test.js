@@ -7,7 +7,7 @@ function simulerModele() {
   const requetes=[];
   const db={promise:()=>({query:async(sql,params=[])=>{
     requetes.push({sql,params});
-    if(sql.includes('COUNT(*) AS total') && sql.includes('FROM artisans JOIN'))return [[{total:37}]];
+    if(sql.includes('COUNT(*) AS total') && /FROM artisans\s+JOIN/.test(sql))return [[{total:37}]];
     return [[{id:10,prenom:'Nadia',nom:'Ben',service_nom:'Peinture'}]];
   }})};
   const module={exports:{}};

@@ -20,8 +20,24 @@ async function obtenirCsrf(renouveler=false) {
   return csrfEnCours;
 }
 function reinitialiserCsrf() {csrfEnCours=null;}
-// Envoyer une requete API
+// Deux composants du profil peuvent demander les mêmes données simultanément.
+// Partage uniquement la requête en vol, jamais un résultat conservé en cache.
+let compteEnCours=null;
 async function requeteAPI(url, options = {}) {
+  if(url==='/api/account' && Object.keys(options).length===0) {
+    if(!compteEnCours){
+      const demande=executerRequeteAPI(url,options);
+      compteEnCours=demande;
+      const liberer=()=>{if(compteEnCours===demande)compteEnCours=null;};
+      demande.then(liberer,liberer);
+    }
+    return compteEnCours;
+  }
+  if(!['GET','HEAD','OPTIONS'].includes((options.method||'GET').toUpperCase()))compteEnCours=null;
+  return executerRequeteAPI(url,options);
+}
+// Envoyer une requete API
+async function executerRequeteAPI(url, options = {}) {
   const configuration = {
     credentials: "include",
     ...options
@@ -125,6 +141,7 @@ function gererImageService(img, nom) {
     img.onerror = null;
     img.src = imageServiceFallback(nom);
   };
+  if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) img.onerror();
 }
 
 // Formater une date courte

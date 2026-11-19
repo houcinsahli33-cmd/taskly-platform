@@ -5,6 +5,7 @@
 const express = require("express");
 
 const configurerSession = require('./config/sessionConfig');
+const {sessionMesuree} = require('./helpers/performanceTiming');
 const {verifierCsrf} = require('./middleware/securityMiddleware');
 const adminAuthRoutes=require('./routes/adminAuthRoutes');
 const verificationRoutes=require('./routes/verificationRoutes');
@@ -34,16 +35,22 @@ if (!adminEntryPath || !/^\/[a-z0-9][a-z0-9-]{30,100}$/.test(adminEntryPath)) {
 
 if (process.env.TRUST_PROXY === '1') app.set('trust proxy', 1);
 app.disable('x-powered-by');
+// Les API privées ne doivent pas être mises en cache ni revalidées par ETag.
+app.disable('etag');
 
 // Middleware. La session est montee AVANT les pages privees.
 function preparerApp(store) {
+// Les ressources publiques ne nécessitent pas de lecture de session.
+app.use(require('./middleware/publicFiles').publicAssets);
+// Même les erreurs de parsing ou de stockage de session ne sont pas cachables.
+app.use('/api', (req,res,next)=>{res.setHeader('Cache-Control','private, no-store');next();});
 app.use(express.json({limit:'100kb'}));
 app.use(express.urlencoded({extended:false,limit:'100kb'}));
 // Les comptes publics et administrateurs n'utilisent ni le même cookie ni le même contexte.
 const sessionPublique = configurerSession(store, false);
 const sessionAdmin = configurerSession(store, true);
 app.use((req,res,next)=>{
-  const chemin=req.path;
+  const chemin=req.path.toLowerCase().replace(/\/+$/, '') || '/';
   const apiAdmin = chemin==='/api/admin' || chemin.startsWith('/api/admin/') ||
     chemin.startsWith('/api/admin-verification') ||
     (chemin.startsWith('/api/admin-settings') && !chemin.startsWith('/api/admin-settings/invitation')) ||
@@ -53,14 +60,14 @@ app.use((req,res,next)=>{
     req.get('X-Taskly-Admin')==='1';
   const prive=chemin===adminEntryPath || chemin.startsWith(adminEntryPath+'/') || apiAdmin || partage;
   req.tasklyAdminContext=prive;
-  (prive?sessionAdmin:sessionPublique)(req,res,next);
+  sessionMesuree(prive?sessionAdmin:sessionPublique,req,res,next);
 });
 app.use(require('./services/sessionActivity').verifierInactivite);
 app.use((req,res,next)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
   res.setHeader('X-Frame-Options','DENY');
-  res.setHeader('Cache-Control',req.path === adminEntryPath || req.path.startsWith(adminEntryPath + '/') ? 'no-store, private' : 'no-cache');
+  if (!res.hasHeader('Cache-Control')) res.setHeader('Cache-Control',req.path === adminEntryPath || req.path.startsWith(adminEntryPath + '/') ? 'no-store, private' : 'no-cache');
   next();
 });
 // Ne jamais exposer les anciennes URL d'administration.
@@ -89,20 +96,21 @@ app.use(require('./middleware/publicFiles').publicFiles);
 app.get('/api/media/:id',async(req,res)=>{
   try {
     const file=await require('./services/fileStorage').lire(req.params.id,false);
-    if(!file)return res.status(404).end();
+    if(!file || !['image/jpeg','image/png'].includes(file.media_type))return res.status(404).end();
     res.set('Content-Type',file.media_type);res.set('Cache-Control','public,max-age=86400');res.send(file.contenu);
   } catch(e) {res.status(503).end();}
 });
 app.get('/api/site-settings',async(req,res)=>{
-  try {res.set('Cache-Control','no-cache');res.json({parametres:await require('./services/siteSettings').lire(require('./config/db').promise())});}
+  try {res.set('Cache-Control','no-cache');res.json({parametres:await require('./services/siteSettings').lirePublic(require('./config/db').promise())});}
   catch(error){res.status(503).json({message:'Coordonnées du site indisponibles.'});}
 });
 // Déclencheur externe planifié pour le serverless. Sans CRON_SECRET, accès désactivé.
 app.get('/api/internal/expire-sessions', async(req,res)=>{
  const crypto=require('node:crypto');
  const secret=process.env.CRON_SECRET;
- const fourni=(req.get('Authorization')||'').replace(/^Bearer\s+/i,'');
- if(!secret||!fourni||secret.length!==fourni.length||
+ const autorisation=req.get('Authorization')||'';
+ const fourni=/^Bearer ([^\s]+)$/i.exec(autorisation)?.[1];
+ if(!secret||!fourni||Buffer.byteLength(secret)!==Buffer.byteLength(fourni)||
      !crypto.timingSafeEqual(Buffer.from(secret),Buffer.from(fourni)))return res.status(404).end();
  try { const resultat=await require('./services/sessionExpiryNotifier').traiterEcheances();res.json({notifications:resultat}); }
  catch(e){console.error('Cron session :',e.code||e.message);res.status(503).json({message:'Tâche indisponible.'});}
@@ -136,6 +144,11 @@ app.use(
   '/api/admin/taskly-assistant',
   require('./routes/tasklyAssistantRoutes')
 );
+if (process.env.TASKLY_MAIL_PILOT_ENABLED === 'true') {
+  const mail = require('./routes/professionalMailRoutes');
+  app.use('/api/taskly-mail',mail.artisan);
+  app.use('/api/admin/taskly-mail',mail.admin);
+}
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
 app.use("/api/contact", contactRoutes); // routes liÃƒÂ©es au contact/support
@@ -151,6 +164,7 @@ app.use((req, res) => {
 
 app.use((err,req,res,next)=>{
   console.error('Erreur requête :',err.code||err.name);
+  if(res.headersSent)return next(err);
   if(req.path.startsWith('/api/') && !err.code?.startsWith('LIMIT_') && !err.status) return res.status(500).json({message:'Opération indisponible. Vérifiez les migrations de la base.'});
   res.status(err.code==='LIMIT_FILE_SIZE'?413:400).json({message:err.code==='LIMIT_FILE_SIZE'?'Fichier trop volumineux (3 Mo maximum).': 'Requete ou fichier invalide.'});
 });

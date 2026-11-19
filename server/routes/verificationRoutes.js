@@ -2,6 +2,11 @@ const express=require('express');const fs=require('fs').promises;const path=requ
 const db=require('../config/db').promise();const {verifierConnexion,verifierArtisan}=require('../middleware/authMiddleware');
 const {upload,dossier,formatValide}=require('../middleware/documentUpload');
 const router=express.Router();router.use(verifierConnexion,verifierArtisan);
+const types=new Set(['identite','diplome','certificat','qualification']);
+function sansCache(res){return res.set('Cache-Control','private, no-store');}
+function nomFichier(value){
+  return path.basename(String(value||'').replace(/\\/g,'/')).replace(/[\x00-\x1f\x7f]/g,'').slice(0,255)||'justificatif';
+}
 router.get('/status',async(req,res)=>{
  try{const [rows]=await db.query('SELECT id,verification_statut,verification_commentaire FROM artisans WHERE user_id=?',[req.session.utilisateur.id]);
   if(!rows[0])return res.status(404).json({message:'Profil inexistant.'});
@@ -34,11 +39,11 @@ router.get('/documents/:id',async(req,res)=>{
 router.post('/documents', upload.single('document'), async (req,res) => {
   if(!req.file)return sansCache(res).status(400).json({message:'Document requis.'});
   const type=String(req.body?.type_document||'');
-  if(!types.has(type) || !formatValide(req.file.buffer,req.file.mimetype))
+  if(!types.has(type) || !Buffer.isBuffer(req.file.buffer) || !formatValide(req.file.buffer,req.file.mimetype))
     return sansCache(res).status(400).json({message:'Type ou fichier invalide.'});
   const remplacement=String(req.body?.remplacer_document_id||'').trim();
   const documentId=remplacement?Number(remplacement):null;
-  if(remplacement && (!Number.isSafeInteger(documentId)||documentId<1))
+  if(remplacement && (!/^[1-9]\d*$/.test(remplacement)||!Number.isSafeInteger(documentId)||documentId<1))
     return sansCache(res).status(400).json({message:'Document à remplacer invalide.'});
   let conn;
   try {
@@ -51,7 +56,7 @@ router.post('/documents', upload.single('document'), async (req,res) => {
       if(!existants.length){await conn.rollback();return sansCache(res).status(404).json({message:'Ce document ne fait pas partie de votre dossier.'});}
     }
     // L'enregistrement du blob, la pièce et la remise en verification sont atomiques.
-    const stored=await enregistrer(req.file,true,conn);
+    const stored=await require('../services/fileStorage').enregistrer(req.file,true,conn);
     const valeurs=[type,stored,nomFichier(req.file.originalname),req.file.mimetype,req.file.size];
     if(documentId){
       await conn.query('UPDATE artisan_documents SET type_document=?,stored_name=?,original_name=?,media_type=?,taille=? WHERE id=? AND artisan_id=?', [...valeurs,documentId,artisan.id]);

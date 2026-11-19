@@ -255,6 +255,8 @@ function attendreSession() {
 
 // Les liens proviennent de la base, jamais d'un modèle HTML fourni par l'API.
 async function actualiserCoordonneesSite() {
+  // Ne pas interroger les paramètres si aucun élément ne les utilise.
+  if (!document.querySelector('[data-site-contact], [data-site-social]')) return;
   try {
     const {parametres} = await requeteAPI('/api/site-settings');
     if (typeof parametres.email === 'string' && /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(parametres.email)) {
