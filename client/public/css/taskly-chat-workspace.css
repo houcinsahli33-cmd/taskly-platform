@@ -42,3 +42,63 @@ body.dashboard-page[data-require-role].taskly-chat-shell-active .dashboard-shell
 @media(max-width:1100px){body.dashboard-page .dashboard-content.chat-workspace{overflow-x:clip}.chat-workspace::before,.chat-workspace::after{transform:none}}
 /* Les icônes ajoutées à la navigation client se limitent à la rubrique chat. */
 body[data-taskly-client-shell]:not(.taskly-chat-shell-active) .sidebar-title .chat-nav-icon,body[data-taskly-client-shell]:not(.taskly-chat-shell-active) .side-nav a:not([data-dashboard-link=messagerie]) .chat-nav-icon{display:none}
+
+/* TASKLY SIDEBAR PERMANENTE V3 */
+
+body.dashboard-page:is([data-taskly-client-shell],[data-taskly-artisan-shell]) .sidebar-title .chat-nav-icon,
+body.dashboard-page:is([data-taskly-client-shell],[data-taskly-artisan-shell]) .side-nav a .chat-nav-icon {
+    display: inline-block;
+}
+
+@media (min-width: 1101px) {
+
+    body.dashboard-page:is([data-taskly-client-shell],[data-taskly-artisan-shell]):not(.taskly-chat-shell-active) .dashboard-shell > .sidebar {
+        padding: 30px 10px 25px;
+        background: linear-gradient(125deg,#093b30,#04382f 55%,#06352c);
+        font-family: Arial,Helvetica,sans-serif !important;
+    }
+
+    body.dashboard-page:is([data-taskly-client-shell],[data-taskly-artisan-shell]) .sidebar-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: white;
+        text-transform: none;
+        letter-spacing: 0;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 5px 14px 25px;
+    }
+
+    body.dashboard-page:is([data-taskly-client-shell],[data-taskly-artisan-shell]) .side-nav {
+        gap: 8px;
+    }
+
+    body.dashboard-page:is([data-taskly-client-shell],[data-taskly-artisan-shell]) .side-nav a {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        border-radius: 13px;
+        min-height: 50px;
+        padding: 12px 15px;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    body.dashboard-page:is([data-taskly-client-shell],[data-taskly-artisan-shell]) .side-nav a.active {
+        background: #167d68;
+        color: white;
+        border-left: 4px solid #7ed7c3;
+        padding-left: 11px;
+    }
+}
+
+/* TASKLY ICONES PERMANENTES */
+body.dashboard-page[data-taskly-client-shell] .sidebar-title .chat-nav-icon,
+body.dashboard-page[data-taskly-client-shell] .side-nav a .chat-nav-icon,
+body.dashboard-page[data-taskly-artisan-shell] .sidebar-title .chat-nav-icon,
+body.dashboard-page[data-taskly-artisan-shell] .side-nav a .chat-nav-icon {
+    display: inline-flex !important;
+}
