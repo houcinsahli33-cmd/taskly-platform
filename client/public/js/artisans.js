@@ -7,19 +7,19 @@ function carteArtisan(artisan) {
           <img class="avatar large" loading="lazy" decoding="async" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
           <div>
             <h3>${echapperHTML(nomComplet(artisan))}</h3>
-            <p class="muted">${echapperHTML(artisan.service_nom || "Service")} · ${echapperHTML(artisan.ville || "Commune non précisée")}</p>
-            <div class="stars">${echapperHTML(afficherEtoiles(artisan.moyenne_notes))}</div>
+            <p class="muted taskly-list-service"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6a5 5 0 0 0-6 6L3 17a3 3 0 0 0 4 4l5-5a5 5 0 0 0 6-6l-3 3-4-4Z"></path></svg> <span>${echapperHTML(artisan.service_nom || "Service")}</span></p>
+            <p class="muted taskly-list-location"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0ZM12 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"></path></svg> <span>${echapperHTML(artisan.ville || "Commune non précisée")}</span></p>
           </div>
         </div>
         <div class="meta-row">
-          <span class="badge primary">${Number(artisan.experience || 0)} an(s) d'expérience</span>
-          <span class="badge accent">${echapperHTML(noteArtisan(artisan))}</span>
-          <span class="badge">${Number(artisan.total_demandes || 0)} mission(s)</span>
+          <span class="badge primary"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v16H3zM7 2v6M17 2v6M3 11h18"></path></svg> ${Number(artisan.experience || 0)} an(s) d'expérience</span>
+          <span class="badge accent">${Number(artisan.total_avis || 0) > 0 ? echapperHTML(noteArtisan(artisan)) : "Pas encore d’avis"}</span>
+          <span class="badge"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v14H3zM8 7V3h8v4M3 13h18"></path></svg> ${Number(artisan.total_demandes || 0)} demande(s)</span>
         </div>
-        <p class="muted artisan-description">${echapperHTML(artisan.description || "Artisan Taskly disponible pour vos demandes.")}</p>
+        <div class="taskly-list-description"><span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6a5 5 0 0 0-6 6L3 17a3 3 0 0 0 4 4l5-5a5 5 0 0 0 6-6l-3 3-4-4Z"></path></svg></span><p class="muted artisan-description">${echapperHTML(artisan.description || "Aucune description renseignée.")}</p></div>
         <div class="request-actions">
-          <a class="btn outline" href="/artisan-profile.html?id=${artisan.id}">Voir le profil</a>
-          ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${artisan.id}">Envoyer une demande</button>` : ""}
+          <a class="btn outline" href="/artisan-profile.html?id=${artisan.id}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a7 7 0 0 0-14 0v2M13 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path></svg> <span>Voir le profil</span></a>
+          ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${artisan.id}"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4 20-7ZM22 2 11 13"></path></svg> <span>Envoyer une demande</span></button>` : ""}
         </div>
       </div>
     </article>
@@ -61,6 +61,8 @@ function mettreAJourCompteurArtisans() {
   const conteneur = bouton.closest('.load-more-artisans-wrap');
   const compteur = document.getElementById('artisans-results-count');
   const vus = artisansCharges.length;
+  const totalListe = document.getElementById("taskly-list-total");
+  if (totalListe) totalListe.textContent = chargementPageArtisans && !pageArtisans ? "Recherche des artisans…" : pageArtisans > 0 ? `${totalArtisans} artisan${totalArtisans === 1 ? "" : "s"} trouvé${totalArtisans === 1 ? "" : "s"}` : "";
   compteur.innerHTML = `<strong>${vus}</strong> artisan${vus > 1 ? 's' : ''} affiché${vus > 1 ? 's' : ''} sur <strong>${totalArtisans}</strong> résultat${totalArtisans > 1 ? 's' : ''}`;
   conteneur.hidden = totalArtisans === 0;
   bouton.hidden = vus >= totalArtisans;

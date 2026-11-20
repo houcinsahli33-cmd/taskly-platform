@@ -27,3 +27,38 @@ body[data-active="artisans"] .artisan-description{width:100%;white-space:normal;
 body[data-active="artisans"] .artisan-card{transition:transform .18s,border-color .18s,box-shadow .18s}
 body[data-active="artisans"] .artisan-card:hover,body[data-active="artisans"] .artisan-card:focus-within{transform:translateY(-4px);border-color:#a2d8c9;box-shadow:0 24px 50px #123c2c18}
 @media(prefers-reduced-motion:reduce){body[data-active="artisans"] .artisan-card{transition:none}body[data-active="artisans"] .artisan-card:hover{transform:none}}
+
+/* TASKLY_LIST_PREMIUM_V3 - annuaire seulement, hover original intact. */
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode){max-width:1592px!important;width:calc(100% - 48px)!important;min-width:0;box-sizing:border-box;margin-inline:auto}
+body[data-active="artisans"] #artisans-filter-form :is(.tmp-field-icon,legend,.request-actions) svg{width:18px!important;height:18px!important;max-width:18px;max-height:18px;flex:0 0 18px;vertical-align:middle}
+body[data-active="artisans"] #artisans-filter-form .tmp-field-icon{display:inline-flex;width:18px;height:18px;flex:none;color:#087e64;margin:0}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.25fr) max-content;align-items:end;gap:16px!important;padding:18px 22px!important;border:1px solid #dce8e5;border-radius:18px;box-shadow:0 6px 22px #123b3210;background:#fff;margin:0 0 22px!important;box-sizing:border-box}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form>label{min-width:0;margin:0;width:100%}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form .field-label{display:flex;align-items:center;gap:8px;font-weight:750;margin:0 0 8px;line-height:1.4;color:#142d38;font-size:14px}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form :is(.form-control,.form-select){width:100%;min-width:0;height:48px;min-height:48px;margin:0;border:1px solid #ccd9da;border-radius:11px;box-sizing:border-box;font-size:14px}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form .request-actions{display:flex;flex-wrap:nowrap;align-items:center;gap:10px;margin:0;width:auto;grid-column:auto}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form .request-actions .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;min-height:48px;padding:10px 14px;border-radius:11px;margin:0;font-size:13px;font-weight:750;box-shadow:none}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) .taskly-map-experience{background:transparent;border:0;box-shadow:none;padding:0;margin:0 0 22px}
+body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) .taskly-artisans-map-controls{margin:0;gap:20px;align-items:center}
+body[data-active="artisans"] .taskly-list-total{margin:0;padding-left:20px;border-left:1px solid #ceded9;color:#142d38;font-size:clamp(16px,1.6vw,23px);font-weight:800;line-height:1.4}
+body[data-active="artisans"] .tmp-map-mode .taskly-list-total{display:none!important}
+body[data-active="artisans"] #artisans-grid:not([hidden]){grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:stretch}
+body[data-active="artisans"] #artisans-grid>.artisan-card{min-width:0;border-radius:19px}
+body[data-active="artisans"] #artisans-grid>.artisan-card .card-body{padding:20px;min-width:0;box-sizing:border-box}
+body[data-active="artisans"] #artisans-grid .artisan-top{gap:14px;min-height:80px;margin:0 0 14px}
+body[data-active="artisans"] #artisans-grid .artisan-top .avatar{width:72px;height:72px;flex:0 0 72px;border:4px solid #e4f4ed;box-sizing:border-box}
+body[data-active="artisans"] #artisans-grid .artisan-top h3{font-size:19px;margin:0 0 7px;line-height:1.3}
+body[data-active="artisans"] #artisans-grid .artisan-top p{display:flex;align-items:center;gap:6px;font-size:13px;line-height:1.45;margin:3px 0;overflow-wrap:anywhere}
+body[data-active="artisans"] #artisans-grid .artisan-top .taskly-list-service{color:#087e64;font-weight:750}
+body[data-active="artisans"] #artisans-grid :is(.artisan-top,.meta-row,.request-actions,.taskly-list-description) svg{width:17px;height:17px;flex:0 0 17px;color:inherit;vertical-align:middle}
+body[data-active="artisans"] #artisans-grid .meta-row{border-top:1px solid #e0e8e5;padding-top:12px;margin:0 0 12px;gap:7px;display:flex;flex-wrap:wrap}
+body[data-active="artisans"] #artisans-grid .meta-row .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;padding:6px 8px;border-radius:8px;font-weight:700;white-space:normal}
+body[data-active="artisans"] #artisans-grid .taskly-list-description{display:flex;align-items:flex-start;gap:10px;margin:0 0 20px;min-height:65px}
+body[data-active="artisans"] #artisans-grid .taskly-list-description>span{display:grid;place-items:center;height:35px;width:35px;flex:0 0 35px;border-radius:10px;background:#e4f4ed;color:#087e64}
+body[data-active="artisans"] #artisans-grid .taskly-list-description p{font-size:13px;line-height:1.6;margin:0;color:#526873;min-width:0}
+body[data-active="artisans"] #artisans-grid .request-actions{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:8px;margin:auto 0 0;width:100%}
+body[data-active="artisans"] #artisans-grid .request-actions>.btn{display:flex;align-items:center;justify-content:center;gap:5px;min-width:0;min-height:45px;width:100%;padding:8px 5px;border-radius:10px;box-sizing:border-box;font-size:clamp(11px,.9vw,13px);font-weight:750;line-height:1.25;white-space:normal;text-align:center;margin:0}
+body[data-active="artisans"] #artisans-grid .request-actions>.btn:only-child{grid-column:1/-1}
+body[data-active="artisans"] #artisans-grid .request-actions>.btn span{min-width:0;overflow-wrap:normal}
+@media(max-width:1100px){body[data-active="artisans"] #artisans-grid:not([hidden]){grid-template-columns:repeat(2,minmax(0,1fr))}body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form{grid-template-columns:repeat(3,minmax(0,1fr))}body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form .request-actions{grid-column:1/-1;justify-content:flex-end}}
+@media(max-width:640px){body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode){width:calc(100% - 28px)!important}body[data-active="artisans"] #artisans-grid:not([hidden]){grid-template-columns:minmax(0,1fr);gap:16px}body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form{grid-template-columns:minmax(0,1fr);padding:14px!important;gap:10px!important}body[data-active="artisans"] .tmp-directory:not(.tmp-map-mode) #artisans-filter-form .request-actions>.btn{flex:1;min-width:0;padding:8px 5px;font-size:12px}body[data-active="artisans"] #artisans-grid>.artisan-card .card-body{padding:16px}body[data-active="artisans"] .taskly-list-total{padding-left:12px;font-size:15px}}

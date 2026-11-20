@@ -13,8 +13,8 @@
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/taskly-request-calendar.js"></script>
   <script defer src="/js/taskly-request-wizard.js?v=1"></script>
-  <script defer src="/js/artisans.js?v=wizard1"></script>
-<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/taskly-artisans-map.css?v=premium2"></head>
+  <script defer src="/js/artisans.js?v=liste3"></script>
+<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=liste3"><link rel="stylesheet" href="/css/taskly-artisans-map.css?v=premium2"></head>
 <body data-active="artisans">
   <div id="site-header"></div>
   <main class="page-main">
@@ -77,6 +77,7 @@
               <button class="btn primary" type="button" data-artisan-view="liste" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Liste</button>
               <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg> Carte</button>
             </div>
+            <p id="taskly-list-total" class="taskly-list-total" role="status" aria-live="polite"></p>
             <div class="tmp-toolbar" id="tmp-toolbar" hidden aria-label="Filtres de la carte">
               <strong><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"></path></svg> Filtrer les résultats</strong>
               <button class="tmp-chip" id="tmp-well" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"></path></svg> Bien notés (≥ 4,5)</button>
