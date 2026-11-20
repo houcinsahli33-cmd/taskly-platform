@@ -35,59 +35,52 @@ body[data-workspace-page="profil"] .tp-info-dialog .tp-info-save{color:white!imp
 .tp-info-dialog .tp-info-actions button:focus-visible,.tp-info-dialog .workspace-close:focus-visible{outline:2px solid #0b9575!important;outline-offset:2px!important}
 .tp-info-dialog #account-edit-status{margin:0!important;min-height:0!important;font-size:12px!important;line-height:1.4!important;overflow-wrap:anywhere}.tp-info-dialog #account-edit-status:empty{display:none!important}
 @media(max-width:420px){body[data-workspace-page="profil"] .tp-info-dialog .workspace-dialog-header{padding:12px!important;gap:9px!important}.tp-info-dialog .tp-info-mark{width:36px;height:36px;flex-basis:36px}.tp-info-dialog .tp-info-mark svg{width:23px;height:23px}body[data-workspace-page="profil"] .tp-info-dialog .workspace-dialog-header h2{font-size:18px!important}body[data-workspace-page="profil"] .tp-info-dialog .workspace-dialog-body{padding:12px!important}body[data-workspace-page="profil"] .tp-info-dialog .tp-info-actions button{font-size:11px!important;padding:8px 5px!important}.tp-info-dialog .tp-info-actions svg{width:15px;height:15px}}
-/* TASKLY-INFO-DIALOG-LAYOUT-FIX */
-.taskly-profile-info-dialog .taskly-info-actions,
-.taskly-profile-info-dialog .taskly-form-actions,
-.taskly-profile-info-dialog .info-dialog-actions,
-.taskly-profile-info-dialog .profile-info-actions{
-  display:flex !important;
-  flex-direction:row !important;
-  align-items:center !important;
-  justify-content:flex-start !important;
-  gap:14px !important;
-  flex-wrap:nowrap !important;
+
+/* TASKLY-INFO-FIX-V3 */
+
+body.dashboard-page[data-workspace-page="profil"]
+dialog.workspace-dialog.tp-info-dialog::backdrop {
+    background: rgba(16,32,28,.18) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
 }
 
-.taskly-profile-info-dialog .taskly-info-actions > *,
-.taskly-profile-info-dialog .taskly-form-actions > *,
-.taskly-profile-info-dialog .info-dialog-actions > *,
-.taskly-profile-info-dialog .profile-info-actions > *{
-  width:auto !important;
-  min-width:190px !important;
-  max-width:none !important;
-  margin:0 !important;
+body[data-workspace-page="profil"]
+dialog.workspace-dialog.tp-info-dialog
+#account-edit-form > .tp-info-actions {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: stretch !important;
+    justify-content: space-between !important;
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    gap: 10px !important;
+    box-sizing: border-box !important;
 }
 
-.taskly-profile-info-dialog .taskly-info-actions .btn,
-.taskly-profile-info-dialog .taskly-form-actions .btn,
-.taskly-profile-info-dialog .info-dialog-actions .btn,
-.taskly-profile-info-dialog .profile-info-actions .btn{
-  min-height:46px !important;
-  display:inline-flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  white-space:nowrap !important;
+body[data-workspace-page="profil"]
+dialog.workspace-dialog.tp-info-dialog
+#account-edit-form .tp-info-actions > button {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 41px !important;
+    margin: 0 !important;
+    align-self: stretch !important;
+    white-space: normal !important;
+    position: static !important;
 }
 
-.taskly-profile-info-dialog::backdrop{
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  background:rgba(16,32,28,.18) !important;
+body[data-workspace-page="profil"]
+dialog.workspace-dialog.tp-info-dialog
+#account-edit-form .tp-info-actions > .tp-info-reset {
+    flex: 1 1 0 !important;
 }
 
-@media (max-width:640px){
-  .taskly-profile-info-dialog .taskly-info-actions,
-  .taskly-profile-info-dialog .taskly-form-actions,
-  .taskly-profile-info-dialog .info-dialog-actions,
-  .taskly-profile-info-dialog .profile-info-actions{
-    flex-wrap:wrap !important;
-  }
-
-  .taskly-profile-info-dialog .taskly-info-actions > *,
-  .taskly-profile-info-dialog .taskly-form-actions > *,
-  .taskly-profile-info-dialog .info-dialog-actions > *,
-  .taskly-profile-info-dialog .profile-info-actions > *{
-    min-width:0 !important;
-    flex:1 1 220px !important;
-  }
+body[data-workspace-page="profil"]
+dialog.workspace-dialog.tp-info-dialog
+#account-edit-form .tp-info-actions > .tp-info-save {
+    flex: 2 1 0 !important;
 }
