@@ -13,7 +13,10 @@ function menuChat(original){
  return original.replace(/<a href="\/espace\/artisan\/profil"/,link+'<a href="/espace/artisan/profil"');
 }
 const dossier=path.join(__dirname,'../../client/private/artisan');
+const {modeGeneral}=require('../services/professionalMailAccess');
+
 function mailAutorise(id){
+ if(modeGeneral(process.env))return true;
  if(process.env.TASKLY_MAIL_PILOT_ENABLED!=='true')return false;
  if(process.env.TASKLY_MAIL_INTERNAL_ENABLED!=='true')return true;
  return String(process.env.TASKLY_MAIL_PILOT_USER_IDS||'')

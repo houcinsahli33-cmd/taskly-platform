@@ -17,7 +17,7 @@ window.afficherTasklyMailbox=async function(root,status){
   }
   if(result.state!=='active')throw Error('État de la messagerie inconnu.');
   if(result.foldersEnabled&&typeof window.afficherTasklyMailFolders==='function'){await window.afficherTasklyMailFolders(section,status,result);return;}
-  section.append(text('h3','Votre boîte professionnelle'),text('p',result.address),text('p','Accès réservé à ce profil Artisan.'));
+  section.append(text('h3','Votre boîte professionnelle'),text('p',result.address),text('p','Accès réservé à votre profil Taskly.'));
   const nav=document.createElement('div');nav.className='taskly-mailbox-nav';const content=document.createElement('div');content.className='taskly-mailbox-content';section.append(nav,content);
   nav.append(button('Boîte de réception',()=>run(()=>list('inbox'))),button('Messages envoyés',()=>run(()=>list('sent'))),button('Rédiger / brouillon',()=>run(compose),'primary'));
   async function list(folder,cursor){const v=++version;const query=new URLSearchParams({folder});if(cursor)query.set('cursor',cursor);const d=await requeteAPI(base+'/messages?'+query.toString());if(v!==version||!section.isConnected)return;content.replaceChildren(text('h3',folder==='inbox'?'Boîte de réception':'Messages envoyés'));if(!d.messages.length)content.append(text('p','Aucun message dans cette page.'));

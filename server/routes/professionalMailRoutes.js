@@ -21,7 +21,11 @@ const pilotIds=new Set(
  .filter(id=>/^[1-9][0-9]*$/.test(id))
 );
 
-const piloteAutorise=id=>!internalMode||pilotIds.has(String(id));
+const {modeGeneral,modeClient}=require('../services/professionalMailAccess');
+
+const piloteAutorise=id=>!internalMode
+    || modeGeneral(process.env)
+    || pilotIds.has(String(id));
 
 function accesPilote(req,res,next){
  if(!piloteAutorise(req.session.utilisateur.id)){
@@ -30,19 +34,50 @@ function accesPilote(req,res,next){
  next();
 }
 
-artisan.use(actif,verifierConnexion,verifierArtisan,accesPilote);
+function verifierProfilMail(req,res,next){
+ if(req.session?.utilisateur?.role==='client'
+    && modeClient(process.env))return next();
+ return verifierArtisan(req,res,next);
+}
+artisan.use(actif,verifierConnexion,verifierProfilMail,accesPilote);
 admin.use(actif,verifierConnexion,verifierAdmin);
 const sensible=limiter({max:12});
 async function transaction(fn){let conn;try{conn=await db.getConnection();await conn.beginTransaction();const value=await fn(conn);await conn.commit();return value;}catch(e){if(conn)await conn.rollback();throw e;}finally{conn?.release();}}
 async function profil(conn,id){
- if(!piloteAutorise(id))throw erreur('Profil non autorise pour le pilote.',403);const [rows]=await conn.query(`SELECT u.id,u.nom,u.prenom,u.email,u.role,u.statut_compte,u.email_verified,a.id AS artisan_id,a.service_id,a.verification_statut,s.nom AS service_nom FROM users u JOIN artisans a ON a.user_id=u.id JOIN services s ON s.id=a.service_id WHERE u.id=? FOR UPDATE`,[id]);const p=rows[0];if(!p||p.role!=='artisan'||p.statut_compte!=='actif'||!p.email_verified||p.verification_statut!=='approuve')throw erreur('Profil artisan non autorisé.',403);return p;}
-const correspond=(p,r)=>Number(p.artisan_id)===Number(r.artisan_id)&&Number(p.service_id)===Number(r.service_id)&&p.email===r.personal_email;
+ if(!piloteAutorise(id))throw erreur('Profil non autorise pour le pilote.',403);const [rows]=await conn.query(`SELECT u.id,u.nom,u.prenom,u.email,u.role,u.statut_compte,u.email_verified,a.id AS artisan_id,a.service_id,a.verification_statut,s.nom AS service_nom FROM users u JOIN artisans a ON a.user_id=u.id JOIN services s ON s.id=a.service_id WHERE u.id=? FOR UPDATE`,[id]);const p=rows[0];
+ if(!p&&modeClient(process.env)){
+  const [clients]=await conn.query(
+   `SELECT u.id,u.nom,u.prenom,u.email,u.role,
+           u.statut_compte,u.email_verified,
+           c.id AS client_id
+    FROM users u JOIN clients c ON c.user_id=u.id
+    WHERE u.id=? AND u.role='client' FOR UPDATE`,[id]);
+  const c=clients[0];
+  if(c&&c.role==='client'&&c.statut_compte==='actif'
+     &&Number(c.email_verified)===1
+     &&Number(c.client_id)>0)return c;
+ }
+ if(!p||p.role!=='artisan'||p.statut_compte!=='actif'||!p.email_verified||p.verification_statut!=='approuve')throw erreur('Profil artisan non autorisé.',403);return p;}
+const correspond=(p,r)=>{
+ if(p.role==='client'){
+  return modeClient(process.env)
+   &&Number(p.client_id)>0
+   &&Number(p.client_id)===Number(r.client_id)
+   &&r.artisan_id===null
+   &&r.service_id===null
+   &&p.email===r.personal_email;
+ }
+ return p.role==='artisan' && Number(p.artisan_id)>0 && Number(p.service_id)>0 && Number(p.artisan_id)===Number(r.artisan_id)
+  &&Number(p.service_id)===Number(r.service_id)
+  &&r.client_id==null
+  &&p.email===r.personal_email;
+};
 const gateway=internalMode
- ? createInternalGateway({transaction,profil,correspond})
+ ? createInternalGateway({transaction,profil,correspond,clientEnabled:modeClient(process.env)})
  : createGateway();
 
 function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
-artisan.get('/',wrap(async(req,res)=>{const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal});}));
+artisan.get('/',wrap(async(req,res)=>{if(req.session.utilisateur.role==='client')await transaction(conn=>profil(conn,req.session.utilisateur.id));const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal});}));
 artisan.post('/request',sensible,wrap(async(req,res)=>{
  if(internalMode&&!gateway.configured)throw erreur('Configuration interne invalide.',503);
  const domain=domaine(internalMode?'taskly.test':process.env.TASKLY_MAIL_DOMAIN);if(!domain||!require('../services/emailService').estConfigure())throw erreur('Domaine ou service de confirmation non configuré.',503);
@@ -61,10 +96,17 @@ artisan.post('/request',sensible,wrap(async(req,res)=>{
   if(internalMode&&!internalAddress(candidate))throw erreur('Adresse interne invalide.',409);
   const hash=empreinte(process.env.SESSION_SECRET,uid,candidate,code);
   if(old)await conn.query("UPDATE taskly_professional_mail_requests SET status='pending_confirmation',code_hash=?,attempts=0,expires_at=DATE_ADD(NOW(),INTERVAL 10 MINUTE),requested_at=NOW(),confirmed_at=NULL WHERE user_id=?",[hash,uid]);
-  else await conn.query(`INSERT INTO taskly_professional_mail_requests (user_id,artisan_id,service_id,personal_email,proposed_address,code_hash,expires_at) VALUES (?,?,?,?,?,?,DATE_ADD(NOW(),INTERVAL 10 MINUTE))`,[uid,p.artisan_id,p.service_id,p.email,candidate,hash]);
+  else if(p.role==='client'){
+    await conn.query(
+     `INSERT INTO taskly_professional_mail_requests
+      (user_id,client_id,personal_email,proposed_address,code_hash,expires_at)
+      VALUES (?,?,?,?,?,DATE_ADD(NOW(),INTERVAL 10 MINUTE))`,
+      [uid,p.client_id,p.email,candidate,hash]);
+   }
+   else await conn.query(`INSERT INTO taskly_professional_mail_requests (user_id,artisan_id,service_id,personal_email,proposed_address,code_hash,expires_at) VALUES (?,?,?,?,?,?,DATE_ADD(NOW(),INTERVAL 10 MINUTE))`,[uid,p.artisan_id,p.service_id,p.email,candidate,hash]);
   return {email:p.email,candidate};
  });
- await require('../services/adminMailService').envoyerCourrielAdmin(data.email,'Taskly Mail — confirmer ou annuler votre demande',`Adresse proposée : ${data.candidate}. Code : ${code}. Valable 10 minutes, 3 tentatives. Retournez dans le même espace Artisan, rubrique Taskly Mail, puis saisissez le code pour confirmer ou annuler. Ne transmettez jamais ce code.`);
+ await require('../services/adminMailService').envoyerCourrielAdmin(data.email,'Taskly Mail — confirmer ou annuler votre demande',`Adresse proposée : ${data.candidate}. Code : ${code}. Valable 10 minutes, 3 tentatives. Retournez dans le même espace Taskly, rubrique Taskly Mail, puis saisissez le code pour confirmer ou annuler. Ne transmettez jamais ce code.`);
  res.status(201).json({message:'Code envoyé à votre adresse personnelle. Aucune boîte mail n’a été créée.'});
 }));
 artisan.post('/confirm',sensible,wrap(async(req,res)=>{

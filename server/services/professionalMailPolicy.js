@@ -5,9 +5,10 @@ function domaine(value){const d=String(value||'').trim().toLowerCase();return /^
 function adresse(profil,domain,collision=false){
  const d=domaine(domain);if(!d)throw Error('Domaine Taskly Mail non configuré.');
  const id=Number(profil.id);if(!Number.isSafeInteger(id)||id<=0)throw Error('Identifiant invalide.');
- const base=[slug(profil.nom),slug(profil.prenom)].filter(Boolean).join('.')||'artisan';
+ const isClient=profil.role==='client';
+ const base=[slug(profil.nom),slug(profil.prenom)].filter(Boolean).join('.')||(isClient?'client':'artisan');
  const local=collision?base.slice(0,45)+'.'+id:base;
- const metier=slug(profil.service_nom)||'service-'+Number(profil.service_id);
+ const metier=isClient?'client':(slug(profil.service_nom)||'service-'+Number(profil.service_id));
  const result=local+'@'+metier+'.'+d;if(result.length>254)throw Error('Adresse trop longue.');return result;
 }
 function empreinte(secret,userId,address,code){

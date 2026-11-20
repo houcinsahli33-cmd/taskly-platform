@@ -13,7 +13,7 @@ function internalAddress(address) {
         /^[a-z0-9-]+\.taskly\.test$/.test(address.split('@')[1]);
 }
 
-function createInternalGateway({transaction, profil, correspond, env = process.env}) {
+function createInternalGateway({transaction, profil, correspond, env = process.env, clientEnabled = false}) {
 
     const configured =
         env.TASKLY_MAIL_INTERNAL_ENABLED === 'true' &&
@@ -22,12 +22,16 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
     const foldersEnabled = configured && env.TASKLY_MAIL_FOLDERS_ENABLED === 'true';
     const copyId = v => {if(typeof v!=='string'||!/^[1-9][0-9]{0,19}$/.test(v)||BigInt(v)>18446744073709551615n)throw error('Identifiant invalide.',400);return v;};
     const filters = {inbox:"folder='inbox' AND archived_at IS NULL AND trashed_at IS NULL",sent:"folder='sent' AND archived_at IS NULL AND trashed_at IS NULL",favorites:"is_starred=1 AND trashed_at IS NULL",archive:'archived_at IS NOT NULL AND trashed_at IS NULL',trash:'trashed_at IS NOT NULL'};
+    const clientFields =
+        clientEnabled === true
+        ? ', r.client_id' : '';
+
     async function active(conn, id) {
         const p = await profil(conn, id);
 
         const [rows] = await conn.query(
             `SELECT m.*, r.artisan_id, r.service_id, r.personal_email,
-                    r.proposed_address
+                    r.proposed_address${clientFields}
              FROM taskly_professional_mailboxes m
              JOIN taskly_professional_mail_requests r
                ON r.user_id = m.user_id

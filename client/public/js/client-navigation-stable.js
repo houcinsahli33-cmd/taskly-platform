@@ -5,6 +5,9 @@
  if(!iframe)return;
  const pages=new Set(['accueil','demandes','profil','support']);
  pages.add('messagerie');
+ if(document.querySelector('[data-dashboard-link="taskly-mail"]')){
+  pages.add('taskly-mail');
+ }
  const base='/espace/client/';
  let selected=location.pathname+location.search+location.hash;
  let observer;
