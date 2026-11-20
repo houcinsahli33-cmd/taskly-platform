@@ -33,6 +33,8 @@
 <script defer src="/js/taskly-profile-delete-dialog.js?v=1"></script>
   <link rel="stylesheet" href="/css/taskly-artisan-documents.css?v=20261120-docs31">
   <link rel="stylesheet" href="/css/taskly-artisan-zone.css?v=20261120-1">
+  <link rel="stylesheet" href="/css/taskly-disponibilite.css?v=1">
+  <script defer src="/js/taskly-disponibilite-privee.js?v=1"></script>
 </head>
 <body class="dashboard-page" data-require-role="artisan" data-workspace-page="profil">
   <div id="site-header"></div>
@@ -82,6 +84,19 @@
           </div>
           <div class="panel-body">
             <div id="artisan-profile-card"></div>
+            <section class="ta-panel" aria-labelledby="ta-title">
+              <h2 id="ta-title">Ma disponibilité professionnelle</h2>
+              <p>Indiquez votre disponibilité aux clients. Ce statut ne modifie pas les réservations.</p>
+              <p id="ta-current" role="status">Chargement…</p>
+              <form id="ta-form">
+                <fieldset id="ta-fields" disabled>
+                  <label for="ta-status">Statut</label><select class="form-select" id="ta-status"><option value="non_renseignee">Non renseignée</option><option value="disponible">Disponible</option><option value="occupe">Occupé</option><option value="indisponible">Indisponible</option></select>
+                  <label for="ta-duration">Durée à partir de l’enregistrement</label><select class="form-select" id="ta-duration"><option value="24">24 heures</option><option value="48">48 heures</option><option value="168">7 jours</option></select>
+                  <label class="ta-check"><input type="checkbox" id="ta-fast"> Intervention rapide (disponibilité déclarée)</label>
+                  <button class="btn primary" type="submit">Enregistrer ma disponibilité</button>
+                </fieldset>
+              </form><button class="btn outline" type="button" id="ta-retry" hidden>Réessayer</button><p id="ta-message" role="status" aria-live="polite"></p>
+            </section>
             <div hidden><form id="artisan-photo-form" class="mt-22">
               <label>
                 <span class="field-label">Photo de profil</span>

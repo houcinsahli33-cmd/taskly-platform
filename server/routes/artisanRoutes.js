@@ -18,6 +18,10 @@ const router = express.Router();
 // Carte publique
 router.get('/carte', artisanController.artisansCarte);
 
+// Gestion de la disponibilite de l'espace actif.
+router.get('/ma-disponibilite', verifierConnexion, verifierArtisan, artisanController.lireDisponibilite);
+router.put('/ma-disponibilite', verifierConnexion, verifierArtisan, artisanController.enregistrerDisponibilite);
+
 // Gestion de la zone publique
 router.get('/ma-zone',
     verifierConnexion,

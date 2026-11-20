@@ -13,8 +13,8 @@
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/taskly-request-calendar.js"></script>
   <script defer src="/js/taskly-request-wizard.js?v=1"></script>
-  <script defer src="/js/artisans.js?v=liste3"></script>
-<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=liste3"><link rel="stylesheet" href="/css/taskly-artisans-map.css?v=premium2"></head>
+  <script defer src="/js/artisans.js?v=dispo1"></script>
+<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=liste3"><link rel="stylesheet" href="/css/taskly-artisans-map.css?v=premium2"><link rel="stylesheet" href="/css/taskly-disponibilite.css?v=1"><script defer src="/js/taskly-disponibilite.js?v=1"></script></head>
 <body data-active="artisans">
   <div id="site-header"></div>
   <main class="page-main">
@@ -59,6 +59,7 @@
             <input class="form-control" id="filter-search" placeholder="Nom, service, description">
           </label>
 
+          <div class="ta-filters" role="group" aria-label="Disponibilité professionnelle"><label class="ta-check"><input type="checkbox" id="filter-available"> Disponibles uniquement</label><label class="ta-check"><input type="checkbox" id="filter-fast"> Intervention rapide</label></div>
           <div class="request-actions">
             <button class="btn primary" type="submit" aria-label="Rechercher"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM15 15l5 5"></path></svg> Rechercher</button>
             <button class="btn outline" id="reset-filters" type="button" aria-label="Réinitialiser les filtres"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"></path></svg> Réinitialiser</button>
@@ -93,7 +94,7 @@
             <div class="tmp-split">
               <div class="tmp-map-box">
                 <div id="taskly-artisans-map" aria-label="Carte interactive"></div><button type="button" id="tmp-recenter" title="Recentrer la carte" aria-label="Recentrer la carte"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12ZM12 10v4M10 12h4"></path></svg></button>
-                <div class="tmp-legend"><span><i class="tmp-blue"></i>Votre zone approximative</span><span><i class="tmp-ring"></i>Rayon de recherche</span><span><i></i>Zone artisan</span></div>
+                <div class="tmp-legend"><span><i class="tmp-blue"></i>Votre zone approximative</span><span><i class="tmp-ring"></i>Rayon de recherche</span><span><i class="ta-disponible"></i>Disponible</span><span><i class="ta-occupe"></i>Occupé</span><span><i class="ta-indisponible"></i>Indisponible</span><span><i class="ta-non_renseignee"></i>Non renseignée</span><span><i class="ta-mixte"></i>Statuts mixtes</span></div>
               </div>
               <aside class="tmp-side" aria-label="Artisans trouvés">
                 <div class="tmp-side-head"><h3><span id="tmp-side-title">Artisans à proximité</span> (<span id="tmp-count">—</span>)</h3><select id="tmp-sort" aria-label="Trier les artisans"><option value="distance">Proximité</option><option value="note">Meilleures notes</option></select></div>
@@ -161,5 +162,5 @@
     <section class="rw-success" id="rw-success" hidden><div class="rw-success-icon">✓</div><h3>Votre demande a été envoyée !</h3><p>Retrouvez votre demande et suivez son avancement dans votre espace client.</p><a class="rw-primary" href="/espace/client/demandes">Voir mes demandes</a><button type="button" class="rw-secondary" data-rw-close>Fermer</button></section>
   </dialog>
   <div id="site-footer"></div>
-<script defer src="/js/taskly-artisans-map.js?v=premium2"></script></body>
+<script defer src="/js/taskly-artisans-map.js?v=dispo1"></script></body>
 </html>

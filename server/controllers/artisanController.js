@@ -11,6 +11,7 @@ async function listerArtisans(req, res) {
             serviceId: req.query.serviceId,
             wilaya: req.query.wilaya,
             ville: req.query.ville,
+            disponibles: req.query.disponibles, rapide: req.query.rapide,
             recherche: req.query.recherche
         };
         const pageDemandee = req.query.page !== undefined || req.query.limit !== undefined;
@@ -25,6 +26,7 @@ async function listerArtisans(req, res) {
             pagination = {page:Number(brutPage), limit:Number(brutLimite)};
         }
         const resultat = await artisanModel.trouverTousLesArtisans(filtres, pagination);
+        res.set?.('Cache-Control','no-store');
         res.status(200).json(pagination ? resultat : {artisans:resultat});
     } catch (error) {
         console.error('Erreur récupération artisans :', error.code || error.message);
@@ -45,6 +47,7 @@ async function detailArtisan(req, res) {
             });
         }
 
+        res.set?.('Cache-Control','no-store');
         res.status(200).json({  // la requete a ete acceptee, on renvoie l'artisan
             artisan: artisan
         });
@@ -68,7 +71,7 @@ async function artisansCarte(req,res){
   if((lat!==null||lon!==null)&&(!Number.isFinite(lat)||!Number.isFinite(lon)||lat< -90||lat>90||lon< -180||lon>180))
     return res.status(400).json({message:'Localisation invalide.'});
   if(!Number.isFinite(rayon)||rayon<1||rayon>100)return res.status(400).json({message:'Rayon invalide.'});
-  const filtres={serviceId:req.query.serviceId,wilaya:req.query.wilaya,recherche:req.query.recherche};
+  const filtres={serviceId:req.query.serviceId,wilaya:req.query.wilaya,recherche:req.query.recherche,ville:req.query.ville,disponibles:req.query.disponibles,rapide:req.query.rapide};
   const data=await artisanModel.artisansPourCarte(filtres,lat,lon,rayon);
   res.set('Cache-Control','no-store');res.json({artisans:data});
  }catch(e){console.error('Carte artisans :',e.code||e.message);res.status(503).json({message:'Carte temporairement indisponible.'});}
@@ -162,7 +165,32 @@ async function coordonneesArtisan(req, res) {
     }
 }
 
+// API privee : aucun identifiant de profil fourni par le navigateur.
+async function lireDisponibilite(req, res) {
+    res.set('Cache-Control','private, no-store');
+    const user = req.session?.utilisateur;
+    if (!user?.id || user.role !== 'artisan') return res.status(403).json({message:'Accès réservé aux artisans.'});
+    try {
+        const disponibilite = await artisanModel.lireDisponibilite(user.id);
+        return disponibilite ? res.json({disponibilite}) : res.status(404).json({message:'Profil artisan introuvable.'});
+    } catch (e) { return res.status(503).json({message:'Disponibilité temporairement indisponible.'}); }
+}
+async function enregistrerDisponibilite(req, res) {
+    res.set('Cache-Control','private, no-store');
+    const user = req.session?.utilisateur;
+    if (!user?.id || user.role !== 'artisan') return res.status(403).json({message:'Accès réservé aux artisans.'});
+    const b = req.body;
+    if (!b || typeof b !== 'object' || Array.isArray(b) || Object.keys(b).some(k=>!['statut','duree','rapide'].includes(k)) ||
+        !['non_renseignee','disponible','occupe','indisponible'].includes(b.statut) || typeof b.rapide !== 'boolean' ||
+        !(b.statut === 'non_renseignee' ? b.duree === 0 : [24,48,168].includes(b.duree)) || (b.rapide && b.statut !== 'disponible'))
+        return res.status(400).json({message:'Choix de disponibilité invalide.'});
+    try {
+        const disponibilite = await artisanModel.enregistrerDisponibilite(user.id,b.statut,b.duree,b.rapide);
+        return disponibilite ? res.json({disponibilite}) : res.status(404).json({message:'Profil artisan introuvable.'});
+    } catch (e) { return res.status(503).json({message:'Impossible de mettre à jour la disponibilité.'}); }
+}
 module.exports = {
+    lireDisponibilite, enregistrerDisponibilite,
     lireEtatZone,
     datesIndisponibles,
     artisansCarte,enregistrerZone,supprimerZone,

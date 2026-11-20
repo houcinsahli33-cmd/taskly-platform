@@ -24,6 +24,32 @@ async function creerProfilArtisan(
     return resultat;
 }
 
+// Disponibilite declaree, distincte des dates de reservation.
+function disponibiliteSQL(alias) {
+    const active = `${alias}.disponibilite_expiration > UTC_TIMESTAMP()`;
+    return {
+        statut: `CASE WHEN ${active} THEN ${alias}.disponibilite_statut ELSE 'non_renseignee' END`,
+        rapide: `CASE WHEN ${active} AND ${alias}.disponibilite_statut = 'disponible' AND ${alias}.intervention_rapide = 1 THEN 1 ELSE 0 END`,
+        secondes: `CASE WHEN ${active} THEN TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), ${alias}.disponibilite_expiration) ELSE 0 END`
+    };
+}
+function selectDisponibilite(alias) {
+    const d = disponibiliteSQL(alias);
+    return `${d.statut} AS disponibilite_statut, ${d.rapide} AS intervention_rapide, ${d.secondes} AS disponibilite_secondes`;
+}
+async function lireDisponibilite(userId) {
+    const [rows] = await db.promise().query(`SELECT ${selectDisponibilite('a')} FROM artisans a WHERE a.user_id = ? LIMIT 2`, [userId]);
+    return rows.length === 1 ? rows[0] : null;
+}
+async function enregistrerDisponibilite(userId, statut, duree, rapide) {
+    // Le seul identifiant accepte provient de la session authentifiee.
+    const [result] = await db.promise().query(
+        `UPDATE artisans SET disponibilite_statut = ?, disponibilite_expiration = CASE WHEN ? = 0 THEN NULL ELSE TIMESTAMPADD(HOUR, ?, UTC_TIMESTAMP()) END, intervention_rapide = ? WHERE user_id = ?`,
+        [statut, duree, duree, rapide ? 1 : 0, userId]);
+    if (result.affectedRows !== 1) return null;
+    return lireDisponibilite(userId);
+}
+
 // FILTRES DE L'ANNUAIRE PUBLIC
 
 function construireFiltresAnnuaire(filtres = {}) {
@@ -35,6 +61,9 @@ function construireFiltresAnnuaire(filtres = {}) {
     ];
 
     const valeurs = [];
+    const d = disponibiliteSQL('a');
+    if (filtres.disponibles === '1') conditions.push(`(${d.statut}) = 'disponible'`);
+    if (filtres.rapide === '1') conditions.push(`(${d.rapide}) = 1`);
 
     if (filtres.serviceId) {
         conditions.push('a.service_id = ?');
@@ -131,6 +160,7 @@ async function trouverTousLesArtisans(
                NULL AS telephone,
                a.description,
                a.experience,
+                ${selectDisponibilite('a')},
                u.photo_profil,
                u.nom,
                u.prenom,
@@ -238,6 +268,7 @@ async function trouverArtisanParId(id) {
             NULL AS telephone,
             artisans.description,
             artisans.experience,
+            ${selectDisponibilite('artisans')},
             users.photo_profil,
             users.nom,
             users.prenom,
@@ -266,6 +297,7 @@ async function trouverArtisanParId(id) {
             artisans.ville,
             artisans.description,
             artisans.experience,
+            artisans.disponibilite_statut, artisans.disponibilite_expiration, artisans.intervention_rapide,
             users.photo_profil,
             users.nom,
             users.prenom,
@@ -309,6 +341,7 @@ async function artisansPourCarte(
         a.ville,
         a.public_lat AS lat,
         a.public_lon AS lon,
+        ${selectDisponibilite('a')},
         u.nom,
         u.prenom,
         u.photo_profil,
@@ -484,6 +517,7 @@ async function trouverCoordonneesAutorisees(id) {
 }
 
 module.exports = {
+    lireDisponibilite, enregistrerDisponibilite,
     lireEtatZone,
     artisansPourCarte,
     enregistrerZone,
