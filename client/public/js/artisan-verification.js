@@ -16,6 +16,13 @@
       const infos=document.createElement('div');
       const nom=document.createElement('strong');nom.textContent=noms[d.type_document]||d.type_document||'Justificatif';
       const fichier=document.createElement('small');fichier.textContent=d.original_name||`Document n°${id}`;
+      if ($('tp-doc-file-name')) {
+        const kind=d.media_type==='application/pdf'?'PDF':d.media_type==='image/jpeg'?'JPG':d.media_type==='image/png'?'PNG':'';
+        if(kind==='PDF')ligne.dataset.media='pdf';
+        const type=nom.textContent;
+        nom.textContent=fichier.textContent;
+        fichier.textContent=type+(kind?' · '+kind:'');
+      }
       infos.append(nom,fichier);
       const actions=document.createElement('div');actions.className='artisan-document-actions';
       function lien(texte,afficher){
@@ -51,7 +58,7 @@
     try {
       const d=await requeteAPI('/api/artisan-verification/status');
       const libelles={en_attente:'En attente de contrôle',a_completer:'Documents complémentaires demandés',approuve:'Profil approuvé',refuse:'Dossier refusé'};
-      cible.textContent=`Statut : ${libelles[d.statut]||d.statut}${d.commentaire?' — '+d.commentaire:''}`;
+      cible.textContent=`${$('tp-doc-file-name')?'':'Statut : '}${libelles[d.statut]||d.statut}${d.commentaire?' — '+d.commentaire:''}`;
       cible.dataset.tpState=Object.hasOwn(libelles,d.statut)?d.statut:'';
       afficherDocuments(d.documents);
       $('artisan-document-form').hidden=false;
@@ -60,6 +67,22 @@
   document.addEventListener('DOMContentLoaded',async()=>{
     await (window.tasklyAuthReady||Promise.resolve());
     if(window.utilisateurCourant?.role!=='artisan'||!$('artisan-verification-panel'))return;
+    // V3: native input and explicit drop use the same existing multipart form.
+    const fileName=$('tp-doc-file-name');
+    if(fileName){
+      const form=$('artisan-document-form'),input=form.querySelector('[name="document"]'),drop=input.closest('.tp-doc-drop');
+      const showFile=()=>{fileName.textContent=input.files?.[0]?.name||'Aucun fichier choisi';};
+      input.addEventListener('change',showFile);
+      form.addEventListener('reset',()=>queueMicrotask(showFile));
+      drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('is-dragging');});
+      drop.addEventListener('dragleave',()=>drop.classList.remove('is-dragging'));
+      drop.addEventListener('drop',e=>{
+        e.preventDefault();drop.classList.remove('is-dragging');
+        const files=e.dataTransfer?.files;
+        if(!files||files.length!==1){$('artisan-document-message').textContent='Sélectionnez un seul fichier.';return;}
+        try{input.files=files;showFile();}catch{ $('artisan-document-message').textContent='Utilisez le bouton Choisir un fichier.'; }
+      });
+    }
     $('artisan-document-cancel-replace').addEventListener('click',()=>{
       resetRemplacement();$('artisan-document-message').textContent='Ajout d’un nouveau justificatif.';
     });
@@ -72,7 +95,7 @@
         const data=await requeteAPI('/api/artisan-verification/documents',{method:'POST',body:new FormData(form)});
         form.reset();resetRemplacement();info.textContent=data.message;
         if(data.nouvelleVerification){
-          $('artisan-verification-status').textContent='Statut : En attente de contrôle administratif';
+          $('artisan-verification-status').textContent=($('tp-doc-file-name')?'':'Statut : ')+'En attente de contrôle administratif';
           $('artisan-verification-status').dataset.tpState='en_attente';
           info.textContent+=' Votre espace artisan sera limité pendant cet examen ; reconnectez-vous pour suivre votre dossier.';
         }else {await actualiser();info.textContent=data.message;}
