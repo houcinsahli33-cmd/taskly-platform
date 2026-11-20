@@ -44,12 +44,13 @@ admin.use(actif,verifierConnexion,verifierAdmin);
 const sensible=limiter({max:12});
 async function transaction(fn){let conn;try{conn=await db.getConnection();await conn.beginTransaction();const value=await fn(conn);await conn.commit();return value;}catch(e){if(conn)await conn.rollback();throw e;}finally{conn?.release();}}
 async function profil(conn,id){
- if(!piloteAutorise(id))throw erreur('Profil non autorise pour le pilote.',403);const [rows]=await conn.query(`SELECT u.id,u.nom,u.prenom,u.email,u.role,u.statut_compte,u.email_verified,a.id AS artisan_id,a.service_id,a.verification_statut,s.nom AS service_nom FROM users u JOIN artisans a ON a.user_id=u.id JOIN services s ON s.id=a.service_id WHERE u.id=? FOR UPDATE`,[id]);const p=rows[0];
+ if(!piloteAutorise(id))throw erreur('Profil non autorise pour le pilote.',403);const [rows]=await conn.query(`SELECT u.id,u.nom,u.prenom,u.email,u.role,u.statut_compte,u.email_verified,a.id AS artisan_id,a.service_id,a.verification_statut,s.nom AS service_nom, (SELECT m.address FROM taskly_professional_mailboxes m WHERE m.user_id=u.id AND m.activated_at IS NOT NULL) AS active_mail_address FROM users u JOIN artisans a ON a.user_id=u.id JOIN services s ON s.id=a.service_id WHERE u.id=? FOR UPDATE`,[id]);const p=rows[0];
  if(!p&&modeClient(process.env)){
   const [clients]=await conn.query(
    `SELECT u.id,u.nom,u.prenom,u.email,u.role,
            u.statut_compte,u.email_verified,
-           c.id AS client_id
+           c.id AS client_id,
+           (SELECT m.address FROM taskly_professional_mailboxes m WHERE m.user_id=u.id AND m.activated_at IS NOT NULL) AS active_mail_address
     FROM users u JOIN clients c ON c.user_id=u.id
     WHERE u.id=? AND u.role='client' FOR UPDATE`,[id]);
   const c=clients[0];
@@ -58,20 +59,32 @@ async function profil(conn,id){
      &&Number(c.client_id)>0)return c;
  }
  if(!p||p.role!=='artisan'||p.statut_compte!=='actif'||!p.email_verified||p.verification_statut!=='approuve')throw erreur('Profil artisan non autorisé.',403);return p;}
-const correspond=(p,r)=>{
+// TASKLY_MAIL_CONTINUITY_START
+// La demande historique garde son adresse personnelle d'origine.
+// Seule une boite deja confirmee ET active peut survivre a son changement.
+function activeContinuity(p,r){
+ return p.id!=null && r.user_id!=null && String(p.id)===String(r.user_id)
+  && p.statut_compte==='actif' && Number(p.email_verified)===1
+  && (p.role==='client'||(p.role==='artisan'&&p.verification_statut==='approuve'))
+  && r.status==='approved_pending_provider' && Boolean(r.confirmed_at)
+  && typeof p.active_mail_address==='string' && p.active_mail_address.length>0
+  && p.active_mail_address===r.proposed_address;
+}
+function correspondMail(p,r,clientEnabled){
+ if(!p||!r)return false;
+ const emailMatches=p.email===r.personal_email||activeContinuity(p,r);
  if(p.role==='client'){
-  return modeClient(process.env)
-   &&Number(p.client_id)>0
-   &&Number(p.client_id)===Number(r.client_id)
-   &&r.artisan_id===null
-   &&r.service_id===null
-   &&p.email===r.personal_email;
+  return clientEnabled && Number(p.client_id)>0
+   && Number(p.client_id)===Number(r.client_id)
+   && r.artisan_id===null && r.service_id===null && emailMatches;
  }
- return p.role==='artisan' && Number(p.artisan_id)>0 && Number(p.service_id)>0 && Number(p.artisan_id)===Number(r.artisan_id)
-  &&Number(p.service_id)===Number(r.service_id)
-  &&r.client_id==null
-  &&p.email===r.personal_email;
-};
+ return p.role==='artisan' && Number(p.artisan_id)>0 && Number(p.service_id)>0
+  && Number(p.artisan_id)===Number(r.artisan_id)
+  && Number(p.service_id)===Number(r.service_id)
+  && r.client_id==null && emailMatches;
+}
+// TASKLY_MAIL_CONTINUITY_END
+const correspond=(p,r)=>correspondMail(p,r,modeClient(process.env));
 const gateway=internalMode
  ? createInternalGateway({transaction,profil,correspond,clientEnabled:modeClient(process.env)})
  : createGateway();

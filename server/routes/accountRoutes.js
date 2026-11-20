@@ -62,7 +62,7 @@ router.post('/email/request',sensible,async(req,res)=>{
   const email=String(req.body.email||'').trim().toLowerCase();
   if(!/^[A-Za-z0-9._%+-]+@gmail\.com$/.test(email)||email.length>255)return res.status(400).json({message:'Adresse Gmail valide requise.'});
   const user=await password(req);if(email===user.email)return res.status(400).json({message:'Cette adresse est déjà la vôtre.'});
-  const [exists]=await db.query('SELECT id FROM users WHERE email=?',[email]);if(exists.length)return res.status(409).json({message:'Cette adresse est déjà utilisée.'});
+  const [exists]=await db.query("SELECT id FROM users WHERE email=? AND role IN ('client','artisan')",[email]);if(exists.length)return res.status(409).json({message:'Cette adresse est déjà utilisée.'});
   const [recent]=await db.query('SELECT user_id FROM account_email_changes WHERE user_id=? AND created_at>DATE_SUB(NOW(),INTERVAL 1 MINUTE)',[user.id]);if(recent.length)return res.status(429).json({message:'Attendez une minute avant de demander un nouveau code.'});
   const issuedAt=Date.now();
   const code=crypto.randomInt(0,1000000).toString().padStart(6,'0');
@@ -82,7 +82,7 @@ router.post('/email/verify',sensible,async(req,res)=>{
   const [origine]=await conn.query('SELECT email FROM users WHERE id=? FOR UPDATE',[row.user_id]);
   if(!origine[0]){const e=Error('Compte introuvable.');e.status=409;throw e;}
   await conn.query('SELECT id FROM users WHERE email=? ORDER BY id FOR UPDATE',[origine[0].email]);
-  const [destination]=await conn.query('SELECT id FROM users WHERE email=? FOR UPDATE',[row.nouveau_email]);
+  const [destination]=await conn.query("SELECT id FROM users WHERE email=? AND role IN ('client','artisan') FOR UPDATE",[row.nouveau_email]);
   if(destination.length){const e=Error('Cette adresse est déjà utilisée. Les espaces ne peuvent pas être fusionnés.');e.status=409;throw e;}
   await conn.query("UPDATE users SET email=?,email_verified=1,admin_session_version=admin_session_version+1 WHERE email=? AND role IN ('client','artisan')",[row.nouveau_email,origine[0].email]);
   await conn.query('DELETE FROM account_email_changes WHERE user_id=?',[row.user_id]);await conn.commit();

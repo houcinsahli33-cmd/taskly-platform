@@ -31,7 +31,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
 
         const [rows] = await conn.query(
             `SELECT m.*, r.artisan_id, r.service_id, r.personal_email,
-                    r.proposed_address${clientFields}
+                    r.proposed_address, r.status, r.confirmed_at${clientFields}
              FROM taskly_professional_mailboxes m
              JOIN taskly_professional_mail_requests r
                ON r.user_id = m.user_id

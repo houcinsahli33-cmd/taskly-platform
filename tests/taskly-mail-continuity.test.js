@@ -1,0 +1,21 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+// Exercise the actual production function without starting Express or touching SQL.
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const source=fs.readFileSync(path.join(__dirname,'../server/routes/professionalMailRoutes.js'),'utf8');
+const blocks=source.match(/\/\/ TASKLY_MAIL_CONTINUITY_START([\s\S]*?)\/\/ TASKLY_MAIL_CONTINUITY_END/g);
+assert.equal(blocks?.length,1);
+const correspond=vm.runInNewContext(blocks[0]+'\ncorrespondMail;');
+const p={id:7,role:'client',client_id:11,email:'new@example.test',email_verified:1,statut_compte:'actif',active_mail_address:'client7@taskly.test'};
+const r={user_id:7,client_id:11,artisan_id:null,service_id:null,personal_email:'old@example.test',proposed_address:'client7@taskly.test',confirmed_at:'2026-11-20',status:'approved_pending_provider'};
+const a={...p,id:8,role:'artisan',client_id:null,artisan_id:12,service_id:4,verification_statut:'approuve',active_mail_address:'artisan8@taskly.test'};
+const ar={...r,user_id:8,client_id:null,artisan_id:12,service_id:4,proposed_address:a.active_mail_address};
+test('Mail continuity: active client keeps mailbox after verified email change',()=>assert.equal(correspond(p,r,true),true));
+test('Mail continuity: active artisan keeps mailbox after verified email change',()=>assert.equal(correspond(a,ar,true),true));
+test('Mail continuity: other user or other client space refused',()=>{assert.equal(correspond({...p,id:9},r,true),false);assert.equal(correspond({...p,client_id:99},r,true),false);});
+test('Mail continuity: other artisan, trade or mixed role refused',()=>{assert.equal(correspond({...a,artisan_id:99},ar,true),false);assert.equal(correspond({...a,service_id:5},ar,true),false);assert.equal(correspond(p,ar,true),false);});
+test('Mail continuity: suspended, unverified or unapproved profiles refused',()=>{for(const bad of [{statut_compte:'bloque'},{email_verified:0}])assert.equal(correspond({...p,...bad},r,true),false);assert.equal(correspond({...a,verification_statut:'en_attente'},ar,true),false);});
+test('Mail continuity: no fallback for pending, refused, cancelled or unconfirmed request',()=>{for(const status of ['pending_confirmation','pending_admin','rejected','cancelled'])assert.equal(correspond(p,{...r,status},true),false);assert.equal(correspond(p,{...r,confirmed_at:null},true),false);});
+test('Mail continuity: missing or mismatched active mailbox refused',()=>{for(const active_mail_address of [null,'','other@taskly.test'])assert.equal(correspond({...p,active_mail_address},r,true),false);});
+test('Mail continuity: client feature flag remains mandatory',()=>assert.equal(correspond(p,r,false),false));
+test('Mail continuity: original pending request with matching email still works',()=>assert.equal(correspond({...p,email:r.personal_email,active_mail_address:null},{...r,status:'pending_confirmation',confirmed_at:null},true),true));
