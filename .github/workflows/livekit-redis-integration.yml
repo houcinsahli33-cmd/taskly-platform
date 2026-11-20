@@ -1,4 +1,4 @@
-﻿name: Taskly LiveKit Redis Test
+name: Taskly LiveKit Redis Test
 
 on:
   push:
@@ -37,4 +37,8 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: node tests/taskly-livekit-redis.integration.js
-      - run: npm test
+      - name: Tests Taskly sans connexion Redis persistante
+        run: npm test
+        timeout-minutes: 3
+        env:
+          REDIS_URL: ''
