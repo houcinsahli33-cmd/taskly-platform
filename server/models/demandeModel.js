@@ -3,27 +3,46 @@
 
 const db = require("../config/db"); // on importe la connexion à la base de données depuis db.js
 
-// Creer une demande par un client à un artisan
-async function creerDemande(clientId, artisanId, message, adresse, dateSouhaitee) {
-    if (dateSouhaitee && await jourReserveArtisan(artisanId,dateSouhaitee)) {
-        const error=new Error('Date déjà réservée.');error.code='TASKLY_DATE_OCCUPEE';throw error;
-    }
-    const sql = `
-        INSERT INTO demandes (client_id, artisan_id, message, adresse, date_souhaitee)
-        VALUES (?, ?, ?, ?, ?)
-    `;
-
-    const [resultat] = await db.promise().query(sql, [
-        clientId,
-        artisanId,
-        message,
-        adresse,
-        dateSouhaitee
-    ]);
-
-    return resultat;
+// Les demandes non cloturees bloquent uniquement le couple client/artisan.
+async function trouverDemandeOuverte(clientId, artisanId, conn = db.promise(), verrou = false) {
+    const [rows] = await conn.query(`SELECT id, statut FROM demandes
+        WHERE client_id = ? AND artisan_id = ?
+          AND statut IN ('en_attente','acceptee','attente_confirmation','conteste')
+        ORDER BY id DESC LIMIT 1${verrou ? ' FOR UPDATE' : ''}`, [clientId, artisanId]);
+    return rows[0] || null;
 }
 
+// Le verrou sur le client serialise les creations, meme quand aucune demande n'existe.
+async function creerDemande(clientId, artisanId, message, adresse, dateSouhaitee) {
+    const conn = await db.promise().getConnection();
+    try {
+        const [versions] = await conn.query('SELECT VERSION() AS version');
+        if (/tidb/i.test(String(versions[0]?.version || ''))) {
+            await conn.query('BEGIN PESSIMISTIC');
+        } else {
+            await conn.beginTransaction();
+        }
+        const [clients] = await conn.query('SELECT id FROM clients WHERE id = ? FOR UPDATE', [clientId]);
+        if (clients.length !== 1) throw new Error('Profil client introuvable.');
+        const existante = await trouverDemandeOuverte(clientId, artisanId, conn, true);
+        if (existante) {
+            const error = new Error('Une demande est déjà en cours avec cet artisan.');
+            error.code = 'TASKLY_DEMANDE_OUVERTE'; error.demande = existante; throw error;
+        }
+        const calendrier = controlesCalendrier(conn);
+        if (dateSouhaitee && await calendrier.jourReserveArtisan(artisanId,dateSouhaitee)) {
+            const error=new Error('Date déjà réservée.');error.code='TASKLY_DATE_OCCUPEE';throw error;
+        }
+        const [resultat] = await conn.query(`
+            INSERT INTO demandes (client_id, artisan_id, message, adresse, date_souhaitee)
+            VALUES (?, ?, ?, ?, ?)`, [clientId, artisanId, message, adresse, dateSouhaitee]);
+        await conn.commit();
+        return resultat;
+    } catch (error) {
+        await conn.rollback();
+        throw error;
+    } finally { conn.release(); }
+}
 
 // Seules les missions déjà acceptées/en cours bloquent un jour. Aucune donnée client n'est exposée.
 async function datesReserveesArtisan(artisanId, aPartirDe) {
@@ -35,11 +54,20 @@ async function datesReserveesArtisan(artisanId, aPartirDe) {
         ORDER BY jour`, [artisanId, aPartirDe]);
     return lignes.map(l => String(l.jour));
 }
+// Le calendrier est lie a la connexion qui effectue le controle.
+// L'API publique conserve la signature a deux arguments.
+function controlesCalendrier(conn) {
+    return {
+        async jourReserveArtisan(artisanId, date) {
+            const [lignes] = await conn.query(`
+                SELECT id FROM demandes WHERE artisan_id = ? AND date_souhaitee = ?
+                  AND statut IN ('acceptee','attente_confirmation','conteste') LIMIT 1`, [artisanId,date]);
+            return lignes.length > 0;
+        }
+    };
+}
 async function jourReserveArtisan(artisanId, date) {
-    const [lignes] = await db.promise().query(`
-        SELECT id FROM demandes WHERE artisan_id = ? AND date_souhaitee = ?
-          AND statut IN ('acceptee','attente_confirmation','conteste') LIMIT 1`, [artisanId,date]);
-    return lignes.length > 0;
+    return controlesCalendrier(db.promise()).jourReserveArtisan(artisanId,date);
 }
 // Lister les demandes envoyees par un client
 async function listerDemandesClient(clientId) {
@@ -149,8 +177,8 @@ async function annulerDemandeClient(id, clientId) {
         SET statut = 'annulee',
             annulee_par = 'client',
             date_annulation = NOW()
-        WHERE id = ? 
-        AND client_id = ? 
+        WHERE id = ?
+        AND client_id = ?
         AND statut = 'en_attente'
     `;
 
@@ -254,7 +282,7 @@ async function contesterFinClient(id, clientId) {
     return resultat;
 }
 module.exports = {
-    datesReserveesArtisan, jourReserveArtisan,
+    datesReserveesArtisan, jourReserveArtisan, trouverDemandeOuverte,
     confirmerFinClient,
     contesterFinClient,
     trouverDestinataires,

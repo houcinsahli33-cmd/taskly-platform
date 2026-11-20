@@ -77,11 +77,27 @@ async function obtenirArtisanConnecte(req, res) {
     return artisan;
 }
 
+// Controle indicatif avant ouverture du formulaire, limite au client de session.
+async function demandeOuverte(req, res) {
+    res.set('Cache-Control', 'private, no-store');
+    try {
+        const artisanId = Number(req.params.artisanId);
+        if (!/^[1-9]\d*$/.test(String(req.params.artisanId)) || !Number.isSafeInteger(artisanId))
+            return res.status(400).json({message:'Identifiant artisan invalide.'});
+        const client = await obtenirClientConnecte(req, res);
+        if (!client) return;
+        const demande = await demandeModel.trouverDemandeOuverte(client.id, artisanId);
+        return res.json({demande: demande ? {id: demande.id, statut: demande.statut} : null});
+    } catch (error) {
+        return res.status(503).json({message:'Vérification de la demande momentanément indisponible.'});
+    }
+}
+
 // Creer une demande par un client
 async function creerDemande(req, res) {
     try {
         const { artisanId, message, adresse, dateSouhaitee } = req.body;
-        
+
         if (!artisanId || !message || !adresse) {
             return res.status(400).json({
                 message: "Certains champs sont obligatoires."
@@ -122,6 +138,8 @@ async function creerDemande(req, res) {
         });
 
     } catch (error) {
+        if (error.code === 'TASKLY_DEMANDE_OUVERTE')
+            return res.status(409).json({code:error.code,message:error.message,demande:{id:error.demande.id,statut:error.demande.statut}});
         if (error.code === 'TASKLY_DATE_OCCUPEE')
             return res.status(409).json({message:'Cet artisan est déjà occupé à cette date. Choisissez un autre jour.'});
         console.error("Erreur création demande :", error.message);
@@ -156,7 +174,7 @@ async function listerDemandesClient(req, res) {
     }
 }
 
-// Lister les demandes recues par l'artisan 
+// Lister les demandes recues par l'artisan
 async function listerDemandesArtisan(req, res) {
     try {
         const artisan = await obtenirArtisanConnecte(req, res);
@@ -408,6 +426,7 @@ async function confirmerDepuisEmail(req,res) {
 }
 
 module.exports = {
+    demandeOuverte,
     confirmerFinClient,
     contesterFinClient,
     confirmerDepuisEmail,

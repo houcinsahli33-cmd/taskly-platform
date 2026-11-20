@@ -16,6 +16,8 @@ router.post("/", verifierConnexion, verifierClient, demandeController.creerDeman
 // Lister les demandes envoyées par le client connecté
 router.get("/client", verifierConnexion, verifierClient, demandeController.listerDemandesClient);
 
+router.get("/en-cours/:artisanId", verifierConnexion, verifierClient, demandeController.demandeOuverte);
+
 // Annuler une demande encore en attente
 router.put("/:id/annuler", verifierConnexion, verifierClient, demandeController.annulerDemandeClient);
 

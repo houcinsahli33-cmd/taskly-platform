@@ -2,7 +2,7 @@
 /* Demande en trois étapes. Même API, mêmes contrôles serveur et CSRF. */
 (function(){
  const $=id=>document.getElementById(id);
- let step=0, busy=false, initialized=false, previousFocus=null;
+ let step=0, busy=false, checking=false, initialized=false, previousFocus=null;
  const dialog=()=>$('request-modal'), form=()=>$('request-form');
  const val=id=>$(id).value.trim();
  function error(text,field){const e=$('rw-error');e.textContent=text;e.hidden=!text;if(field)field.focus();return false;}
@@ -21,8 +21,33 @@
   return true;
  }
  function close(){if(busy)return;dialog().close();}
- function open(artisan){
-  if(!initialized)init();if(!initialized||dialog().open||busy)return;
+ async function verifierDemande(id){
+  const data=await requeteAPI('/api/demandes/en-cours/'+encodeURIComponent(String(id)));
+  return data.demande||null;
+ }
+ function afficherDemandeOuverte(d){
+  const labels={en_attente:'En attente',acceptee:'Acceptée',attente_confirmation:'En attente de confirmation',conteste:'Contestée'};
+  let panel=$('rw-existing-request');
+  if(!panel){
+   panel=document.createElement('section');panel.id='rw-existing-request';panel.className='rw-success';panel.setAttribute('aria-live','polite');dialog().append(panel);
+  }
+  const create=(tag,text,cls)=>{const el=document.createElement(tag);el.textContent=text;if(cls)el.className=cls;return el;};
+  const icon=create('div','!','rw-success-icon');icon.setAttribute('aria-hidden','true');icon.style.color='#9a6700';icon.style.backgroundColor='#fff4db';
+  const title=create('h3','Vous avez déjà une demande en cours');
+  const info=create('p','Demande n° '+String(d.id)+' — '+(labels[d.statut]||'En cours'));
+  const detail=create('p','Une nouvelle demande auprès de cet artisan sera possible après la clôture de la demande actuelle.');
+  const link=create('a','Voir mes demandes','rw-primary');link.href='/espace/client/demandes';
+  const button=create('button','Fermer','rw-secondary');button.type='button';button.addEventListener('click',close);
+  panel.replaceChildren(icon,title,info,detail,link,button);
+  form().hidden=true;$('rw-success').hidden=true;dialog().querySelector('.rw-steps').hidden=true;panel.hidden=false;link.focus();
+ }
+ async function open(artisan){
+  if(!initialized)init();if(!initialized||dialog().open||busy||checking)return;
+  checking=true;let existante=null,verificationEchouee=false;
+  try{existante=await verifierDemande(artisan.id);}catch(e){verificationEchouee=true;}finally{checking=false;}
+  if(dialog().open||busy)return;
+  const existing=$('rw-existing-request');if(existing)existing.hidden=true;
+  dialog().querySelector('.rw-steps').hidden=false;
   previousFocus=document.activeElement;form().reset();step=0;form().hidden=false;$('rw-success').hidden=true;
   $('request-artisan-id').value=String(artisan.id);$('request-artisan-name').textContent=nomComplet(artisan);
   $('request-artisan-photo').src=imageProfil(artisan.photo_profil);
@@ -31,7 +56,10 @@
   $('request-artisan-experience').textContent=Number(artisan.experience||0)+' an(s) d’expérience';
   const missions=$('request-artisan-missions');missions.hidden=artisan.total_demandes==null;missions.textContent=Number(artisan.total_demandes||0)+' mission(s)';
   $('request-artisan-description').textContent=artisan.description||'Aucune description détaillée pour le moment.';
-  render();dialog().showModal();document.body.classList.add('no-scroll');$('request-message').focus();
+  render();dialog().showModal();document.body.classList.add('no-scroll');
+  if(existante){afficherDemandeOuverte(existante);return;}
+  if(verificationEchouee)error('Vérification préalable indisponible. Le serveur vérifiera votre demande lors de l’envoi.');
+  $('request-message').focus();
  }
  function init(){
   if(initialized||!dialog()||!form())return;initialized=true;
@@ -52,7 +80,10 @@
    try{
     await requeteAPI('/api/demandes',{method:'POST',body:JSON.stringify({artisanId:Number(val('request-artisan-id')),message:message(),adresse:val('request-address'),dateSouhaitee:val('request-date')||null})});
     form().hidden=true;$('rw-success').hidden=false;$('rw-success').querySelector('a').focus();
-   }catch(e){error(e.message||'Impossible d’envoyer la demande.');}
+   }catch(e){
+    let existante=null;try{existante=await verifierDemande(val('request-artisan-id'));}catch{}
+    if(existante)afficherDemandeOuverte(existante);else error(e.message||'Impossible d’envoyer la demande.');
+   }
    finally{busy=false;b.disabled=false;$('rw-back').disabled=false;b.textContent='Envoyer la demande';}
   });
  }
