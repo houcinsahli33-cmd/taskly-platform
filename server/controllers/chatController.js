@@ -414,6 +414,21 @@ async function emettreJetonLiveKit(req, res) {
             mode: call.mode
         });
 
+        const marquage = await service.signaler({
+            demandeId: acces.demandeId,
+            role: acces.role,
+            clientId: acces.demande.client_id,
+            artisanId: acces.demande.artisan_id
+        }, 'livekit', { id: call.id });
+
+        if (marquage.code !== 200) {
+            return res.status(
+                [404, 409].includes(marquage.code) ? 409 : 503
+            ).json({
+                message: 'Appel non disponible.'
+            });
+        }
+
         return res.status(200).json(jeton);
 
     } catch (error) {

@@ -2,6 +2,7 @@
 
 const { randomUUID } = require('node:crypto');
 const { obtenirClientRedis } = require('../config/sessionStore');
+const CLEANUP_KEY = 'taskly:livekit:cleanup:v1';
 
 const SCRIPT = `
 local raw = redis.call('GET', KEYS[1])
@@ -28,6 +29,23 @@ end
 
 local function save(value, ttl)
     redis.call('SET', KEYS[1], cjson.encode(value), 'EX', ttl)
+end
+
+
+local function queueCleanup(runAt)
+    if call and call.livekitIssued == true and
+       (call.state == 'accepted' or call.state == 'ended') then
+
+        local job = string.format(
+            '{"demandeId":%d,"appelId":"%s","clientId":%d,"artisanId":%d}',
+            tonumber(ARGV[7]),
+            call.id,
+            tonumber(ARGV[8]),
+            tonumber(ARGV[9])
+        )
+
+        redis.call('ZADD', KEYS[2], runAt, job)
+    end
 end
 
 if action == 'start' then
@@ -70,6 +88,18 @@ if action == 'accept' then
     return result(200, 'Appel accepte.', call)
 end
 
+if action == 'livekit' then
+    if call.state ~= 'accepted' then
+        return result(409, 'Appel non actif.')
+    end
+
+    call.livekitIssued = true
+    queueCleanup(now + 60000)
+    save(call, 60)
+
+    return result(200, 'LiveKit prepare.', call)
+end
+
 if action == 'heartbeat' then
 
     if call.state ~= 'accepted' then
@@ -88,6 +118,7 @@ if action == 'heartbeat' then
         call.offer = nil
         call.answer = nil
 
+        queueCleanup(now)
         save(call, 30)
 
         return result(200, 'Appel expire.', call)
@@ -99,6 +130,7 @@ if action == 'heartbeat' then
         call.seenArtisan = now
     end
 
+    queueCleanup(now + 60000)
     save(call, 60)
 
     return result(200, 'Presence confirmee.', call)
@@ -128,6 +160,7 @@ call.endedAt = now
 call.offer = nil
 call.answer = nil
 
+queueCleanup(now)
 save(call, 30)
 
 return result(200, 'Appel termine.', call)
@@ -159,7 +192,7 @@ async function signaler(acces, action, payload = {}) {
         return failure(403, 'Acces refuse.');
     }
 
-    if (!['read', 'start', 'accept', 'reject', 'end', 'heartbeat'].includes(action)) {
+    if (!['read', 'start', 'accept', 'reject', 'end', 'heartbeat', 'livekit'].includes(action)) {
         return failure(400, 'Action invalide.');
     }
 
@@ -204,14 +237,17 @@ async function signaler(acces, action, payload = {}) {
     }
 
     const result = await redis.eval(SCRIPT, {
-        keys: [key],
+        keys: [key, CLEANUP_KEY],
         arguments: [
             action,
             acces.role,
             action === 'start' ? randomUUID() : payload.id,
             action === 'start' ? payload.mode : '',
             ['start', 'accept'].includes(action) ? payload.sdp : '',
-            String(Date.now())
+            String(Date.now()),
+            String(acces.demandeId),
+            String(acces.clientId),
+            String(acces.artisanId)
         ]
     });
 
