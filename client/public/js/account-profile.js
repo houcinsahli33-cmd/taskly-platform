@@ -19,7 +19,21 @@ document.addEventListener('DOMContentLoaded',async()=>{
   target.querySelectorAll('input[type=password]').forEach(el=>{el.maxLength=72;el.autocomplete=el.id.includes('-new')||el.id.includes('-repeat')?'new-password':'current-password';});
   async function submit(form,url,method,body,statusId,done){const b=form.querySelector('button[type=submit]');b.disabled=true;$(statusId).textContent='Traitement en cours…';try{const d=await requeteAPI(url,{method,body:JSON.stringify(body)});$(statusId).textContent=d.message;if(d.deconnexion){location.replace('/login.html');return;}if(done)done(d);}catch(e){$(statusId).textContent=e.message;}finally{b.disabled=false;}}
   $('account-edit-form').addEventListener('submit',e=>{e.preventDefault();submit(e.currentTarget,'/api/account','PUT',{nom:$('account-nom').value,prenom:$('account-prenom').value,telephone:$('account-phone').value,ville:$('account-ville').value,adresse:$('account-address')?.value,serviceId:$('account-service')?.value,experience:$('account-experience')?.value,description:$('account-description')?.value},'account-edit-status',()=>location.reload());});
-  $('account-email-request').addEventListener('submit',e=>{e.preventDefault();submit(e.currentTarget,'/api/account/email/request','POST',{email:$('account-email').value,motDePasse:$('account-email-password').value},'account-email-status',()=>{$('account-email-password').value='';$('account-email-verify').hidden=false;});});
+  $('account-email-request').addEventListener('submit',e=>{
+    e.preventDefault();
+    const form=e.currentTarget;
+    if(form.querySelector('button[type=submit]').disabled)return;
+    const email=$('account-email').value.trim().toLowerCase(),started=performance.now();
+    submit(form,'/api/account/email/request','POST',{email,motDePasse:$('account-email-password').value},'account-email-status',d=>{
+      $('account-email-password').value='';$('account-email').value=email;
+      const verify=$('account-email-verify');
+      if(Number.isFinite(d.expiresInMs)&&d.expiresInMs>=0&&d.expiresInMs<=180000){
+        verify.dataset.tpEmailDeadline=String(Math.min(started+180000,performance.now()+d.expiresInMs));
+      }else{delete verify.dataset.tpEmailDeadline;}
+      verify.hidden=false;
+      verify.dispatchEvent(new Event('taskly:email-code-issued'));
+    });
+  });
   $('account-email-verify').addEventListener('submit',e=>{e.preventDefault();submit(e.currentTarget,'/api/account/email/verify','POST',{code:$('account-email-code').value},'account-email-status');});
   $('account-password-form').addEventListener('submit',e=>{e.preventDefault();if($('account-password-new').value!==$('account-password-repeat').value){$('account-password-status').textContent='Les mots de passe ne correspondent pas.';return;}submit(e.currentTarget,'/api/account/password','PUT',{motDePasse:$('account-password-old').value,nouveauMotDePasse:$('account-password-new').value},'account-password-status');});
   $('account-delete-form').addEventListener('submit',async e=>{

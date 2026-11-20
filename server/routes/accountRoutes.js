@@ -64,10 +64,11 @@ router.post('/email/request',sensible,async(req,res)=>{
   const user=await password(req);if(email===user.email)return res.status(400).json({message:'Cette adresse est déjà la vôtre.'});
   const [exists]=await db.query('SELECT id FROM users WHERE email=?',[email]);if(exists.length)return res.status(409).json({message:'Cette adresse est déjà utilisée.'});
   const [recent]=await db.query('SELECT user_id FROM account_email_changes WHERE user_id=? AND created_at>DATE_SUB(NOW(),INTERVAL 1 MINUTE)',[user.id]);if(recent.length)return res.status(429).json({message:'Attendez une minute avant de demander un nouveau code.'});
+  const issuedAt=Date.now();
   const code=crypto.randomInt(0,1000000).toString().padStart(6,'0');
-  await db.query('INSERT INTO account_email_changes(user_id,nouveau_email,code_hash,expires_at) VALUES (?,?,?,DATE_ADD(NOW(),INTERVAL 10 MINUTE)) ON DUPLICATE KEY UPDATE nouveau_email=VALUES(nouveau_email),code_hash=VALUES(code_hash),expires_at=VALUES(expires_at),attempts=0,created_at=NOW()',[user.id,email,emailHash(user.id,email,code)]);
-  await require('../services/adminMailService').envoyerCourrielAdmin(email,'Taskly — confirmation de votre nouvelle adresse',`Votre code : ${code}. Valable 10 minutes, 3 tentatives maximum.`);
-  res.json({message:'Code envoyé à la nouvelle adresse. L’adresse actuelle reste inchangée jusqu’à confirmation.'});
+  await db.query('INSERT INTO account_email_changes(user_id,nouveau_email,code_hash,expires_at) VALUES (?,?,?,DATE_ADD(NOW(),INTERVAL 3 MINUTE)) ON DUPLICATE KEY UPDATE nouveau_email=VALUES(nouveau_email),code_hash=VALUES(code_hash),expires_at=VALUES(expires_at),attempts=0,created_at=NOW()',[user.id,email,emailHash(user.id,email,code)]);
+  await require('../services/adminMailService').envoyerCourrielAdmin(email,'Taskly — confirmation de votre nouvelle adresse',`Votre code : ${code}. Valable 3 minutes, 3 tentatives maximum.`);
+  res.json({message:'Code envoyé à la nouvelle adresse. L’adresse actuelle reste inchangée jusqu’à confirmation.',expiresInMs:Math.max(0,180000-Math.max(0,Date.now()-issuedAt))});
  }catch(e){fail(res,e);}
 });
 router.post('/email/verify',sensible,async(req,res)=>{
