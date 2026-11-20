@@ -312,7 +312,9 @@ async function artisansPourCarte(
         u.nom,
         u.prenom,
         u.photo_profil,
-        s.nom AS service_nom
+        s.nom AS service_nom,
+        COALESCE((SELECT ROUND(AVG(av.note), 1) FROM avis av WHERE av.artisan_id=a.id), 0) AS moyenne_notes,
+        (SELECT COUNT(*) FROM avis av WHERE av.artisan_id=a.id) AS total_avis
         FROM artisans a
         JOIN users u ON u.id = a.user_id
         JOIN services s ON s.id = a.service_id

@@ -14,7 +14,7 @@
   <script defer src="/js/taskly-request-calendar.js"></script>
   <script defer src="/js/taskly-request-wizard.js?v=1"></script>
   <script defer src="/js/artisans.js?v=wizard1"></script>
-<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/taskly-artisans-map.css"></head>
+<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/taskly-artisans-map.css?v=premium1"></head>
 <body data-active="artisans">
   <div id="site-header"></div>
   <main class="page-main">
@@ -36,17 +36,26 @@
       <div class="container">
         <form class="filters" id="artisans-filter-form">
           <label>
-            <span class="field-label">Service</span>
+            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true">⚒</span>Service</span>
             <select class="form-select" id="filter-service"></select>
           </label>
 
           <label>
-            <span class="field-label">Wilaya</span>
+            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true">⌖</span>Wilaya</span>
             <select class="form-select" id="filter-wilaya"></select>
           </label>
 
+            <fieldset class="taskly-map-radius-fieldset" hidden><legend>Rayon de recherche</legend>
+              <div class="taskly-map-radius-options" role="group" aria-label="Rayon de recherche">
+                <button type="button" data-map-radius="5" aria-pressed="false">5 km</button>
+                <button type="button" data-map-radius="10" aria-pressed="true" class="selected">10 km</button>
+                <button type="button" data-map-radius="25" aria-pressed="false">25 km</button>
+                 <button type="button" data-map-radius="50" aria-pressed="false">50 km</button>
+              </div>
+              <select id="taskly-map-radius" class="taskly-map-original-select" aria-label="Rayon sélectionné" tabindex="-1"><option value="5">5 km</option><option value="10" selected>10 km</option><option value="25">25 km</option><option value="50">50 km</option></select>
+            </fieldset>
           <label>
-            <span class="field-label">Recherche</span>
+            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true">⌕</span>Recherche</span>
             <input class="form-control" id="filter-search" placeholder="Nom, service, description">
           </label>
 
@@ -68,19 +77,32 @@
               <button class="btn primary" type="button" data-artisan-view="liste" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Liste</button>
               <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg> Carte des artisans proches</button>
             </div>
-            <fieldset class="taskly-map-radius-fieldset"><legend>Rayon de recherche</legend>
-              <div class="taskly-map-radius-options" role="group" aria-label="Rayon de recherche">
-                <button type="button" data-map-radius="5" aria-pressed="false">5 km</button>
-                <button type="button" data-map-radius="10" aria-pressed="true" class="selected">10 km</button>
-                <button type="button" data-map-radius="25" aria-pressed="false">25 km</button>
-              </div>
-              <select id="taskly-map-radius" class="taskly-map-original-select" aria-label="Rayon sélectionné" tabindex="-1"><option value="5">5 km</option><option value="10" selected>10 km</option><option value="25">25 km</option></select>
-            </fieldset>
+
           </div>
           <div id="taskly-artisans-map-panel" hidden>
-            <div class="taskly-map-results"><span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2c0-3 3-5 7-5s7 2 7 5v2M17 5a3 3 0 0 1 0 6M18 13c3 0 5 2 5 5v2"/></svg></span><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p></div>
-            <div id="taskly-artisans-map"></div>
-            <p class="taskly-map-privacy"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>La carte affiche seulement des zones approximatives choisies par les artisans. Votre localisation est facultative et n'est pas partagée.</span></p>
+            <div class="tmp-toolbar" aria-label="Filtres de la carte">
+              <strong>Filtrer les résultats</strong>
+              <button class="tmp-chip" id="tmp-well" type="button" aria-pressed="false">☆ Bien notés (≥ 4,5/5)</button>
+              <span class="tmp-verified">✓ Profils approuvés uniquement</span>
+              <span class="tmp-spacer"></span>
+              <button class="tmp-chip" id="tmp-geo" type="button">⌖ Ma position</button>
+              <button class="tmp-chip" id="tmp-clear" type="button" hidden>Retirer ma position</button>
+            </div>
+            <p id="tmp-geo-status" role="status">La localisation est facultative.</p>
+            <div class="taskly-map-results"><span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2c0-3 3-5 7-5s7 2 7 5v2M17 5a3 3 0 0 1 0 6M18 13c3 0 5 2 5 5v2"/></svg></span><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p><button id="tmp-more" class="tmp-chip" type="button" hidden>Élargir le rayon</button><button id="tmp-retry" class="tmp-chip" type="button" hidden>Réessayer</button></div>
+            <div class="tmp-split">
+              <div class="tmp-map-box">
+                <div id="taskly-artisans-map" aria-label="Carte interactive"></div>
+                <div class="tmp-legend"><span><i class="tmp-blue"></i>Votre zone approximative</span><span><i class="tmp-ring"></i>Rayon de recherche</span><span><i></i>Zone artisan</span></div>
+              </div>
+              <aside class="tmp-side" aria-label="Artisans trouvés">
+                <div class="tmp-side-head"><h3>Artisans à proximité (<span id="tmp-count">—</span>)</h3><select id="tmp-sort" aria-label="Trier les artisans"><option value="distance">Proximité</option><option value="note">Meilleures notes</option></select></div>
+                <p id="tmp-filter-caption"></p><div id="tmp-results"></div>
+                <div class="tmp-nav"><button type="button" id="tmp-prev" disabled>‹ Précédent</button><span id="tmp-page" aria-live="polite">—</span><button type="button" id="tmp-next" disabled>Suivant ›</button></div>
+                <p id="tmp-limit"></p>
+              </aside>
+            </div>
+            <p class="taskly-map-privacy"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Seules les zones publiques approximatives des artisans sont visibles. Si vous le choisissez, votre zone est arrondie sur votre appareil avant la recherche ; elle n'est pas publiée aux autres utilisateurs.</span></p>
           </div>
         </section>
         <div class="grid three" id="artisans-grid"></div>
@@ -139,5 +161,5 @@
     <section class="rw-success" id="rw-success" hidden><div class="rw-success-icon">✓</div><h3>Votre demande a été envoyée !</h3><p>Retrouvez votre demande et suivez son avancement dans votre espace client.</p><a class="rw-primary" href="/espace/client/demandes">Voir mes demandes</a><button type="button" class="rw-secondary" data-rw-close>Fermer</button></section>
   </dialog>
   <div id="site-footer"></div>
-<script defer src="/js/taskly-artisans-map.js"></script></body>
+<script defer src="/js/taskly-artisans-map.js?v=premium1"></script></body>
 </html>

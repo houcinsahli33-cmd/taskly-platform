@@ -1,63 +1,59 @@
-/* Ajout non destructif : l'annuaire Liste fonctionne sans cartes ni geolocalisation. */
-document.addEventListener('DOMContentLoaded',()=>{
- const mapPanel=document.getElementById('taskly-artisans-map-panel'),grille=document.getElementById('artisans-grid');
- if(!mapPanel||!grille)return;
- const status=document.getElementById('taskly-artisans-map-status');
- const heading=document.getElementById('taskly-map-heading');
- const selectRayon=document.getElementById('taskly-map-radius');
- function choisirRayon(value){
-  if(!['5','10','25'].includes(value))return;
-  selectRayon.value=value;
-  document.querySelectorAll('[data-map-radius]').forEach(b=>{const on=b.dataset.mapRadius===value;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',String(on));});
-  if(!mapPanel.hidden)montrerCarte();
+/* TASKLY_MAP_PREMIUM_V1 — carte et résultats issus de l'API, sans toucher au header. */
+(function () {
+ 'use strict';
+ const RADII=['5','10','25','50'], PAGE=4;
+ const number=v=>v!==null&&v!==undefined&&v!==''&&Number.isFinite(Number(v))?Number(v):null;
+ function normalize(rows){
+  if(!Array.isArray(rows))throw Error('Réponse carte invalide.');
+  const seen=new Set(),out=[];
+  for(const a of rows){
+   if(!a||typeof a!=='object')continue;
+   const id=number(a.id),lat=number(a.lat),lon=number(a.lon),n=number(a.moyenne_notes),total=number(a.total_avis),d=number(a.distanceKm);
+   if(!Number.isSafeInteger(id)||id<1||seen.has(id)||lat===null||lon===null||Math.abs(lat)>90||Math.abs(lon)>180)continue;
+   seen.add(id);out.push({id,lat,lon,nom:[a.prenom,a.nom].filter(v=>typeof v==='string').join(' ').trim()||'Artisan Taskly',service:typeof a.service_nom==='string'?a.service_nom:'Artisan',ville:typeof a.ville==='string'?a.ville:'Commune non précisée',photo:a.photo_profil,note:total>0&&n!==null&&n>=0&&n<=5?n:null,nb:Number.isSafeInteger(total)&&total>=0?total:null,distance:d!==null&&d>=0?d:null});
+  }return out;
  }
- document.querySelectorAll('[data-map-radius]').forEach(b=>b.addEventListener('click',()=>choisirRayon(b.dataset.mapRadius)));
- let carte=null,markers=null,userPos=null,geoAttempted=false,leafletPromise=null,requeteCourante=0;
- function leaflet(){
-  if(leafletPromise)return leafletPromise;
-  leafletPromise=new Promise((resolve,reject)=>{
-   if(window.L)return resolve(window.L);
-   const css=document.createElement('link');css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.append(css);
-   const js=document.createElement('script');js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';js.onload=()=>resolve(window.L);js.onerror=()=>{leafletPromise=null;reject(Error('Carte indisponible.'));};document.head.append(js);
-  });return leafletPromise;
+ function rank(rows,sort,well){
+  return rows.filter(a=>!well||(a.note!==null&&a.note>=4.5)).sort((a,b)=>{
+   const dist=(a.distance??Infinity)-(b.distance??Infinity);
+   if(sort==='note')return (b.note??-1)-(a.note??-1)||(b.nb??0)-(a.nb??0)||dist||a.id-b.id;
+   return dist||a.id-b.id;
+  });
  }
- const valid=id=>/^[1-9]\d*$/.test(String(id));
- async function montrerCarte(){
-  const numeroRequete=++requeteCourante;
-  const boutons=document.querySelectorAll('[data-artisan-view]');boutons.forEach(b=>{const sel=b.dataset.artisanView==='carte';b.classList.toggle('primary',sel);b.classList.toggle('outline',!sel);b.setAttribute('aria-pressed',String(sel));});heading.hidden=false;
-  grille.hidden=true;mapPanel.hidden=false;document.querySelector('.load-more-artisans-wrap')?.setAttribute('hidden','');status.textContent='Recherche des artisans proches…';
-  try{
-   const L=await leaflet();
-   if(numeroRequete!==requeteCourante||mapPanel.hidden)return;
-   if(!carte){carte=L.map('taskly-artisans-map').setView([28.03,2.7],5);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(carte);markers=L.layerGroup().addTo(carte);}
-   requestAnimationFrame(()=>{if(!mapPanel.hidden)carte.invalidateSize();});
-   if(!geoAttempted&&navigator.geolocation){
-    geoAttempted=true;
-    userPos=await new Promise(resolve=>navigator.geolocation.getCurrentPosition(p=>resolve([p.coords.latitude,p.coords.longitude]),()=>resolve(null),{enableHighAccuracy:false,timeout:5500}));
-   }
-   if(numeroRequete!==requeteCourante||mapPanel.hidden)return;
-   const params=new URLSearchParams(construireQueryArtisans());
-   params.set('rayonKm',document.getElementById('taskly-map-radius').value);
-   if(userPos){params.set('lat',userPos[0]);params.set('lon',userPos[1]);}
-   const {artisans}=await requeteAPI('/api/artisans/carte?'+params);
-   if(numeroRequete!==requeteCourante||mapPanel.hidden)return;
-   markers.clearLayers();const limites=[];
-   if(userPos){L.circleMarker(userPos,{radius:7,color:'#2563eb',fillColor:'#3b82f6',fillOpacity:.8}).addTo(markers);limites.push(userPos);}
-   (artisans||[]).forEach(a=>{
-    const pt=[Number(a.lat),Number(a.lon)];if(!Number.isFinite(pt[0])||!Number.isFinite(pt[1]))return;
-    const nom=[a.prenom,a.nom].filter(Boolean).join(' ');
-    const card=document.createElement('div');card.textContent=nom+' — '+(a.service_nom||'Artisan');
-    const link=document.createElement('a');link.href='/artisan-profile.html?id='+Number(a.id);link.textContent='Voir le profil';link.style.display='block';card.append(link);
-    L.circleMarker(pt,{radius:9,color:'#007e64',fillColor:'#009f7f',fillOpacity:.85}).bindPopup(card).addTo(markers);limites.push(pt);
-   });
-   if(limites.length)carte.fitBounds(limites,{padding:[35,35],maxZoom:12});
-   const count=(artisans||[]).length;
-   status.textContent=count+' artisan(s) avec une zone publique renseignée'+(userPos?' à proximité.':'.')+
-     (count===0?' Aucun artisan trouvé dans ce rayon. Essayez un rayon plus large.':(!userPos?' Autorisez la localisation pour filtrer par distance.':''));
-  }catch(e){if(numeroRequete!==requeteCourante)return; status.textContent='Carte indisponible. Vous pouvez revenir à la liste des artisans.';}
- }
- document.querySelector('[data-artisan-view="carte"]')?.addEventListener('click',montrerCarte);
- document.querySelector('[data-artisan-view="liste"]')?.addEventListener('click',()=>{requeteCourante++;heading.hidden=true;mapPanel.hidden=true;grille.hidden=false;document.querySelector('.load-more-artisans-wrap')?.removeAttribute('hidden');document.querySelectorAll('[data-artisan-view]').forEach(b=>{const on=b.dataset.artisanView==='liste';b.classList.toggle('primary',on);b.classList.toggle('outline',!on);b.setAttribute('aria-pressed',String(on));});});
- document.getElementById('taskly-map-radius')?.addEventListener('change',()=>{if(!mapPanel.hidden)montrerCarte();});
- document.getElementById('artisans-filter-form')?.addEventListener('submit',()=>{if(!mapPanel.hidden)montrerCarte();});
-});
+ function approximate(lat,lon){if(number(lat)===null||number(lon)===null||Math.abs(lat)>90||Math.abs(lon)>180)return null;return [Math.round(lat*20)/20,Math.round(lon*20)/20];}
+ function group(rows){const g=new Map();for(const a of rows){const k=a.lat+':'+a.lon;if(!g.has(k))g.set(k,[]);g.get(k).push(a);}return [...g.values()];}
+ if(typeof module==='object'&&module.exports)module.exports={normalize,rank,approximate,group};
+ if(typeof document==='undefined')return;
+ document.addEventListener('DOMContentLoaded',()=>{
+  const $=id=>document.getElementById(id),panel=$('taskly-artisans-map-panel'),grid=$('artisans-grid'),form=$('artisans-filter-form');
+  if(!panel||!grid||!form)return;
+  const heading=$('taskly-map-heading'),radius=$('taskly-map-radius'),field=radius.closest('fieldset'),status=$('taskly-artisans-map-status'),out=$('tmp-results'),sort=$('tmp-sort'),well=$('tmp-well'),geo=$('tmp-geo'),clear=$('tmp-clear'),more=$('tmp-more'),retry=$('tmp-retry'),mapEl=$('taskly-artisans-map');
+  let map=null,Lref=null,layers=null,leafletPromise=null,center=null,all=[],shown=[],page=0,seq=0,geoSeq=0,selected=null,markerById=new Map(),loading=false,failed=false,mapFailed=false,started=false;
+  const el=(tag,cls,text)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;};
+  const profile=a=>{const x=el('a','tmp-profile','Voir le profil ↗');x.href='/artisan-profile.html?id='+a.id;return x;};
+  function image(a){const im=el('img','tmp-avatar');im.alt='';im.loading='lazy';im.decoding='async';let src='/images/defaults/avatar.png';try{const u=new URL(typeof imageProfil==='function'?imageProfil(a.photo):a.photo||src,location.origin);if(u.origin===location.origin&&/^\/(?:images|uploads|api\/media|media)\//.test(u.pathname))src=u.href;}catch{}im.src=src;im.addEventListener('error',()=>{if(!im.src.endsWith('/images/defaults/avatar.png'))im.src='/images/defaults/avatar.png';},{once:true});return im;}
+  function updateRadius(v){if(!RADII.includes(v))v='10';radius.value=v;document.querySelectorAll('[data-map-radius]').forEach(b=>{const on=b.dataset.mapRadius===v;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',String(on));});}
+  function switchView(on){panel.hidden=!on;heading.hidden=!on;grid.hidden=on;field.hidden=!on;form.dataset.mapMode=on?'1':'0';document.querySelectorAll('[data-artisan-view]').forEach(b=>{const active=b.dataset.artisanView===(on?'carte':'liste');b.classList.toggle('primary',active);b.classList.toggle('outline',!active);b.setAttribute('aria-pressed',String(active));});if(!on){seq++;geoSeq++;geo.disabled=false;if(started&&typeof mettreAJourCompteurArtisans==='function')mettreAJourCompteurArtisans();} }
+  function getLeaflet(){if(window.L)return Promise.resolve(window.L);if(leafletPromise)return leafletPromise;leafletPromise=new Promise((resolve,reject)=>{const css=el('link');css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.append(css);const js=el('script');js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';let timer=setTimeout(()=>{js.remove();reject(Error('Carte indisponible'));},12000);js.onload=()=>{clearTimeout(timer);window.L?resolve(window.L):reject(Error('Carte indisponible'));};js.onerror=()=>{clearTimeout(timer);js.remove();reject(Error('Carte indisponible'));};document.head.append(js);}).catch(e=>{leafletPromise=null;throw e;});return leafletPromise;}
+  async function initMap(){if(map)return;const lib=await getLeaflet();if(panel.hidden)return;if(map)return;Lref=lib;mapEl.replaceChildren();map=lib.map(mapEl).setView([28.03,2.7],5);lib.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(map);layers=lib.layerGroup().addTo(map);}
+  function focusArtisan(id,open){selected=id;const index=shown.findIndex(a=>a.id===id);if(index<0)return;page=Math.floor(index/PAGE);renderCards();const m=markerById.get(id);if(m&&open){map.panTo(m.getLatLng());m.openPopup();}}
+  function renderCards(){out.replaceChildren();$('tmp-count').textContent=loading?'…':failed?'—':String(shown.length);const pages=Math.max(1,Math.ceil(shown.length/PAGE));page=Math.max(0,Math.min(page,pages-1));$('tmp-page').textContent=loading||failed?'—':`${page+1} / ${pages}`;$('tmp-prev').disabled=loading||failed||page===0;$('tmp-next').disabled=loading||failed||page>=pages-1;
+   if(loading||failed||!shown.length){out.append(el('p','tmp-empty',loading?'Recherche en cours…':failed?'Résultats indisponibles. Réessayez.':well.getAttribute('aria-pressed')==='true'&&all.length?'Aucun artisan noté au moins 4,5/5.':'Aucun artisan correspondant à ces critères.'));return;}
+   for(const a of shown.slice(page*PAGE,(page+1)*PAGE)){const card=el('article','tmp-card');card.dataset.id=String(a.id);card.classList.toggle('tmp-selected',a.id===selected);const top=el('div','tmp-person'),copy=el('div','tmp-person-copy'),name=el('strong','tmp-name',a.nom);copy.append(name,el('span','tmp-verified','✓ Profil approuvé'),el('p','tmp-meta',a.service+' · '+a.ville),el('p','tmp-rating',a.note===null?'Pas encore de note disponible':`★ ${a.note.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})}/5 (${a.nb} avis)`));top.append(image(a),copy);const foot=el('div','tmp-foot'),dist=el('span','tmp-distance',center&&a.distance!==null?'≈ '+a.distance.toLocaleString('fr-FR')+' km':'Distance non calculée'),loc=el('button','tmp-locate','Sur la carte');loc.type='button';loc.disabled=!map||!markerById.has(a.id);loc.addEventListener('click',()=>focusArtisan(a.id,true));foot.append(dist,loc,profile(a));card.append(top,foot);out.append(card);}
+  }
+  function draw(fit){if(!map||!layers)return;map.invalidateSize();layers.clearLayers();markerById.clear();let bounds=[];if(center){const c=Lref.circle(center,{radius:Number(radius.value)*1000,color:'#00876c',weight:2,dashArray:'7 6',fillColor:'#1ebc91',fillOpacity:.12}).addTo(layers);bounds.push(c.getBounds().getSouthWest(),c.getBounds().getNorthEast());Lref.circleMarker(center,{radius:8,color:'#fff',weight:3,fillColor:'#2078ed',fillOpacity:1}).bindTooltip('Votre position approximative').addTo(layers);}
+   for(const items of group(shown)){const pt=[items[0].lat,items[0].lon],icon=Lref.divIcon({className:'tmp-marker-wrap',html:'<span class="tmp-marker">'+(items.length>1?String(items.length):'⚒')+'</span>',iconSize:[36,36],iconAnchor:[18,18]}),m=Lref.marker(pt,{icon,keyboard:true,title:items.length>1?`${items.length} artisans dans cette zone`:items[0].nom}).addTo(layers),popup=el('div','tmp-popup');for(const a of items){const line=el('div','tmp-popup-row');line.append(el('strong','',a.nom),el('p','',a.service),profile(a));const b=el('button','tmp-locate','Afficher la fiche');b.type='button';b.addEventListener('click',()=>focusArtisan(a.id,false));line.append(b);popup.append(line);markerById.set(a.id,m);}m.bindPopup(popup,{maxHeight:230});m.on('click',()=>focusArtisan(items[0].id,false));bounds.push(pt);}
+   if(fit){if(bounds.length)map.fitBounds(bounds,{padding:[22,22],maxZoom:12});else map.setView([28.03,2.7],5);} }
+  function render(fit=false){sort.options[0].disabled=!center;if(!center&&sort.value==='distance')sort.value='note';shown=rank(all,sort.value,well.getAttribute('aria-pressed')==='true');if(!shown.some(a=>a.id===selected))selected=null;draw(fit);renderCards();const suffix=center?` dans un rayon de ${radius.value} km autour de votre zone approximative.`:' avec une zone publique. Activez votre position pour rechercher autour de vous.';status.textContent=loading?'Recherche des artisans…':failed?'Impossible de charger les artisans. Réessayez.':`${shown.length} artisan(s) affichable(s)${suffix}`+(all.length===0?' Aucun résultat : vérifiez les filtres ou élargissez le rayon.':'')+(mapFailed?' Fond de carte indisponible ; les fiches restent consultables.':'');more.hidden=loading||failed||!center||all.length!==0||radius.value==='50';retry.hidden=loading||(!failed&&!mapFailed);clear.hidden=!center;sort.options[0].disabled=!center;if(!center&&sort.value==='distance')sort.value='note';$('tmp-filter-caption').textContent=center?'Distances approximatives à vol d’oiseau.':'Sans position : pas de filtre de distance.';$('tmp-limit').textContent='La carte présente au maximum 200 artisans correspondant à la recherche.';}
+  async function load(){if(panel.hidden)return;const v=++seq;loading=true;failed=false;mapFailed=false;all=[];page=0;selected=null;render(false);const params=new URLSearchParams(construireQueryArtisans());params.set('rayonKm',radius.value);if(center){params.set('lat',String(center[0]));params.set('lon',String(center[1]));}
+   const mapPromise=initMap().catch(()=>{if(v===seq){mapFailed=true;mapEl.textContent='Fond de carte indisponible.';}});
+   try{const data=await requeteAPI('/api/artisans/carte?'+params,{cache:'no-store'});if(v!==seq||panel.hidden)return;all=normalize(data.artisans);loading=false;render(true);}catch(e){if(v!==seq||panel.hidden)return;all=[];loading=false;failed=true;render(false);}await mapPromise;if(v===seq&&!panel.hidden)render(true);
+  }
+  function locate(){if(panel.hidden)return;const v=++geoSeq;if(!navigator.geolocation){$('tmp-geo-status').textContent='Géolocalisation indisponible.';return;}geo.disabled=true;$('tmp-geo-status').textContent='Localisation en cours…';navigator.geolocation.getCurrentPosition(p=>{if(v!==geoSeq||panel.hidden)return;geo.disabled=false;const pos=approximate(p.coords.latitude,p.coords.longitude);if(!pos){$('tmp-geo-status').textContent='Position invalide.';return;}center=pos;sort.value='distance';$('tmp-geo-status').textContent='Zone approximative utilisée.';load();},()=>{if(v!==geoSeq||panel.hidden)return;geo.disabled=false;$('tmp-geo-status').textContent='Localisation refusée ou indisponible. La recherche sans position reste possible.';},{enableHighAccuracy:false,timeout:10000,maximumAge:60000});}
+  document.querySelector('[data-artisan-view="carte"]').addEventListener('click',()=>{switchView(true);started=true;load();});document.querySelector('[data-artisan-view="liste"]').addEventListener('click',()=>switchView(false));
+  document.querySelectorAll('[data-map-radius]').forEach(b=>b.addEventListener('click',()=>{updateRadius(b.dataset.mapRadius);if(!panel.hidden)load();}));radius.addEventListener('change',()=>{updateRadius(radius.value);if(!panel.hidden)load();});
+  form.addEventListener('submit',()=>{if(!panel.hidden)load();});$('reset-filters').addEventListener('click',()=>setTimeout(()=>{updateRadius(radius.value);well.setAttribute('aria-pressed','false');sort.value=center?'distance':'note';if(!panel.hidden)load();},0));
+  sort.addEventListener('change',()=>{page=0;render(false);});well.addEventListener('click',()=>{well.setAttribute('aria-pressed',String(well.getAttribute('aria-pressed')!=='true'));page=0;render(true);});$('tmp-prev').addEventListener('click',()=>{page--;renderCards();});$('tmp-next').addEventListener('click',()=>{page++;renderCards();});geo.addEventListener('click',locate);clear.addEventListener('click',()=>{geoSeq++;geo.disabled=false;center=null;sort.value='note';$('tmp-geo-status').textContent='Position retirée de la recherche.';load();});more.addEventListener('click',()=>{updateRadius(RADII[Math.min(3,RADII.indexOf(radius.value)+1)]);load();});retry.addEventListener('click',load);
+  updateRadius(radius.value);switchView(false);
+ });
+})();
