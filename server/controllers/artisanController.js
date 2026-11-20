@@ -182,7 +182,7 @@ async function enregistrerDisponibilite(req, res) {
     const b = req.body;
     if (!b || typeof b !== 'object' || Array.isArray(b) || Object.keys(b).some(k=>!['statut','duree','rapide'].includes(k)) ||
         !['non_renseignee','disponible','occupe','indisponible'].includes(b.statut) || typeof b.rapide !== 'boolean' ||
-        !(b.statut === 'non_renseignee' ? b.duree === 0 : [24,48,168].includes(b.duree)) || (b.rapide && b.statut !== 'disponible'))
+        !(b.statut === 'non_renseignee' ? b.duree === 0 : [1,2,4,8,24,48,168].includes(b.duree)) || (b.rapide && b.statut !== 'disponible'))
         return res.status(400).json({message:'Choix de disponibilité invalide.'});
     try {
         const disponibilite = await artisanModel.enregistrerDisponibilite(user.id,b.statut,b.duree,b.rapide);

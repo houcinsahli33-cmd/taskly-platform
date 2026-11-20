@@ -33,8 +33,8 @@
 <script defer src="/js/taskly-profile-delete-dialog.js?v=1"></script>
   <link rel="stylesheet" href="/css/taskly-artisan-documents.css?v=20261120-docs31">
   <link rel="stylesheet" href="/css/taskly-artisan-zone.css?v=20261120-1">
-  <link rel="stylesheet" href="/css/taskly-disponibilite.css?v=1">
-  <script defer src="/js/taskly-disponibilite-privee.js?v=1"></script>
+  <link rel="stylesheet" href="/css/taskly-disponibilite.css?v=2a">
+  <script defer src="/js/taskly-disponibilite-privee.js?v=2a"></script>
 </head>
 <body class="dashboard-page" data-require-role="artisan" data-workspace-page="profil">
   <div id="site-header"></div>
@@ -84,18 +84,27 @@
           </div>
           <div class="panel-body">
             <div id="artisan-profile-card"></div>
-            <section class="ta-panel" aria-labelledby="ta-title">
-              <h2 id="ta-title">Ma disponibilité professionnelle</h2>
-              <p>Indiquez votre disponibilité aux clients. Ce statut ne modifie pas les réservations.</p>
-              <p id="ta-current" role="status">Chargement…</p>
-              <form id="ta-form">
-                <fieldset id="ta-fields" disabled>
-                  <label for="ta-status">Statut</label><select class="form-select" id="ta-status"><option value="non_renseignee">Non renseignée</option><option value="disponible">Disponible</option><option value="occupe">Occupé</option><option value="indisponible">Indisponible</option></select>
-                  <label for="ta-duration">Durée à partir de l’enregistrement</label><select class="form-select" id="ta-duration"><option value="24">24 heures</option><option value="48">48 heures</option><option value="168">7 jours</option></select>
-                  <label class="ta-check"><input type="checkbox" id="ta-fast"> Intervention rapide (disponibilité déclarée)</label>
-                  <button class="btn primary" type="submit">Enregistrer ma disponibilité</button>
-                </fieldset>
-              </form><button class="btn outline" type="button" id="ta-retry" hidden>Réessayer</button><p id="ta-message" role="status" aria-live="polite"></p>
+            <section class="ta-panel ta-premium" aria-labelledby="ta-title">
+              <header class="ta-heading"><span class="ta-illustration" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18m-12 5 2 2 4-4"></path></svg></span><div><h2 id="ta-title">Ma disponibilité professionnelle</h2><p>Indiquez aux clients quand vous pouvez intervenir.</p></div></header>
+              <div class="ta-current-box" id="ta-current-box" data-status="non_renseignee"><span class="ta-dot" aria-hidden="true"></span><div><strong id="ta-current" role="status">Chargement…</strong><p id="ta-expiration"></p></div></div>
+              <div class="ta-layout">
+                <form id="ta-form">
+                  <fieldset id="ta-fields" disabled>
+                    <legend>Mon statut de disponibilité</legend>
+                    <div class="ta-options" role="group" aria-label="Choisir un statut">
+                      <label class="ta-option" data-status="disponible"><input type="radio" name="ta-status" value="disponible"><span class="ta-option-icon" aria-hidden="true">✓</span><strong>Disponible</strong><small>Je peux prendre de nouvelles demandes.</small></label>
+                      <label class="ta-option" data-status="occupe"><input type="radio" name="ta-status" value="occupe"><span class="ta-option-icon" aria-hidden="true">◷</span><strong>Occupé temporairement</strong><small>Je suis en intervention ou occupé.</small></label>
+                      <label class="ta-option" data-status="indisponible"><input type="radio" name="ta-status" value="indisponible"><span class="ta-option-icon" aria-hidden="true">⊘</span><strong>Indisponible</strong><small>Je ne peux pas intervenir actuellement.</small></label>
+                      <label class="ta-option" data-status="non_renseignee"><input type="radio" name="ta-status" value="non_renseignee" checked><span class="ta-option-icon" aria-hidden="true">—</span><strong>Non renseignée</strong><small>Je ne publie pas mon statut.</small></label>
+                    </div>
+                    <div class="ta-duration"><label for="ta-duration">Durée à partir de l’enregistrement</label><select class="form-select" id="ta-duration"><option value="1">1 heure</option><option value="2">2 heures</option><option value="4">4 heures</option><option value="8">8 heures</option><option value="24" selected>24 heures</option><option value="48">48 heures</option><option value="168">7 jours</option></select><small>Votre statut expire automatiquement. Vous pouvez le modifier avant son expiration.</small></div>
+                    <label class="ta-switch-row"><input type="checkbox" id="ta-fast"><span class="ta-toggle" aria-hidden="true"></span><span><strong>Intervention rapide</strong><small>Pour les petits dépannages, sans garantie de délai.</small></span></label>
+                    <button class="btn primary ta-save" type="submit">Enregistrer ma disponibilité</button>
+                  </fieldset>
+                </form>
+                <aside class="ta-planning" aria-label="Suivi des interventions"><div class="ta-planning-card"><span class="ta-illustration" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18"></path></svg></span><h3>Mes interventions</h3><p id="ta-planning-status" role="status">Chargement des demandes…</p><p id="ta-planning-next"></p><a class="btn outline" href="/espace/artisan/demandes">Consulter mes demandes</a></div><div class="ta-info"><strong>Disponibilité et réservations</strong><p>Après une intervention, réglez votre disponibilité sans attendre la confirmation du client. Pour le moment, le calendrier des demandes conserve ses règles existantes.</p></div></aside>
+              </div>
+              <button class="btn outline" type="button" id="ta-retry" hidden>Réessayer</button><p id="ta-message" role="status" aria-live="polite"></p>
             </section>
             <div hidden><form id="artisan-photo-form" class="mt-22">
               <label>
