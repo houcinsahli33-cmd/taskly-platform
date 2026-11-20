@@ -323,6 +323,108 @@ async function gererAppel(req, res) {
 }
 
 
+
+async function emettreJetonLiveKit(req, res) {
+    try {
+        res.set('Cache-Control', 'private, no-store');
+
+        if (process.env.TASKLY_LIVEKIT_ENABLED !== 'true') {
+            return res.status(404).json({
+                message: 'Service indisponible.'
+            });
+        }
+
+        if (!callsPilot.autoriseCompte(
+            req.session?.utilisateur?.role,
+            req.session?.utilisateur?.id
+        )) {
+            return res.status(404).json({
+                message: 'Service indisponible.'
+            });
+        }
+
+        const acces = await verifierParticipant(req, res);
+        if (!acces) return;
+
+        if (acces.demande.statut !== 'acceptee' ||
+            Number(acces.demande.messagerie_bloquee) === 1) {
+            return res.status(403).json({
+                message: 'Appels non autorises.'
+            });
+        }
+
+        if (!callsPilot.autoriseDemande(acces.demandeId)) {
+            return res.status(404).json({
+                message: 'Service indisponible.'
+            });
+        }
+
+        if (callsPilot.modeGeneral() &&
+            !(await chatModel.participantsAppelActifs(
+                acces.demandeId
+            ))) {
+            return res.status(403).json({
+                message: 'Participants non autorises.'
+            });
+        }
+
+        const appelId = req.body?.id;
+
+        if (typeof appelId !== 'string' ||
+            !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(appelId)) {
+            return res.status(400).json({
+                message: 'Identifiant invalide.'
+            });
+        }
+
+        const service = require('../services/chatCallService');
+
+        const etat = await service.signaler({
+            demandeId: acces.demandeId,
+            role: acces.role,
+            clientId: acces.demande.client_id,
+            artisanId: acces.demande.artisan_id
+        }, 'read');
+
+        if (etat.code !== 200) {
+            return res.status(503).json({
+                message: 'Verification de l appel indisponible.'
+            });
+        }
+
+        const call = etat.call;
+
+        if (!call ||
+            call.state !== 'accepted' ||
+            call.id !== appelId ||
+            !['audio', 'video'].includes(call.mode)) {
+            return res.status(409).json({
+                message: 'Appel non actif.'
+            });
+        }
+
+        const { creerJetonLiveKit } =
+            require('../services/livekitTokenService');
+
+        const jeton = await creerJetonLiveKit({
+            demandeId: acces.demandeId,
+            appelId: call.id,
+            role: acces.role,
+            profilId: acces.profilId,
+            mode: call.mode
+        });
+
+        return res.status(200).json(jeton);
+
+    } catch (error) {
+        console.error('Taskly LiveKit : delivrance impossible.');
+
+        return res.status(503).json({
+            message: 'LiveKit temporairement indisponible.'
+        });
+    }
+}
+
 async function appelsEntrants(req, res) {
 
     try {
@@ -399,5 +501,6 @@ module.exports = {
     nonLus,
     confirmerLecture,
     gererAppel,
-    appelsEntrants
+    appelsEntrants,
+    emettreJetonLiveKit
 };

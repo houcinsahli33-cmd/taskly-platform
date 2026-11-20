@@ -68,6 +68,17 @@ if (
         chatController.appelsEntrants
     );
 
+
+    if (process.env.TASKLY_LIVEKIT_ENABLED === 'true') {
+        router.post(
+            '/:id/chat/call/livekit-token',
+            verifierConnexion,
+            verifierCsrf,
+            limiter({fenetre:60000,max:8,parCompte:true}),
+            chatController.emettreJetonLiveKit
+        );
+    }
+
     router.get(
         '/:id/chat/call',
         verifierConnexion,
