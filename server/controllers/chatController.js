@@ -331,7 +331,12 @@ async function gererAppel(req, res) {
 
         return res.status(result.code).json({
             message: result.message,
-            call: result.call
+            call: result.call,
+            ...(req.method === 'GET' &&
+                process.env.TASKLY_LIVEKIT_ENABLED === 'true' &&
+                process.env.TASKLY_LIVEKIT_BROWSER_ENABLED === 'true'
+                ? { livekitEnabled: true }
+                : {})
         });
 
     } catch (error) {
@@ -349,7 +354,8 @@ async function emettreJetonLiveKit(req, res) {
     try {
         res.set('Cache-Control', 'private, no-store');
 
-        if (process.env.TASKLY_LIVEKIT_ENABLED !== 'true') {
+        if (process.env.TASKLY_LIVEKIT_ENABLED !== 'true' ||
+            process.env.TASKLY_LIVEKIT_BROWSER_ENABLED !== 'true') {
             return res.status(404).json({
                 message: 'Service indisponible.'
             });
@@ -417,6 +423,7 @@ async function emettreJetonLiveKit(req, res) {
 
         if (!call ||
             call.state !== 'accepted' ||
+            call.transport !== 'livekit' ||
             call.id !== appelId ||
             !['audio', 'video'].includes(call.mode)) {
             return res.status(409).json({

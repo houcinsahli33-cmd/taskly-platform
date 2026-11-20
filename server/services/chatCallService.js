@@ -60,6 +60,7 @@ if action == 'start' then
         mode = mode,
         state = 'ringing',
         offer = sdp,
+        transport = ARGV[10],
         startedAt = now
     }
 
@@ -72,6 +73,9 @@ if not call or call.id ~= id then
 end
 
 if action == 'accept' then
+    if (call.transport or 'webrtc') ~= ARGV[10] then
+        return result(409, 'Protocoles incompatibles.')
+    end
 
     if call.state ~= 'ringing' or call.callerRole == role then
         return result(409, 'Acceptation impossible.')
@@ -200,13 +204,29 @@ async function signaler(acces, action, payload = {}) {
         return failure(400, 'Donnees invalides.');
     }
 
+
+    const transport = ['start', 'accept'].includes(action)
+        ? (payload.transport ?? 'webrtc')
+        : 'webrtc';
+
+    if (!['webrtc', 'livekit'].includes(transport)) {
+        return failure(400, 'Protocole invalide.');
+    }
+
+    if (transport === 'livekit' &&
+        (process.env.TASKLY_LIVEKIT_ENABLED !== 'true' ||
+         process.env.TASKLY_LIVEKIT_BROWSER_ENABLED !== 'true')) {
+        return failure(404, 'LiveKit indisponible.');
+    }
+
     if (action === 'start' &&
         (!['audio', 'video'].includes(payload.mode) ||
-         !validSdp(payload.sdp))) {
+         !(transport === 'livekit' ? payload.sdp == null : validSdp(payload.sdp)))) {
         return failure(400, 'Offre WebRTC invalide.');
     }
 
-    if (action === 'accept' && !validSdp(payload.sdp)) {
+    if (action === 'accept' &&
+        !(transport === 'livekit' ? payload.sdp == null : validSdp(payload.sdp))) {
         return failure(400, 'Reponse WebRTC invalide.');
     }
 
@@ -243,11 +263,12 @@ async function signaler(acces, action, payload = {}) {
             acces.role,
             action === 'start' ? randomUUID() : payload.id,
             action === 'start' ? payload.mode : '',
-            ['start', 'accept'].includes(action) ? payload.sdp : '',
+            ['start', 'accept'].includes(action) ? (payload.sdp || '') : '',
             String(Date.now()),
             String(acces.demandeId),
             String(acces.clientId),
-            String(acces.artisanId)
+            String(acces.artisanId),
+            transport
         ]
     });
 

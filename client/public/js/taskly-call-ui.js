@@ -261,12 +261,13 @@
                 : this.api(url);
         }
 
-        show(context, mode, incoming) {
+        show(context, mode, incoming, transport = 'webrtc') {
 
             const call = {
                 context,
                 mode,
                 incoming,
+                transport,
                 accepted: false,
                 pending: false,
                 microphone: true,
@@ -279,7 +280,11 @@
                 id: null
             };
 
-            call.media = new window.TasklyCallMedia(
+            call.media = new (
+                transport === 'livekit'
+                    ? window.TasklyCallLiveKit
+                    : window.TasklyCallMedia
+            )(
                 stream => {
                     if (this.active !== call) return;
 
@@ -303,6 +308,11 @@
                         this.status('Reconnexion en cours...');
                     } else if (state === 'failed') {
                         this.finish('end', 'Connexion impossible.');
+                    }
+                },
+                stream => {
+                    if (this.active === call) {
+                        this.get('local').srcObject = stream;
                     }
                 }
             );
@@ -332,29 +342,93 @@
             return call;
         }
 
+
+        async connectLiveKit(call) {
+            if (this.active !== call ||
+                call.transport !== 'livekit') {
+                throw new Error('Appel annule.');
+            }
+
+            const data = await this.api(
+                '/api/demandes/' +
+                call.context.id +
+                '/chat/call/livekit-token',
+                {
+                    method: 'POST',
+                    body: JSON.stringify({ id: call.id })
+                }
+            );
+
+            if (this.active !== call) {
+                throw new Error('Appel annule.');
+            }
+
+            const url = data?.url || data?.livekitUrl;
+            const token = data?.token || data?.jeton;
+
+            if (!url || !token) {
+                throw new Error('Jeton LiveKit indisponible.');
+            }
+
+            const stream = await call.media.connect({
+                url,
+                token,
+                mode: call.mode
+            });
+
+            if (this.active !== call) {
+                throw new Error('Appel annule.');
+            }
+
+            if (stream) this.get('local').srcObject = stream;
+        }
+
+
         async start(mode) {
+            if (!this.context || this.active || this.starting) return;
 
-            if (!this.context || this.active) return;
-
-            const call = this.show(this.context, mode, false);
-            call.pending = true;
+            this.starting = true;
+            const context = this.context;
+            let call = null;
 
             try {
-                const stream = await call.media.prepare(mode);
+                const configuration = await this.request(context.id);
 
-                if (this.active !== call) return;
+                if (!this.context ||
+                    this.context.id !== context.id ||
+                    this.active) return;
 
-                this.get('local').srcObject = stream;
+                const livekit = configuration.livekitEnabled === true &&
+                    typeof window.TasklyCallLiveKit === 'function' &&
+                    Boolean(window.LivekitClient?.Room);
 
-                const sdp = await call.media.createOffer();
+                const transport = livekit ? 'livekit' : 'webrtc';
 
-                if (this.active !== call) return;
+                call = this.show(context, mode, false, transport);
+                call.pending = true;
 
-                const data = await this.request(call.context.id, {
+                let sdp;
+
+                if (transport === 'webrtc') {
+                    const stream = await call.media.prepare(mode);
+
+                    if (this.active !== call) return;
+                    this.get('local').srcObject = stream;
+
+                    sdp = await call.media.createOffer();
+
+                    if (this.active !== call) return;
+                }
+
+                const demande = {
                     action: 'start',
                     mode,
-                    sdp
-                });
+                    transport
+                };
+
+                if (sdp) demande.sdp = sdp;
+
+                const data = await this.request(context.id, demande);
 
                 if (!data.call?.id) {
                     throw new Error('Invitation non confirmee.');
@@ -364,44 +438,46 @@
                 call.lastSignalAt = Date.now();
 
                 if (this.active !== call) {
-                    await this.request(call.context.id, {
+                    await this.request(context.id, {
                         action: 'end',
                         id: call.id
                     }).catch(() => {});
-
                     return;
                 }
 
                 this.status('En attente de votre interlocuteur...');
-                this.get('mic').hidden = false;
-                this.get('camera').hidden = mode !== 'video';
+
+                this.get('mic').hidden = transport === 'livekit';
+                this.get('camera').hidden =
+                    transport === 'livekit' || mode !== 'video';
 
             } catch (error) {
-                if (this.active === call) {
+                if (call && this.active === call) {
                     this.cleanup(call);
-                    console.warn('Taskly appel sortant', {
-                        name: error.name,
-                        status: error.status || null
-                    });
-                    this.notify(error.message || 'Appel impossible.');
                 }
-            } finally {
-                call.pending = false;
+                this.notify(error.message || 'Appel impossible.');
 
-                if (this.active === call && call.id) {
-                    this.startRing();
+            } finally {
+                this.starting = false;
+
+                if (call) {
+                    call.pending = false;
+
+                    if (this.active === call && call.id) {
+                        this.startRing();
+                    }
                 }
             }
         }
 
-        async accept() {
 
+        async accept() {
             const call = this.active;
 
-            if (!call?.incoming || call.pending || call.accepted) return;
+            if (!call?.incoming ||
+                call.pending || call.accepted) return;
 
             call.pending = true;
-
             this.get('accept').hidden = true;
             this.get('reject').hidden = true;
             this.get('end').hidden = false;
@@ -409,38 +485,51 @@
             this.status('Connexion en cours...');
 
             try {
-                const stream = await call.media.prepare(call.mode);
+                let sdp;
 
-                if (this.active !== call) return;
+                if (call.transport === 'webrtc') {
+                    const stream = await call.media.prepare(call.mode);
 
-                this.get('local').srcObject = stream;
+                    if (this.active !== call) return;
+                    this.get('local').srcObject = stream;
 
-                const sdp = await call.media.createAnswer(call.offer);
+                    sdp = await call.media.createAnswer(call.offer);
 
-                if (this.active !== call) return;
+                    if (this.active !== call) return;
+                }
 
-                await this.request(call.context.id, {
+                const demande = {
                     action: 'accept',
                     id: call.id,
-                    sdp
-                });
+                    transport: call.transport
+                };
+
+                if (sdp) demande.sdp = sdp;
+
+                await this.request(call.context.id, demande);
 
                 if (this.active !== call) return;
 
                 call.accepted = true;
                 call.lastSignalAt = Date.now();
 
+                if (call.transport === 'livekit') {
+                    await this.connectLiveKit(call);
+                }
+
+                if (this.active !== call) return;
+
                 this.get('mic').hidden = false;
                 this.get('camera').hidden = call.mode !== 'video';
 
             } catch (error) {
                 if (this.active === call) {
-                    console.warn('Taskly appel entrant', {
-                        name: error.name,
-                        status: error.status || null
-                    });
-                    await this.finish('end', error.message);
+                    await this.finish(
+                        'end',
+                        error.message || 'Connexion impossible.'
+                    );
                 }
+
             } finally {
                 call.pending = false;
             }
@@ -531,8 +620,19 @@
                     if (remote?.state === 'ringing' &&
                         remote.callerRole !== this.role) {
 
+                        if (remote.transport === 'livekit' &&
+                            (!window.TasklyCallLiveKit ||
+                             !window.LivekitClient?.Room)) {
+                            this.notify('LiveKit indisponible sur ce navigateur.');
+                            return;
+                        }
+
                         const incoming = this.show(
-                            context, remote.mode, true
+                            context,
+                            remote.mode,
+                            true,
+                            remote.transport === 'livekit'
+                                ? 'livekit' : 'webrtc'
                         );
 
                         incoming.id = remote.id;
@@ -575,7 +675,17 @@
             this.status('Connexion en cours...');
 
                     try {
-                        await active.media.applyAnswer(remote.answer);
+                        if (active.transport === 'livekit') {
+                            await this.connectLiveKit(active);
+
+                            if (this.active === active) {
+                                this.get('mic').hidden = false;
+                                this.get('camera').hidden =
+                                    active.mode !== 'video';
+                            }
+                        } else {
+                            await active.media.applyAnswer(remote.answer);
+                        }
                     } catch {
                         await this.finish('end', 'Connexion impossible.');
                     }
@@ -603,7 +713,13 @@
             if (!call) return;
 
             call.microphone = !call.microphone;
-            call.media.setMicrophone(call.microphone);
+            Promise.resolve(
+                call.media.setMicrophone(call.microphone)
+            ).catch(() => {
+                if (this.active === call) {
+                    this.status('Microphone indisponible.');
+                }
+            });
 
             this.get('mic').textContent = call.microphone
                 ? 'Micro' : 'Reactiver le micro';
@@ -614,7 +730,13 @@
             if (!call || call.mode !== 'video') return;
 
             call.camera = !call.camera;
-            call.media.setCamera(call.camera);
+            Promise.resolve(
+                call.media.setCamera(call.camera)
+            ).catch(() => {
+                if (this.active === call) {
+                    this.status('Camera indisponible.');
+                }
+            });
 
             this.get('camera').textContent = call.camera
                 ? 'Camera' : 'Reactiver la camera';

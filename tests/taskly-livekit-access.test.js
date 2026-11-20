@@ -5,11 +5,14 @@ const assert = require("node:assert/strict");
 
 const CALL_ID = "550e8400-e29b-41d4-a716-446655440000";
 const ancienneOption = process.env.TASKLY_LIVEKIT_ENABLED;
+const ancienneOptionNavigateur =
+    process.env.TASKLY_LIVEKIT_BROWSER_ENABLED;
 
 let state;
 
 function reset() {
     process.env.TASKLY_LIVEKIT_ENABLED = "true";
+    process.env.TASKLY_LIVEKIT_BROWSER_ENABLED = "true";
     state = {
         demande: {
             id: 304,
@@ -28,7 +31,8 @@ function reset() {
         call: {
             id: CALL_ID,
             state: "accepted",
-            mode: "audio"
+            mode: "audio",
+            transport: "livekit"
         },
         jetons: []
     };
@@ -232,4 +236,30 @@ test("Appel accepte : jeton delivre au bon profil", async () => {
         profilId: 8,
         mode: "audio"
     });
+});
+
+
+after(() => {
+    if (ancienneOptionNavigateur === undefined) {
+        delete process.env.TASKLY_LIVEKIT_BROWSER_ENABLED;
+    } else {
+        process.env.TASKLY_LIVEKIT_BROWSER_ENABLED =
+            ancienneOptionNavigateur;
+    }
+});
+
+test("WebRTC accepte : aucun jeton LiveKit", async () => {
+    reset();
+    state.call.transport = "webrtc";
+
+    assert.equal((await executer()).statusCode, 409);
+    assert.equal(state.jetons.length, 0);
+});
+
+test("Navigateur LiveKit desactive : aucun jeton", async () => {
+    reset();
+    delete process.env.TASKLY_LIVEKIT_BROWSER_ENABLED;
+
+    assert.equal((await executer()).statusCode, 404);
+    assert.equal(state.jetons.length, 0);
 });
