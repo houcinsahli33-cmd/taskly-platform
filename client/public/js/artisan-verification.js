@@ -8,6 +8,7 @@
     cible.replaceChildren();
     if(!documents?.length){cible.textContent='Aucun justificatif reçu.';return;}
     const titre=document.createElement('h3');titre.textContent='Documents déposés';cible.append(titre);
+    const compteur=document.createElement('span');compteur.className='tp-doc-count';titre.append(compteur);let total=0;
     for(const d of documents){
       const id=Number(d.id);
       if(!Number.isSafeInteger(id)||id<1)continue;
@@ -36,7 +37,8 @@
         $('artisan-document-message').textContent=`Remplacement de : ${d.original_name||nom.textContent}. Sélectionnez le nouveau fichier puis confirmez.`;
         form.querySelector('[name="document"]').focus();
       });
-      actions.append(remplacer);ligne.append(infos,actions);cible.append(ligne);
+      actions.append(remplacer);ligne.append(infos,actions);cible.append(ligne);total++;
+      compteur.textContent=total+' document'+(total>1?'s':'');
     }
   }
   function resetRemplacement(){
@@ -50,9 +52,10 @@
       const d=await requeteAPI('/api/artisan-verification/status');
       const libelles={en_attente:'En attente de contrôle',a_completer:'Documents complémentaires demandés',approuve:'Profil approuvé',refuse:'Dossier refusé'};
       cible.textContent=`Statut : ${libelles[d.statut]||d.statut}${d.commentaire?' — '+d.commentaire:''}`;
+      cible.dataset.tpState=Object.hasOwn(libelles,d.statut)?d.statut:'';
       afficherDocuments(d.documents);
       $('artisan-document-form').hidden=false;
-    } catch(e){cible.textContent=e.message;}
+    } catch(e){cible.textContent=e.message;delete cible.dataset.tpState;}
   }
   document.addEventListener('DOMContentLoaded',async()=>{
     await (window.tasklyAuthReady||Promise.resolve());
@@ -70,6 +73,7 @@
         form.reset();resetRemplacement();info.textContent=data.message;
         if(data.nouvelleVerification){
           $('artisan-verification-status').textContent='Statut : En attente de contrôle administratif';
+          $('artisan-verification-status').dataset.tpState='en_attente';
           info.textContent+=' Votre espace artisan sera limité pendant cet examen ; reconnectez-vous pour suivre votre dossier.';
         }else {await actualiser();info.textContent=data.message;}
       } catch(err){info.textContent=err.message;}finally{button.disabled=false;}
