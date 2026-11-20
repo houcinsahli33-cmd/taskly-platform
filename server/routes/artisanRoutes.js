@@ -51,6 +51,8 @@ router.get('/:id/dates-indisponibles',
     artisanController.datesIndisponibles
 );
 
+router.get('/:id/creneaux-disponibles', verifierConnexion, verifierClient, artisanController.creneauxDisponibles);
+
 // Consultation sécurisée des coordonnées
 router.get('/:id/coordonnees',
     verifierConnexion,

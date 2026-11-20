@@ -1,0 +1,18 @@
+/* Scoped only to the newly introduced acceptance dialog. */
+dialog.taskly-creneau-acceptation{width:min(440px,calc(100% - 32px));max-height:90vh;overflow:auto;margin:auto;padding:24px;border:1px solid #dce8e3;border-radius:16px;background:#fff;color:#17352c;box-shadow:0 18px 80px #153a2929;box-sizing:border-box}
+dialog.taskly-creneau-acceptation::backdrop{background:#102b244d}
+.taskly-creneau-acceptation h2{font-size:1.25rem;margin:0 0 12px}
+.taskly-creneau-acceptation p{margin:0 0 16px;line-height:1.5;font-size:.9rem}
+.taskly-creneau-acceptation label{display:block;font-weight:600;margin:0 0 6px}
+.taskly-creneau-acceptation select{width:100%;margin:0 0 12px}
+.taskly-creneau-acceptation .request-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+/* Uniquement les nouveaux horaires du formulaire de demande. */
+#request-modal #rw-hours[hidden]{display:none!important}
+#request-modal #rw-hours{margin:12px 0;padding:12px;border:1px solid #dce8e3;border-radius:12px;background:#f8fbf9}
+#request-modal #rw-hour-period{width:100%;min-height:36px;margin-bottom:8px;background:#fff}
+#request-modal #rw-hour-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;max-height:142px;overflow-y:auto}
+#request-modal .rw-hour-option{min-height:32px;padding:5px 1px;border:1px solid #ccdcd5;border-radius:7px;background:#fff;color:#235342;font-size:.85rem;font-weight:600;cursor:pointer;box-shadow:none}
+#request-modal .rw-hour-option[aria-pressed=true]{background:#087c60;color:white;border-color:#087c60}
+#request-modal .rw-hour-option:disabled{background:#e8eae9;color:#777;cursor:not-allowed;opacity:1;text-decoration:line-through}
+#request-modal #rw-hour-info{font-size:.8rem;line-height:1.35;margin:8px 0 2px}

@@ -13,7 +13,7 @@ async function trouverDemandeOuverte(clientId, artisanId, conn = db.promise(), v
 }
 
 // Le verrou sur le client serialise les creations, meme quand aucune demande n'existe.
-async function creerDemande(clientId, artisanId, message, adresse, dateSouhaitee) {
+async function creerDemande(clientId, artisanId, message, adresse, dateSouhaitee, heureSouhaitee) {
     const conn = await db.promise().getConnection();
     try {
         const [versions] = await conn.query('SELECT VERSION() AS version');
@@ -30,10 +30,23 @@ async function creerDemande(clientId, artisanId, message, adresse, dateSouhaitee
             error.code = 'TASKLY_DEMANDE_OUVERTE'; error.demande = existante; throw error;
         }
         const calendrier = controlesCalendrier(conn);
-        if (dateSouhaitee && await calendrier.jourReserveArtisan(artisanId,dateSouhaitee)) {
+        let proposition = null;
+        if (heureSouhaitee !== undefined && heureSouhaitee !== null && heureSouhaitee !== '') {
+            const creneaux = require('../helpers/creneauxIntervention');
+            proposition = creneaux.normaliserHeureSouhaitee(heureSouhaitee);
+            creneaux.verifierFutur(dateSouhaitee,proposition.debut);
+            // Même verrou artisan que l’acceptation : contrôle avant insertion, non réservation.
+            const [artisans] = await conn.query('SELECT id FROM artisans WHERE id=? FOR UPDATE',[artisanId]);
+            if (artisans.length !== 1) throw Object.assign(Error('Artisan introuvable.'),{code:'TASKLY_CRENEAU_INVALIDE'});
+            if ((await creneaux.occupations(conn,artisanId,dateSouhaitee,0)).some(x=>creneaux.conflit(proposition,x)))
+                throw Object.assign(Error('Ce créneau est déjà occupé.'),{code:'TASKLY_CRENEAU_OCCUPE'});
+        } else if (dateSouhaitee && await calendrier.jourReserveArtisan(artisanId,dateSouhaitee)) {
             const error=new Error('Date déjà réservée.');error.code='TASKLY_DATE_OCCUPEE';throw error;
         }
-        const [resultat] = await conn.query(`
+        // En attente : l’heure proposée n’est pas un créneau réservé, la fin reste NULL.
+        const [resultat] = proposition ? await conn.query(`
+            INSERT INTO demandes (client_id, artisan_id, message, adresse, date_souhaitee, creneau_debut_minute)
+            VALUES (?, ?, ?, ?, ?, ?)`, [clientId, artisanId, message, adresse, dateSouhaitee, proposition.debut]) : await conn.query(`
             INSERT INTO demandes (client_id, artisan_id, message, adresse, date_souhaitee)
             VALUES (?, ?, ?, ?, ?)`, [clientId, artisanId, message, adresse, dateSouhaitee]);
         await conn.commit();
@@ -51,9 +64,18 @@ async function datesReserveesArtisan(artisanId, aPartirDe) {
         FROM demandes
         WHERE artisan_id = ? AND date_souhaitee >= ?
           AND statut IN ('acceptee','attente_confirmation','conteste')
+          AND (creneau_debut_minute IS NULL OR creneau_fin_minute IS NULL OR creneau_blocage_minute IS NULL
+               OR creneau_debut_minute >= creneau_fin_minute OR creneau_fin_minute >= creneau_blocage_minute OR creneau_blocage_minute > 1440)
         ORDER BY jour`, [artisanId, aPartirDe]);
     return lignes.map(l => String(l.jour));
 }
+// Seuls les débuts possibles sont transmis : ni identité ni adresse des autres clients.
+async function heuresProposablesArtisan(artisanId, jour) {
+    const creneaux = require('../helpers/creneauxIntervention');
+    const autres = await creneaux.occupations(db.promise(),artisanId,jour);
+    return {heures:creneaux.heuresProposables(jour,autres)};
+}
+
 // Le calendrier est lie a la connexion qui effectue le controle.
 // L'API publique conserve la signature a deux arguments.
 function controlesCalendrier(conn) {
@@ -79,6 +101,11 @@ async function listerDemandesClient(clientId) {
             demandes.message,
             demandes.adresse,
             demandes.date_souhaitee,
+            demandes.creneau_debut_minute,
+            demandes.creneau_fin_minute,
+            demandes.creneau_blocage_minute,
+            demandes.intervention_debut_utc,
+            demandes.intervention_fin_utc,
             demandes.statut,
             demandes.annulee_par,
             demandes.motif_annulation,
@@ -124,6 +151,11 @@ async function listerDemandesArtisan(artisanId) {
             demandes.message,
             CASE WHEN demandes.statut IN ('acceptee','attente_confirmation','terminee','conteste') THEN demandes.adresse ELSE NULL END AS adresse,
             demandes.date_souhaitee,
+            demandes.creneau_debut_minute,
+            demandes.creneau_fin_minute,
+            demandes.creneau_blocage_minute,
+            demandes.intervention_debut_utc,
+            demandes.intervention_fin_utc,
             demandes.statut,
             demandes.annulee_par,
             demandes.motif_annulation,
@@ -151,7 +183,10 @@ async function listerDemandesArtisan(artisanId) {
 }
 
 // Modifier le statut d'une demande par un artisan : accepter ou refuser
-async function modifierStatutDemande(id, artisanId, statut) {
+async function modifierStatutDemande(id, artisanId, statut, horaire) {
+    if (statut === 'acceptee') {
+        return require('../helpers/creneauxIntervention').accepter(db.promise(),id,artisanId,horaire);
+    }
     const sql = `
         UPDATE demandes
         SET statut = ?,
@@ -197,6 +232,7 @@ async function annulerDemandeArtisan(id, artisanId, motifAnnulation) {
         SET statut = 'annulee',
             annulee_par = 'artisan',
             motif_annulation = ?,
+            intervention_fin_utc = CASE WHEN intervention_debut_utc IS NOT NULL THEN UTC_TIMESTAMP() ELSE NULL END,
             date_annulation = NOW()
         WHERE id = ?
         AND artisan_id = ?
@@ -212,15 +248,45 @@ async function annulerDemandeArtisan(id, artisanId, motifAnnulation) {
     return resultat;
 }
 
+// Démarrage déclaré par le profil propriétaire. Le verrou commun sérialise les démarrages.
+async function demarrerDemande(id, artisanId) {
+    const conn = await db.promise().getConnection();
+    try {
+        const [versions] = await conn.query('SELECT VERSION() AS version');
+        if (/tidb/i.test(String(versions[0]?.version || ''))) await conn.query('BEGIN PESSIMISTIC');
+        else await conn.beginTransaction();
+        const [artisans] = await conn.query('SELECT id FROM artisans WHERE id=? FOR UPDATE', [artisanId]);
+        if (artisans.length !== 1) throw Object.assign(Error('Profil artisan introuvable.'), {code:'TASKLY_INTERVENTION_CONFLIT'});
+        const [rows] = await conn.query(`SELECT id, intervention_debut_utc,
+            CASE WHEN date_souhaitee IS NULL THEN 1
+                 WHEN creneau_debut_minute IS NULL THEN date_souhaitee <= DATE(TIMESTAMPADD(HOUR,1,UTC_TIMESTAMP()))
+                 ELSE TIMESTAMPADD(MINUTE,creneau_debut_minute,CAST(date_souhaitee AS DATETIME)) <= TIMESTAMPADD(HOUR,1,UTC_TIMESTAMP()) END AS peut_demarrer
+            FROM demandes WHERE id=? AND artisan_id=? AND statut='acceptee' FOR UPDATE`, [id,artisanId]);
+        if (rows.length !== 1 || rows[0].intervention_debut_utc != null || Number(rows[0].peut_demarrer) !== 1)
+            throw Object.assign(Error('Cette intervention ne peut pas démarrer avant son rendez-vous ou a déjà démarré.'), {code:'TASKLY_INTERVENTION_CONFLIT'});
+        const [actives] = await conn.query(`SELECT id FROM demandes WHERE artisan_id=? AND statut='acceptee'
+            AND intervention_debut_utc IS NOT NULL AND intervention_fin_utc IS NULL LIMIT 1 FOR UPDATE`, [artisanId]);
+        if (actives.length) throw Object.assign(Error('Terminez votre intervention en cours avant d’en démarrer une autre.'), {code:'TASKLY_INTERVENTION_CONFLIT'});
+        const [resultat] = await conn.query(`UPDATE demandes SET intervention_debut_utc=UTC_TIMESTAMP()
+            WHERE id=? AND artisan_id=? AND statut='acceptee' AND intervention_debut_utc IS NULL AND intervention_fin_utc IS NULL`, [id,artisanId]);
+        if (resultat.affectedRows !== 1) throw Object.assign(Error('Cette demande a changé. Actualisez la page.'), {code:'TASKLY_INTERVENTION_CONFLIT'});
+        await conn.commit();
+        return resultat;
+    } catch (error) { await conn.rollback(); throw error; }
+    finally { conn.release(); }
+}
+
 // Marquer une demande acceptee comme terminee
 async function terminerDemande(id, artisanId) {
     const sql = `
         UPDATE demandes
         SET statut = 'attente_confirmation',
+            intervention_fin_utc = UTC_TIMESTAMP(),
             date_traitement = NOW()
         WHERE id = ?
         AND artisan_id = ?
         AND statut = 'acceptee'
+        AND (intervention_debut_utc IS NOT NULL OR creneau_debut_minute IS NULL)
     `;
 
     const [resultat] = await db.promise().query(sql, [
@@ -282,7 +348,7 @@ async function contesterFinClient(id, clientId) {
     return resultat;
 }
 module.exports = {
-    datesReserveesArtisan, jourReserveArtisan, trouverDemandeOuverte,
+    datesReserveesArtisan, heuresProposablesArtisan, jourReserveArtisan, trouverDemandeOuverte,
     confirmerFinClient,
     contesterFinClient,
     trouverDestinataires,
@@ -293,5 +359,6 @@ module.exports = {
     modifierStatutDemande,
     annulerDemandeClient,
     annulerDemandeArtisan,
+    demarrerDemande,
     terminerDemande
 };

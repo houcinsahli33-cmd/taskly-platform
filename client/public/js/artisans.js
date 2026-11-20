@@ -1,7 +1,7 @@
 // Construire une carte artisan
 function carteArtisan(artisan) {
   return `
-    <article class="card artisan-card">
+    <article class="card artisan-card" data-ta-artisan-id="${Number(artisan.id)}">
       <div class="card-body">
         <div class="artisan-top">
           <img class="avatar large" loading="lazy" decoding="async" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
@@ -35,6 +35,8 @@ let pageArtisans = 0;
 let totalArtisans = 0;
 let chargementPageArtisans = false;
 let versionRechercheArtisans = 0;
+let queryArtisansAppliquee = "";
+let actualisationArtisans = false;
 
 function obtenirBoutonAfficherPlusArtisans() {
   const grille = document.getElementById('artisans-grid');
@@ -80,7 +82,7 @@ async function chargerPageArtisans() {
   chargementPageArtisans = true;
   mettreAJourCompteurArtisans();
   try {
-    const params = new URLSearchParams(construireQueryArtisans());
+    const params = new URLSearchParams(queryArtisansAppliquee);
     params.set('page', prochainePage);
     params.set('limit', TAILLE_PAGE_ARTISANS);
     const resultat = await requeteAPI(`/api/artisans?${params}`, {cache:"no-store"});
@@ -155,6 +157,7 @@ function chargerArtisans() {
   const grille = document.getElementById('artisans-grid');
   if (!grille) return;
   versionRechercheArtisans += 1;
+  queryArtisansAppliquee = construireQueryArtisans();
   artisansCharges = [];
   pageArtisans = 0;
   totalArtisans = 0;
@@ -342,5 +345,72 @@ document.addEventListener("DOMContentLoaded", async () => {
   chargerProfilArtisan();
 });
 
-// Actualise aussi les filtres lorsque la disponibilite expire sur une page ouverte.
-document.addEventListener("taskly:availability-expired",()=>{if(document.getElementById("filter-available")?.checked||document.getElementById("filter-fast")?.checked)chargerArtisans();});
+// Actualisation silencieuse de la fenêtre déjà chargée, avec les filtres APPLIQUÉS.
+async function actualiserListeArtisans(signal) {
+  const grille = document.getElementById('artisans-grid');
+  const dispo = window.TasklyDisponibilite;
+  if (!grille || grille.hidden || !pageArtisans || chargementPageArtisans || actualisationArtisans || !dispo) return;
+  const version = versionRechercheArtisans, pages = pageArtisans;
+  const contexteValide = () => !document.hidden && !grille.hidden && version === versionRechercheArtisans && pages === pageArtisans && !chargementPageArtisans;
+  const encoreValide = () => !signal.aborted && contexteValide();
+  actualisationArtisans = true;
+  try {
+    const rows = [], limit = 36, cible = pages * TAILLE_PAGE_ARTISANS;
+    let total = 0;
+    for (let p = 1; (p-1)*limit < cible; p++) {
+      const params = new URLSearchParams(queryArtisansAppliquee);
+      params.set('page',p);params.set('limit',limit);
+      const data = await requeteAPI(`/api/artisans?${params}`,{cache:'no-store',signal});
+      if (!encoreValide()) return;
+      if (!Array.isArray(data.artisans) || !Number.isSafeInteger(Number(data.total)) || Number(data.total)<0) throw Error('Annuaire incomplet');
+      total = Number(data.total);rows.push(...data.artisans);
+      if (rows.length >= total || data.artisans.length < limit) break;
+    }
+    const nouveaux = rows.slice(0,cible);
+    if (new Set(nouveaux.map(a=>String(a.id))).size !== nouveaux.length) throw Error('Annuaire modifié pendant la lecture');
+    const anciens = new Map(Array.from(grille.querySelectorAll('[data-ta-artisan-id]'),el=>[el.dataset.taArtisanId,el]));
+    const memeOrdre = nouveaux.length===artisansCharges.length && nouveaux.every((a,i)=>String(a.id)===String(artisansCharges[i].id));
+    if (!memeOrdre) {
+      if (!nouveaux.length) grille.innerHTML = etatVideDeuxLignes('Aucun artisan ne correspond à vos critères.','Essayez de changer le service, la wilaya ou la recherche.');
+      else {
+        const focus = document.activeElement;
+        const frag = document.createDocumentFragment();
+        for (const a of nouveaux) {
+          const el = anciens.get(String(a.id));
+          if (el) frag.append(el);
+          else {const tpl=document.createElement('template');tpl.innerHTML=carteArtisan(a).trim();frag.append(tpl.content);}
+        }
+        grille.replaceChildren(frag);
+        if (focus && grille.contains(focus)) focus.focus({preventScroll:true});
+      }
+    }
+    for (const [i,el] of Array.from(grille.querySelectorAll('[data-ta-artisan-id]')).entries()) dispo.actualiserBadge(el.querySelector('.ta-badges'),nouveaux[i]);
+    artisansCharges = nouveaux;totalArtisans = total;pageArtisans = Math.max(1,Math.min(pages,Math.ceil(total/TAILLE_PAGE_ARTISANS)));
+    mettreAJourCompteurArtisans();
+  } catch (e) {
+    if (contexteValide()) {
+      grille.querySelectorAll('.ta-badges').forEach(el=>dispo.actualiserBadge(el,null));
+      const compteur=document.getElementById('taskly-list-total');if(compteur)compteur.textContent='Disponibilités non vérifiées — nouvelle tentative automatique.';
+      throw e;
+    }
+  } finally {actualisationArtisans=false;}
+}
+async function actualiserProfilPublic(signal) {
+  const badge = document.querySelector('#artisan-profile .ta-badges');
+  const id = obtenirParametre('id');
+  if (!badge || !/^[1-9]\d*$/.test(id||'')) return;
+  try {
+    const {artisan}=await requeteAPI(`/api/artisans/${encodeURIComponent(id)}`,{cache:'no-store',signal});
+    if (!artisan||String(artisan.id)!==id) throw Error('Profil indisponible');
+    if (!signal.aborted&&!document.hidden&&badge.isConnected) window.TasklyDisponibilite.actualiserBadge(badge,artisan);
+  } catch(e) {
+    if (!document.hidden&&badge.isConnected) {window.TasklyDisponibilite.actualiserBadge(badge,null);throw e;}
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('artisans-grid')||document.getElementById('artisan-profile'))
+    window.TasklyDisponibilite?.surveiller(async signal=>{
+      if(document.getElementById('artisan-profile')) await actualiserProfilPublic(signal);
+      else await actualiserListeArtisans(signal);
+    });
+});

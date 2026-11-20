@@ -36,6 +36,15 @@ function afficherStatsClient() {
   `).join('');
 }
 
+// L’heure proposée n’est pas confirmée tant que l’artisan n’a pas fixé la durée.
+function texteCreneauClient(d) {
+  const debut=d.creneau_debut_minute, fin=d.creneau_fin_minute;
+  const valide=n=>Number.isInteger(n)&&n>=0&&n<=1440;
+  const heure=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
+  if(!valide(debut)||debut>=1440)return 'À convenir';
+  return valide(fin)&&fin>debut?heure(debut)+' – '+heure(fin)+' (estimée)':heure(debut)+' (souhaitée)';
+}
+
 // Construire une carte demande client
 function carteDemandeClient(demande) {
   const peutAnnuler = demande.statut === "en_attente";
@@ -56,6 +65,8 @@ function carteDemandeClient(demande) {
       <div class="meta-row mt-14">
         <span class="badge">Adresse : ${echapperHTML(demande.adresse || "Non précisée")}</span>
         <span class="badge">Date souhaitée : ${formatDate(demande.date_souhaitee)}</span>
+        ${demande.creneau_debut_minute != null ? `<span class="badge">Horaire : ${echapperHTML(texteCreneauClient(demande))} (Algérie)</span>` : ''}
+        ${demande.statut==='acceptee' ? `<span class="badge${demande.intervention_debut_utc?' accent':''}">${demande.intervention_debut_utc?'Intervention en cours':'Intervention non démarrée'}</span>` : ''}
         <span class="badge">Créée le ${formatDate(demande.created_at)}</span>
         ${dejaAvis ? `<span class="badge accent">Avis : ${demande.avis_note}/5</span>` : ""}
       </div>

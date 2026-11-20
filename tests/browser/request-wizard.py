@@ -12,7 +12,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 ARTISAN = dict(id=270003, nom='SAHLI', prenom='Hocine', service_nom='Électricité', ville='Larbaâ Nath Irathen', experience=2, moyenne_notes=0, total_demandes=1, description='Électricien spécialisé dans l’installation, l’entretien et le dépannage électrique. Je propose des services de réparation de pannes, installation de prises, éclairages et tableaux électriques. Travail sérieux, rapide et soigné.')
 # All displayed data are fixtures. No HTTP API or database is accessed.
 BOOKED=(datetime.now(ZoneInfo('Africa/Algiers')).date()+timedelta(days=1)).isoformat()
-CSS=['base.css','components.css','layout.css','auth.css','dashboards.css','responsive.css','artisan-directory-fidele.css','taskly-artisans-map.css','taskly-request-calendar.css','taskly-request-wizard.css']
+CSS=['base.css','components.css','layout.css','auth.css','dashboards.css','responsive.css','artisan-directory-fidele.css','taskly-artisans-map.css','taskly-request-calendar.css','taskly-request-wizard.css','taskly-creneaux.css']
 def data_uri(file):
  return 'data:'+mimetypes.guess_type(file)[0]+';base64,'+base64.b64encode((ROOT/file).read_bytes()).decode()
 with sync_playwright() as p:
@@ -34,7 +34,7 @@ with sync_playwright() as p:
     window.utilisateurCourant={role:'client'};window.afficherToast=()=>{};
     window.echapperHTML=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
     window.afficherEtoiles=()=>'';window.noteArtisan=()=> 'Nouveau';
-    window.requeteAPI=async(url,opts)=>{if(url==='/api/artisans/270003')return {artisan:window.fixture};if(url.includes('dates-indisponibles'))return {dates:[booked]};if(url==='/api/demandes'){sent.push(JSON.parse(opts.body));if(failSend)throw Error('Échec simulé');return {demandeId:123};}throw Error('Unexpected API');};
+    window.requeteAPI=async(url,opts)=>{if(url==='/api/artisans/270003')return {artisan:window.fixture};if(url.includes('dates-indisponibles'))return {dates:[booked]};if(url.includes('creneaux-disponibles'))return {heures:[600,615,660]};if(url.includes('/en-cours/'))return {demande:null};if(url==='/api/demandes'){sent.push(JSON.parse(opts.body));if(failSend)throw Error('Échec simulé');return {demandeId:123};}throw Error('Unexpected API');};
     document.querySelector('#site-header').innerHTML='<header class="site-header"><div class="container header-inner"><a class="brand"><img src="'+logo+'" alt="Taskly"></a></div></header>';
   }''',{'avatar':avatar,'booked':BOOKED,'logo':logo})
   # Use the real card generator, without bootstrapping the unrelated network-backed directory.
@@ -59,9 +59,10 @@ with sync_playwright() as p:
    page.locator('[data-calendar-next]').click();booked=page.locator(f'[data-calendar-day="{BOOKED}"]')
   assert booked.is_disabled();page.screenshot(path=str(OUT/f'Taskly_calendrier_{width}.png'))
   page.locator('[data-calendar-day]:not([disabled])').first.click();selected=page.locator('#request-date').input_value();assert selected
+  page.locator('#rw-hour-grid button:not([disabled])').first.click();heure=page.locator('#rw-hour').input_value();assert heure
   page.evaluate('window.failSend=true');page.locator('#rw-submit').click();assert page.locator('#rw-error').is_visible();assert not page.locator('#rw-success').is_visible()
   page.evaluate('window.failSend=false;window.sent=[]');page.locator('#rw-submit').click();page.locator('#rw-success').wait_for()
-  sent=page.evaluate('window.sent');assert len(sent)==1 and sent[0]['artisanId']==270003 and sent[0]['dateSouhaitee']==selected and 'Dépannage' in sent[0]['message']
+  sent=page.evaluate('window.sent');assert len(sent)==1 and sent[0]['artisanId']==270003 and sent[0]['dateSouhaitee']==selected and sent[0]['heureSouhaitee']==heure and 'Dépannage' in sent[0]['message']
   assert page.locator('#rw-success a').is_visible() and not errors
   print(f'{width}x{height}: formulaire, validations, retour, indisponibilités, erreur API et réussite OK; aucune exception JS')
   page.close()

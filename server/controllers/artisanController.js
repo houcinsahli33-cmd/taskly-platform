@@ -117,6 +117,18 @@ async function datesIndisponibles(req,res){
   res.set('Cache-Control','no-store');res.json({dates});
  } catch(e){res.status(503).json({message:'Disponibilités indisponibles. Réessayez.'});}
 }
+// Créneaux indicatifs pour un client authentifié; le serveur recontrôle à l’envoi et à l’acceptation.
+async function creneauxDisponibles(req,res){
+    res.set('Cache-Control','private, no-store');
+    try {
+        const id = String(req.params.id), jour = req.query.jour;
+        const {verifierDateSouhaitee, estDateISOValide} = require('../helpers/requestDate');
+        if (!/^[1-9]\d*$/.test(id) || !Number.isSafeInteger(Number(id)) || !estDateISOValide(jour) || !verifierDateSouhaitee(jour).valide)
+            return res.status(400).json({message:'Artisan ou date invalide.'});
+        if (!await artisanModel.trouverArtisanParId(id)) return res.status(404).json({message:'Artisan introuvable.'});
+        return res.json(await require('../models/demandeModel').heuresProposablesArtisan(id,jour));
+    } catch(e) { return res.status(503).json({message:'Créneaux temporairement indisponibles.'}); }
+}
 // Consultation des coordonnées autorisées
 async function coordonneesArtisan(req, res) {
 
@@ -203,7 +215,7 @@ async function enregistrerDisponibilite(req, res) {
 module.exports = {
     lireDisponibilite, enregistrerDisponibilite,
     lireEtatZone,
-    datesIndisponibles,
+    datesIndisponibles, creneauxDisponibles,
     artisansCarte,enregistrerZone,supprimerZone,
     listerArtisans,
     detailArtisan,

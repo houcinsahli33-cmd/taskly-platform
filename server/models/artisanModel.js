@@ -24,21 +24,30 @@ async function creerProfilArtisan(
     return resultat;
 }
 
-// Disponibilite declaree, distincte des dates de reservation.
+// Le statut effectif superpose la mission réelle sans écraser le choix manuel.
 function disponibiliteSQL(alias) {
     const active = `${alias}.disponibilite_expiration > UTC_TIMESTAMP()`;
+    const mission = `EXISTS (SELECT 1 FROM demandes di WHERE di.artisan_id=${alias}.id AND di.statut='acceptee' AND di.intervention_debut_utc IS NOT NULL AND di.intervention_fin_utc IS NULL)`;
+    const manuel = `CASE WHEN ${active} THEN ${alias}.disponibilite_statut ELSE 'non_renseignee' END`;
+    const secondesManuelles = `CASE WHEN ${active} THEN TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), ${alias}.disponibilite_expiration) ELSE 0 END`;
+    const rapideManuel = `CASE WHEN ${active} AND ${alias}.disponibilite_statut = 'disponible' AND ${alias}.intervention_rapide = 1 THEN 1 ELSE 0 END`;
     return {
-        statut: `CASE WHEN ${active} THEN ${alias}.disponibilite_statut ELSE 'non_renseignee' END`,
-        rapide: `CASE WHEN ${active} AND ${alias}.disponibilite_statut = 'disponible' AND ${alias}.intervention_rapide = 1 THEN 1 ELSE 0 END`,
-        secondes: `CASE WHEN ${active} THEN TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), ${alias}.disponibilite_expiration) ELSE 0 END`
+        mission, manuel, secondesManuelles, rapideManuel,
+        statut: `CASE WHEN ${active} AND ${alias}.disponibilite_statut='indisponible' THEN 'indisponible' WHEN ${mission} THEN 'occupe' ELSE ${manuel} END`,
+        rapide: `CASE WHEN ${mission} THEN 0 ELSE ${rapideManuel} END`,
+        // 60 s = délai de rafraîchissement public, pas une fin prévisible de la mission.
+        secondes: `CASE WHEN ${mission} THEN CASE WHEN ${active} AND ${alias}.disponibilite_statut='indisponible' THEN GREATEST(1,LEAST(60,${secondesManuelles})) ELSE 60 END ELSE ${secondesManuelles} END`
     };
 }
 function selectDisponibilite(alias) {
     const d = disponibiliteSQL(alias);
-    return `${d.statut} AS disponibilite_statut, ${d.rapide} AS intervention_rapide, ${d.secondes} AS disponibilite_secondes`;
+    return `${d.statut} AS disponibilite_statut, ${d.rapide} AS intervention_rapide, ${d.secondes} AS disponibilite_secondes, ${d.mission} AS intervention_en_cours`;
 }
 async function lireDisponibilite(userId) {
-    const [rows] = await db.promise().query(`SELECT ${selectDisponibilite('a')} FROM artisans a WHERE a.user_id = ? LIMIT 2`, [userId]);
+    const d=disponibiliteSQL('a');
+    const [rows] = await db.promise().query(`SELECT ${selectDisponibilite('a')},
+        ${d.manuel} AS statut_manuel, ${d.secondesManuelles} AS secondes_manuelles, ${d.rapideManuel} AS rapide_manuel
+        FROM artisans a WHERE a.user_id = ? LIMIT 2`, [userId]);
     return rows.length === 1 ? rows[0] : null;
 }
 async function enregistrerDisponibilite(userId, statut, duree, rapide) {

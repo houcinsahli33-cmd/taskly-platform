@@ -37,6 +37,8 @@ router.put("/:id/statut", verifierConnexion, verifierArtisan, verifierArtisanAct
 // Annuler une demande acceptée avec un motif
 router.put("/:id/annuler-artisan", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.annulerDemandeArtisan);
 
+router.put("/:id/demarrer", verifierConnexion, verifierArtisan, verifierArtisanActif, verifierCsrf, demandeController.demarrerDemande);
+
 // Marquer une demande acceptée comme terminée
 router.put("/:id/terminer", verifierConnexion, verifierArtisan, verifierArtisanActif, demandeController.terminerDemande);
 

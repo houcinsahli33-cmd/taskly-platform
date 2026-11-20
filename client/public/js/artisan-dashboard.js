@@ -34,10 +34,43 @@ function afficherStatsArtisan() {
   `;
 }
 
+// Horaire proposé ou confirmé, jamais une durée inventée pour une ancienne demande.
+function texteCreneauDemande(d){
+  const debut=d.creneau_debut_minute,fin=d.creneau_fin_minute;
+  const valide=n=>Number.isInteger(n)&&n>=0&&n<=1440;
+  const heure=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
+  if(!valide(debut)||debut>=1440)return 'À convenir';
+  return valide(fin)&&fin>debut?heure(debut)+' – '+heure(fin):heure(debut)+' (souhaitée)';
+}
+let planificationEnCours=false;
+function demanderDureeIntervention(d){
+  return new Promise(resolve=>{
+    const dialogue=document.createElement('dialog');dialogue.className='taskly-creneau-acceptation';
+    const titre=document.createElement('h2');titre.textContent='Planifier l’intervention';
+    dialogue.setAttribute('aria-label',titre.textContent);
+    const info=document.createElement('p');info.textContent='Heure souhaitée : '+texteCreneauDemande(d)+' · '+formatDate(d.date_souhaitee)+' (Algérie)';
+    const form=document.createElement('form');form.method='dialog';
+    const label=document.createElement('label');const select=document.createElement('select');select.id='taskly-duree-intervention';select.className='form-select';label.htmlFor=select.id;label.textContent='Durée estimée';
+    select.add(new Option('Choisir une durée',''));select.required=true;
+    const max=Math.min(720,1440-30-d.creneau_debut_minute);
+    for(let n=15;n<=max;n+=15)select.add(new Option(n<60?n+' min':Math.floor(n/60)+' h'+(n%60?' '+n%60+' min':''),String(n)));
+    const note=document.createElement('p');note.className='muted';note.textContent='30 minutes de trajet sont ajoutées automatiquement. Aucun créneau n’est confirmé avant la validation serveur.';
+    const actions=document.createElement('div');actions.className='request-actions';
+    const annuler=document.createElement('button');annuler.type='button';annuler.className='btn outline';annuler.textContent='Annuler';
+    const confirmer=document.createElement('button');confirmer.type='submit';confirmer.className='btn primary';confirmer.textContent='Confirmer le créneau';
+    let choix=null;
+    annuler.addEventListener('click',()=>dialogue.close());
+    form.addEventListener('submit',event=>{event.preventDefault();if(!form.reportValidity())return;choix=Number(select.value);dialogue.close();});
+    dialogue.addEventListener('close',()=>{dialogue.remove();resolve(choix);},{once:true});
+    actions.append(annuler,confirmer);form.append(label,select,note,actions);dialogue.append(titre,info,form);document.body.append(dialogue);dialogue.showModal();
+  });
+}
 // Construire une carte demande artisan
 function carteDemandeArtisan(demande) {
   const peutTraiter = demande.statut === "en_attente";
-  const peutTerminer = demande.statut === "acceptee";
+  const acceptee = demande.statut === "acceptee";
+  const demarree = acceptee && !!demande.intervention_debut_utc;
+  const peutTerminer = acceptee && (demarree || demande.creneau_debut_minute == null);
   const donneesPrivees = ['acceptee','attente_confirmation','terminee','conteste'].includes(demande.statut);
 
   return `
@@ -53,6 +86,9 @@ function carteDemandeArtisan(demande) {
       <div class="meta-row mt-14">
         <span class="badge">Adresse : ${echapperHTML(donneesPrivees ? (demande.adresse || demande.client_adresse || "Non précisée") : "Disponible après acceptation")}</span>
         <span class="badge">Date souhaitée : ${formatDate(demande.date_souhaitee)}</span>
+        ${demande.creneau_debut_minute != null ? `<span class="badge">Horaire : ${echapperHTML(texteCreneauDemande(demande))}</span>` : ''}
+        ${demarree ? '<span class="badge accent">Intervention en cours</span>' : ''}
+        ${acceptee && !demarree ? '<span class="badge">Intervention non démarrée</span>' : ''}
         <span class="badge">Créée le ${formatDate(demande.created_at)}</span>
       </div>
       ${demande.motif_annulation ? `<p class="alert show warning mt-14">Motif d'annulation : ${echapperHTML(demande.motif_annulation)}</p>` : ""}
@@ -60,8 +96,9 @@ function carteDemandeArtisan(demande) {
         <button class="btn outline" type="button" data-view-artisan-request="${Number(demande.id)}">Consulter la demande</button>
         ${peutTraiter ? `<button class="btn primary" type="button" data-set-status="${demande.id}" data-status="acceptee">Accepter</button>` : ""}
         ${peutTraiter ? `<button class="btn outline" type="button" data-set-status="${demande.id}" data-status="refusee">Refuser</button>` : ""}
-        ${peutTerminer ? `<button class="btn primary" type="button" data-complete-request="${demande.id}">Marquer terminée</button>` : ""}
-        ${peutTerminer ? `<button class="btn outline" type="button" data-open-cancel-artisan="${demande.id}">Annuler avec motif</button>` : ""}
+        ${acceptee && !demarree ? `<button class="btn primary" type="button" data-start-request="${Number(demande.id)}">Démarrer l’intervention</button>` : ""}
+        ${peutTerminer ? `<button class="btn ${demarree?'primary':'outline'}" type="button" data-complete-request="${Number(demande.id)}">Marquer terminée</button>` : ""}
+        ${acceptee ? `<button class="btn outline" type="button" data-open-cancel-artisan="${demande.id}">Annuler avec motif</button>` : ""}
         ${(["acceptee","attente_confirmation","terminee","conteste"].includes(demande.statut) || (demande.statut === "annulee" && demande.date_traitement)) ? `<button class="btn outline" type="button" data-open-taskly-chat="${Number(demande.id)}">Ouvrir le chat</button>` : ""}
         <button class="btn danger" type="button" data-open-report="${demande.id}">Signaler</button>
       </div>
@@ -116,27 +153,57 @@ async function chargerDemandesArtisan() {
 
 // Changer le statut d'une demande
 async function changerStatutDemande(id, statut) {
+  if(planificationEnCours)return;
+  planificationEnCours=true;
   try {
+    let horaire;
+    if(statut==='acceptee'){
+      // Relire la demande authentifiée, y compris lorsqu’on accepte depuis le détail.
+      const {demande:d}=await requeteAPI('/api/demandes/'+encodeURIComponent(id)+'/details');
+      if(!d||d.statut!=='en_attente')throw Error('Cette demande a changé. Actualisez la page.');
+      if(d.creneau_debut_minute!=null){
+        if(!Number.isInteger(d.creneau_debut_minute)||d.creneau_debut_minute<0||d.creneau_debut_minute>1395||d.creneau_debut_minute%15!==0)throw Error('Heure souhaitée invalide.');
+        const dureeMinutes=await demanderDureeIntervention(d);
+        if(dureeMinutes===null)return;
+        const n=d.creneau_debut_minute;
+        horaire={heureDebut:String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0'),dureeMinutes};
+      }
+    }
     await requeteAPI(`/api/demandes/${id}/statut`, {
       method: "PUT",
-      body: JSON.stringify({ statut })
+      body: JSON.stringify({ statut, horaire })
     });
     afficherToast("Statut mis à jour.");
     chargerDemandesArtisan();
   } catch (error) {
     afficherToast(error.message, "error");
-  }
+  } finally {planificationEnCours=false;}
+}
+
+// Actions explicites, partagées entre cartes et détail.
+let actionInterventionEnCours=false;
+async function demarrerDemandeArtisan(id) {
+  if(actionInterventionEnCours)return;
+  actionInterventionEnCours=true;
+  try {
+    await requeteAPI(`/api/demandes/${encodeURIComponent(id)}/demarrer`, {method:'PUT'});
+    afficherToast('Intervention démarrée. Votre disponibilité effective est actualisée.');
+    await chargerDemandesArtisan();
+  } catch(error) { afficherToast(error.message,'error'); }
+  finally {actionInterventionEnCours=false;}
 }
 
 // Marquer une demande comme terminee
 async function terminerDemandeArtisan(id) {
+  if(actionInterventionEnCours)return;
+  actionInterventionEnCours=true;
   try {
     await requeteAPI(`/api/demandes/${id}/terminer`, { method: "PUT" });
-    afficherToast("Le client a reçu une demande de confirmation de fin de prestation.");
-    chargerDemandesArtisan();
+    afficherToast("Fin déclarée. En attente de confirmation du client.");
+    await chargerDemandesArtisan();
   } catch (error) {
     afficherToast(error.message, "error");
-  }
+  } finally {actionInterventionEnCours=false;}
 }
 
 // Ouvrir la modale d'annulation artisan
@@ -170,11 +237,13 @@ function initialiserActionsArtisan() {
     const details = event.target.closest("[data-view-artisan-request]");
     if (details) consulterDemandeArtisan(details.dataset.viewArtisanRequest);
     const statut = event.target.closest("[data-set-status]");
+    const demarrer = event.target.closest("[data-start-request]");
     const terminer = event.target.closest("[data-complete-request]");
     const annuler = event.target.closest("[data-open-cancel-artisan]");
     const signaler = event.target.closest("[data-open-report]");
 
     if (statut) changerStatutDemande(statut.dataset.setStatus, statut.dataset.status);
+    if (demarrer) demarrerDemandeArtisan(demarrer.dataset.startRequest);
     if (terminer) terminerDemandeArtisan(terminer.dataset.completeRequest);
     if (annuler) ouvrirAnnulationArtisan(annuler.dataset.openCancelArtisan);
     if (signaler) ouvrirSignalementArtisan(signaler.dataset.openReport);
@@ -389,7 +458,7 @@ async function consulterDemandeArtisan(id) {
     document.body.appendChild(dialogue);
     dialogue.addEventListener("click", (event) => {
       if (event.target === dialogue || event.target.closest("[data-close-artisan-detail]")) dialogue.close();
-      if (event.target.closest("[data-set-status], [data-complete-request], [data-open-cancel-artisan], [data-open-report]")) dialogue.close();
+      if (event.target.closest("[data-set-status], [data-start-request], [data-complete-request], [data-open-cancel-artisan], [data-open-report]")) dialogue.close();
     });
   }
   const corps = dialogue.querySelector("#taskly-detail-body");
@@ -414,7 +483,9 @@ async function consulterDemandeArtisan(id) {
     const destination = encodeURIComponent([adresse, d.client_ville, "Algérie"].filter(Boolean).join(", "));
     const googleMaps = "https://www.google.com/maps/dir/?api=1&destination=" + destination;
     const peutTraiter = d.statut === "en_attente";
-    const peutTerminer = d.statut === "acceptee";
+    const acceptee = d.statut === 'acceptee';
+    const demarree = acceptee && !!d.intervention_debut_utc;
+    const peutTerminer = acceptee && (demarree || d.creneau_debut_minute == null);
     // SVG locaux, identiques pour chaque demande ; seules les données proviennent de l'API.
     const pictos={
       user:'<circle cx="12" cy="8" r="3.4"/><path d="M5 21c0-4 2.7-6.5 7-6.5s7 2.5 7 6.5"/>',
@@ -445,13 +516,17 @@ async function consulterDemandeArtisan(id) {
           ${detailRow('wrench','Métier',echapperHTML(d.service_nom || 'Non précisé'))}
           ${detailRow('message','Demande',`<span class="taskly-detail-message" id="taskly-detail-message-${numero}">${echapperHTML(d.message || 'Aucun message fourni.')}</span><button type="button" class="taskly-detail-expand" aria-expanded="false" aria-label="Afficher la description complète" aria-controls="taskly-detail-message-${numero}" hidden>⌄</button>`,'taskly-detail-message-row')}
           ${detailRow('calendar','Date souhaitée',echapperHTML(formatDate(d.date_souhaitee)))}
+          ${d.creneau_debut_minute != null ? detailRow('calendar','Horaire',echapperHTML(texteCreneauDemande(d))) : ''}
+          ${acceptee ? detailRow('check','Intervention',demarree?'En cours':'Non démarrée') : ''}
           ${detailRow('created','Créée le',echapperHTML(formatDate(d.created_at)))}
           ${detailRow('check','Statut',`<span class="taskly-detail-status">${echapperHTML(libelleStatut(d.statut))}</span>`)}
         </section>
       </section>
       <div class="request-actions taskly-detail-actions">
         ${peutTraiter ? `<button class="btn primary" type="button" data-set-status="${numero}" data-status="acceptee">Accepter</button><button class="btn outline" type="button" data-set-status="${numero}" data-status="refusee">Refuser</button>` : ""}
-        ${peutTerminer ? `<button class="btn primary" type="button" data-complete-request="${numero}">Marquer terminée</button><button class="btn outline" type="button" data-open-cancel-artisan="${numero}">Annuler avec motif</button>` : ""}
+        ${acceptee && !demarree ? `<button class="btn primary" type="button" data-start-request="${numero}">Démarrer l’intervention</button>` : ""}
+        ${peutTerminer ? `<button class="btn ${demarree?'primary':'outline'}" type="button" data-complete-request="${numero}">Marquer terminée</button>` : ""}
+        ${acceptee ? `<button class="btn outline" type="button" data-open-cancel-artisan="${numero}">Annuler avec motif</button>` : ""}
         <button class="btn danger taskly-detail-report" type="button" data-open-report="${numero}">${picto("flag")} Signaler</button>
       </div>
       ${autorisee && adresse ? `<div class="taskly-route-preview"><h3><span class="taskly-location-picto">${picto("pin")}</span>Localisation de l'intervention</h3>

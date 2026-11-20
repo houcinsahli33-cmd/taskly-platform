@@ -96,7 +96,7 @@ async function demandeOuverte(req, res) {
 // Creer une demande par un client
 async function creerDemande(req, res) {
     try {
-        const { artisanId, message, adresse, dateSouhaitee } = req.body;
+        const { artisanId, message, adresse, dateSouhaitee, heureSouhaitee } = req.body;
 
         if (!artisanId || !message || !adresse) {
             return res.status(400).json({
@@ -127,7 +127,8 @@ async function creerDemande(req, res) {
             artisanId,
             message,
             adresse,
-            dateSouhaitee || null
+            dateSouhaitee || null,
+            heureSouhaitee
         );
 
         await notifierDemande(resultat.insertId, 'nouvelle');
@@ -140,6 +141,8 @@ async function creerDemande(req, res) {
     } catch (error) {
         if (error.code === 'TASKLY_DEMANDE_OUVERTE')
             return res.status(409).json({code:error.code,message:error.message,demande:{id:error.demande.id,statut:error.demande.statut}});
+        if (error.code === 'TASKLY_CRENEAU_INVALIDE') return res.status(400).json({code:error.code,message:error.message});
+        if (error.code === 'TASKLY_CRENEAU_OCCUPE') return res.status(409).json({code:error.code,message:error.message});
         if (error.code === 'TASKLY_DATE_OCCUPEE')
             return res.status(409).json({message:'Cet artisan est déjà occupé à cette date. Choisissez un autre jour.'});
         console.error("Erreur création demande :", error.message);
@@ -219,10 +222,16 @@ async function modifierStatutDemande(req, res) {
             return;
         }
 
+        // Le créneau est facultatif pour les anciens clients, mais contrôlé côté serveur.
+        const horaire = req.body.horaire;
+        if (horaire !== undefined && statut !== 'acceptee') {
+            return res.status(400).json({message:'Un créneau ne peut accompagner qu’une acceptation.'});
+        }
         const resultat = await demandeModel.modifierStatutDemande(
             req.params.id,
             artisan.id,
-            statut
+            statut,
+            horaire
         );
 
         if (resultat.affectedRows === 0) {
@@ -238,6 +247,8 @@ async function modifierStatutDemande(req, res) {
         });
 
     } catch (error) {
+        if (error.code === 'TASKLY_CRENEAU_INVALIDE') return res.status(400).json({code:error.code,message:error.message});
+        if (error.code === 'TASKLY_CRENEAU_OCCUPE') return res.status(409).json({code:error.code,message:error.message});
         console.error("Erreur modification statut demande :", error.message);
 
         res.status(500).json({
@@ -321,6 +332,23 @@ async function annulerDemandeArtisan(req, res) {
     }
 }
 
+// Le propriétaire est déterminé par la session, jamais par le corps HTTP.
+async function demarrerDemande(req,res) {
+    try {
+        const id=String(req.params.id);
+        if (!/^[1-9]\d*$/.test(id) || !Number.isSafeInteger(Number(id))) return res.status(400).json({message:'Demande invalide.'});
+        const artisan=await obtenirArtisanConnecte(req,res);
+        if (!artisan) return;
+        await demandeModel.demarrerDemande(id,artisan.id);
+        res.set('Cache-Control','private, no-store');
+        return res.status(200).json({message:'Intervention démarrée.'});
+    } catch(error) {
+        if (error.code==='TASKLY_INTERVENTION_CONFLIT') return res.status(409).json({code:error.code,message:error.message});
+        console.error('Démarrage intervention :',error.code||error.message);
+        return res.status(500).json({message:'Démarrage momentanément indisponible.'});
+    }
+}
+
 // Marquer une demande comme terminee
 async function terminerDemande(req, res) {
     try {
@@ -337,7 +365,7 @@ async function terminerDemande(req, res) {
 
         if (resultat.affectedRows === 0) {
             return res.status(400).json({
-                message: "Cette demande ne peut pas être terminée."
+                message: "Cette demande ne peut pas être terminée. Démarrez d’abord une intervention planifiée."
             });
         }
 
@@ -437,5 +465,6 @@ module.exports = {
     modifierStatutDemande,
     annulerDemandeClient,
     annulerDemandeArtisan,
+    demarrerDemande,
     terminerDemande
 };
