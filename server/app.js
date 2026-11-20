@@ -120,6 +120,7 @@ app.get('/api/internal/expire-sessions', async(req,res)=>{
  try { const resultat=await require('./services/sessionExpiryNotifier').traiterEcheances();res.json({notifications:resultat}); }
  catch(e){console.error('Cron session :',e.code||e.message);res.status(503).json({message:'Tâche indisponible.'});}
 });
+app.use('/api/internal', require('./routes/livekitMaintenanceRoutes').creerRouteMaintenanceLiveKit());
 app.use('/api',verifierCsrf);
 // L'API de connexion admin partage le meme chemin prive aleatoire.
 app.use('/api' + adminEntryPath + '/auth', headersAdminPrive, adminAuthRoutes);
