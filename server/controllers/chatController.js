@@ -308,6 +308,27 @@ async function gererAppel(req, res) {
             }
         }
 
+
+        // nettoyage immediat LiveKit apres raccrochage
+        if (
+            action === 'end' &&
+            result.code === 200 &&
+            result.call?.state === 'ended' &&
+            result.call?.livekitIssued === true &&
+            process.env.TASKLY_LIVEKIT_ENABLED === 'true' &&
+            process.env.TASKLY_LIVEKIT_CLEANUP_ENABLED === 'true'
+        ) {
+            try {
+                await require('../services/livekitCleanupWorker')
+                    .traiterFermeturesLiveKit({ limite: 5 });
+            } catch {
+                // La tache reste enregistree dans Redis.
+                console.error(
+                    'Taskly LiveKit : nettoyage reporte.'
+                );
+            }
+        }
+
         return res.status(result.code).json({
             message: result.message,
             call: result.call
