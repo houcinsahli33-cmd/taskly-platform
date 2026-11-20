@@ -19,6 +19,12 @@ const router = express.Router();
 router.get('/carte', artisanController.artisansCarte);
 
 // Gestion de la zone publique
+router.get('/ma-zone',
+    verifierConnexion,
+    verifierArtisan,
+    artisanController.lireEtatZone
+);
+
 router.put('/ma-zone',
     verifierConnexion,
     verifierArtisan,

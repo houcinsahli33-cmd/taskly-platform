@@ -84,7 +84,7 @@ async function lireChat(req, res) {
 
         return res.json({
     demandeId: acces.demandeId,
-    lectureSeule: acces.demande.statut !== "acceptee",
+    lectureSeule: acces.demande.statut !== "acceptee" || Number(acces.demande.messagerie_bloquee) === 1,
     informations: {
         clientNom: acces.demande.client_nom || null,
         artisanNom: acces.demande.artisan_nom || null,
@@ -118,6 +118,10 @@ async function envoyerChat(req, res) {
             return res.status(403).json({
                 message: "Cette conversation est fermee."
             });
+        }
+
+        if (Number(acces.demande.messagerie_bloquee) === 1) {
+            return res.status(403).json({ message: "La messagerie est désactivée par l’artisan." });
         }
 
         if (typeof req.body?.contenu !== "string") {
@@ -227,6 +231,13 @@ async function gererAppel(req, res) {
             return res.status(400).json({
                 message: 'Action invalide.'
             });
+        }
+
+        if (Number(acces.demande.messagerie_bloquee) === 1) {
+            if (action === 'read') return res.json({call:null});
+            if (['start','accept','heartbeat'].includes(action)) {
+                return res.status(403).json({message:'Les appels sont désactivés par l’artisan.'});
+            }
         }
 
         if (callsPilot.modeGeneral() &&
@@ -349,6 +360,7 @@ async function appelsEntrants(req, res) {
 
             if (!demande ||
                 demande.statut !== 'acceptee' ||
+                Number(demande.messagerie_bloquee) === 1 ||
                 Number(demande.client_id) !== call.clientId ||
                 Number(demande.artisan_id) !== call.artisanId) {
                 continue;

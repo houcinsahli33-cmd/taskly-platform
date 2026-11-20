@@ -416,6 +416,17 @@ async function enregistrerZone(userId, lat, lon) {
 
 // SUPPRIMER LA ZONE PUBLIQUE
 
+// TASKLY_ZONE_STATUS : ne retourne aucune coordonnee.
+async function lireEtatZone(userId) {
+    const [rows] = await db.promise().query(
+        `SELECT CASE WHEN public_lat IS NOT NULL AND public_lon IS NOT NULL
+                     THEN 1 ELSE 0 END AS visible
+         FROM artisans WHERE user_id = ? LIMIT 2`, [userId]);
+    if (rows.length !== 1) return null;
+    if (![0, 1, '0', '1'].includes(rows[0].visible)) throw Error('Etat zone invalide');
+    return Number(rows[0].visible) === 1;
+}
+
 async function supprimerZone(userId) {
 
     const [result] = await db.promise().query(
@@ -438,7 +449,16 @@ async function trouverCoordonneesAutorisees(id) {
             END AS telephone,
 
             CASE
-                WHEN a.afficher_email = 1
+                WHEN a.afficher_email = 1 AND ${process.env.TASKLY_MAIL_INTERNAL_ENABLED === 'true' && process.env.TASKLY_MAIL_GATEWAY_ENABLED !== 'true' && require('../services/professionalMailAccess').modeGeneral(process.env) ? 1 : 0} = 1 AND EXISTS (
+                    SELECT 1 FROM taskly_professional_mailboxes m
+                    JOIN taskly_professional_mail_requests r ON r.user_id=m.user_id AND r.proposed_address=m.address
+                    WHERE m.user_id=u.id AND r.artisan_id=a.id AND r.service_id=a.service_id
+                    AND m.address=a.email_professionnel AND m.address<>u.email
+                    AND m.activated_at IS NOT NULL AND r.confirmed_at IS NOT NULL
+                    AND r.status='approved_pending_provider'
+                    AND m.provider_id REGEXP '^internal:[a-f0-9]{64}$'
+                    AND m.address REGEXP '^[^@]+@[a-z0-9-]+[.]taskly[.]test$'
+                )
                 THEN a.email_professionnel
                 ELSE NULL
             END AS email,
@@ -462,6 +482,7 @@ async function trouverCoordonneesAutorisees(id) {
 }
 
 module.exports = {
+    lireEtatZone,
     artisansPourCarte,
     enregistrerZone,
     supprimerZone,

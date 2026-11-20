@@ -1,0 +1,17 @@
+/* Carte artisan : uniquement le bloc existant, sans largeur/hauteur imposee ni flou. */
+body[data-require-role="artisan"][data-workspace-page="profil"] #taskly-zone-card .panel-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+#taskly-zone-card .panel-header h2{display:flex;align-items:center;gap:9px;margin:0;}
+#taskly-zone-card .panel-header h2 svg{width:22px;height:22px;flex:none;stroke:#087f63;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+#taskly-zone-card .zone-state{font-size:11px;font-weight:700;border-radius:20px;padding:5px 10px;background:#eef2f4;color:#536470;display:inline-flex;align-items:center;gap:6px;}
+#taskly-zone-card .zone-state::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+#taskly-zone-card .zone-state[data-state="on"]{color:#08784d;background:#e2f6e9;}
+#taskly-zone-card .panel-body{display:flex;gap:16px;align-items:center;}
+#taskly-zone-card .zone-art{flex:0 0 76px;display:grid;place-items:center;border-right:1px solid #e1ebe5;padding-right:12px;}
+#taskly-zone-card .zone-art svg{display:block;width:64px;height:auto;max-width:100%;}
+#taskly-zone-card .zone-main{flex:1;min-width:0;}
+#taskly-zone-card .zone-main>p.muted{margin:0 0 10px;line-height:1.5;}
+#taskly-zone-card .request-actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:0;}
+#taskly-zone-card .request-actions button{max-width:100%;white-space:normal;}
+#taskly-zone-card #taskly-zone-feedback{font-size:12px;margin:8px 0 0;overflow-wrap:anywhere;}
+#taskly-zone-card #taskly-zone-feedback:empty{display:none;}
+@media(max-width:600px){#taskly-zone-card .zone-art{display:none;}#taskly-zone-card .panel-header{align-items:flex-start;}#taskly-zone-card .request-actions{align-items:stretch;}}

@@ -85,6 +85,18 @@ async function enregistrerZone(req,res){
   res.status(ok?200:404).json({message:ok?'Zone publique approximative enregistrée.':'Profil artisan introuvable.'});
  }catch(e){res.status(503).json({message:'Impossible de mettre à jour votre zone.'});}
 }
+// TASKLY_ZONE_STATUS : etat du seul profil de session.
+async function lireEtatZone(req,res) {
+    res.set('Cache-Control','private, no-store');
+    try {
+        const user=req.session?.utilisateur;
+        if (!user?.id || user.role !== 'artisan') return res.status(403).json({message:'Accès réservé aux artisans.'});
+        const visible=await artisanModel.lireEtatZone(user.id);
+        if (typeof visible !== 'boolean') return res.status(404).json({message:'Profil artisan introuvable ou ambigu.'});
+        return res.json({visible});
+    } catch(e) { return res.status(503).json({message:'État de la zone temporairement indisponible.'}); }
+}
+
 async function supprimerZone(req,res){
  try{
   const ok=await artisanModel.supprimerZone(req.session.utilisateur.id);
@@ -151,6 +163,7 @@ async function coordonneesArtisan(req, res) {
 }
 
 module.exports = {
+    lireEtatZone,
     datesIndisponibles,
     artisansCarte,enregistrerZone,supprimerZone,
     listerArtisans,

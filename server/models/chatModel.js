@@ -19,6 +19,7 @@ async function trouverDemande(demandeId) {
             CASE WHEN a.afficher_telephone = 1 AND a.verification_statut = 'approuve'
                   AND ua.statut_compte = 'actif' AND ua.email_verified = 1
                  THEN a.telephone ELSE NULL END AS artisan_telephone,
+            CASE WHEN a.autoriser_messagerie = 1 THEN 0 ELSE 1 END AS messagerie_bloquee,
             s.nom AS service_nom
          FROM demandes d
          LEFT JOIN clients c ON c.id = d.client_id
@@ -62,6 +63,7 @@ async function envoyerMessage(demandeId, auteurType, profilId, contenu) {
          FROM demandes d
          WHERE d.id = ?
            AND d.statut = 'acceptee'
+           AND EXISTS (SELECT 1 FROM artisans a WHERE a.id=d.artisan_id AND a.autoriser_messagerie=1)
            AND (
                 (? = 'client' AND d.client_id = ?)
                 OR

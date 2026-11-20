@@ -98,6 +98,24 @@ router.delete('/',sensible,async(req,res)=>{
   await conn.commit();req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Compte et données liées supprimés.'});
  }catch(e){if(conn)await conn.rollback();fail(res,e);}finally{conn?.release();}
 });
+// TASKLY_PRIVACY_MAIL_V1
+async function privacyMailbox(conn, userId, artisanId) {
+    if (process.env.TASKLY_MAIL_INTERNAL_ENABLED !== 'true' ||
+        process.env.TASKLY_MAIL_GATEWAY_ENABLED === 'true' ||
+        !require('../services/professionalMailAccess').modeGeneral(process.env)) return null;
+    const [rows] = await conn.query(`SELECT m.address FROM taskly_professional_mailboxes m
+        JOIN taskly_professional_mail_requests r ON r.user_id=m.user_id AND r.proposed_address=m.address
+        JOIN artisans a ON a.user_id=m.user_id AND a.id=r.artisan_id AND a.service_id=r.service_id
+        JOIN users u ON u.id=m.user_id
+        WHERE m.user_id=? AND a.id=? AND m.activated_at IS NOT NULL
+        AND r.confirmed_at IS NOT NULL AND r.status='approved_pending_provider'
+        AND a.verification_statut='approuve' AND u.role='artisan'
+        AND u.statut_compte='actif' AND u.email_verified=1 AND m.address<>u.email
+        AND m.provider_id REGEXP '^internal:[a-f0-9]{64}$'
+        AND m.address REGEXP '^[^@]+@[a-z0-9-]+[.]taskly[.]test$' LIMIT 2`, [userId, artisanId]);
+    return rows.length===1 ? rows[0].address : null;
+}
+
 // Récupération des préférences de confidentialité
 
 router.get('/confidentialite', async (req, res) => {
@@ -139,9 +157,11 @@ router.get('/confidentialite', async (req, res) => {
             });
         }
 
-        return res.json({
-            confidentialite: profils[0]
-        });
+        const mailbox = await privacyMailbox(db, user.id, profils[0].artisan_id);
+        return res.json({ confidentialite: {
+            ...profils[0], email_professionnel: mailbox,
+            afficher_email: mailbox ? profils[0].afficher_email : 0
+        }});
 
     } catch (error) {
 
@@ -180,6 +200,7 @@ router.put('/confidentialite', limiter({max:20}), async (req, res) => {
         if (
             ![0, 1].includes(b.afficher_telephone) ||
             ![0, 1].includes(b.afficher_email) ||
+            ![0, 1].includes(b.autoriser_messagerie) ||
             typeof b.email_professionnel !== 'string' ||
             !Number.isSafeInteger(b.artisan_id) ||
             b.artisan_id <= 0
@@ -190,32 +211,6 @@ router.put('/confidentialite', limiter({max:20}), async (req, res) => {
             });
 
         }
-
-        const email = b.email_professionnel.trim();
-
-        if (
-            email.length > 254 ||
-            (email && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/.test(email))
-        ) {
-
-            return res.status(400).json({
-                message: 'Adresse e-mail professionnelle invalide.'
-            });
-
-        }
-
-        if (b.afficher_email === 1 && !email) {
-
-            return res.status(400).json({
-                message: 'Renseignez votre e-mail professionnel.'
-            });
-
-        }
-     if (b.afficher_email === 1) {
-        return res.status(400).json({
-            message: 'La verification de votre e-mail professionnel est necessaire avant sa publication.'
-        });
-      }
 
         conn = await db.getConnection();
         await conn.beginTransaction();
@@ -236,21 +231,6 @@ router.put('/confidentialite', limiter({max:20}), async (req, res) => {
 
             return res.status(403).json({
                 message: 'Compte non autorisé.'
-            });
-
-        }
-
-        // Protection de l'adresse de connexion
-
-        if (
-            email &&
-            email.toLowerCase() === users[0].email.toLowerCase()
-        ) {
-
-            await conn.rollback();
-
-            return res.status(400).json({
-                message: 'Utilisez une adresse professionnelle différente de votre e-mail de connexion.'
             });
 
         }
@@ -278,20 +258,29 @@ router.put('/confidentialite', limiter({max:20}), async (req, res) => {
 
         }
 
+        const email = await privacyMailbox(conn, user.id, profils[0].id);
+        if (b.afficher_email === 1 && !email) {
+            await conn.rollback();
+            return res.status(409).json({message: 'Activez votre propre adresse Taskly Mail avant de la partager.'});
+        }
+
         // Mise a jour du profil autorise
 
         await conn.query(`
             UPDATE artisans
             SET
                 afficher_telephone = ?,
-                email_professionnel = ?,
-                afficher_email = ?
+                email_professionnel = CASE WHEN ? = 1 THEN ? ELSE email_professionnel END,
+                afficher_email = ?,
+                autoriser_messagerie = ?
             WHERE id = ?
               AND user_id = ?
         `, [
             b.afficher_telephone,
+            b.afficher_email,
             email || null,
             b.afficher_email,
+            b.autoriser_messagerie,
             profils[0].id,
             user.id
         ]);

@@ -187,3 +187,20 @@
     }
 
 }
+
+/* TASKLY_PRIVACY_MAIL_V1 — no width or height overrides on modal */
+body[data-workspace-page="profil"][data-require-role="artisan"] dialog.workspace-dialog:has(#artisan-privacy-panel)::backdrop{background:rgba(16,32,28,.18)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important}
+body[data-workspace-page="profil"] dialog.workspace-dialog:has(#artisan-privacy-panel)>.workspace-dialog-header{background:linear-gradient(125deg,#064f43 60%,#129c78)!important;color:white!important}
+body[data-workspace-page="profil"] dialog.workspace-dialog:has(#artisan-privacy-panel)>.workspace-dialog-header h2{color:white!important;font-size:19px!important}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel{border:0!important;margin:0!important;box-shadow:none!important}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel>.panel-body{padding:0!important}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-option{border:1px solid #d5e5de!important;border-radius:12px;padding:10px!important;gap:10px!important;margin:0 0 8px!important;background:#fff;box-sizing:border-box}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-option:before{content:'';width:35px;height:35px;flex:0 0 35px;border-radius:10px;background:#e2f5eb var(--privacy-icon) center/22px no-repeat}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-option:nth-of-type(1){--privacy-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23087e63%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M22%2016.9v3a2%202%200%200%201-2.2%202A18%2018%200%200%201%202.1%204.2%202%202%200%200%201%204.1%202h3l2%205-3%202a15%2015%200%200%200%209%209l2-3z%22/%3E%3C/svg%3E")}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-option:nth-of-type(2){--privacy-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23087e63%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%205h18v14H3zM3%205l9%208%209-8%22/%3E%3C/svg%3E")}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-option:nth-of-type(3){--privacy-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23087e63%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M21%2011a9%209%200%200%201-9%209H3l2-5a9%209%200%201%201%2016-4zM8%2011h8%22/%3E%3C/svg%3E")}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-info h3{font-size:14px!important;margin:0 0 4px!important}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-info p{font-size:12px!important;line-height:1.4!important;overflow-wrap:anywhere}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-state.is-visible{color:#087e63;font-weight:600}
+body[data-workspace-page="profil"] dialog #artisan-privacy-panel .privacy-note{font-size:12px;background:#e8f5ef;color:#075e49;border-radius:9px;padding:10px;margin:10px 0}
+body[data-workspace-page="profil"] dialog #privacy-save-button{width:100%;min-height:40px!important}

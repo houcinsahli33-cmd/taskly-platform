@@ -1,0 +1,15 @@
+/* Scoped to the new public-profile contact action. No changes to existing modals. */
+#taskly-contact-open[hidden],#taskly-contact-dialog [hidden]{display:none!important}
+#taskly-contact-open{max-width:100%;margin-top:10px;white-space:normal}
+#taskly-contact-dialog{box-sizing:border-box;width:min(480px,calc(100% - 28px));max-height:calc(100dvh - 34px);overflow:auto;border:1px solid #dce9e2;border-radius:14px;padding:0;background:#fff;color:#18332e;box-shadow:0 14px 42px #123c3026}
+#taskly-contact-dialog::backdrop{background:rgba(13,42,34,.20);backdrop-filter:none;-webkit-backdrop-filter:none}
+#taskly-contact-dialog .tc-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;background:#075e4e;color:#fff}
+#taskly-contact-dialog .tc-header h2{font-size:18px;color:inherit;margin:0}
+#taskly-contact-dialog .tc-close{border:1px solid #b9ddce;background:#fff;color:#075e4e;border-radius:8px;width:34px;height:34px;font-size:22px;cursor:pointer;flex:none}
+#taskly-contact-dialog .tc-body{padding:16px 18px;font-size:14px}
+#taskly-contact-dialog dl{margin:0;display:grid;gap:5px}
+#taskly-contact-dialog dt{font-weight:700;margin-top:9px}
+#taskly-contact-dialog dd{margin:0 0 5px;overflow-wrap:anywhere;color:#405c55}
+#taskly-contact-dialog #taskly-contact-copy{margin:4px 0 6px;min-height:34px}
+#taskly-contact-dialog #taskly-contact-status{margin:8px 0 0;overflow-wrap:anywhere}
+#taskly-contact-dialog .tc-note{font-size:12px;color:#556b65;margin:8px 0 0}

@@ -13,6 +13,8 @@
   <script defer src="/js/taskly-request-calendar.js"></script>
   <script defer src="/js/taskly-request-wizard.js?v=1"></script>
   <script defer src="/js/artisans.js?v=wizard1"></script>
+  <link rel="stylesheet" href="/css/taskly-artisan-contact.css?v=1">
+  <script defer src="/js/taskly-artisan-contact.js?v=1"></script>
 </head>
 <body data-active="artisans">
   <div id="site-header"></div>
@@ -20,6 +22,7 @@
     <!-- Profil public artisan -->
     <section class="section compact">
       <div class="container" id="artisan-profile"></div>
+      <div class="container"><button id="taskly-contact-open" class="btn outline" type="button" hidden>Consulter les coordonnées autorisées</button></div>
     </section>
     <!-- Avis du profil -->
     <section class="section alt artisan-reviews-section">
@@ -81,6 +84,18 @@
       </div>
     </form>
     <section class="rw-success" id="rw-success" hidden><div class="rw-success-icon">✓</div><h3>Votre demande a été envoyée !</h3><p>Retrouvez votre demande et suivez son avancement dans votre espace client.</p><a class="rw-primary" href="/espace/client/demandes">Voir mes demandes</a><button type="button" class="rw-secondary" data-rw-close>Fermer</button></section>
+  </dialog>
+  <dialog id="taskly-contact-dialog" aria-labelledby="taskly-contact-title">
+    <header class="tc-header"><h2 id="taskly-contact-title">Coordonnées de cet artisan</h2><button id="taskly-contact-close" class="tc-close" type="button" aria-label="Fermer">×</button></header>
+    <div class="tc-body">
+      <div id="taskly-contact-data" hidden>
+        <dl><dt>Téléphone</dt><dd id="taskly-contact-phone"></dd><dt>Adresse Taskly Mail</dt><dd id="taskly-contact-email"></dd></dl>
+        <button id="taskly-contact-copy" class="btn outline" type="button" hidden>Copier l’adresse</button>
+        <p class="tc-note">Adresse interne : utilisez Taskly Mail depuis votre espace client.</p>
+        <dl><dt>Messagerie privée</dt><dd id="taskly-contact-chat"></dd></dl>
+      </div>
+      <p id="taskly-contact-status" role="status" aria-live="polite"></p>
+    </div>
   </dialog>
   <div id="site-footer"></div>
 </body>
