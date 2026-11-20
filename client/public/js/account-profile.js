@@ -17,7 +17,12 @@ document.addEventListener('DOMContentLoaded',async()=>{
    $('account-experience').min=0;$('account-experience').max=80;
   }
   target.querySelectorAll('input[type=password]').forEach(el=>{el.maxLength=72;el.autocomplete=el.id.includes('-new')||el.id.includes('-repeat')?'new-password':'current-password';});
-  async function submit(form,url,method,body,statusId,done){const b=form.querySelector('button[type=submit]');b.disabled=true;$(statusId).textContent='Traitement en cours…';try{const d=await requeteAPI(url,{method,body:JSON.stringify(body)});$(statusId).textContent=d.message;if(d.deconnexion){location.replace('/login.html');return;}if(done)done(d);}catch(e){$(statusId).textContent=e.message;}finally{b.disabled=false;}}
+  async function submit(form,url,method,body,statusId,done){const b=form.querySelector('button[type=submit]');b.disabled=true;$(statusId).textContent='Traitement en cours…';try{const d=await requeteAPI(url,{method,body:JSON.stringify(body)});$(statusId).textContent=d.message;if(d.deconnexion){
+      if(url==='/api/account/email/verify'&&d.deconnexion===true){
+        try{if(window.tasklyAfficherConfirmationEmail?.(d,form)===true)return;}catch{/* Use the original secure redirect. */}
+      }
+      location.replace('/login.html');return;
+    }if(done)done(d);}catch(e){$(statusId).textContent=e.message;}finally{b.disabled=false;}}
   $('account-edit-form').addEventListener('submit',e=>{e.preventDefault();submit(e.currentTarget,'/api/account','PUT',{nom:$('account-nom').value,prenom:$('account-prenom').value,telephone:$('account-phone').value,ville:$('account-ville').value,adresse:$('account-address')?.value,serviceId:$('account-service')?.value,experience:$('account-experience')?.value,description:$('account-description')?.value},'account-edit-status',()=>location.reload());});
   $('account-email-request').addEventListener('submit',e=>{
     e.preventDefault();

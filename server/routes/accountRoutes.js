@@ -86,7 +86,7 @@ router.post('/email/verify',sensible,async(req,res)=>{
   if(destination.length){const e=Error('Cette adresse est déjà utilisée. Les espaces ne peuvent pas être fusionnés.');e.status=409;throw e;}
   await conn.query("UPDATE users SET email=?,email_verified=1,admin_session_version=admin_session_version+1 WHERE email=? AND role IN ('client','artisan')",[row.nouveau_email,origine[0].email]);
   await conn.query('DELETE FROM account_email_changes WHERE user_id=?',[row.user_id]);await conn.commit();
-  req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Adresse commune modifiée et confirmée pour tous vos espaces. Reconnectez-vous.',deconnexion:true});
+  req.session.destroy(()=>{});res.clearCookie('artisans.sid');res.json({message:'Adresse commune modifiée et confirmée pour tous vos espaces. Reconnectez-vous.',deconnexion:true,previousEmail:origine[0].email,confirmedEmail:row.nouveau_email});
  }catch(e){if(conn)await conn.rollback();fail(res,e);}finally{conn?.release();}
 });
 router.delete('/',sensible,async(req,res)=>{
