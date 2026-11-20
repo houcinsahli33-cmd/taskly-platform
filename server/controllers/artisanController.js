@@ -180,12 +180,23 @@ async function enregistrerDisponibilite(req, res) {
     const user = req.session?.utilisateur;
     if (!user?.id || user.role !== 'artisan') return res.status(403).json({message:'Accès réservé aux artisans.'});
     const b = req.body;
-    if (!b || typeof b !== 'object' || Array.isArray(b) || Object.keys(b).some(k=>!['statut','duree','rapide'].includes(k)) ||
-        !['non_renseignee','disponible','occupe','indisponible'].includes(b.statut) || typeof b.rapide !== 'boolean' ||
-        !(b.statut === 'non_renseignee' ? b.duree === 0 : [1,2,4,8,24,48,168].includes(b.duree)) || (b.rapide && b.statut !== 'disponible'))
+    if (!b || typeof b !== 'object' || Array.isArray(b) || Object.keys(b).some(k=>!['statut','duree','rapide','expiration'].includes(k)) ||
+        !['non_renseignee','disponible','occupe','indisponible'].includes(b.statut) || typeof b.rapide !== 'boolean' || (b.rapide && b.statut !== 'disponible'))
         return res.status(400).json({message:'Choix de disponibilité invalide.'});
+    const exact = Object.hasOwn(b,'expiration');
+    let limite = b.duree;
+    if (exact) {
+        const e = b.expiration;
+        const ms = typeof e === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:00\.000Z$/.test(e) ? Date.parse(e) : NaN;
+        const now = Date.now();
+        if (Object.hasOwn(b,'duree') || b.statut === 'non_renseignee' || !Number.isFinite(ms) || new Date(ms).toISOString() !== e || ms <= now || ms > now + 7*86400000)
+            return res.status(400).json({message:'Une date de fin future, dans les 7 prochains jours, est obligatoire.'});
+        limite = e.slice(0,19).replace('T',' ');
+    } else if (!(b.statut === 'non_renseignee' ? b.duree === 0 : [1,2,4,8,24,48,168].includes(b.duree))) {
+        return res.status(400).json({message:'Choix de disponibilité invalide.'});
+    }
     try {
-        const disponibilite = await artisanModel.enregistrerDisponibilite(user.id,b.statut,b.duree,b.rapide);
+        const disponibilite = await artisanModel.enregistrerDisponibilite(user.id,b.statut,limite,b.rapide);
         return disponibilite ? res.json({disponibilite}) : res.status(404).json({message:'Profil artisan introuvable.'});
     } catch (e) { return res.status(503).json({message:'Impossible de mettre à jour la disponibilité.'}); }
 }

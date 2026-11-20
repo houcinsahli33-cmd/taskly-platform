@@ -18,3 +18,20 @@ test('Disponibilite : pas de badge rapide expire, inconnu ou occupe',()=>{for(co
 test('Disponibilite : migration additive et routes protegees avant /:id',()=>{const sql=read('database/migration_disponibilite_artisan.sql'),routes=read('server/routes/artisanRoutes.js');assert.doesNotMatch(sql,/DELETE|DROP|TRUNCATE/i);assert.match(sql,/DEFAULT 'non_renseignee'/);for(const method of ['get','put']){assert.match(routes,new RegExp(`router\\.${method}\\('/ma-disponibilite', verifierConnexion, verifierArtisan`));assert.ok(routes.indexOf(`router.${method}('/ma-disponibilite'`)<routes.indexOf('router.get("/:id"'));}});
 test('Disponibilite premium : durees courtes autorisees sans modifier les reservations',async()=>{for(const duree of [1,2,4,8]){const f=controller(),r=res();await f.api.enregistrerDisponibilite(req({statut:'occupe',duree,rapide:false}),r);assert.equal(r.code,200);assert.deepEqual(f.calls,[[18,'occupe',duree,false]]);}for(const duree of [-1,0.5,3,169]){const f=controller(),r=res();await f.api.enregistrerDisponibilite(req({...valid,duree}),r);assert.equal(r.code,400);assert.equal(f.calls.length,0);}});
 test('Disponibilite premium : formulaire accessible, aucune action de cloture directe',()=>{const h=read('client/private/artisan/profil.html'),js=read('client/public/js/taskly-disponibilite-privee.js');for(const v of ['disponible','occupe','indisponible','non_renseignee'])assert.match(h,new RegExp(`name="ta-status" value="${v}"`));assert.match(h,/id="ta-fields" disabled/);assert.match(js,/Africa\/Algiers/);assert.match(js,/\/api\/demandes\/artisan/);assert.doesNotMatch(js,/\/terminer|\/statut/);});
+test('Disponibilite exacte : date UTC future, compte issu de la session',async()=>{
+ const e=new Date(Math.ceil((Date.now()+3600000)/60000)*60000).toISOString();
+ const f=controller(),r=res(); await f.api.enregistrerDisponibilite(req({statut:'occupe',expiration:e,rapide:false}),r);
+ assert.equal(r.code,200);assert.deepEqual(f.calls,[[18,'occupe',e.slice(0,19).replace('T',' '),false]]);
+});
+test('Disponibilite exacte : refus des dates passees, hors limite, ambigues et impossibles',async()=>{
+ const future=new Date(Math.ceil((Date.now()+3600000)/60000)*60000).toISOString();
+ const far=new Date(Math.ceil((Date.now()+8*86400000)/60000)*60000).toISOString();
+ for(const b of [{expiration:'2000-01-01T00:00:00.000Z'},{expiration:far},{expiration:'2026-02-30T12:00:00.000Z'},{expiration:future.slice(0,16)},{expiration:future,duree:24},{expiration:future,statut:'non_renseignee'},{expiration:future,userId:123}]){
+ const f=controller(),r=res();await f.api.enregistrerDisponibilite(req({statut:'disponible',rapide:false,...b}),r);assert.equal(r.code,400);assert.equal(f.calls.length,0);}
+});
+test('Disponibilite exacte : requete parametree UTC et limite SQL',async()=>{
+ const m=model(), e='2026-11-21 14:30:00';await m.api.enregistrerDisponibilite(19,'occupe',e,false);assert.match(m.calls[0].sql,/WHERE user_id = \? AND \? > UTC_TIMESTAMP\(\)/);assert.match(m.calls[0].sql,/TIMESTAMPADD\(DAY, 7, UTC_TIMESTAMP\(\)\)/);assert.equal(JSON.stringify(m.calls[0].params),JSON.stringify(['occupe',e,0,19,e,e]));
+});
+test('Disponibilite exacte : interface date heure et heure algerienne',()=>{
+ const h=read('client/private/artisan/profil.html'),js=read('client/public/js/taskly-disponibilite-privee.js');assert.match(h,/data-ta-duration="tonight"/);assert.match(h,/data-ta-duration="precise"/);assert.match(h,/id="ta-exact" type="datetime-local"/);assert.match(js,/T23:59/);assert.match(js,/\+01:00/);assert.match(js,/expiration:new Date\(end\).toISOString\(\)/);
+});

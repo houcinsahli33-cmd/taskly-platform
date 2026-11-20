@@ -43,6 +43,14 @@ async function lireDisponibilite(userId) {
 }
 async function enregistrerDisponibilite(userId, statut, duree, rapide) {
     // Le seul identifiant accepte provient de la session authentifiee.
+    if (typeof duree === 'string') {
+        // Date UTC canonique, validee par le controleur ; garde temporelle aussi en base.
+        const [result] = await db.promise().query(
+            `UPDATE artisans SET disponibilite_statut = ?, disponibilite_expiration = ?, intervention_rapide = ? WHERE user_id = ? AND ? > UTC_TIMESTAMP() AND ? <= TIMESTAMPADD(DAY, 7, UTC_TIMESTAMP())`,
+            [statut, duree, rapide ? 1 : 0, userId, duree, duree]);
+        if (result.affectedRows !== 1) return null;
+        return lireDisponibilite(userId);
+    }
     const [result] = await db.promise().query(
         `UPDATE artisans SET disponibilite_statut = ?, disponibilite_expiration = CASE WHEN ? = 0 THEN NULL ELSE TIMESTAMPADD(HOUR, ?, UTC_TIMESTAMP()) END, intervention_rapide = ? WHERE user_id = ?`,
         [statut, duree, duree, rapide ? 1 : 0, userId]);

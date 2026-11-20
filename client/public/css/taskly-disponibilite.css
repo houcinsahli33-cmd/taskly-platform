@@ -40,3 +40,6 @@
 @container (max-width:850px){#ta-availability .ta-option{min-height:104px;padding:8px 9px!important}}
 @container (max-width:690px){#ta-availability .ta-layout{grid-template-columns:minmax(0,1fr)!important}}
 @container (max-width:470px){#ta-availability .ta-options,#ta-availability .ta-duration-options{grid-template-columns:minmax(0,1fr)!important}#ta-availability .ta-option{min-height:0;padding:9px 30px 9px 9px!important}}
+
+/* V2A3 : choix horaire, uniquement dans le bloc privé. */
+#ta-availability .ta-duration-options{grid-template-columns:repeat(2,minmax(0,1fr))}#ta-availability .ta-exact{display:grid;gap:5px;font-size:12px;color:#28443a}#ta-availability .ta-exact input{box-sizing:border-box;width:100%;min-width:0;min-height:35px!important;padding:5px 10px;font-size:13px;border:1px solid #dce8e3;border-radius:9px;background:#fff;color:inherit}#ta-availability .ta-exact input:focus-visible{outline:2px solid #00866a;outline-offset:2px}@container (max-width:470px){#ta-availability .ta-duration-options{grid-template-columns:minmax(0,1fr)!important}}
