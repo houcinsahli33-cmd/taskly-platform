@@ -33,8 +33,8 @@
 <script defer src="/js/taskly-profile-delete-dialog.js?v=1"></script>
   <link rel="stylesheet" href="/css/taskly-artisan-documents.css?v=20261120-docs31">
   <link rel="stylesheet" href="/css/taskly-artisan-zone.css?v=20261120-1">
-  <link rel="stylesheet" href="/css/taskly-disponibilite.css?v=2a">
-  <script defer src="/js/taskly-disponibilite-privee.js?v=2a"></script>
+  <link rel="stylesheet" href="/css/taskly-disponibilite.css?v=2a2">
+  <script defer src="/js/taskly-disponibilite-privee.js?v=2a2"></script>
 </head>
 <body class="dashboard-page" data-require-role="artisan" data-workspace-page="profil">
   <div id="site-header"></div>
@@ -84,26 +84,32 @@
           </div>
           <div class="panel-body">
             <div id="artisan-profile-card"></div>
-            <section class="ta-panel ta-premium" aria-labelledby="ta-title">
-              <header class="ta-heading"><span class="ta-illustration" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18m-12 5 2 2 4-4"></path></svg></span><div><h2 id="ta-title">Ma disponibilité professionnelle</h2><p>Indiquez aux clients quand vous pouvez intervenir.</p></div></header>
-              <div class="ta-current-box" id="ta-current-box" data-status="non_renseignee"><span class="ta-dot" aria-hidden="true"></span><div><strong id="ta-current" role="status">Chargement…</strong><p id="ta-expiration"></p></div></div>
-              <div class="ta-layout">
-                <form id="ta-form">
-                  <fieldset id="ta-fields" disabled>
-                    <legend>Mon statut de disponibilité</legend>
-                    <div class="ta-options" role="group" aria-label="Choisir un statut">
-                      <label class="ta-option" data-status="disponible"><input type="radio" name="ta-status" value="disponible"><span class="ta-option-icon" aria-hidden="true">✓</span><strong>Disponible</strong><small>Je peux prendre de nouvelles demandes.</small></label>
-                      <label class="ta-option" data-status="occupe"><input type="radio" name="ta-status" value="occupe"><span class="ta-option-icon" aria-hidden="true">◷</span><strong>Occupé temporairement</strong><small>Je suis en intervention ou occupé.</small></label>
-                      <label class="ta-option" data-status="indisponible"><input type="radio" name="ta-status" value="indisponible"><span class="ta-option-icon" aria-hidden="true">⊘</span><strong>Indisponible</strong><small>Je ne peux pas intervenir actuellement.</small></label>
-                      <label class="ta-option" data-status="non_renseignee"><input type="radio" name="ta-status" value="non_renseignee" checked><span class="ta-option-icon" aria-hidden="true">—</span><strong>Non renseignée</strong><small>Je ne publie pas mon statut.</small></label>
+            <!-- Disponibilite, sous les informations personnelles et professionnelles du profil. -->
+            <section class="ta-panel ta-premium" id="ta-availability" aria-labelledby="ta-title">
+              <header class="ta-heading"><span class="ta-illustration" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18m-12 5 2 2 4-4"></path></svg></span><div><h2 id="ta-title">Ma disponibilité professionnelle</h2><p>Indiquez votre disponibilité réelle aux clients, indépendamment de vos réservations.</p></div></header>
+              <div class="ta-current-box" id="ta-current-box" data-status="non_renseignee"><span class="ta-dot" aria-hidden="true"></span><div><strong id="ta-current" role="status">Chargement…</strong><p id="ta-expiration"></p></div><span class="ta-current-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 12 4 4 8-8"></path></svg></span></div>
+              <form id="ta-form">
+                <fieldset id="ta-fields" disabled>
+                  <div class="ta-layout">
+                    <div class="ta-settings">
+                      <h3>Mon statut de disponibilité</h3>
+                      <div class="ta-options" role="group" aria-label="Choisir un statut">
+                        <label class="ta-option" data-status="disponible"><input type="radio" name="ta-status" value="disponible"><span class="ta-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18"></path></svg></span><span class="ta-choice-text"><strong>Disponible</strong><small>Je peux prendre de nouvelles demandes.</small></span><span class="ta-radio" aria-hidden="true"></span></label>
+                        <label class="ta-option" data-status="occupe"><input type="radio" name="ta-status" value="occupe"><span class="ta-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3h14M5 21h14M7 3v4l5 5-5 5v4m10-18v4l-5 5 5 5v4"></path></svg></span><span class="ta-choice-text"><strong>Occupé temporairement</strong><small>Je suis occupé pour le moment.</small></span><span class="ta-radio" aria-hidden="true"></span></label>
+                        <label class="ta-option" data-status="indisponible"><input type="radio" name="ta-status" value="indisponible"><span class="ta-option-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m6 18 12-12"></path></svg></span><span class="ta-choice-text"><strong>Indisponible</strong><small>Je ne peux pas prendre de nouvelles demandes pour le moment.</small></span><span class="ta-radio" aria-hidden="true"></span></label>
+                      </div>
+                      <label class="ta-neutral"><input type="radio" name="ta-status" value="non_renseignee" checked><span class="ta-radio" aria-hidden="true"></span><span>Ne pas renseigner ma disponibilité</span></label>
+                      <div class="ta-duration"><div class="ta-duration-head"><h3>Durée de disponibilité</h3><small>Modifiable à tout moment.</small></div><div class="ta-duration-options" role="group" aria-label="Durée de disponibilité"><button type="button" data-ta-duration="2" aria-pressed="false"><span class="ta-radio" aria-hidden="true"></span>Pendant 2 h</button><button type="button" data-ta-duration="8" aria-pressed="false"><span class="ta-radio" aria-hidden="true"></span>Pendant 8 h</button><button type="button" data-ta-duration="other" aria-pressed="true"><span class="ta-radio" aria-hidden="true"></span>Autre durée</button></div><label class="ta-custom-duration" id="ta-custom-duration" for="ta-duration"><span class="ta-sr">Choisir la durée</span><select class="form-select" id="ta-duration"><option value="1">1 heure</option><option value="2">2 heures</option><option value="4">4 heures</option><option value="8">8 heures</option><option value="24" selected>24 heures</option><option value="48">48 heures</option><option value="168">7 jours</option></select></label></div>
+                      <label class="ta-switch-row"><input type="checkbox" id="ta-fast"><span class="ta-toggle" aria-hidden="true"></span><strong>Intervention rapide</strong><small>Pour les petits dépannages, sans garantie de délai.</small></label>
                     </div>
-                    <div class="ta-duration"><label for="ta-duration">Durée à partir de l’enregistrement</label><select class="form-select" id="ta-duration"><option value="1">1 heure</option><option value="2">2 heures</option><option value="4">4 heures</option><option value="8">8 heures</option><option value="24" selected>24 heures</option><option value="48">48 heures</option><option value="168">7 jours</option></select><small>Votre statut expire automatiquement. Vous pouvez le modifier avant son expiration.</small></div>
-                    <label class="ta-switch-row"><input type="checkbox" id="ta-fast"><span class="ta-toggle" aria-hidden="true"></span><span><strong>Intervention rapide</strong><small>Pour les petits dépannages, sans garantie de délai.</small></span></label>
-                    <button class="btn primary ta-save" type="submit">Enregistrer ma disponibilité</button>
-                  </fieldset>
-                </form>
-                <aside class="ta-planning" aria-label="Suivi des interventions"><div class="ta-planning-card"><span class="ta-illustration" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18"></path></svg></span><h3>Mes interventions</h3><p id="ta-planning-status" role="status">Chargement des demandes…</p><p id="ta-planning-next"></p><a class="btn outline" href="/espace/artisan/demandes">Consulter mes demandes</a></div><div class="ta-info"><strong>Disponibilité et réservations</strong><p>Après une intervention, réglez votre disponibilité sans attendre la confirmation du client. Pour le moment, le calendrier des demandes conserve ses règles existantes.</p></div></aside>
-              </div>
+                    <aside class="ta-planning" aria-label="Suivi des interventions">
+                      <div class="ta-planning-card"><div class="ta-planning-head"><span class="ta-illustration" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18"></path></svg></span><div><h3>Mes interventions</h3><p>Suivez vos demandes acceptées et à confirmer.</p></div></div><div class="ta-planning-summary"><p id="ta-planning-status" role="status">Chargement des demandes…</p><p id="ta-planning-next"></p></div></div>
+                      <div class="ta-info"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5m0-9v.5"></path></svg><div><strong>Disponibilité et réservations</strong><p>Après une intervention, vous pouvez actualiser votre disponibilité sans attendre la confirmation du client. Les créneaux horaires ne sont pas encore gérés.</p></div></div>
+                    </aside>
+                  </div>
+                  <div class="ta-actions"><button class="btn primary ta-save" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-10"></path></svg>Enregistrer ma disponibilité</button><a class="btn outline ta-requests" href="/espace/artisan/demandes"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M7 3v4m10-4v4M3 10h18m-12 5 2 2 4-4"></path></svg>Consulter mes demandes</a><small>Votre statut aide les clients à vous trouver plus rapidement.</small></div>
+                </fieldset>
+              </form>
               <button class="btn outline" type="button" id="ta-retry" hidden>Réessayer</button><p id="ta-message" role="status" aria-live="polite"></p>
             </section>
             <div hidden><form id="artisan-photo-form" class="mt-22">
