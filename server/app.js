@@ -46,6 +46,11 @@ app.use(require('./middleware/publicFiles').publicAssets);
 app.use('/api', (req,res,next)=>{res.setHeader('Cache-Control','private, no-store');next();});
 app.use(express.json({limit:'100kb'}));
 app.use(express.urlencoded({extended:false,limit:'100kb'}));
+// Lecture par jeton uniquement, sans cookie de session ni accès à la boîte.
+if (process.env.TASKLY_MAIL_READ_LINK_ENABLED === 'true') {
+  const mail = require('./routes/professionalMailRoutes');
+  require('./routes/professionalMailReadRoutes').mount(app,{redeem:mail.redeemNotification,retry:mail.retryNotifications,limiter:require('./middleware/securityMiddleware').limiter});
+}
 // Les comptes publics et administrateurs n'utilisent ni le même cookie ni le même contexte.
 const sessionPublique = configurerSession(store, false);
 const sessionAdmin = configurerSession(store, true);

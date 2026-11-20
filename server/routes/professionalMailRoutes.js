@@ -86,7 +86,7 @@ function correspondMail(p,r,clientEnabled){
 // TASKLY_MAIL_CONTINUITY_END
 const correspond=(p,r)=>correspondMail(p,r,modeClient(process.env));
 const gateway=internalMode
- ? createInternalGateway({transaction,profil,correspond,clientEnabled:modeClient(process.env)})
+ ? createInternalGateway({transaction,profil,correspond,clientEnabled:modeClient(process.env),enableNotifications:process.env.TASKLY_MAIL_READ_LINK_ENABLED==='true'&&require('../services/professionalMailNotifications').configured(process.env)})
  : createGateway();
 
 function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
@@ -153,4 +153,4 @@ admin.post('/:id/decision',sensible,wrap(async(req,res)=>{
  res.json({message:decision==='approve'?'Demande approuvée. Création de la boîte en attente du fournisseur.':'Demande refusée.'});
 }));
 require('./professionalMailboxRoutes').mount({artisan,admin,db,transaction,profil,correspond,wrap,erreur,limiter,gateway,sendConfirmation:(...args)=>require('../services/adminMailService').envoyerCourrielAdmin(...args)});
-module.exports={artisan,admin};
+module.exports={artisan,admin,redeemNotification:gateway.redeemNotification,retryNotifications:gateway.retryNotifications};

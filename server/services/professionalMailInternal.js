@@ -13,7 +13,7 @@ function internalAddress(address) {
         /^[a-z0-9-]+\.taskly\.test$/.test(address.split('@')[1]);
 }
 
-function createInternalGateway({transaction, profil, correspond, env = process.env, clientEnabled = false}) {
+function createInternalGateway({transaction, profil, correspond, env = process.env, clientEnabled = false, enableNotifications = false, sendNotification}) {
 
     const configured =
         env.TASKLY_MAIL_INTERNAL_ENABLED === 'true' &&
@@ -51,7 +51,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
             throw error('Boite interne non autorisee.');
         }
 
-        return m;
+        return enableNotifications ? {...m, notificationEmail:p.email} : m;
     }
 
     async function own(conn, mailbox) {
@@ -78,8 +78,10 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
         };
     }
 
+    const notifications = enableNotifications && configured ? require('./professionalMailNotifications').createNotifications({transaction,active,format,env,send:sendNotification}) : null;
     return {
         configured, foldersEnabled,
+        ...(notifications ? {redeemNotification:notifications.redeem,retryNotifications:notifications.retry} : {}),
         async listCopies(mailbox, box, next, q='') {
             if(!foldersEnabled)throw error('Dossiers indisponibles.',503);
             if(!Object.hasOwn(filters,box)||typeof q!=='string'||q.length>100)throw error('Recherche invalide.',400);
@@ -196,7 +198,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
                 throw error('Seules les adresses Taskly internes sont acceptees.', 400);
             }
 
-            return transaction(async conn => {
+            const result = await transaction(async conn => {
 
                 const [targets] = await conn.query(
                     `SELECT user_id FROM taskly_professional_mailboxes
@@ -244,7 +246,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
                         throw error('Identifiant envoi deja utilise.', 409);
                     }
 
-                    return {id: old.message_id};
+                    return {id: old.message_id, targetId};
                 }
 
                 if (!target || target.address !== d.to) {
@@ -269,8 +271,12 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
                     ]
                 );
 
-                return {id};
+                if(notifications)await notifications.enqueue(conn,targetId,id);
+                return {id,targetId};
             });
+            // SMTP is performed only after the two copies and notification are committed.
+            if(notifications){try{await notifications.deliver(result.targetId,result.id);}catch(e){console.error('Notification Taskly Mail :',e.code||e.name);}}
+            return {id:result.id};
         }
     };
 }
