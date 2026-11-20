@@ -34,3 +34,23 @@ test('pending premium : décoration seule, conserve le submit et la confirmation
  assert.match(js,/dialog\.taskly-confirm-dialog/);
  assert.match(read('client/public/js/artisan-pending.js'),/window\.confirmerSuppressionCompte\(\)/);
 });
+test('pending premium V2 : mêmes largeurs que le conteneur de la page Artisans',()=>{
+ const directory=read('client/public/css/artisan-directory-fidele.css');
+ assert.match(directory,/max-width:1592px!important;width:calc\(100% - 48px\)!important/);
+ assert.match(css,/main\.pending-shell>\.container\.pending-content\{[^}]*width:calc\(100% - 48px\)!important;max-width:1592px!important/);
+ assert.match(css,/@media\(max-width:640px\)\{[^}]*width:calc\(100% - 28px\)!important/);
+ assert.match(html,/artisan-pending-fidele\.css\?v=premium3/);
+});
+test('pending premium V2 : en-têtes et suppression horizontaux malgré les styles workspace',()=>{
+ assert.match(css,/#pending-forms>\.pp-card>\.panel-header\{display:grid!important;grid-template-columns:48px minmax\(0,1fr\)!important/);
+ assert.match(css,/#pending-forms>\.pending-account-action>button\.workspace-action\{[^}]*grid-template-columns:48px minmax\(0,1fr\) auto!important/);
+ assert.match(css,/workspace-action:focus-visible\{outline:2px solid #cc1635!important/);
+});
+
+test('pending premium V3 : sélection native conservée et présentation française',()=>{
+ assert.match(html,/id="pp-upload-name" role="status">Aucun fichier sélectionné/);
+ assert.match(html,/id="pending-doc" name="document" type="file"[^>]*required/);
+ assert.match(js,/name\.textContent=file\?file\.name/);
+ assert.match(js,/input\.form\?\.addEventListener\('reset',/);
+ assert.match(css,/\.pp-upload:focus-within\{outline:2px solid/);
+});

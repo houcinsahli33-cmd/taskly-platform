@@ -103,3 +103,58 @@
 .pending-page .tp-del-dialog .pp-eye-detached{top:34px;right:6px;z-index:2}.pending-page .tp-del-dialog #pending-delete-password{padding-left:46px!important}.pending-page .tp-del-dialog .pp-danger-copy .tp-del-svg,.pending-page .pending-account-action .tp-del-svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;width:24px;height:24px}.pending-page .pending-account-action .pp-danger-cta .tp-del-svg{width:17px;height:17px}
 .pending-page #pending-forms #pending-support-form .btn.primary{margin-top:6px}
 .pending-page #pending-forms:has(#pending-doc-form[hidden]) .pp-step.current{background:#e3e9e7;color:#52646b}
+
+/* V2 : mêmes dimensions que l'annuaire (liste et carte), sans toucher au header/footer.
+   Les règles workspace-pro sont partagées : isoler les corrections à cette page. */
+body.pending-page main.pending-shell{width:100%!important;max-width:none!important;margin:0!important;padding:18px 0 28px!important;min-height:0!important}
+body.pending-page main.pending-shell>.container.pending-content{box-sizing:border-box!important;width:calc(100% - 48px)!important;max-width:1592px!important;min-width:0!important;margin-inline:auto!important;padding:0!important}
+body.pending-page .pending-content .pp-crumb{margin-bottom:14px}
+body.pending-page .pending-content .pending-intro{padding:24px 30px!important;margin-bottom:16px!important;gap:24px;grid-template-columns:minmax(0,1fr) minmax(160px,25%)}
+body.pending-page .pending-content .pp-hero-art{max-height:180px}
+body.pending-page #pending-forms{gap:16px!important;margin:0!important;align-items:stretch!important}
+body.pending-page #pending-forms>.pp-card>.panel-header{display:grid!important;grid-template-columns:48px minmax(0,1fr)!important;justify-content:start!important;justify-items:start!important;align-items:center!important;gap:14px!important;text-align:left!important;padding:18px 20px 10px!important;min-height:0!important}
+body.pending-page #pending-forms>.pp-card>.panel-header>div{width:100%!important;min-width:0!important;margin:0!important;text-align:left!important;justify-self:start!important}
+body.pending-page #pending-forms>.pp-card>.panel-header h2,body.pending-page #pending-forms>.pp-card>.panel-header p{text-align:left!important;margin-left:0!important;margin-right:0!important}
+body.pending-page #pending-forms>.pp-card>.panel-body{padding:8px 20px 18px!important;min-height:0!important}
+body.pending-page #pending-forms>.pp-card form{padding:0!important;min-height:0!important}
+body.pending-page #pending-forms #pending-support-form .btn.primary{margin-top:6px!important}
+body.pending-page #pending-forms .pp-received{margin-top:10px!important}
+body.pending-page #pending-forms>.pp-progress{padding:14px 20px!important}
+body.pending-page #pending-forms>.pp-public{padding:15px 20px!important}
+/* Le bouton historique ouvre toujours le même dialog. La grille écrase les styles
+   flex-column et centrages du composant workspace-action générique. */
+body.pending-page #pending-forms>.pending-account-action{display:block!important;margin:0!important;padding:0!important;width:100%!important;min-width:0!important}
+body.pending-page #pending-forms>.pending-account-action>button.workspace-action{box-sizing:border-box!important;display:grid!important;grid-template-columns:48px minmax(0,1fr) auto!important;grid-auto-flow:row!important;flex-direction:row!important;align-items:center!important;justify-items:start!important;justify-content:stretch!important;gap:15px!important;width:100%!important;max-width:none!important;min-height:84px!important;height:auto!important;padding:15px 20px!important;margin:0!important;text-align:left!important;border:1px solid #ef9ca8!important;background:#fff2f4!important;border-radius:14px!important;box-shadow:none!important;outline:none}
+body.pending-page #pending-forms>.pending-account-action>button.workspace-action:hover{border-color:#d71e39!important;background:#ffeaee!important}
+body.pending-page #pending-forms>.pending-account-action>button.workspace-action:focus-visible{outline:2px solid #cc1635!important;outline-offset:3px!important}
+body.pending-page #pending-forms>.pending-account-action .pp-danger-icon{display:grid!important;place-items:center!important;margin:0!important;width:48px!important;height:48px!important}
+body.pending-page #pending-forms>.pending-account-action .pp-danger-copy{display:grid!important;justify-items:start!important;align-items:start!important;text-align:left!important;width:100%!important;margin:0!important;padding:0!important;gap:4px!important}
+body.pending-page #pending-forms>.pending-account-action .pp-danger-copy strong{font-size:17px!important;line-height:1.3!important;margin:0!important;color:#b30a2b!important;text-align:left!important}
+body.pending-page #pending-forms>.pending-account-action .pp-danger-copy>span{font-size:13px!important;line-height:1.5!important;margin:0!important;text-align:left!important;color:#536b7a!important}
+body.pending-page #pending-forms>.pending-account-action .pp-danger-cta{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:center!important;justify-self:end!important;gap:8px!important;min-height:44px!important;width:auto!important;margin:0!important;padding:10px 15px!important;background:linear-gradient(180deg,#ed2445,#c20c2b)!important;color:#fff!important;border-radius:9px!important;text-align:center!important;font-size:13px!important;font-weight:750!important}
+body.pending-page dialog.workspace-dialog.tp-del-dialog{width:min(580px,calc(100vw - 24px))!important;max-height:calc(100dvh - 32px)!important}
+body.pending-page .tp-del-dialog .workspace-dialog-header{min-height:78px!important;padding:16px 18px!important}
+body.pending-page .tp-del-dialog .workspace-dialog-header h2{font-size:20px!important}
+body.pending-page .tp-del-dialog .workspace-dialog-body{padding:18px!important}
+body.pending-page .tp-del-dialog .tp-del-warning{padding:13px!important}
+body.pending-page .tp-del-dialog .tp-del-warning p,body.pending-page .tp-del-dialog #pending-delete-form .tp-del-consent{font-size:13px!important}
+body.pending-page .tp-del-dialog .tp-del-data{grid-template-columns:114px minmax(0,1fr)!important;padding:14px!important}
+body.pending-page .tp-del-dialog .tp-del-list li{font-size:12px!important}
+body.pending-page .tp-del-dialog .tp-del-actions>button{min-height:44px!important;font-size:13px!important}
+@media(max-width:800px){body.pending-page .pending-content .pending-intro{padding:20px!important;grid-template-columns:minmax(0,1fr) minmax(100px,20%)}body.pending-page #pending-forms>.pending-account-action>button.workspace-action{grid-template-columns:48px minmax(0,1fr)!important}body.pending-page #pending-forms>.pending-account-action .pp-danger-cta{grid-column:2;justify-self:start!important}}
+@media(max-width:640px){body.pending-page main.pending-shell>.container.pending-content{width:calc(100% - 28px)!important}body.pending-page main.pending-shell{padding:14px 0 22px!important}}
+@media(max-width:490px){body.pending-page .pending-content .pending-intro{padding:18px 15px!important}body.pending-page #pending-forms>.pp-card>.panel-header{grid-template-columns:40px minmax(0,1fr)!important;padding:14px!important;gap:10px!important}body.pending-page #pending-forms>.pp-card>.panel-body{padding:0 14px 14px!important}body.pending-page #pending-forms>.pp-progress,body.pending-page #pending-forms>.pp-public{padding:12px!important}body.pending-page #pending-forms>.pending-account-action>button.workspace-action{grid-template-columns:40px minmax(0,1fr)!important;padding:13px!important;gap:10px!important}body.pending-page #pending-forms>.pending-account-action .pp-danger-icon{width:40px!important;height:40px!important}body.pending-page #pending-forms>.pending-account-action .pp-danger-cta{grid-column:1/-1;width:100%!important}body.pending-page .tp-del-dialog .workspace-dialog-header{padding:12px!important;min-height:64px!important}body.pending-page .tp-del-dialog .workspace-dialog-header h2{font-size:16px!important}body.pending-page .tp-del-dialog .workspace-dialog-body{padding:12px!important}body.pending-page .tp-del-dialog .tp-del-data{grid-template-columns:64px minmax(0,1fr)!important;padding:8px!important}body.pending-page .tp-del-dialog .tp-del-actions>button{font-size:11px!important}}
+
+/* V3 : présentation du champ fichier natif, limitée à cette zone. */
+body.pending-page #pending-doc-form .pp-upload{position:relative;box-sizing:border-box;display:grid!important;justify-items:center!important;align-content:center;gap:8px;padding:16px 14px!important;min-height:158px;border:1.5px dashed #82c8b6;border-radius:13px;background:#f2faf7;color:#08795f;text-align:center;overflow:hidden;cursor:pointer;transition:background .15s,border-color .15s}
+body.pending-page #pending-doc-form .pp-upload>svg{box-sizing:content-box;width:29px;height:29px;padding:8px;border-radius:12px;background:#dff3ea;stroke-width:1.7}
+body.pending-page #pending-doc-form .pp-upload-title{font-size:14px;font-weight:750;color:#143c35;line-height:1.35}
+body.pending-page #pending-doc-form .pp-upload-choose{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:#00846a;color:white;border-radius:9px;padding:9px 17px;font-weight:700;font-size:13px;line-height:1.4;box-shadow:0 3px 7px #08795f16}
+body.pending-page #pending-doc-form .pp-upload-choose svg{width:16px;height:16px;flex:none}
+body.pending-page #pending-doc-form .pp-upload-name{font-size:12px;color:#536b7a;max-width:100%;overflow-wrap:anywhere;line-height:1.4}
+body.pending-page #pending-doc-form .pp-upload #pending-doc{position:absolute!important;inset:0!important;z-index:2;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;opacity:0!important;cursor:pointer!important}
+body.pending-page #pending-doc-form .pp-upload:hover,body.pending-page #pending-doc-form .pp-upload:focus-within{background:#e6f6ef;border-color:#00846a}
+body.pending-page #pending-doc-form .pp-upload:focus-within{outline:2px solid #00846a;outline-offset:3px}
+body.pending-page #pending-doc-form .pp-upload.has-file{background:#e8f7ef;border-style:solid;border-color:#73bfa8}
+body.pending-page #pending-doc-form .pp-upload.has-file .pp-upload-name{color:#14684e;font-weight:650}
+@media(max-width:640px){body.pending-page #pending-doc-form .pp-upload{padding:13px 10px!important;min-height:146px}}

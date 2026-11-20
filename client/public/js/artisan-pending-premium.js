@@ -43,3 +43,15 @@
   new MutationObserver(()=>{const confirm=document.querySelector('dialog.taskly-confirm-dialog');if(!confirm||confirm.dataset.pendingCopy)return;confirm.dataset.pendingCopy='true';const label=confirm.querySelector('.taskly-danger-label'),heading=confirm.querySelector('#delete-confirm-title'),paragraph=confirm.querySelector('#delete-confirm-description');if(label)label.textContent='Annulation de l’inscription';if(heading)heading.textContent='Supprimer définitivement votre inscription artisan ?';if(paragraph)paragraph.textContent='Votre dossier artisan en attente, les justificatifs et les données qui y sont liées seront supprimés. Cette action est irréversible.';}).observe(document.body,{childList:true,subtree:true});
  });
 })();
+
+// Présentation uniquement : le champ natif conserve ses fichiers, sa validation et FormData.
+document.addEventListener('DOMContentLoaded',()=>{
+ if(!document.body.classList.contains('pending-page'))return;
+ const input=document.getElementById('pending-doc'),name=document.getElementById('pp-upload-name');
+ const zone=input?.closest('.pp-upload');
+ if(!input||!name||!zone)return;
+ const render=()=>{const file=input.files?.[0];name.textContent=file?file.name:'Aucun fichier sélectionné';zone.classList.toggle('has-file',!!file);};
+ input.addEventListener('change',render);
+ input.form?.addEventListener('reset',()=>queueMicrotask(render));
+ render();
+});
