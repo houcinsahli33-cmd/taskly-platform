@@ -106,3 +106,87 @@
 @media(max-width:1250px){#artisans-filter-form[data-map-mode="1"]{grid-template-columns:repeat(3,minmax(0,1fr))}#artisans-filter-form[data-map-mode="1"] .request-actions{grid-column:span 2}}
 @media(max-width:850px){.taskly-map-experience .tmp-split{grid-template-columns:minmax(0,1fr)}.taskly-map-experience .tmp-side{min-height:230px}.taskly-map-experience #taskly-artisans-map{height:340px}}
 @media(max-width:600px){#artisans-filter-form[data-map-mode="1"]{grid-template-columns:minmax(0,1fr)}#artisans-filter-form[data-map-mode="1"] .request-actions{grid-column:auto}.taskly-map-experience{padding:12px}.taskly-map-experience .tmp-side{padding:10px}.taskly-map-experience .tmp-toolbar .tmp-spacer{display:none}.taskly-map-experience #taskly-artisans-map{height:300px}}
+
+/* TASKLY_MAP_PREMIUM_V2 : uniquement le contenu de l'annuaire en mode carte. */
+.tmp-directory.tmp-map-mode{width:calc(100% - 48px)!important;max-width:1592px!important;min-width:0!important;margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}
+.tmp-directory.tmp-map-mode #artisans-filter-form{display:grid!important;grid-template-columns:minmax(0,1.05fr) minmax(0,.94fr) minmax(190px,1.1fr) minmax(0,1.07fr) max-content!important;gap:16px!important;align-items:end!important;margin:0 0 24px!important;padding:19px 22px!important;background:#fff!important;border:1px solid #dce8e5!important;border-radius:18px!important;box-shadow:0 6px 22px #123b3210!important;scroll-margin-top:100px;box-sizing:border-box}
+.tmp-directory.tmp-map-mode #artisans-filter-form>label,.tmp-directory.tmp-map-mode #artisans-filter-form>fieldset{min-width:0!important;width:100%!important;margin:0!important}
+.tmp-directory.tmp-map-mode #artisans-filter-form :is(.field-label,legend){min-height:21px;display:flex;align-items:center;gap:7px;color:#142d38;font-size:13px!important;font-weight:750;margin:0 0 9px!important;padding:0;white-space:nowrap}
+.tmp-directory.tmp-map-mode .tmp-field-icon{display:inline-flex;margin:0!important;color:#087e64;width:18px;height:18px;flex:none}
+.tmp-directory.tmp-map-mode :is(.tmp-field-icon,legend,.request-actions) svg{width:18px;height:18px;flex:none;color:inherit;vertical-align:middle}
+.tmp-directory.tmp-map-mode #artisans-filter-form :is(.form-control,.form-select){height:46px!important;min-height:46px!important;padding:10px 11px!important;box-sizing:border-box;width:100%!important;border:1px solid #ccd9da!important;border-radius:10px!important;background-color:white;font-size:14px!important;margin:0!important}
+.tmp-directory.tmp-map-mode #artisans-filter-form .request-actions{display:flex!important;flex-wrap:nowrap!important;gap:9px!important;grid-column:auto!important;width:auto!important;margin:0!important;align-items:center!important}
+.tmp-directory.tmp-map-mode #artisans-filter-form .request-actions .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px!important;padding:10px 14px!important;white-space:nowrap;border-radius:10px!important;font-weight:750;font-size:13px!important;box-shadow:none!important;margin:0!important}
+.tmp-directory.tmp-map-mode #artisans-filter-form .taskly-map-radius-options{border-radius:12px;min-height:46px;box-sizing:border-box;border-color:#cfdcdd;padding:3px}
+.tmp-directory.tmp-map-mode #artisans-filter-form .taskly-map-radius-options button{font-size:12px!important;border-radius:9px;height:38px;min-width:0;padding:0 7px}
+.tmp-directory.tmp-map-mode .taskly-map-experience{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 28px!important}
+.tmp-map-mode .taskly-map-experience .taskly-map-heading{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.12fr) minmax(205px,.72fr);gap:20px;align-items:center;margin:0 0 22px;padding:8px 0;border:0}
+.tmp-map-mode .taskly-map-heading-copy{gap:15px;min-width:0}
+.tmp-map-mode .taskly-map-experience .taskly-map-heading-icon{width:72px;height:72px;border-radius:18px;background:#d9f2e8}
+.tmp-map-mode .taskly-map-heading-icon svg{width:32px;height:32px}
+.tmp-map-mode .taskly-map-experience .taskly-map-heading h2{font-size:clamp(23px,2.05vw,30px)!important;letter-spacing:-.85px;line-height:1.2;margin:0 0 7px;color:#102b38;font-weight:800}
+.tmp-map-mode .taskly-map-heading-copy p{font-size:14px;line-height:1.5;color:#506875}
+.tmp-map-mode .tmp-heading-stats{display:flex;align-items:center;gap:16px;min-width:0}
+.tmp-map-mode .tmp-stat{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.tmp-map-mode .tmp-stat+.tmp-stat{border-left:1px solid #e1e8e6;padding-left:14px}
+.tmp-map-mode .tmp-stat-icon,.tmp-map-mode .taskly-map-notice>span{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:#def4eb;color:#087e64;flex:none}
+.tmp-map-mode .tmp-stat-icon svg,.tmp-map-mode .taskly-map-notice svg{width:22px;height:22px}
+.tmp-map-mode .tmp-stat strong,.tmp-map-mode .taskly-map-notice strong{font-size:14px;line-height:1.3;font-weight:800;color:#142d38;display:block}
+.tmp-map-mode .tmp-stat small,.tmp-map-mode .taskly-map-notice p{font-size:12px;line-height:1.45;color:#516873;display:block;margin:4px 0 0}
+.tmp-map-mode .taskly-map-experience .taskly-map-notice{max-width:none;border:0;background:transparent;padding:0;gap:10px;min-width:0}
+.tmp-map-mode .taskly-map-experience .taskly-artisans-map-controls{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:11px 13px;border:1px solid #dce8e5;border-radius:16px;background:#fff;box-shadow:0 3px 12px #143b3110;margin:0 0 12px}
+.tmp-map-mode .taskly-map-experience .taskly-map-view-switch{min-width:235px;justify-content:stretch;border-color:#d5e5df;border-radius:999px;gap:4px}
+.tmp-map-mode .taskly-map-experience .taskly-map-view-switch .btn{flex:1;min-height:41px!important;font-size:14px!important;padding:8px 19px!important;white-space:nowrap}
+.tmp-map-mode .taskly-map-experience .tmp-toolbar{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex:1;flex-wrap:wrap;min-width:0;margin:0;padding:0;border:0;box-shadow:none}
+.tmp-map-mode .tmp-toolbar strong{font-size:13px!important;display:flex;align-items:center;gap:5px;white-space:nowrap;color:#142d38}
+.tmp-map-mode .tmp-toolbar svg{width:17px;height:17px;flex:none;color:#087e64}
+.tmp-map-mode .taskly-map-experience .tmp-chip,.tmp-map-mode .tmp-toolbar .tmp-verified{display:inline-flex;align-items:center;gap:6px;justify-content:center;font-size:13px;font-weight:700;border:1px solid #ccdcd8;color:#21443d;background:#fff;border-radius:999px;min-height:39px;padding:8px 13px;white-space:nowrap;box-sizing:border-box}
+.tmp-map-mode .taskly-map-experience .tmp-chip[aria-pressed=true]{background:#e4f5ed;border-color:#91cfba;color:#08765d}
+.tmp-map-mode .taskly-map-experience .tmp-toolbar #tmp-geo{background:#087e64;border-color:#087e64;color:#fff}
+.tmp-map-mode .tmp-toolbar #tmp-geo svg{color:#fff}.tmp-map-mode .tmp-toolbar .tmp-spacer{display:none}
+.tmp-map-mode #taskly-artisans-map-panel{margin:0}
+.tmp-map-mode .taskly-map-experience .taskly-map-results{margin:0 0 12px;background:#eef8f4;border:1px solid #d4e9e0;border-radius:12px;padding:9px 14px;min-height:50px}
+.tmp-map-mode .taskly-map-results>span{width:32px;height:32px}.tmp-map-mode #taskly-artisans-map-status{font-size:13px;line-height:1.45;color:#2c524b}
+.tmp-map-mode .taskly-map-experience #tmp-geo-status{font-size:12px;background:#fff;border-left:3px solid #087e64;padding:7px 11px;margin:0 0 10px;color:#526873}
+.tmp-map-mode .taskly-map-experience .tmp-split{grid-template-columns:minmax(0,1.53fr) minmax(0,1fr);gap:13px;align-items:stretch}
+.tmp-map-mode .taskly-map-experience :is(.tmp-map-box,.tmp-side){background:white;border:1px solid #dce7e4;border-radius:17px;box-shadow:0 5px 20px #143c3110;min-width:0;box-sizing:border-box}
+.tmp-map-mode .tmp-map-box{display:flex;flex-direction:column;position:relative;min-height:484px}
+.tmp-map-mode .taskly-map-experience #taskly-artisans-map{height:434px;flex:1 1 434px;min-height:360px;isolation:isolate;border-radius:16px 16px 0 0}
+.tmp-map-mode #tmp-recenter{position:absolute;left:11px;top:83px;z-index:2;width:34px;height:34px;border:1px solid #b8c8c3;background:#fff;display:grid;place-items:center;color:#173c38;border-radius:7px;box-shadow:0 1px 5px #0003;cursor:pointer;padding:0}
+.tmp-map-mode #tmp-recenter svg{width:19px;height:19px}.tmp-map-mode #tmp-recenter:disabled{opacity:.5;cursor:default}
+.tmp-map-mode .taskly-map-experience .tmp-legend{font-size:12px;line-height:1.4;padding:14px 15px;gap:20px;color:#48616d;border-top:1px solid #e1eae7;min-height:50px;box-sizing:border-box;align-items:center}
+.tmp-map-mode .tmp-legend i{width:13px;height:13px;margin-right:7px}
+.tmp-map-mode .taskly-map-experience .tmp-side{min-height:484px;padding:15px 17px;gap:11px}
+.tmp-map-mode .taskly-map-experience .tmp-side-head{gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.tmp-map-mode .taskly-map-experience .tmp-side-head h3{font-size:19px;font-weight:800;letter-spacing:-.5px;line-height:1.35}
+.tmp-map-mode .taskly-map-experience .tmp-side-head select{font-size:13px;border-radius:12px;border-color:#ccd8dc;min-height:40px;padding:8px 9px;max-width:100%}
+.tmp-map-mode .taskly-map-experience #tmp-filter-caption{font-size:12px;margin:0;color:#5b707e}
+.tmp-map-mode .taskly-map-experience #tmp-results{display:grid;gap:9px;flex:1;align-content:start;min-width:0}
+.tmp-map-mode .taskly-map-experience .tmp-card{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 11px;min-height:104px;box-sizing:border-box;border-radius:14px;border:1px solid #dce5e4;box-shadow:0 2px 4px #102f2908;min-width:0}
+.tmp-map-mode .tmp-card.tmp-selected{background:#f1faf5;border-color:#087e64}
+.tmp-map-mode .taskly-map-experience .tmp-person{flex:1;min-width:0;gap:11px}
+.tmp-map-mode .taskly-map-experience .tmp-avatar{width:55px;height:55px;border:2px solid #e8f3ef}
+.tmp-map-mode .taskly-map-experience .tmp-name{font-size:16px;line-height:1.35;font-weight:800;margin:0 6px 2px 0}
+.tmp-map-mode .taskly-map-experience .tmp-person .tmp-verified{font-size:10px;color:#126d40;background:#d8f4df;border-radius:6px;padding:3px 5px;white-space:nowrap}
+.tmp-map-mode .taskly-map-experience .tmp-meta,.tmp-map-mode .taskly-map-experience .tmp-rating{font-size:12px;line-height:1.4;color:#495f6c;margin:3px 0 0}
+.tmp-map-mode .taskly-map-experience .tmp-rating{font-weight:750;color:#855d0d}
+.tmp-map-mode .taskly-map-experience .tmp-distance{display:block;font-size:11px;color:#607580;margin:3px 0 0}
+.tmp-map-mode .taskly-map-experience .tmp-foot{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:7px;flex:none;margin:0}
+.tmp-map-mode .taskly-map-experience .tmp-profile,.tmp-map-mode .taskly-map-experience .tmp-locate{font-size:12px;line-height:1.35;text-align:center;justify-content:center;font-weight:750;border-radius:8px;padding:7px 10px;white-space:nowrap}
+.tmp-map-mode .taskly-map-experience .tmp-locate{border:0;background:#eaf6f0;color:#167460}
+.tmp-map-mode .taskly-map-experience .tmp-nav{justify-content:center;gap:8px;margin:auto 0 0;flex-wrap:wrap}
+.tmp-map-mode #tmp-page-buttons{display:flex;gap:5px;align-items:center}
+.tmp-map-mode .taskly-map-experience .tmp-nav button{border:1px solid #d5e0df;min-height:40px;border-radius:9px;padding:8px 12px;color:#17343c;font-size:13px;background:#fff}
+.tmp-map-mode .taskly-map-experience .tmp-nav button[aria-current=page]{background:#087e64;color:white;border-color:#087e64}
+.tmp-map-mode .tmp-sr{position:absolute!important;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.tmp-map-mode .taskly-map-experience .tmp-empty{display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px 16px;margin:0;min-height:305px;box-sizing:border-box;border:1px dashed #d4e7de;border-radius:14px;background:#f8fcfa;line-height:1.55}
+.tmp-map-mode .tmp-empty-icon{display:grid;place-items:center;width:65px;height:65px;background:#e0f3e9;color:#087e64;border-radius:20px;font-size:35px;margin:0 0 14px;font-weight:700}
+.tmp-map-mode .tmp-empty h4{font-size:18px;font-weight:800;margin:0 0 7px;color:#17343c}.tmp-map-mode .tmp-empty p{font-size:13px;max-width:320px;margin:0 0 18px;color:#536d77}
+.tmp-map-mode .tmp-empty-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.tmp-map-mode .tmp-empty-button{font:inherit;font-size:12px;font-weight:750;border:1px solid #087e64;background:#087e64;color:#fff;padding:9px 12px;border-radius:9px;cursor:pointer}.tmp-map-mode .tmp-empty-button+button{background:white;color:#087e64}
+.tmp-map-mode .taskly-map-experience .tmp-marker{width:40px;height:40px;border:3px solid white;box-shadow:0 3px 8px #163d3540;position:relative;box-sizing:border-box;font-size:20px}.tmp-map-mode .tmp-marker:after{content:'';position:absolute;bottom:-7px;left:12px;border:6px solid transparent;border-bottom:0;border-top:8px solid #fff}
+.tmp-map-mode .taskly-map-privacy{margin:12px 0 0;font-size:12px;color:#506977;line-height:1.5}
+.tmp-map-mode .taskly-map-experience [hidden]{display:none!important}
+@media(max-width:1300px){.tmp-directory.tmp-map-mode #artisans-filter-form{gap:10px!important;padding:15px!important;grid-template-columns:minmax(0,1fr) minmax(0,.9fr) minmax(170px,1fr) minmax(0,1fr) max-content!important}.tmp-directory.tmp-map-mode #artisans-filter-form .request-actions .btn{padding:9px 10px!important;font-size:12px!important}.tmp-directory.tmp-map-mode #artisans-filter-form .request-actions svg{display:none}.tmp-map-mode .taskly-map-experience .taskly-map-heading{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(185px,.8fr);gap:13px}.tmp-map-mode .tmp-heading-stats{gap:10px}.tmp-map-mode .tmp-stat+.tmp-stat{padding-left:10px}.tmp-map-mode .tmp-stat-icon,.tmp-map-mode .taskly-map-notice>span{width:36px;height:36px}.tmp-map-mode .tmp-stat strong,.tmp-map-mode .taskly-map-notice strong{font-size:12px}.tmp-map-mode .tmp-stat small,.tmp-map-mode .taskly-map-notice p{font-size:11px}.tmp-map-mode .taskly-map-experience .tmp-card{padding:10px 8px}.tmp-map-mode .taskly-map-experience .tmp-avatar{width:45px;height:45px}.tmp-map-mode .taskly-map-experience .tmp-person{gap:8px}}
+@media(max-width:1050px){.tmp-directory.tmp-map-mode #artisans-filter-form{grid-template-columns:repeat(3,minmax(0,1fr))!important}.tmp-directory.tmp-map-mode #artisans-filter-form .request-actions{grid-column:span 2!important;justify-content:flex-end}.tmp-map-mode .taskly-map-experience .taskly-map-heading{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tmp-map-mode .taskly-map-notice{grid-column:1/-1}.tmp-map-mode .taskly-map-experience .tmp-split{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}.tmp-map-mode .taskly-map-experience .tmp-card{flex-wrap:wrap}.tmp-map-mode .taskly-map-experience .tmp-foot{flex-direction:row;flex:1;justify-content:flex-end}.tmp-map-mode .taskly-map-experience .tmp-person{flex-basis:100%}}
+@media(max-width:760px){.tmp-directory.tmp-map-mode{width:calc(100% - 28px)!important}.tmp-directory.tmp-map-mode #artisans-filter-form{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:13px!important;margin-bottom:17px!important}.tmp-directory.tmp-map-mode #artisans-filter-form .request-actions{grid-column:1/-1!important;justify-content:stretch}.tmp-directory.tmp-map-mode #artisans-filter-form .request-actions .btn{flex:1}.tmp-map-mode .taskly-map-experience .taskly-map-heading{grid-template-columns:minmax(0,1fr);gap:14px}.tmp-map-mode .taskly-map-experience .taskly-map-heading-icon{width:52px;height:52px}.tmp-map-mode .tmp-heading-stats{gap:16px}.tmp-map-mode .taskly-map-heading-copy p{font-size:12px}.tmp-map-mode .taskly-map-notice{grid-column:auto}.tmp-map-mode .taskly-map-experience .tmp-toolbar{flex-basis:100%;justify-content:flex-start}.tmp-map-mode .tmp-toolbar strong{flex-basis:100%}.tmp-map-mode .taskly-map-experience .tmp-split{grid-template-columns:minmax(0,1fr)}.tmp-map-mode .tmp-map-box{min-height:0}.tmp-map-mode .taskly-map-experience #taskly-artisans-map{height:340px;min-height:300px;flex:0 0 340px}.tmp-map-mode .taskly-map-experience .tmp-side{min-height:0;padding:13px}.tmp-map-mode .taskly-map-experience .tmp-card{flex-wrap:nowrap}.tmp-map-mode .taskly-map-experience .tmp-person{flex-basis:auto}.tmp-map-mode .taskly-map-experience .tmp-foot{flex:0 0 auto;flex-direction:column}.tmp-map-mode .taskly-map-experience .tmp-empty{min-height:235px}}
+@media(max-width:460px){.tmp-directory.tmp-map-mode #artisans-filter-form{grid-template-columns:minmax(0,1fr)!important}.tmp-map-mode .taskly-map-experience .tmp-card{flex-wrap:wrap}.tmp-map-mode .taskly-map-experience .tmp-person{flex-basis:100%}.tmp-map-mode .taskly-map-experience .tmp-foot{flex:1;flex-direction:row;justify-content:flex-end}.tmp-map-mode .taskly-map-experience .tmp-legend{gap:8px 13px;font-size:11px}}

@@ -14,7 +14,7 @@
   <script defer src="/js/taskly-request-calendar.js"></script>
   <script defer src="/js/taskly-request-wizard.js?v=1"></script>
   <script defer src="/js/artisans.js?v=wizard1"></script>
-<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/taskly-artisans-map.css?v=premium1"></head>
+<link rel="stylesheet" href="/css/artisan-directory-fidele.css?v=20261012-2"><link rel="stylesheet" href="/css/taskly-artisans-map.css?v=premium2"></head>
 <body data-active="artisans">
   <div id="site-header"></div>
   <main class="page-main">
@@ -33,19 +33,19 @@
 
     <!-- Filtres et liste artisans -->
     <section class="section">
-      <div class="container">
+      <div class="container tmp-directory">
         <form class="filters" id="artisans-filter-form">
           <label>
-            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true">⚒</span>Service</span>
+            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7a5 5 0 0 0-6-6l3 3-1 3-3 1-3-3a5 5 0 0 0 6 6l8 8a2 2 0 0 0 3-3l-7-9Z"></path></svg></span>Service</span>
             <select class="form-select" id="filter-service"></select>
           </label>
 
           <label>
-            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true">⌖</span>Wilaya</span>
+            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0ZM12 7v6M9 10h6"></path></svg></span>Wilaya</span>
             <select class="form-select" id="filter-wilaya"></select>
           </label>
 
-            <fieldset class="taskly-map-radius-fieldset" hidden><legend>Rayon de recherche</legend>
+            <fieldset class="taskly-map-radius-fieldset" hidden><legend><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12ZM12 10v4M10 12h4"></path></svg> Rayon de recherche</legend>
               <div class="taskly-map-radius-options" role="group" aria-label="Rayon de recherche">
                 <button type="button" data-map-radius="5" aria-pressed="false">5 km</button>
                 <button type="button" data-map-radius="10" aria-pressed="true" class="selected">10 km</button>
@@ -55,13 +55,13 @@
               <select id="taskly-map-radius" class="taskly-map-original-select" aria-label="Rayon sélectionné" tabindex="-1"><option value="5">5 km</option><option value="10" selected>10 km</option><option value="25">25 km</option><option value="50">50 km</option></select>
             </fieldset>
           <label>
-            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true">⌕</span>Recherche</span>
+            <span class="field-label"><span class="tmp-field-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM15 15l5 5"></path></svg></span>Recherche</span>
             <input class="form-control" id="filter-search" placeholder="Nom, service, description">
           </label>
 
           <div class="request-actions">
-            <button class="btn primary" type="submit" aria-label="Rechercher">Rechercher</button>
-            <button class="btn outline" id="reset-filters" type="button" aria-label="Réinitialiser les filtres">Réinitialiser</button>
+            <button class="btn primary" type="submit" aria-label="Rechercher"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM15 15l5 5"></path></svg> Rechercher</button>
+            <button class="btn outline" id="reset-filters" type="button" aria-label="Réinitialiser les filtres"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"></path></svg> Réinitialiser</button>
           </div>
         </form>
         <section class="taskly-map-experience" aria-label="Carte des artisans proches">
@@ -70,35 +70,34 @@
               <h2>Carte des artisans proches</h2>
               <p>Découvrez les artisans situés à proximité de votre zone.</p>
             </div></div>
-            <div class="taskly-map-notice"><span aria-hidden="true">ⓘ</span><div><strong>Zones publiques uniquement</strong><p>Seuls les artisans ayant choisi une zone publique apparaissent sur la carte.</p></div></div>
+            <div class="tmp-heading-stats"><div class="tmp-stat"><span class="tmp-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM1 21v-3a8 8 0 0 1 16 0v3M17 3a4 4 0 0 1 0 7M19 13a6 6 0 0 1 4 6v2"></path></svg></span><div><strong id="tmp-head-count">Recherche des artisans</strong><small id="tmp-head-scope">Zones publiques</small></div></div><div class="tmp-stat tmp-stat-verified"><span class="tmp-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6l-9-4ZM8 12l3 3 5-6"></path></svg></span><div><strong>Artisans vérifiés</strong><small>Profils approuvés</small></div></div></div><div class="taskly-map-notice"><span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20ZM12 11v6M12 7v.1"></path></svg></span><div><strong>Zones publiques uniquement</strong><p>Seuls les artisans ayant choisi une zone publique apparaissent sur la carte.</p></div></div>
           </div>
           <div class="taskly-artisans-map-controls" role="group" aria-label="Affichage de l'annuaire">
             <div class="taskly-map-view-switch">
               <button class="btn primary" type="button" data-artisan-view="liste" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Liste</button>
-              <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg> Carte des artisans proches</button>
+              <button class="btn outline" type="button" data-artisan-view="carte" aria-controls="taskly-artisans-map-panel" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg> Carte</button>
             </div>
-
-          </div>
-          <div id="taskly-artisans-map-panel" hidden>
-            <div class="tmp-toolbar" aria-label="Filtres de la carte">
-              <strong>Filtrer les résultats</strong>
-              <button class="tmp-chip" id="tmp-well" type="button" aria-pressed="false">☆ Bien notés (≥ 4,5/5)</button>
-              <span class="tmp-verified">✓ Profils approuvés uniquement</span>
+            <div class="tmp-toolbar" id="tmp-toolbar" hidden aria-label="Filtres de la carte">
+              <strong><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"></path></svg> Filtrer les résultats</strong>
+              <button class="tmp-chip" id="tmp-well" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"></path></svg> Bien notés (≥ 4,5)</button>
+              <span class="tmp-verified"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6l-9-4ZM8 12l3 3 5-6"></path></svg> Profils approuvés</span>
               <span class="tmp-spacer"></span>
-              <button class="tmp-chip" id="tmp-geo" type="button">⌖ Ma position</button>
+              <button class="tmp-chip" id="tmp-geo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12ZM12 10v4M10 12h4"></path></svg> Me localiser</button>
               <button class="tmp-chip" id="tmp-clear" type="button" hidden>Retirer ma position</button>
             </div>
-            <p id="tmp-geo-status" role="status">La localisation est facultative.</p>
+          </div>
+          <div id="taskly-artisans-map-panel" hidden>
+            <p id="tmp-geo-status" role="status" class="tmp-geo-message" hidden>La localisation est facultative.</p>
             <div class="taskly-map-results"><span aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M2 20v-2c0-3 3-5 7-5s7 2 7 5v2M17 5a3 3 0 0 1 0 6M18 13c3 0 5 2 5 5v2"/></svg></span><p id="taskly-artisans-map-status" role="status" aria-live="polite"></p><button id="tmp-more" class="tmp-chip" type="button" hidden>Élargir le rayon</button><button id="tmp-retry" class="tmp-chip" type="button" hidden>Réessayer</button></div>
             <div class="tmp-split">
               <div class="tmp-map-box">
-                <div id="taskly-artisans-map" aria-label="Carte interactive"></div>
+                <div id="taskly-artisans-map" aria-label="Carte interactive"></div><button type="button" id="tmp-recenter" title="Recentrer la carte" aria-label="Recentrer la carte"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M2 12h4M18 12h4M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12ZM12 10v4M10 12h4"></path></svg></button>
                 <div class="tmp-legend"><span><i class="tmp-blue"></i>Votre zone approximative</span><span><i class="tmp-ring"></i>Rayon de recherche</span><span><i></i>Zone artisan</span></div>
               </div>
               <aside class="tmp-side" aria-label="Artisans trouvés">
-                <div class="tmp-side-head"><h3>Artisans à proximité (<span id="tmp-count">—</span>)</h3><select id="tmp-sort" aria-label="Trier les artisans"><option value="distance">Proximité</option><option value="note">Meilleures notes</option></select></div>
+                <div class="tmp-side-head"><h3><span id="tmp-side-title">Artisans à proximité</span> (<span id="tmp-count">—</span>)</h3><select id="tmp-sort" aria-label="Trier les artisans"><option value="distance">Proximité</option><option value="note">Meilleures notes</option></select></div>
                 <p id="tmp-filter-caption"></p><div id="tmp-results"></div>
-                <div class="tmp-nav"><button type="button" id="tmp-prev" disabled>‹ Précédent</button><span id="tmp-page" aria-live="polite">—</span><button type="button" id="tmp-next" disabled>Suivant ›</button></div>
+                <div class="tmp-nav"><button type="button" id="tmp-prev" disabled>‹ Précédent</button><span id="tmp-page" aria-live="polite">—</span><div id="tmp-page-buttons" aria-label="Pages de résultats"></div><button type="button" id="tmp-next" disabled>Suivant ›</button></div>
                 <p id="tmp-limit"></p>
               </aside>
             </div>
@@ -161,5 +160,5 @@
     <section class="rw-success" id="rw-success" hidden><div class="rw-success-icon">✓</div><h3>Votre demande a été envoyée !</h3><p>Retrouvez votre demande et suivez son avancement dans votre espace client.</p><a class="rw-primary" href="/espace/client/demandes">Voir mes demandes</a><button type="button" class="rw-secondary" data-rw-close>Fermer</button></section>
   </dialog>
   <div id="site-footer"></div>
-<script defer src="/js/taskly-artisans-map.js?v=premium1"></script></body>
+<script defer src="/js/taskly-artisans-map.js?v=premium2"></script></body>
 </html>
