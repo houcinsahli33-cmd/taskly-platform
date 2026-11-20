@@ -1,34 +1,426 @@
-/* TASKLY-PROFILE-PREMIUM-V1 - Gérer mon compte, maquette validée */
-body[data-workspace-page="profil"] .client-account-actions-heading[hidden]{display:none!important}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management{margin-top:24px!important;min-width:0;overflow:hidden;border:1px solid #dbe8e4;border-radius:20px;background:#f9fbfa;box-shadow:0 8px 22px #133e3214;font-family:Inter,"Segoe UI",Arial,sans-serif}
-#account-profile-editor.tp-management svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-#account-profile-editor.tp-management .tp-management-header{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:18px;padding:23px 28px 29px;background:linear-gradient(110deg,#045345,#07584b 70%,#15956b);color:white;border-radius:19px 19px 0 0}
-#account-profile-editor.tp-management .tp-management-header::before,#account-profile-editor.tp-management .tp-management-header::after{content:"";position:absolute;z-index:-1;pointer-events:none;width:50%;height:220%;right:-12%;top:-10%;border-radius:50%;background:#12ac7b55;transform:rotate(-29deg)}
-#account-profile-editor.tp-management .tp-management-header::after{right:-22%;top:35%;background:#7de0a640}
-#account-profile-editor.tp-management .tp-management-mark{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:linear-gradient(140deg,#299a79,#13705e);flex:none;color:white}
-#account-profile-editor.tp-management .tp-management-mark svg{width:39px;height:39px}
-#account-profile-editor.tp-management .tp-management-title{padding-left:20px;border-left:1px solid #ffffff90;min-width:0}
-#account-profile-editor.tp-management .tp-management-title h2{margin:0!important;font-size:clamp(22px,2.6vw,32px)!important;font-weight:800;color:#fff!important;line-height:1.2;letter-spacing:-.5px}
-#account-profile-editor.tp-management .tp-management-title p{margin:7px 0 0;color:#e0f5ed;font-size:14px;line-height:1.5}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-actions{position:relative;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important;padding:20px!important;margin:-8px 0 0!important;background:#fafcfb;border-radius:17px 17px 0 0;min-width:0}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]{--tone:#008764;--pale:#dcf5ea;position:relative;isolation:isolate;overflow:hidden;display:flex!important;align-items:center!important;gap:15px!important;min-width:0;width:100%;min-height:103px;padding:18px!important;text-align:left;background:white!important;border:1px solid #e0e9e5!important;border-radius:16px!important;box-shadow:0 5px 15px #123c3010;cursor:pointer;color:#10243b!important;transition:box-shadow .15s,border-color .15s,transform .15s}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]::before{content:""!important;position:absolute!important;z-index:-1;inset:auto -20px -36px auto!important;width:130px!important;height:84px!important;background:var(--pale)!important;border-radius:100% 0 0 0!important;transform:rotate(-20deg);pointer-events:none;display:block!important}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]::after{content:none!important;display:none!important}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="blue"]{--tone:#1468d4;--pale:#e3edfd}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="orange"]{--tone:#d77708;--pale:#fff0d9}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="purple"]{--tone:#792bd1;--pale:#eee4fc}
-#account-profile-editor.tp-management .workspace-action .tp-action-icon{display:grid!important;place-items:center;width:56px;height:56px;border-radius:14px;background:var(--pale);color:var(--tone);flex:none}
-#account-profile-editor.tp-management .tp-action-icon svg{width:30px;height:30px}
-#account-profile-editor.tp-management .workspace-action .tp-action-copy{display:flex!important;flex-direction:column;gap:6px;flex:1;min-width:0;border-left:1px solid #b8d0c9;padding-left:15px;white-space:normal}
-#account-profile-editor.tp-management .workspace-action .tp-action-copy strong{display:block!important;font-size:clamp(15px,1.4vw,19px)!important;line-height:1.25;color:#101d35!important;font-weight:750;overflow-wrap:anywhere}
-#account-profile-editor.tp-management .workspace-action .tp-action-description{display:block!important;font-size:13px!important;line-height:1.45;color:#526477!important;overflow-wrap:anywhere}
-#account-profile-editor.tp-management .workspace-action .tp-action-end{display:flex!important;align-items:center;justify-content:center;gap:9px;flex:none;color:#06664e}
-#account-profile-editor.tp-management .workspace-action[data-tp-tone]:hover{transform:translateY(-2px);border-color:var(--tone)!important;box-shadow:0 8px 18px #123c301b}
-#account-profile-editor.tp-management .workspace-action[data-tp-tone]:focus-visible{outline:2px solid var(--tone);outline-offset:2px}
-body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]{--tone:#c60f2c;--pale:#ffdfe3;grid-column:1/-1!important;background:#fff5f6!important;border-color:#f3a9b1!important;min-height:112px}
-#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]::before{display:none!important}
-#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-copy strong{color:#bc1730!important}
-#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end{color:white;background:linear-gradient(180deg,#ef3042,#c60927);border-radius:12px;padding:14px 17px;font-size:14px;font-weight:700;box-shadow:0 5px 12px #c6092722}
-@media(max-width:900px){body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-actions{grid-template-columns:1fr!important}.tp-management .workspace-action .tp-action-icon{width:48px;height:48px}}
-@media(max-width:540px){#account-profile-editor.tp-management .tp-management-header{padding:18px 16px 24px;gap:12px}#account-profile-editor.tp-management .tp-management-mark{width:48px;height:48px}#account-profile-editor.tp-management .tp-management-title{padding-left:12px}body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-actions{padding:12px!important;gap:10px!important}body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]{padding:13px!important;gap:10px!important;min-height:88px}#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]{flex-wrap:wrap}#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end{width:100%}}
-@media(prefers-reduced-motion:reduce){#account-profile-editor.tp-management .workspace-action{transition:none!important;transform:none!important}}
+/* TASKLY-PROFILE-PREMIUM-V2 - rendu plus fidèle à la maquette */
+body[data-workspace-page="profil"] .client-account-actions-heading[hidden]{
+  display:none!important;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management{
+  margin-top:28px!important;
+  min-width:0;
+  overflow:hidden;
+  border:1px solid #d9e5e1;
+  border-radius:28px;
+  background:#f4f8f7;
+  box-shadow:0 14px 34px rgba(19,62,50,.10);
+  font-family:Inter,"Segoe UI",Arial,sans-serif;
+}
+
+#account-profile-editor.tp-management svg{
+  width:24px;
+  height:24px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  flex:none;
+}
+
+#account-profile-editor.tp-management .tp-management-header{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  gap:22px;
+  padding:30px 34px 34px;
+  min-height:150px;
+  background:linear-gradient(120deg,#045346 0%,#05614f 55%,#18a06f 100%);
+  color:#fff;
+  border-radius:27px 27px 0 0;
+}
+
+#account-profile-editor.tp-management .tp-management-header::before,
+#account-profile-editor.tp-management .tp-management-header::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  pointer-events:none;
+  border-radius:50%;
+  transform:rotate(-25deg);
+}
+
+#account-profile-editor.tp-management .tp-management-header::before{
+  width:540px;
+  height:260px;
+  right:-120px;
+  top:-20px;
+  background:rgba(32,196,136,.28);
+}
+
+#account-profile-editor.tp-management .tp-management-header::after{
+  width:470px;
+  height:220px;
+  right:-70px;
+  bottom:-120px;
+  background:rgba(143,234,180,.18);
+}
+
+#account-profile-editor.tp-management .tp-management-mark{
+  display:grid;
+  place-items:center;
+  width:84px;
+  height:84px;
+  border-radius:24px;
+  background:linear-gradient(145deg,#2ea27e,#146b5d);
+  color:#fff;
+  flex:none;
+}
+
+#account-profile-editor.tp-management .tp-management-mark svg{
+  width:48px;
+  height:48px;
+}
+
+#account-profile-editor.tp-management .tp-management-title{
+  min-width:0;
+  padding-left:22px;
+  border-left:2px solid rgba(255,255,255,.65);
+}
+
+#account-profile-editor.tp-management .tp-management-title h2{
+  margin:0!important;
+  font-size:clamp(34px,3.2vw,54px)!important;
+  line-height:1.1;
+  font-weight:800;
+  letter-spacing:-.8px;
+  color:#fff!important;
+}
+
+#account-profile-editor.tp-management .tp-management-title p{
+  margin:10px 0 0;
+  color:#e6f7f0;
+  font-size:clamp(15px,1.25vw,19px);
+  line-height:1.45;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-actions{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:28px!important;
+  padding:30px 32px 26px!important;
+  margin:0!important;
+  background:#f4f8f7;
+  min-width:0;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]{
+  --tone:#0b8767;
+  --pale:#dcf5ea;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  display:grid!important;
+  grid-template-columns:110px minmax(0,1fr) 54px;
+  align-items:center!important;
+  column-gap:22px!important;
+  row-gap:10px!important;
+  min-width:0;
+  width:100%;
+  min-height:170px;
+  padding:28px 28px 28px 30px!important;
+  text-align:left;
+  background:#fff!important;
+  border:1px solid #dfe7e5!important;
+  border-radius:24px!important;
+  box-shadow:0 6px 18px rgba(18,60,48,.07);
+  cursor:pointer;
+  color:#10243b!important;
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]::before{
+  content:"";
+  position:absolute;
+  right:-16px;
+  bottom:-18px;
+  width:165px;
+  height:120px;
+  background:var(--pale);
+  border-radius:110px 0 0 0;
+  pointer-events:none;
+  z-index:-1;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="blue"]{
+  --tone:#1a66dd;
+  --pale:#e3edff;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="orange"]{
+  --tone:#df830b;
+  --pale:#fff0d5;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="purple"]{
+  --tone:#7e31d7;
+  --pale:#efe2ff;
+}
+
+#account-profile-editor.tp-management .workspace-action .tp-action-icon{
+  display:grid!important;
+  place-items:center;
+  width:82px;
+  height:82px;
+  border-radius:24px;
+  background:var(--pale);
+  color:var(--tone);
+  flex:none;
+}
+
+#account-profile-editor.tp-management .tp-action-icon svg{
+  width:42px;
+  height:42px;
+}
+
+#account-profile-editor.tp-management .workspace-action .tp-action-copy{
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  gap:10px;
+  min-width:0;
+  padding-left:28px;
+  border-left:2px solid #d8e4df;
+  white-space:normal;
+}
+
+#account-profile-editor.tp-management .workspace-action .tp-action-copy strong{
+  display:block!important;
+  margin:0;
+  font-size:clamp(19px,1.7vw,28px)!important;
+  line-height:1.22;
+  color:#0f1f3b!important;
+  font-weight:800;
+  letter-spacing:-.2px;
+  overflow-wrap:anywhere;
+}
+
+#account-profile-editor.tp-management .workspace-action .tp-action-description{
+  display:block!important;
+  font-size:clamp(14px,1.05vw,17px)!important;
+  line-height:1.5;
+  color:#516478!important;
+  overflow-wrap:anywhere;
+  max-width:34ch;
+}
+
+#account-profile-editor.tp-management .workspace-action .tp-action-end{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  justify-self:end;
+  align-self:center;
+  color:#0b7a5f;
+}
+
+#account-profile-editor.tp-management .workspace-action .tp-action-end svg{
+  width:34px;
+  height:34px;
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone]:hover{
+  transform:translateY(-2px);
+  border-color:var(--tone)!important;
+  box-shadow:0 12px 24px rgba(18,60,48,.12);
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone]:focus-visible{
+  outline:2px solid var(--tone);
+  outline-offset:3px;
+}
+
+body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]{
+  --tone:#d71432;
+  --pale:#ffe1e5;
+  grid-column:1/-1!important;
+  grid-template-columns:110px minmax(0,1fr) minmax(270px,430px);
+  min-height:190px;
+  background:linear-gradient(180deg,#fff9fa 0%,#fff4f6 100%)!important;
+  border-color:#f2a6b0!important;
+  padding:30px 34px 30px 30px!important;
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]::before{
+  width:210px;
+  height:140px;
+  right:-10px;
+  bottom:-28px;
+  background:#ffd8df;
+  border-radius:130px 0 0 0;
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-copy strong{
+  color:#ca1230!important;
+  font-size:clamp(22px,2vw,34px)!important;
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-description{
+  max-width:44ch;
+  font-size:clamp(15px,1.1vw,18px)!important;
+  color:#5f6979!important;
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end{
+  justify-self:end;
+  align-self:center;
+  gap:14px;
+  min-height:84px;
+  padding:0 30px;
+  border-radius:20px;
+  background:linear-gradient(180deg,#ff314a 0%,#d50a28 100%);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(213,10,40,.24);
+  font-size:clamp(18px,1.5vw,24px);
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end svg{
+  width:32px;
+  height:32px;
+}
+
+#account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end span{
+  line-height:1;
+}
+
+@media (max-width:1200px){
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-actions{
+    gap:20px!important;
+    padding:22px!important;
+  }
+
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]{
+    min-height:152px;
+    grid-template-columns:92px minmax(0,1fr) 44px;
+    padding:24px!important;
+  }
+
+  #account-profile-editor.tp-management .workspace-action .tp-action-icon{
+    width:68px;
+    height:68px;
+    border-radius:20px;
+  }
+
+  #account-profile-editor.tp-management .tp-action-icon svg{
+    width:34px;
+    height:34px;
+  }
+
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]{
+    grid-template-columns:92px minmax(0,1fr) 280px;
+    min-height:165px;
+  }
+
+  #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end{
+    min-height:72px;
+    padding:0 22px;
+    font-size:18px;
+  }
+}
+
+@media (max-width:900px){
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-actions{
+    grid-template-columns:1fr!important;
+  }
+
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]{
+    grid-template-columns:92px minmax(0,1fr);
+  }
+
+  #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end{
+    grid-column:1/-1;
+    justify-self:start;
+    margin-left:120px;
+    margin-top:8px;
+  }
+}
+
+@media (max-width:640px){
+  #account-profile-editor.tp-management .tp-management-header{
+    gap:14px;
+    padding:20px 18px 24px;
+    min-height:auto;
+  }
+
+  #account-profile-editor.tp-management .tp-management-mark{
+    width:58px;
+    height:58px;
+    border-radius:18px;
+  }
+
+  #account-profile-editor.tp-management .tp-management-mark svg{
+    width:34px;
+    height:34px;
+  }
+
+  #account-profile-editor.tp-management .tp-management-title{
+    padding-left:14px;
+  }
+
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-actions{
+    padding:14px!important;
+    gap:14px!important;
+  }
+
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone]{
+    grid-template-columns:64px minmax(0,1fr) 26px;
+    min-height:118px;
+    column-gap:14px!important;
+    padding:18px 16px!important;
+    border-radius:18px!important;
+  }
+
+  #account-profile-editor.tp-management .workspace-action .tp-action-icon{
+    width:56px;
+    height:56px;
+    border-radius:16px;
+  }
+
+  #account-profile-editor.tp-management .tp-action-icon svg{
+    width:28px;
+    height:28px;
+  }
+
+  #account-profile-editor.tp-management .workspace-action .tp-action-copy{
+    padding-left:16px;
+    gap:6px;
+  }
+
+  #account-profile-editor.tp-management .workspace-action .tp-action-end svg{
+    width:24px;
+    height:24px;
+  }
+
+  body[data-workspace-page="profil"] #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"]{
+    grid-template-columns:64px minmax(0,1fr);
+    min-height:auto;
+  }
+
+  #account-profile-editor.tp-management .workspace-action[data-tp-tone="danger"] .tp-action-end{
+    width:100%;
+    min-height:60px;
+    margin:6px 0 0;
+    justify-content:center;
+    margin-left:0;
+    padding:0 16px;
+    border-radius:16px;
+    font-size:16px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  #account-profile-editor.tp-management .workspace-action{
+    transition:none!important;
+    transform:none!important;
+  }
+}
