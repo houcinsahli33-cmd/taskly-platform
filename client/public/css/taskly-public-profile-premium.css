@@ -1,0 +1,59 @@
+/* Taskly public profile only. Header, footer, dialogs and directory are not styled here. */
+.taskly-public-profile{--pp-green:#087d61;--pp-ink:#102834;--pp-muted:#536a72;--pp-line:#dbe8e4;--pp-mint:#e6f5ef}
+.taskly-public-profile>.section{padding:12px 0 0!important;background:transparent!important}
+.taskly-public-profile>.section:first-child{padding-top:24px!important}
+.taskly-public-profile>.artisan-reviews-section{padding-bottom:38px!important}
+.taskly-public-profile>.section>.container{width:calc(100% - 48px);max-width:1390px;box-sizing:border-box;margin-inline:auto}
+.taskly-public-profile [hidden]{display:none!important}
+.taskly-public-profile svg{width:22px;height:22px;flex:none;vertical-align:middle}
+.taskly-public-profile .taskly-pp-back{display:inline-flex;align-items:center;gap:9px;padding:10px 19px;margin:0 0 14px;border:1px solid #c9dfd8;border-radius:30px;color:var(--pp-green);font-weight:750;background:white;text-decoration:none}
+.taskly-public-profile .taskly-pp-back:hover{background:var(--pp-mint)}
+.taskly-public-profile #artisan-profile{display:block}
+.taskly-public-profile .taskly-pp-hero{display:flex;align-items:center;gap:28px;position:relative;isolation:isolate;overflow:hidden;min-height:200px;box-sizing:border-box;padding:24px 34px;margin:0 0 22px;border-radius:20px;background:linear-gradient(110deg,#e0f5ed 0%,#f3fbf8 54%,#96d8c6 100%);border:1px solid #d7eee5;box-shadow:none;color:var(--pp-ink)}
+.taskly-public-profile .taskly-pp-hero:before{content:'';position:absolute;inset:auto -90px -225px auto;width:540px;height:450px;border-radius:50%;background:linear-gradient(130deg,#72c9b0,#007b5f);z-index:-1;transform:rotate(-20deg)}
+.taskly-public-profile .taskly-pp-hero:after{content:'';position:absolute;right:-60px;top:-285px;width:510px;height:440px;border-radius:50%;border:46px solid #ffffff50;z-index:-1;pointer-events:none}
+.taskly-public-profile .taskly-pp-hero img.avatar{width:142px!important;height:142px!important;flex:0 0 142px;object-fit:cover;border-radius:50%;border:5px solid white;background:#d2efe4;box-shadow:0 6px 17px #155e4222;box-sizing:border-box}
+.taskly-public-profile .taskly-pp-identity{flex:1;min-width:0;border-left:1px solid #c9e0d9;padding-left:28px;position:relative;z-index:1}
+.taskly-public-profile .taskly-pp-identity h1{color:var(--pp-ink);font-size:clamp(26px,3.1vw,44px);font-weight:850;line-height:1.12;letter-spacing:-1px;margin:0 0 10px;overflow-wrap:anywhere}
+.taskly-public-profile .taskly-pp-service{display:flex;align-items:center;gap:12px;color:var(--pp-green);font-size:clamp(20px,2vw,28px);font-weight:800;margin:0 0 12px;overflow-wrap:anywhere}
+.taskly-public-profile .taskly-pp-service>span,.taskly-public-profile .taskly-pp-card h2>span,.taskly-public-profile .taskly-pp-review-title>span{display:grid;place-items:center;width:44px;height:44px;background:#d4f0e3;color:var(--pp-green);border-radius:12px;flex:none}
+.taskly-public-profile .taskly-pp-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 0;background:#ffffffb8;border-radius:14px;padding:11px 6px;width:fit-content;max-width:100%;box-sizing:border-box}
+.taskly-public-profile .taskly-pp-meta>span{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;padding:3px 13px;border-right:1px solid #c8ded6;color:var(--pp-ink);min-width:0;overflow-wrap:anywhere}
+.taskly-public-profile .taskly-pp-meta>span:last-child{border:0}
+.taskly-public-profile .taskly-pp-meta svg{color:var(--pp-green);width:19px;height:19px}
+.taskly-public-profile .taskly-pp-meta .taskly-pp-note{color:var(--pp-green);font-weight:750}
+.taskly-public-profile .taskly-pp-art{width:120px;height:120px;flex:0 0 120px;position:relative;display:grid;place-items:center;color:#087d61;background:linear-gradient(145deg,#f1fffa,#b1dfcd);border:1px solid #ffffffa0;border-radius:27px;box-shadow:0 13px 24px #087d6130;transform:rotate(-10deg);margin:0 8px}
+.taskly-public-profile .taskly-pp-art svg{width:76px;height:76px;stroke-width:1.25}
+.taskly-public-profile .taskly-pp-art i,.taskly-public-profile .taskly-pp-art b{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;right:-20px;top:7px;opacity:.8}
+.taskly-public-profile .taskly-pp-art b{width:8px;height:8px;top:auto;bottom:-14px;left:-14px}
+.taskly-public-profile .taskly-pp-columns{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:stretch}
+.taskly-public-profile .taskly-pp-card,.taskly-public-profile .taskly-pp-reviews{border:1px solid var(--pp-line);border-radius:18px;background:#fff;box-shadow:0 8px 24px #143d3009;padding:24px;box-sizing:border-box;min-width:0}
+.taskly-public-profile .taskly-pp-card h2,.taskly-public-profile .taskly-pp-review-title{display:flex;align-items:center;gap:13px;color:var(--pp-ink);font-size:clamp(19px,1.8vw,25px);font-weight:800;line-height:1.25;margin:0 0 14px}
+.taskly-public-profile .taskly-pp-about h2:after{content:none}
+.taskly-public-profile .taskly-pp-about h2{position:relative;padding-bottom:14px}
+.taskly-public-profile .taskly-pp-about h2:before{content:'';position:absolute;bottom:0;left:0;height:3px;width:65px;border-radius:3px;background:var(--pp-green)}
+.taskly-public-profile .taskly-pp-about>p{color:#304750;font-size:16px;line-height:1.75;margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.taskly-public-profile .taskly-pp-contact{background:linear-gradient(120deg,#f7fcfa,#f0f9f5)}
+.taskly-public-profile .taskly-pp-contact .btn{display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;min-height:46px;width:100%;box-sizing:border-box;border-radius:12px;font-size:15px;font-weight:750;white-space:normal;margin:0 0 9px;padding:10px 14px}
+.taskly-public-profile .taskly-pp-contact .btn.primary{background:linear-gradient(110deg,#079763,#007b60);border-color:#078660;color:white}
+.taskly-public-profile .taskly-pp-contact .btn.primary:hover{background:#006c53}
+.taskly-public-profile .taskly-pp-contact .btn.outline{border:1px solid var(--pp-green);color:var(--pp-green);background:white}
+.taskly-public-profile .taskly-pp-contact .btn.outline:hover{background:#e0f4eb}
+.taskly-public-profile .taskly-pp-tip{display:flex;align-items:center;gap:12px;border-radius:9px;padding:12px 14px;background:#e1f2ed;color:#174b3e;font-size:13px;line-height:1.5}
+.taskly-public-profile .taskly-pp-tip p{margin:0;overflow-wrap:anywhere}
+.taskly-public-profile .taskly-pp-tip svg{color:var(--pp-green)}
+.taskly-public-profile .taskly-pp-reviews{margin-top:10px;padding:20px}
+.taskly-public-profile .taskly-pp-reviews .taskly-pp-review-heading{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:0 0 14px;text-align:left;justify-content:flex-start;max-width:none}
+.taskly-public-profile .taskly-pp-review-title{margin:0}
+.taskly-public-profile .taskly-pp-review-subtitle{font-size:15px;color:var(--pp-muted);border-left:1px solid #d3e1dc;padding-left:14px;margin:0}
+.taskly-public-profile #taskly-pp-review-count{margin-left:auto;background:#e9f7f0;color:var(--pp-green);padding:8px 15px;border:1px solid #d1e8df;border-radius:20px;font-size:13px;font-weight:750}
+.taskly-public-profile #artisan-reviews{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.taskly-public-profile #artisan-reviews>*{min-width:0;overflow-wrap:anywhere}
+.taskly-public-profile #artisan-reviews>.taskly-pp-empty,.taskly-public-profile #artisan-reviews>:only-child:not(.profile-testimonial-card){grid-column:1/-1}
+.taskly-public-profile .taskly-pp-empty{display:grid;justify-items:center;text-align:center;padding:20px;gap:7px;background:#eff9f5;border-radius:12px;color:var(--pp-ink)}
+.taskly-public-profile .taskly-pp-empty svg{width:48px;height:48px;color:var(--pp-green);stroke-width:1.5}
+.taskly-public-profile .taskly-pp-empty strong{font-size:18px}.taskly-public-profile .taskly-pp-empty p{margin:0;font-size:14px;color:var(--pp-muted)}
+.taskly-public-profile .profile-testimonial-card{border:1px solid var(--pp-line);border-radius:14px;box-shadow:none;padding:18px;background:#fff}
+.taskly-public-profile a:focus-visible,.taskly-public-profile button:focus-visible{outline:3px solid #07866b;outline-offset:3px}
+@media(max-width:1000px){.taskly-public-profile .taskly-pp-art{display:none}.taskly-public-profile .taskly-pp-hero{padding:22px}.taskly-public-profile .taskly-pp-columns{gap:15px}.taskly-public-profile #artisan-reviews{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.taskly-public-profile>.section>.container{width:calc(100% - 28px)}.taskly-public-profile .taskly-pp-columns{grid-template-columns:minmax(0,1fr)}.taskly-public-profile .taskly-pp-hero{flex-direction:column;align-items:flex-start;gap:12px;padding:18px}.taskly-public-profile .taskly-pp-hero img.avatar{width:90px!important;height:90px!important;flex-basis:90px}.taskly-public-profile .taskly-pp-identity{border:0;padding:0;width:100%;box-sizing:border-box}.taskly-public-profile .taskly-pp-meta>span{font-size:12px;padding:4px 8px}.taskly-public-profile .taskly-pp-meta{width:100%}.taskly-public-profile .taskly-pp-card,.taskly-public-profile .taskly-pp-reviews{padding:16px}.taskly-public-profile #artisan-reviews{grid-template-columns:minmax(0,1fr)}.taskly-public-profile .taskly-pp-review-subtitle{border:0;padding:0;flex-basis:100%;order:2}.taskly-public-profile #taskly-pp-review-count{margin-left:0}}

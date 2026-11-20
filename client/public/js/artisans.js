@@ -237,87 +237,91 @@ async function chargerProfilArtisan() {
   const cible = document.getElementById("artisan-profile");
   const avisCible = document.getElementById("artisan-reviews");
   if (!cible || !avisCible) return;
-
+  const contact = document.getElementById("taskly-contact-open");
+  const reserve = document.getElementById("taskly-pp-contact-reserve");
+  const compteur = document.getElementById("taskly-pp-review-count");
+  if (contact && reserve) reserve.append(contact);
+  if (compteur) compteur.hidden = true;
   const id = obtenirParametre("id");
-  if (!id) {
+  if (!id || !/^[1-9]\d*$/.test(id) || !Number.isSafeInteger(Number(id))) {
     cible.innerHTML = etatVide("Artisan introuvable.");
     avisCible.innerHTML = "";
     return;
   }
-
+  const pictos = {
+    pin:'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M7 3v4M17 3v4M3 10h18"></path>',
+    star:'<path d="m12 3 2.8 5.9 6.5.9-4.7 4.6 1.1 6.5-5.7-3.1-5.7 3.1 1.1-6.5L2.7 9.8l6.5-.9z"></path>',
+    chat:'<path d="M21 11a9 9 0 0 1-9 9H3l2-5a9 9 0 1 1 16-4Z"></path>',
+    tool:'<path d="M14 6a5 5 0 0 0-6 6L3 17a2.8 2.8 0 0 0 4 4l5-5a5 5 0 0 0 6-6l-3 3-4-4z"></path>',
+    bolt:'<path d="m13 2-9 12h7l-1 8 10-12h-7z"></path>',
+    document:'<rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path>',
+    send:'<path d="m22 2-7 20-4-9-9-4 20-7ZM22 2 11 13"></path>',
+    phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2A18 18 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3l2 5-3 2a15 15 0 0 0 9 9l2-3z"></path>',
+    info:'<circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path>'
+  };
+  const icon = n => `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${pictos[n]}</svg>`;
   cible.innerHTML = etatChargement("Chargement du profil...");
   avisCible.innerHTML = etatChargement("Chargement des avis...");
-
   try {
     const [{ artisan }, avisData] = await Promise.all([
       requeteAPI(`/api/artisans/${encodeURIComponent(id)}`),
-      requeteAPI(`/api/avis/artisan/${encodeURIComponent(id)}`).catch(() => ({ avis: [], statistiques: {} }))
+      requeteAPI(`/api/avis/artisan/${encodeURIComponent(id)}`).catch(() => null)
     ]);
-
-    const moyenne = avisData.statistiques?.moyenne_note || artisan.moyenne_notes || 0;
-    const total = avisData.statistiques?.total_avis || artisan.total_avis || 0;
-
+    if (!artisan || Number(artisan.id) !== Number(id)) throw Error("Artisan introuvable.");
+    const count = avisData?.statistiques?.total_avis ?? artisan.total_avis;
+    const total = count !== null && count !== undefined && Number.isSafeInteger(Number(count)) && Number(count)>=0 ? Number(count) : null;
+    const rawRating = avisData?.statistiques?.moyenne_note ?? artisan.moyenne_notes;
+    const moyenne = Number(rawRating);
+    const note = total > 0 && rawRating != null && moyenne >= 1 && moyenne <= 5 ? formatNombre(moyenne) + " / 5" : "Pas encore noté";
+    const countLabel = total === null ? "Avis non renseignés" : `${total} avis`;
+    const experience = artisan.experience != null && Number.isFinite(Number(artisan.experience)) && Number(artisan.experience)>=0 ? `${Number(artisan.experience)} an(s) d'expérience` : "Expérience non renseignée";
+    const metier = String(artisan.service_nom || "Service");
+    const symbol = /électri|electri/i.test(metier) ? 'bolt' : 'tool';
     cible.innerHTML = `
-      <div class="profile-hero">
+      <div class="profile-hero taskly-pp-hero">
         <img class="avatar large" src="${echapperHTML(imageProfil(artisan.photo_profil))}" alt="${echapperHTML(nomComplet(artisan))}" onerror="this.onerror=null;this.src='${DEFAULT_AVATAR}'">
-        <div>
-          <p class="eyebrow">Profil artisan</p>
+        <div class="taskly-pp-identity">
           <h1>${echapperHTML(nomComplet(artisan))}</h1>
-          <p class="lead">${echapperHTML(artisan.service_nom)} à ${echapperHTML(artisan.ville)}</p>
-          <div class="meta-row mt-16">
-            <span class="badge primary">${Number(artisan.experience || 0)} an(s) d'expérience</span>
-            <span class="badge accent">${Number(moyenne) ? formatNombre(moyenne) + " / 5" : "Nouveau"} · ${total} avis</span>
-          </div>
+          <p class="taskly-pp-service"><span>${icon(symbol)}</span>${echapperHTML(metier)}</p>
+          <div class="taskly-pp-meta"><span>${icon('pin')}${echapperHTML(artisan.ville || "Commune non renseignée")}</span><span>${icon('calendar')}${echapperHTML(experience)}</span><span class="taskly-pp-note">${icon('star')}${echapperHTML(note)}</span><span>${icon('chat')}${countLabel}</span></div>
         </div>
-        ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${artisan.id}">Envoyer une demande</button>` : `<a class="btn outline" href="/login.html">Se connecter pour demander</a>`}
+        <div class="taskly-pp-art" aria-hidden="true">${icon(symbol)}<i></i><b></b></div>
       </div>
-      <div class="panel mt-24">
-        <div class="panel-header">
-          <h2>À propos de l'artisan</h2>
-        </div>
-        <div class="panel-body">
-          <p>${echapperHTML(artisan.description || "Cet artisan n'a pas encore ajouté de description détaillée.")}</p>
-          <div class="meta-row mt-18">
-            <span class="badge">Téléphone : ${echapperHTML(artisan.telephone || "Non précisé")}</span>
-            <span class="badge">Email : ${echapperHTML(artisan.email || "Non précisé")}</span>
-          </div>
-        </div>
-      </div>
-    `;
-
-    if (!avisData.avis?.length) {
-      avisCible.innerHTML = etatVide("Aucun avis pour le moment.");
+      <div class="taskly-pp-columns">
+        <section class="taskly-pp-card taskly-pp-about"><h2><span>${icon('document')}</span>À propos de l'artisan</h2><p>${echapperHTML(artisan.description || "Cet artisan n'a pas encore ajouté de description détaillée.")}</p></section>
+        <section class="taskly-pp-card taskly-pp-contact"><h2><span>${icon('send')}</span>Contacter cet artisan</h2>
+          ${window.utilisateurCourant?.role === "client" ? `<button class="btn primary" type="button" data-open-request="${Number(id)}">${icon('send')} Envoyer une demande</button>` : `<a class="btn outline" href="/login.html">Se connecter pour demander</a>`}
+          <div id="taskly-pp-contact-slot"></div>
+          <div class="taskly-pp-tip">${icon('info')}<p>Seules les coordonnées autorisées par l'artisan sont accessibles aux clients connectés.</p></div>
+        </section>
+      </div>`;
+    if (contact) {
+      document.getElementById('taskly-pp-contact-slot').append(contact);
+      if (!contact.querySelector('svg')) contact.insertAdjacentHTML('afterbegin',icon('phone'));
+    }
+    if (compteur) { compteur.textContent = countLabel; compteur.hidden = false; }
+    if (!Array.isArray(avisData?.avis)) {
+      avisCible.innerHTML = `<div class="taskly-pp-empty">${icon('info')}<strong>Avis temporairement indisponibles</strong><p>Réessayez en actualisant la page.</p></div>`;
       return;
     }
-
+    if (!avisData.avis.length) {
+      avisCible.innerHTML = `<div class="taskly-pp-empty">${icon('star')}<strong>Aucun avis pour le moment</strong><p>Les avis des clients apparaîtront ici lorsqu'ils seront publiés.</p></div>`;
+      return;
+    }
     avisCible.innerHTML = avisData.avis.map((avis) => {
       const nomClient = nomComplet(avis, "client_");
       const initiale = nomClient.trim().charAt(0).toUpperCase() || "C";
-
-      return `
-        <article class="profile-testimonial-card">
-          <div class="profile-testimonial-header">
-            <div class="profile-testimonial-avatar">${echapperHTML(initiale)}</div>
-            <div>
-              <h3>${echapperHTML(nomClient)}</h3>
-              <p>Client Taskly</p>
-            </div>
-          </div>
-
-          <div class="profile-testimonial-stars">${afficherEtoiles(avis.note)}</div>
-
-          <p class="profile-testimonial-text">
-            “${echapperHTML(avis.commentaire || "Avis sans commentaire.")}”
-          </p>
-
-          <div class="profile-testimonial-footer">
-            <span class="profile-testimonial-tag">${echapperHTML(artisan.service_nom || "Service")}</span>
-            <span class="profile-testimonial-date">${formatDate(avis.created_at)}</span>
-          </div>
-        </article>
-      `;
+      return `<article class="profile-testimonial-card">
+        <div class="profile-testimonial-header"><div class="profile-testimonial-avatar">${echapperHTML(initiale)}</div><div><h3>${echapperHTML(nomClient)}</h3><p>Client Taskly</p></div></div>
+        <div class="profile-testimonial-stars">${afficherEtoiles(avis.note)}</div>
+        <p class="profile-testimonial-text">“${echapperHTML(avis.commentaire || "Avis sans commentaire.")}”</p>
+        <div class="profile-testimonial-footer"><span class="profile-testimonial-tag">${echapperHTML(metier)}</span><span class="profile-testimonial-date">${echapperHTML(formatDate(avis.created_at))}</span></div>
+      </article>`;
     }).join("");
   } catch (error) {
+    if (contact && reserve) reserve.append(contact);
+    if (compteur) compteur.hidden = true;
     cible.innerHTML = etatVide(error.message);
     avisCible.innerHTML = "";
   }
