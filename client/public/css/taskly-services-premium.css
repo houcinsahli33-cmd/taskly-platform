@@ -1044,7 +1044,7 @@ body[data-active="services"] #services-grid .taskly-svc-symbol:has(> svg > path:
   }
 }
 body[data-active="services"] .taskly-services-hero-layout > .taskly-services-hero-media-v4 > img {
-  object-position: center 36%; /* Regarder plus haut dans la photo : ne pas couper les têtes */
+  object-position: center top; /* Conserver les visages entiers en haut de la photo. */
 }
 /* Deux pictogrammes explicitement marqués par services.js : aucun effet sur les autres cartes. */
 body[data-active="services"] #services-grid .taskly-svc-symbol:has(> svg[data-taskly-service-icon="climatisation"]),
@@ -1065,14 +1065,14 @@ body[data-active="services"] #services-grid .taskly-svc-symbol:has(> svg[data-ta
 body[data-active="services"] #services-grid .taskly-svc-symbol > svg[data-taskly-service-icon="climatisation"],
 body[data-active="services"] #services-grid .taskly-svc-symbol > svg[data-taskly-service-icon="demenagement"] {
   display: block;
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  min-height: 30px;
-  max-width: 30px;
-  max-height: 30px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  max-width: 32px;
+  max-height: 32px;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 2.05;
   fill: none;
   filter: none;
 }
