@@ -3,13 +3,6 @@
  'use strict';
  const iframe=document.getElementById('taskly-artisan-content-frame');
  if(!iframe)return;
-  // Barre verticale mobile commune
-  if(!document.querySelector('[data-taskly-mobile-sidebar-script]')){
-    const mobileSidebarScript = document.createElement('script');
-    mobileSidebarScript.src = '/js/taskly-mobile-sidebar.js';
-    mobileSidebarScript.dataset.tasklyMobileSidebarScript = '1';
-    document.head.appendChild(mobileSidebarScript);
-  }
  const pages=new Set(['accueil','demandes','avis','profil','support']);
  pages.add('taskly-mail');
  pages.add('messagerie');

@@ -46,14 +46,15 @@ function preparerCadreArtisan(original,id) {
   .replace(/(<a\b[^>]*data-dashboard-link="accueil"[^>]*>)\s*(?:<svg\b[^>]*>[\s\S]*?<\/svg>\s*)?/i,'$1'+grille)
   :aside;
 
- const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<\/head>/i,
-  '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=3"><link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat-calls1"></script></head>');
+ const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<head\b[^>]*>/i,match=>match+'<style>@media(max-width:800px){body[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:hidden!important}body.taskly-mobile-ready[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body.taskly-mobile-ready[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:visible!important}}</style>').replace(/<\/head>/i,
+  '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat-calls1"></script></head>');
  const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=4"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
  const callHead=chatEnabled&&callsPilot.autoriseCompte('artisan',id)
   ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=3"></script></head>')
   :finalHead;
+ const mobileHead=callHead.replace('</head>', '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=4"><script defer src="/js/taskly-mobile-sidebar.js?v=4"></script></head>');
  const shellBody=body.replace(/>$/, ' data-taskly-artisan-shell="1">');
- return '<!doctype html><html lang="fr">'+callHead+shellBody+
+ return '<!doctype html><html lang="fr">'+mobileHead+shellBody+
   '<div id="site-header"></div><main class="dashboard-shell">'+menuAside+
   '<section class="artisan-frame-container" aria-label="Rubrique artisan"><iframe id="taskly-artisan-content-frame"'+(chatEnabled&&callsPilot.autoriseCompte('artisan',id)?' allow="camera \'self\'; microphone \'self\'"':'')+' title="Contenu de l’espace artisan"></iframe></section></main></body></html>';
 }
