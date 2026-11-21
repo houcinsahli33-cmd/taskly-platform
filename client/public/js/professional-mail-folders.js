@@ -5,6 +5,7 @@ window.afficherTasklyMailFolders=async function(section,status,account){
  const base='/api/taskly-mail/mailbox';
  const defaults={notify_email:true,signature_enabled:false,signature:'',confirm_delete:true,preview_enabled:true,auto_save:true};
  let prefs={...defaults},prefsReady=false,current='inbox',cursor=null,search='',busy=false,version=0,dirty=false;
+ let pendingAttachment=null;
  let sendKey=null,sendSignature=null,autoTimer=null,reader=null,listPanel=null,selectedIds=new Set(),messages=[];
  let activeSettingsCategory='general';
  const uuid=()=>{if(typeof crypto.randomUUID==='function')return crypto.randomUUID();const a=crypto.getRandomValues(new Uint8Array(16));a[6]=(a[6]&15)|64;a[8]=(a[8]&63)|128;const h=Array.from(a,x=>x.toString(16).padStart(2,'0')).join('');return [h.slice(0,8),h.slice(8,12),h.slice(12,16),h.slice(16,20),h.slice(20)].join('-');};
@@ -53,7 +54,7 @@ window.afficherTasklyMailFolders=async function(section,status,account){
   if(index<text.length)pre.append(document.createTextNode(text.slice(index)));
   return pre;
  }
- function leave(){if(!dirty)return true;return confirm('Quitter sans enregistrer les modifications du brouillon ?');}
+ function leave(){if(pendingAttachment&&!confirm('Quitter et perdre le fichier joint non envoyé ?'))return false;if(dirty&&!confirm('Quitter sans enregistrer les modifications du brouillon ?'))return false;pendingAttachment=null;return true;}
  function stopAuto(){if(autoTimer){clearTimeout(autoTimer);autoTimer=null;}}
  async function switchFolder(key){if(!leave())return;stopAuto();dirty=false;search='';searchInput.value='';await list(key);}
  async function counts(){try{const d=await request('/counts');inboxBadge.textContent=d.unread>99?'99+':String(d.unread);inboxBadge.hidden=!Number.isSafeInteger(d.unread)||d.unread<=0;}catch{inboxBadge.hidden=true;}}
@@ -120,7 +121,9 @@ window.afficherTasklyMailFolders=async function(section,status,account){
   const title=el('h3',m.subject||'Sans objet','tm-reader-subject'),sender=el('div',null,'tm-reader-sender'),info=el('div',null,'tm-reader-names');info.append(el('strong',m.from),el('small','À : '+m.to),el('small',date(m.date)));sender.append(avatar(m.from),info);
   const body=safeBody(m.body),bottom=el('div',null,'tm-reader-bottom');
   if(!m.trashed){const to=m.folder==='sent'?m.to:m.from;if(/^[^@]+@[a-z0-9-]+\.taskly\.test$/i.test(to))bottom.append(withIcon('Répondre','reply',()=>run(()=>compose({to,subject:('Re : '+(m.subject||'')).slice(0,200),body:''})),'tm-new'));bottom.append(withIcon('Transférer','forward',()=>run(()=>compose({to:'',subject:('Tr : '+(m.subject||'')).slice(0,200),body:'\n\n--- Message transféré ---\nDe : '+m.from+'\n'+m.body}))));}
-  reader.replaceChildren(bar,title,sender,body,bottom);await counts();notice('');
+  const files=el('section',null,'tm-reader-bottom');
+  if(Array.isArray(m.attachments)&&m.attachments.length){files.append(el('strong','Pièces jointes ('+m.attachments.length+')'));for(const f of m.attachments){const link=el('a',null,'tm-button');link.href=base+'/copies/'+encodeURIComponent(id)+'/attachment';link.setAttribute('download',f.name);link.append(icon('attach'),el('span',f.name+' · '+Math.ceil(f.size/1024)+' Ko'));files.append(link);}}
+  reader.replaceChildren(bar,title,sender,body,...(files.children.length?[files]:[]),bottom);await counts();notice('');
  }
  async function showDraft(){
   if(!leave())return;stopAuto();dirty=false;activate('draft');const {draft:d}=await request('/draft');const title=heading('draft'),card=el('div',null,'tm-draft-board');content.className='tm-mail-content tm-drafts-view';content.replaceChildren(title,card);const exists=[d.to,d.subject,d.body].some(Boolean);
@@ -154,8 +157,14 @@ window.afficherTasklyMailFolders=async function(section,status,account){
   for(const [name,label,fn] of [['B','Gras',()=>marker('**')],['I','Italique',()=>marker('*')],['U','Souligné',()=>marker('__')],['•','Liste à puces',()=>linePrefix('- ')],['1.','Liste numérotée',()=>linePrefix('1. ')]] ) {const button=btn(name,fn,'tm-format-button');button.setAttribute('aria-label',label);button.title=label+' (notation texte)';formatting.append(button);}
   const formatSep=el('span',null,'tm-format-separator');formatting.append(formatSep);const linkBtn=withIcon('Lien','link',()=>marker('https://',''),'tm-format-button tm-format-icon');linkBtn.title='Insérer une adresse web';formatting.append(linkBtn);
   const formatTip=el('span','Mise en forme texte','tm-format-hint');formatting.append(formatTip);
-  // Le serveur ne stocke pas encore les pièces jointes : le contrôle est désactivé honnêtement.
-  const attach=withIcon('Joindre un fichier','attach',()=>{},'tm-button tm-compose-attachment');attach.disabled=true;attach.title='Pièces jointes non disponibles : aucune pièce ne sera transmise';attach.setAttribute('aria-label','Joindre un fichier — indisponible');
+  // Une pièce jointe privée, uniquement si le serveur l'autorise.
+  const picker=el('input');picker.type='file';picker.accept='.pdf,.jpg,.jpeg,.png';picker.hidden=true;
+  const fileInfo=el('span',null,'tm-compose-feedback');fileInfo.style.overflowWrap='anywhere';fileInfo.style.minWidth='0';
+  const removeFile=btn('Retirer le fichier',()=>{if(busy)return;pendingAttachment=null;picker.value='';fileInfo.textContent='';removeFile.hidden=true;sendKey=null;sendSignature=null;});removeFile.hidden=true;
+  const attach=withIcon('Joindre un fichier','attach',()=>{if(!busy&&account.attachmentsEnabled)picker.click();},'tm-button tm-compose-attachment');
+  if(!account.attachmentsEnabled){attach.disabled=true;attach.title='Pièces jointes indisponibles';attach.setAttribute('aria-label','Joindre un fichier — indisponible');}
+  else attach.title='PDF, JPEG ou PNG · 3 Mo maximum · non enregistré dans le brouillon';
+  picker.addEventListener('change',()=>{if(busy)return;const f=picker.files[0];if(!f)return;if(!['application/pdf','image/jpeg','image/png'].includes(f.type)||!f.size||f.size>3*1024*1024){picker.value='';pendingAttachment=null;fileInfo.textContent='';removeFile.hidden=true;sendKey=null;sendSignature=null;notice('PDF, JPEG ou PNG de 3 Mo maximum.');return;}pendingAttachment=f;sendKey=null;sendSignature=null;fileInfo.textContent=f.name+' · '+Math.ceil(f.size/1024)+' Ko · non enregistré dans le brouillon';removeFile.hidden=false;});
   for(const input of [to.input,subject.input,body.input])input.addEventListener('input',()=>{dirty=true;feedback.textContent='Modifications non enregistrées';stopAuto();if(prefs.auto_save)autoTimer=setTimeout(()=>{autoTimer=null;if(!busy&&dirty)run(()=>save(true));},8000);});
   const bar=el('div',null,'tm-mail-actions tm-compose-actions');
   const saveButton=withIcon('Enregistrer le brouillon','save',()=>run(async()=>{stopAuto();await save();}));
@@ -166,14 +175,14 @@ window.afficherTasklyMailFolders=async function(section,status,account){
    if(!/^[^@]+@[a-z0-9-]+\.taskly\.test$/i.test(v.to))throw Error('Seules les adresses Taskly internes sont disponibles actuellement.');
    if(!confirm('Envoyer ce message à '+v.to+' ?'))return;
    const sig=JSON.stringify(v);if(sendSignature!==sig||!sendKey){sendKey=uuid();sendSignature=sig;}
-   const response=await request('/send','POST',{...v,key:sendKey});dirty=false;sendKey=null;sendSignature=null;await list('sent');notice((response.message||'Message envoyé.')+' Le brouillon enregistré reste disponible.');
+   let response;if(pendingAttachment){const formData=new FormData();for(const [key,value] of Object.entries({...v,key:sendKey}))formData.append(key,value);formData.append('attachment',pendingAttachment);response=await requeteAPI(base+'/send-file',{method:'POST',body:formData});}else response=await request('/send','POST',{...v,key:sendKey});pendingAttachment=null;dirty=false;sendKey=null;sendSignature=null;await list('sent');notice((response.message||'Message envoyé.')+' Le brouillon enregistré reste disponible.');
   }),'tm-new');
   const more=el('details',null,'tm-compose-more');more.append(el('summary','Autres actions'),deleteButton,cancelButton);
   bar.append(more,saveButton,sendButton);
   const sender=el('div',null,'tm-compose-from');sender.append(el('strong','De : '),el('span',account.address));
   const form=el('div',null,'tm-compose-form'),editor=el('section',null,'tm-compose-editor');editor.append(formatting,body.node);
   const statusRow=el('div',null,'tm-compose-status');statusRow.append(feedback,el('span','Les codes de sécurité restent envoyés uniquement à votre e-mail personnel.','tm-compose-security'));
-  const foot=el('footer',null,'tm-compose-footer'),fileTools=el('div',null,'tm-compose-file-tools');fileTools.append(attach);foot.append(fileTools,bar);
+  const foot=el('footer',null,'tm-compose-footer'),fileTools=el('div',null,'tm-compose-file-tools');if(account.attachmentsEnabled)fileTools.style.flexWrap='wrap';fileTools.append(attach,picker,fileInfo,removeFile);foot.append(fileTools,bar);
   form.append(sender,recipientRow,subject.node,editor,statusRow,foot);content.replaceChildren(top,form);notice('');
  }
  function switchSetting(name,label,subtitle){const row=el('label',null,'tm-pref-row'),text=el('span',null,'tm-pref-desc');text.append(el('strong',label));if(subtitle)text.append(el('small',subtitle));const c=el('input');c.type='checkbox';c.checked=Boolean(prefs[name]);c.dataset.preference=name;const track=el('span',null,'tm-toggle-track');row.append(text,c,track);return row;}

@@ -13,13 +13,15 @@ function internalAddress(address) {
         /^[a-z0-9-]+\.taskly\.test$/.test(address.split('@')[1]);
 }
 
-function createInternalGateway({transaction, profil, correspond, env = process.env, clientEnabled = false, enableNotifications = false, sendNotification}) {
+function createInternalGateway({transaction, profil, correspond, env = process.env, clientEnabled = false, enableNotifications = false, sendNotification, attachmentStorage}) {
 
     const configured =
         env.TASKLY_MAIL_INTERNAL_ENABLED === 'true' &&
         env.TASKLY_MAIL_GATEWAY_ENABLED !== 'true';
 
     const foldersEnabled = configured && env.TASKLY_MAIL_FOLDERS_ENABLED === 'true';
+    const attachmentsEnabled = foldersEnabled && env.TASKLY_MAIL_ATTACHMENTS_ENABLED === 'true';
+    const attachments = require('./professionalMailAttachments');
     const copyId = v => {if(typeof v!=='string'||!/^[1-9][0-9]{0,19}$/.test(v)||BigInt(v)>18446744073709551615n)throw error('Identifiant invalide.',400);return v;};
     const filters = {inbox:"folder='inbox' AND archived_at IS NULL AND trashed_at IS NULL",sent:"folder='sent' AND archived_at IS NULL AND trashed_at IS NULL",favorites:"is_starred=1 AND trashed_at IS NULL",archive:'archived_at IS NOT NULL AND trashed_at IS NULL',trash:'trashed_at IS NOT NULL'};
     const clientFields =
@@ -81,7 +83,11 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
 
     const notifications = enableNotifications && configured ? require('./professionalMailNotifications').createNotifications({transaction,active,format,env,send:sendNotification}) : null;
     return {
-        configured, foldersEnabled,
+        configured, foldersEnabled, attachmentsEnabled,
+        async downloadAttachment(mailbox,id) {
+            if(!attachmentsEnabled)throw error('Pièces jointes indisponibles.',503);copyId(id);
+            return transaction(async conn=>{const m=await own(conn,mailbox);return attachments.download(conn,m.user_id,id);});
+        },
         ...(notifications ? {redeemNotification:notifications.redeem,retryNotifications:notifications.retry} : {}),
         async listCopies(mailbox, box, next, q='') {
             if(!foldersEnabled)throw error('Dossiers indisponibles.',503);
@@ -95,7 +101,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
         },
         async readCopy(mailbox,id) {
             if(!foldersEnabled)throw error('Dossiers indisponibles.',503);copyId(id);
-            return transaction(async conn=>{const m=await own(conn,mailbox);const [rows]=await conn.query('SELECT *,CAST(id AS CHAR) AS sequence_id FROM taskly_professional_mail_messages WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED) FOR UPDATE',[m.user_id,id]);if(!rows[0])throw error('Message introuvable.',404);if(rows[0].folder==='inbox')await conn.query('UPDATE taskly_professional_mail_messages SET is_read=1 WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED)',[m.user_id,id]);return format({...rows[0],is_read:1});});
+            return transaction(async conn=>{const m=await own(conn,mailbox);const [rows]=await conn.query('SELECT *,CAST(id AS CHAR) AS sequence_id FROM taskly_professional_mail_messages WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED) FOR UPDATE',[m.user_id,id]);if(!rows[0])throw error('Message introuvable.',404);if(rows[0].folder==='inbox')await conn.query('UPDATE taskly_professional_mail_messages SET is_read=1 WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED)',[m.user_id,id]);return {...format({...rows[0],is_read:1}),...(attachmentsEnabled?{attachments:await attachments.meta(conn,m.user_id,id)}:{})};});
         },
         async changeCopy(mailbox,id,action) {
             if(!foldersEnabled)throw error('Dossiers indisponibles.',503);copyId(id);
@@ -194,9 +200,11 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
             });
         },
 
-        async send(mailbox, value) {
+        async send(mailbox, value, file) {
             if (!configured) throw error('Service indisponible.', 503);
 
+            if(file&&!attachmentsEnabled)throw error('Pièces jointes indisponibles.',503);
+            const descriptor=file?attachments.describe(file):null;
             const d = validateSend(value);
             d.to = d.to.toLowerCase();
             d.key = d.key.toLowerCase();
@@ -253,6 +261,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
                         throw error('Identifiant envoi deja utilise.', 409);
                     }
 
+                    if(attachmentsEnabled&&!await attachments.retryMatches(conn,senderId,old.message_id,descriptor))throw error('Identifiant envoi deja utilise.',409);
                     return {id: old.message_id, targetId};
                 }
 
@@ -278,6 +287,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
                     ]
                 );
 
+                if(descriptor)await attachments.save(conn,id,senderId,targetId,file,descriptor,attachmentStorage||require('./fileStorage'));
                 if(notifications)await notifications.enqueue(conn,targetId,id);
                 return {id,targetId};
             });

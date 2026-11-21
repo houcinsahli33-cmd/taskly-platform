@@ -24,7 +24,7 @@ function mount({artisan,admin,db,transaction,profil,correspond,wrap,erreur,limit
   await transaction(async conn=>{const {r,m}=await state(conn,id);if(r.proposed_address!==address)throw erreur('Demande modifiée. Intervention du support nécessaire.');if(m){if(m.provider_id!==providerId)throw erreur('Incohérence du fournisseur. Intervention nécessaire.');return;}await conn.query('INSERT INTO taskly_professional_mailboxes (user_id,address,provider_id) VALUES (?,?,?)',[id,address,providerId]);});
   res.json({message:'Boîte confirmée par le fournisseur. L’artisan doit encore activer son accès.'});
  }));
- artisan.get('/mailbox',enabled,reads,wrap(async(req,res)=>{const {m}=await transaction(conn=>state(conn,uid(req)));res.json({state:!m?'waiting_provider':m.activated_at?'active':'activation_required',address:m?.address||null,foldersEnabled:Boolean(gateway.foldersEnabled),internal:env.TASKLY_MAIL_INTERNAL_ENABLED==='true'});}));
+ artisan.get('/mailbox',enabled,reads,wrap(async(req,res)=>{const {m}=await transaction(conn=>state(conn,uid(req)));res.json({state:!m?'waiting_provider':m.activated_at?'active':'activation_required',address:m?.address||null,foldersEnabled:Boolean(gateway.foldersEnabled),attachmentsEnabled:Boolean(gateway.attachmentsEnabled),internal:env.TASKLY_MAIL_INTERNAL_ENABLED==='true'});}));
  artisan.post('/mailbox/activation/request',enabled,sensitive,wrap(async(req,res)=>{
   const id=uid(req),code=crypto.randomInt(0,1000000).toString().padStart(6,'0');
   const target=await transaction(async conn=>{const {p,m}=await state(conn,id);if(!m||m.activated_at)throw erreur('Activation non disponible.');if(m.activation_age!==null&&Number(m.activation_age)<60)throw erreur('Veuillez attendre une minute.',429);const hash=activationHash(env.SESSION_SECRET,id,m.address,code);await conn.query('UPDATE taskly_professional_mailboxes SET activation_hash=?,activation_expires_at=DATE_ADD(NOW(),INTERVAL 10 MINUTE),activation_requested_at=NOW(),activation_attempts=0 WHERE user_id=?',[hash,id]);return {email:p.email,address:m.address};});
@@ -42,6 +42,23 @@ function mount({artisan,admin,db,transaction,profil,correspond,wrap,erreur,limit
   artisan.post('/mailbox/copies/:id/read',enabled,writes,wrap(async(req,res)=>res.json({message:await gateway.readCopy(await own(req),req.params.id)})));
   artisan.post('/mailbox/copies/:id/action',enabled,writes,wrap(async(req,res)=>res.json(await gateway.changeCopy(await own(req),req.params.id,req.body?.action))));
   artisan.get('/mailbox/counts',enabled,reads,wrap(async(req,res)=>res.json(await gateway.counts(await own(req)))));
+ }
+ if(gateway.attachmentsEnabled){
+  const multer=require('multer');
+  const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:3*1024*1024,files:1,fields:4,fieldSize:32000,parts:6}}).single('attachment');
+  const uploadLimit=limiter({max:8,parCompte:true});
+  const downloadLimit=limiter({max:60,parCompte:true});
+  artisan.post('/mailbox/send-file',enabled,uploadLimit,(req,res,next)=>upload(req,res,e=>e?res.status(e.code==='LIMIT_FILE_SIZE'?413:400).json({message:'Fichier ou formulaire invalide (3 Mo maximum).'}):next()),wrap(async(req,res)=>{
+   if(!req.file)throw erreur('Fichier requis.',400);
+   const result=await gateway.send(await own(req),req.body,req.file);
+   res.status(202).json({message:'Message et fichier enregistrés.',id:result.id});
+  }));
+  artisan.get('/mailbox/copies/:id/attachment',enabled,downloadLimit,wrap(async(req,res)=>{
+   const f=await gateway.downloadAttachment(await own(req),req.params.id);
+   res.set('Cache-Control','private, no-store');res.set('X-Content-Type-Options','nosniff');
+   res.set('Content-Security-Policy',"default-src 'none'; sandbox");
+   res.attachment(f.name);res.type(f.mime);res.send(f.content);
+  }));
  }
  artisan.get('/mailbox/messages',enabled,reads,wrap(async(req,res)=>res.json(await gateway.list(await own(req),req.query.folder,req.query.cursor))));
  artisan.get('/mailbox/messages/:id',enabled,reads,wrap(async(req,res)=>res.json({message:await gateway.read(await own(req),req.params.id)})));
