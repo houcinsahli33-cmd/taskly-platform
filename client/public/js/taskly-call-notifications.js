@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!document.querySelector('script[data-taskly-persistent-call-host]')) {
         const persistent = document.createElement('script');
         persistent.dataset.tasklyPersistentCallHost = '1';
-        persistent.src = '/js/taskly-call-host-shell.js?v=9';
+        persistent.src = '/js/taskly-call-host-shell.js?v=10';
         document.head.appendChild(persistent);
     }
 
@@ -22,6 +22,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const role = window.utilisateurCourant?.role;
 
     if (!['client', 'artisan'].includes(role)) return;
+
+    // Short-lived server presence, with explicit opt-in on the backend.
+    // If the feature has not been deployed/migrated, stop after 404.
+    let presenceAvailable = true;
+    async function pulsePresence() {
+        if (!presenceAvailable || document.hidden) return;
+        try {
+            await requeteAPI('/api/demandes/chat/presence', {method:'POST',body:'{}'});
+        } catch (error) {
+            if ([403,404].includes(Number(error?.status))) presenceAvailable = false;
+        }
+    }
+    void pulsePresence();
+    const presenceInterval = setInterval(pulsePresence, 60000);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') void pulsePresence();
+    });
+    addEventListener('pagehide', () => clearInterval(presenceInterval), {once:true});
+
 
     const frame = document.querySelector(
         'iframe[id$="content-frame"]'
@@ -50,9 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <p data-call="name"></p>
         <p data-call="type" role="status"></p>
         <div class="tgc-actions">
-            <button type="button" data-call="ring" hidden>
-                Activer la sonnerie
-            </button>
+            <button type="button" data-call="ring" hidden aria-label="Autoriser le son sur cet appareil">Son</button>
             <button type="button" data-call="reject">
                 Refuser
             </button>
@@ -217,6 +234,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.addEventListener('keydown', unlock);
 
     frame.addEventListener('load', bindFrame);
+    window.addEventListener('taskly:persistent-call-connected', () => {
+        current = null;
+        stopRing();
+        panel.hidden = true;
+    });
+    window.addEventListener('taskly:persistent-call-ended', () => {
+        hide();
+    });
 
     bindFrame();
 
@@ -227,6 +252,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         current = call;
+
+        // Use the existing persistent authenticated call window directly.
+        // Never overlay a second acceptance banner on top of it.
+        if (window.TasklyCallHost?.open?.(role, call.demandeId, 'receive')) {
+            panel.hidden = true;
+            // Audio plays only if the browser has already allowed sound.
+            window.TasklyPhoneRing?.start('global',
+                () => current === call && Boolean(window.TasklyCallHost?.isActive()),
+                'incoming');
+            return;
+        }
 
         get('name').textContent =
             call.nom || 'Interlocuteur';
@@ -264,7 +300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 c.demandeId <= 2147483647 &&
                 typeof c.id === 'string' &&
                 ['audio', 'video'].includes(c.mode) &&
-                !suppressed(c) &&
+                (!suppressed(c) || (current?.id === c.id && window.TasklyCallHost?.isActive())) &&
                 !(c.id === snoozedId &&
                     Date.now() < snoozedUntil)
             );

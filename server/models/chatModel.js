@@ -111,6 +111,12 @@ async function envoyerFichier(demandeId,auteurType,profilId,contenu,file,info){
 }
 
 // Les conversations appartiennent uniquement au profil courant. Jamais à son e-mail.
+const presenceActive = () => typeof process !== 'undefined' && process.env?.TASKLY_CHAT_PRESENCE_ENABLED === 'true';
+async function enregistrerPresence(userId) {
+ if (!Number.isSafeInteger(Number(userId)) || Number(userId) < 1) throw Error('Identifiant invalide.');
+ await db.promise().query(`INSERT INTO taskly_chat_presence (user_id, seen_at)
+ VALUES (?, NOW(3)) ON DUPLICATE KEY UPDATE seen_at=NOW(3)`, [userId]);
+}
 const historiqueSQL="(d.statut IN ('acceptee','attente_confirmation','terminee','conteste') OR (d.statut='annulee' AND d.date_traitement IS NOT NULL))";
 function scope(role){
  if(role==='client')return {owner:'d.client_id',other:'artisan',join:'JOIN artisans p ON p.id=d.artisan_id JOIN users u ON u.id=p.user_id',otherId:'d.artisan_id'};
@@ -119,11 +125,14 @@ function scope(role){
 }
 async function conversations(role,profilId,{q='',unread=false,offset=0}={}){
  const a=scope(role);
+ const presence = presenceActive();
  const [rows]=await db.promise().query(`SELECT d.id,d.statut,d.date_souhaitee,s.nom AS service_nom,
   NULLIF(TRIM(CONCAT_WS(' ',u.prenom,u.nom)),'') AS nom,u.photo_profil,
+  ${presence ? 'IF(tp.user_id IS NOT NULL, 1, 0)' : '0'} AS en_ligne,
   m.contenu AS dernier_message, m.created_at AS dernier_at,
   (SELECT COUNT(*) FROM taskly_chat_messages n WHERE n.demande_id=d.id AND n.auteur_type=? AND n.auteur_profil_id=${a.otherId} AND n.lu_at IS NULL) AS non_lus
   FROM demandes d ${a.join} JOIN artisans ap ON ap.id=d.artisan_id JOIN services s ON s.id=ap.service_id
+  ${presence ? 'LEFT JOIN taskly_chat_presence tp ON tp.user_id=u.id AND tp.seen_at >= NOW(3) - INTERVAL 120 SECOND' : ''}
   LEFT JOIN (
     SELECT x.id, x.demande_id, x.contenu, x.created_at,
            ROW_NUMBER() OVER (
@@ -178,4 +187,4 @@ async function participantsAppelActifs(demandeId) {
     return rows.length === 1;
 }
 
-module.exports = { participantsAppelActifs, trouverDemande,listerMessages,envoyerMessage,envoyerFichier,conversations,compterNonLus,marquerLus };
+module.exports = { enregistrerPresence, participantsAppelActifs, trouverDemande,listerMessages,envoyerMessage,envoyerFichier,conversations,compterNonLus,marquerLus };

@@ -179,6 +179,19 @@ async function listerConversations(req,res){
   return res.json(await chatModel.conversations(p.role,p.id,{q:q.trim(),offset,unread:unread==='1'}));
  }catch(e){console.error('Conversations :',e.code||e.name);return res.status(503).json({message:'Conversations indisponibles.'});}
 }
+async function signalerPresence(req,res){
+ try {
+  res.set('Cache-Control','private, no-store');
+  if(typeof process === 'undefined' || process.env?.TASKLY_CHAT_PRESENCE_ENABLED !== 'true')
+   return res.status(404).json({message:'Fonction indisponible.'});
+  const user = req.session?.utilisateur;
+  if(!user || !['client','artisan'].includes(user.role) ||
+     !Number.isSafeInteger(Number(user.id)) || Number(user.id)<1)
+   return res.status(403).json({message:'Accès refusé.'});
+  await chatModel.enregistrerPresence(Number(user.id));
+  return res.status(204).end();
+ }catch(e){console.error('Présence :',e.code||e.name);return res.status(503).json({message:'Présence indisponible.'});}
+}
 async function nonLus(req,res){
  try{res.set('Cache-Control','private, no-store');const p=await profilChat(req,res);if(!p)return;return res.json({total:await chatModel.compterNonLus(p.role,p.id)});}
  catch(e){return res.status(503).json({message:'Notifications indisponibles.'});}
@@ -575,6 +588,7 @@ module.exports = {
     envoyerChat,
     listerConversations,
     nonLus,
+    signalerPresence,
     confirmerLecture,
     gererAppel,
     appelsEntrants,

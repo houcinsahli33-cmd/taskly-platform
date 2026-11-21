@@ -135,7 +135,7 @@ html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-action
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-unread {font-size:13px;min-width:23px;height:23px;line-height:21px;right:15px;}
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-hang {height:65px;width:min(400px,50%);font-size:25px!important;margin:21px auto 30px;}
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-bottom-art {height:95px;}
-html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-video {border-radius:23px;max-width:min(100%,1280px);margin:auto;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-video {border-radius:23px;max-width:100%;margin:0;}
 @media(max-height:520px){
  .tc-v8-board {padding:5px 8px!important;}
  .tc-v8-top {min-height:33px;}
@@ -238,7 +238,7 @@ html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-tas
   display:block!important;position:relative!important;flex:1 1 auto!important;
   width:100%!important;height:100%!important;min-height:100px!important;
   border:1px solid #d3eae0!important;border-radius:17px!important;
-  background:#12392f!important;overflow:hidden!important;isolation:isolate!important;
+  background:linear-gradient(135deg,#e5f8ee,#c5f0dd)!important;overflow:hidden!important;isolation:isolate!important;
 }
 html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video .tc-videos {
   display:block!important;position:absolute!important;inset:0!important;
@@ -301,7 +301,7 @@ html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mod
 html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-actions>.tc-v8-hang[hidden] {display:none!important;}
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-board {padding:clamp(12px,2dvh,30px) clamp(15px,3vw,44px) 9px!important;}
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-hero {min-height:30dvh!important;}
-html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-video {max-width:min(100%,1280px);margin:auto;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-video {max-width:100%;margin:0;}
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-actions {max-width:720px!important;gap:12px!important;margin:10px auto 30px!important;}
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-action>.tc-v8-icon,
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-actions>.tc-v8-hang>.tc-v8-icon {width:62px!important;height:62px!important;border-radius:17px!important;padding:17px!important;}
@@ -316,3 +316,7 @@ html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-
 .chat-workspace .cw-call-event[data-call-mode=video] .cw-call-event-icon {color:#008f60;background:#d5f3e7;}
 .chat-workspace .cw-call-event[data-call-mode=audio] .cw-call-event-icon {color:#ee2581;background:#dff5e9;}
 .chat-workspace .cw-call-event[data-status=cancelled] .cw-call-event-icon {background:#e2f5ed;}
+
+/* Finalisation: the video frame covers available space without grey sidebars. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video {max-width:100%!important;margin:0!important;background:#e5f8ee!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video [data-tc='remote'] {object-fit:cover!important;background:#e5f8ee!important;}

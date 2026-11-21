@@ -65,6 +65,11 @@
     const stage=dialog.dataset.premiumStage || 'connecting';
     const incoming=stage==='incoming';
     info.board.dataset.callStage=stage;
+    if (info.lastNotifiedStage !== stage && window.parent !== window && location.origin) {
+      info.lastNotifiedStage = stage;
+      try { window.parent.postMessage({type:'taskly:call-host-stage', stage}, location.origin); }
+      catch { /* parent navigation must never affect media */ }
+    }
     info.incomingRow.hidden=!incoming;
     info.hang.hidden=incoming;
     const mode=dialog.dataset.mode === 'video' ? 'video' : 'audio';

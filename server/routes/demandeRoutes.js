@@ -54,6 +54,7 @@ router.put('/:id/contester-fin', verifierConnexion, verifierClient, demandeContr
 if(process.env.TASKLY_CHAT_WORKSPACE_ENABLED==='true'){
  router.get('/chat/conversations',verifierConnexion,limiter({fenetre:60000,max:60}),chatController.listerConversations);
  router.get('/chat/unread',verifierConnexion,limiter({fenetre:60000,max:30}),chatController.nonLus);
+ router.post('/chat/presence',verifierConnexion,verifierCsrf,limiter({fenetre:60000,max:4,parCompte:true}),chatController.signalerPresence);
  router.post('/:id/chat/read',verifierConnexion,verifierCsrf,limiter({fenetre:60000,max:60}),chatController.confirmerLecture);
 }
 

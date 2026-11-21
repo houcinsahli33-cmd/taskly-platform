@@ -8,8 +8,8 @@ const css=read('client/public/css/taskly-call-maquette-v8.css');
 for(const role of ['client','artisan']) {
  test('V8 loaded in '+role+' private messaging after persistent window',()=>{
   const html=read('client/private/'+role+'/messagerie.html');
-  assert.match(html,/taskly-call-maquette-v8\.css\?v=9/);
-  assert.match(html,/taskly-call-maquette-v8\.js\?v=9/);
+  assert.match(html,/taskly-call-maquette-v8\.css\?v=10/);
+  assert.match(html,/taskly-call-maquette-v8\.js\?v=10/);
   assert.ok(html.indexOf('taskly-call-floating.js')<html.indexOf('taskly-call-maquette-v8.js'));
   assert.match(html,/taskly-call-livekit\.js/);
  });

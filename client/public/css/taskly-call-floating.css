@@ -6,7 +6,7 @@
   width:min(390px,calc(100vw - 24px));height:min(460px,calc(100dvh - 24px));
   min-width:285px;min-height:42px;overflow:hidden;
   border:1px solid #d4e2dd;border-radius:16px;
-  background:#e9f4ef;box-shadow:0 16px 48px #002e2473,0 4px 13px #00372b36;
+  background:#ffffff;box-shadow:0 16px 48px #002e2473,0 4px 13px #00372b36;
   resize:both;
 }
 .taskly-floating-titlebar {
@@ -28,7 +28,7 @@
 .taskly-floating-commands button:hover {background:#dcece4;}
 .taskly-floating-commands [data-call-host=close]:hover {background:#db4343;color:white;}
 .taskly-floating-commands button:focus-visible {outline:2px solid #087c55;outline-offset:-2px;}
-.taskly-floating-call-frame {display:block;flex:1 1 auto;width:100%;height:calc(100% - 41px);border:0;background:#003427;}
+.taskly-floating-call-frame {display:block;flex:1 1 auto;width:100%;height:calc(100% - 41px);border:0;background:#ffffff;}
 .taskly-floating-host[data-call-window-state=max],
 .taskly-floating-host:fullscreen {
   position:fixed!important;inset:0!important;left:0!important;top:0!important;
@@ -47,7 +47,7 @@
    its ordinary chat page while keeping its original DOM and JS functional. */
 html[data-taskly-call-host='1'],html[data-taskly-call-host='1'] body {
   width:100%!important;height:100%!important;max-width:none!important;
-  margin:0!important;overflow:hidden!important;background:#003629!important;
+  margin:0!important;overflow:hidden!important;background:#ffffff!important;
 }
 html[data-taskly-call-host='1'] body > :not(.taskly-call-dialog) {visibility:hidden!important;}
 html[data-taskly-call-host='1'] body > .taskly-call-dialog {visibility:visible!important;}
@@ -57,9 +57,9 @@ html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-c
   position:fixed!important;inset:0!important;top:0!important;left:0!important;
   width:100%!important;max-width:100%!important;height:100%!important;max-height:100%!important;
   margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
-  box-shadow:none!important;overflow:hidden!important;background:#003b2c!important;
+  box-shadow:none!important;overflow:hidden!important;background:#ffffff!important;
 }
-html[data-taskly-call-host='1'] .taskly-call-dialog::backdrop {background:#003629!important;backdrop-filter:none!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog::backdrop {background:transparent!important;backdrop-filter:none!important;}
 html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-panel {
   padding:12px 14px 15px!important;
   background:radial-gradient(ellipse at 50% 30%,#09644b,#003126 65%,#00251e)!important;

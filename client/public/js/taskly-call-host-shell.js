@@ -19,7 +19,7 @@
   let dragging = null;
   let cleanupTimer = null;
 
-  const CSS = '/css/taskly-call-floating.css?v=7';
+  const CSS = '/css/taskly-call-floating.css?v=10';
   if (!document.querySelector('link[data-taskly-floating-style]')) {
     const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = CSS;
     css.dataset.tasklyFloatingStyle = '1'; document.head.append(css);
@@ -176,7 +176,13 @@
   window.addEventListener('message', event => {
     if (event.origin !== location.origin || !frame || event.source !== frame.contentWindow) return;
     if (event.data?.type === 'taskly:call-host-ready') return;
-    if (event.data?.type === 'taskly:call-host-ended') clear();
+    if (event.data?.type === 'taskly:call-host-ended') {
+      window.dispatchEvent(new Event('taskly:persistent-call-ended'));
+      clear();
+    }
+    if (event.data?.type === 'taskly:call-host-stage' && event.data.stage === 'connected') {
+      window.dispatchEvent(new Event('taskly:persistent-call-connected'));
+    }
     if (event.data?.type === 'taskly:call-host-action') {
       if (event.data.action === 'max') toggleFullscreen();
       if (event.data.action === 'chat') {

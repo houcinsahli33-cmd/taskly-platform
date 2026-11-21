@@ -128,3 +128,20 @@ body.dashboard-page[data-taskly-artisan-shell] .side-nav a .chat-nav-icon {
 .cw-file-remove{border:0;background:#d6eee3;color:#075a47;border-radius:7px;cursor:pointer;font-size:20px;min-width:26px;min-height:26px}
 .cw-attachment-link{display:flex;align-items:center;gap:7px;max-width:100%;border:1px solid #c7e7d7;background:#fff;border-radius:10px;padding:9px 10px;margin:8px 0;color:#096850;font-size:12px;font-weight:700;overflow-wrap:anywhere;text-decoration:none}
 .cw-attachment-link:hover{text-decoration:underline;background:#f3fcf7}
+
+/* Online status: overlay on the avatar edge, not beside the name. */
+.chat-workspace .cw-avatar {overflow:visible;}
+.chat-workspace .cw-avatar img {border-radius:50%;}
+.chat-workspace .cw-avatar .cw-presence-dot {
+ position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;z-index:4;
+ border:2px solid #fff;border-radius:50%;background:#12c56a;
+ box-shadow:0 1px 3px #063d2955;box-sizing:border-box;pointer-events:none;
+}
+.chat-workspace .cw-heading {position:relative;}
+.chat-workspace .cw-return-site {
+ position:absolute;top:0;right:18px;display:inline-flex;align-items:center;gap:6px;
+ border:1px solid #d0e9db;background:#fff;color:#036044;text-decoration:none;
+ border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;
+}
+.chat-workspace .cw-return-site:hover {background:#e8f8f0;}
+@media(max-width:700px) {.chat-workspace .cw-return-site {position:static;margin:0 0 9px 0;}}
