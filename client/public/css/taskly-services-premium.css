@@ -1,0 +1,443 @@
+/* TASKLY - SERVICES PREMIUM / uniquement les cartes publiques Services + Accueil.
+   Reprend le conteneur et la grille de l'annuaire Artisans.
+   Ne cible ni le header, ni le footer, ni l'administration, ni la fiche service. */
+
+body[data-active="services"] .taskly-services-page {
+  background:
+    radial-gradient(ellipse 42% 21% at 100% 2%, rgba(141, 221, 186, .19), transparent 85%),
+    radial-gradient(ellipse 40% 25% at 0 0, rgba(134, 225, 191, .14), transparent 80%),
+    #f8fcfa;
+  padding-bottom: 60px;
+}
+
+/* Mêmes marges horizontales que .tmp-directory de la page Artisans */
+body[data-active="services"] .taskly-services-container {
+  width: calc(100% - 48px);
+  max-width: 1592px;
+  min-width: 0;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+body[data-active="services"] .taskly-services-hero {
+  min-height: 0;
+  padding: 38px 0 22px;
+  background: transparent;
+}
+body[data-active="services"] .taskly-services-eyebrow {
+  display: inline-flex;
+  min-height: 31px;
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 5px 20px;
+  border-radius: 999px;
+  color: #04744f;
+  background: #daf5e9;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: .045em;
+}
+body[data-active="services"] .taskly-services-hero h1 {
+  margin: 0 0 8px;
+  font-family: var(--font-main, Poppins, sans-serif);
+  font-size: clamp(28px, 3.0vw, 46px);
+  font-weight: 900;
+  line-height: 1.17;
+  letter-spacing: -.025em;
+  color: #103c2e;
+  text-shadow: none;
+}
+body[data-active="services"] .taskly-services-lead {
+  color: #526474;
+  font-size: clamp(14px, 1.12vw, 18px);
+  line-height: 1.55;
+  margin: 0;
+}
+body[data-active="services"] .taskly-services-catalogue {padding: 0}
+
+body[data-active="services"] .taskly-services-tools {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  border: 1px solid #e2efea;
+  border-radius: 21px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(8, 63, 43, .07);
+  backdrop-filter: none;
+}
+body[data-active="services"] .taskly-services-tools .services-search-shell {
+  flex: 1 1 460px;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+}
+body[data-active="services"] .taskly-services-tools .services-search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+  height: 54px;
+  min-height: 54px;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  border: 1px solid #cfded9;
+  border-radius: 999px;
+  box-shadow: none;
+  overflow: hidden;
+}
+body[data-active="services"] .taskly-services-search-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+body[data-active="services"] .taskly-services-search-icon {
+  display: inline-grid;
+  place-items: center;
+  color: #0b9567;
+  margin-left: 19px;
+  flex: 0 0 21px;
+  width: 21px;
+  height: 21px;
+}
+body[data-active="services"] .taskly-services-search-icon svg {width: 21px;height: 21px;}
+body[data-active="services"] .taskly-services-search-form input {
+  display: block;
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  padding: 0 16px;
+  font-size: 14px;
+  line-height: 1.35;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #1a3540;
+  outline: 0;
+}
+body[data-active="services"] .taskly-services-search-form input:focus-visible {outline: 2px solid #0ba87e;outline-offset: -3px;border-radius: 99px}
+body[data-active="services"] .taskly-services-search-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  gap: 9px;
+  min-width: 150px;
+  width: auto;
+  height: 52px;
+  min-height: 52px;
+  margin: 0;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 99px;
+  color: #fff;
+  background: linear-gradient(125deg, #079d68, #006943);
+  font-size: 14px;
+  font-weight: 800;
+}
+body[data-active="services"] .taskly-services-search-button svg {display: block;width: 21px;height: 21px;filter:none}
+body[data-active="services"] .taskly-services-filter-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  min-width: 0;
+  overflow: visible;
+}
+body[data-active="services"] .taskly-services-filter-tabs .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 9px 19px;
+  border: 1px solid #a9dfc7;
+  border-radius: 999px;
+  background: #fff;
+  color: #065f3f;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.35;
+  box-shadow: none;
+  white-space: nowrap;
+}
+body[data-active="services"] .taskly-services-filter-tabs .btn svg {width: 20px;height:20px;flex:0 0 20px;color:currentColor;fill:none}
+body[data-active="services"] .taskly-services-filter-tabs .btn.active,
+body[data-active="services"] .taskly-services-filter-tabs .btn[aria-pressed="true"] {
+  color: #fff;
+  background: #087f63;
+  border-color: #087f63;
+}
+body[data-active="services"] #services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  align-items: stretch;
+}
+
+/* Cartes communes à la page Services et au carrousel public d'accueil uniquement. */
+body[data-active="services"] .taskly-svc-card,
+body[data-active="home"] #services-carousel .taskly-svc-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #dfede8;
+  border-radius: 19px;
+  background: white;
+  box-shadow: 0 12px 30px rgba(15, 62, 45, .09);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+body[data-active="services"] .taskly-svc-card:hover,
+body[data-active="home"] #services-carousel .taskly-svc-card:hover {
+  transform: translateY(-4px);
+  border-color: #a4d8c5;
+  box-shadow: 0 22px 40px rgba(15, 62, 45, .13);
+}
+.taskly-svc-card .taskly-svc-image-wrap {
+  width: 100%;
+  height: clamp(170px, 13.1vw, 238px);
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: #e7eee9;
+}
+.taskly-svc-card .taskly-svc-image-wrap .service-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+}
+body[data-active="services"] .taskly-svc-card .card-body,
+body[data-active="home"] #services-carousel .taskly-svc-card .card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 1 1 auto;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 14px 16px 16px;
+}
+.taskly-svc-card .taskly-svc-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+.taskly-svc-card .taskly-svc-symbol {
+  flex: 0 0 48px;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: #e6f7ef;
+  color: #067956;
+}
+.taskly-svc-card .taskly-svc-symbol svg {width: 27px;height:27px;max-width:27px;max-height:27px}
+.taskly-svc-card .taskly-svc-copy {min-width:0;flex:1}
+.taskly-svc-card .taskly-svc-copy h3 {
+  margin: 2px 0 5px;
+  font-family: var(--font-main, Poppins, sans-serif);
+  font-size: clamp(17px,1.4vw,23px);
+  line-height: 1.25;
+  font-weight: 800;
+  color: #0e202b;
+}
+.taskly-svc-card .taskly-svc-copy p {
+  margin: 0;
+  font-size: clamp(12px, .95vw, 14px);
+  line-height: 1.5;
+  color: #536474;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+body[data-active="services"] .taskly-svc-card .taskly-svc-stats,
+body[data-active="home"] #services-carousel .taskly-svc-card .taskly-svc-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  width: 100%;
+  margin: auto 0 0;
+  min-width: 0;
+}
+.taskly-svc-card .taskly-svc-stats .badge {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 35px;
+  margin: 0;
+  padding: 6px 8px;
+  flex: initial;
+  font-size: clamp(11px,.85vw,13px);
+  line-height: 1.25;
+  text-align: center;
+  border-radius: 10px;
+  background: #f2f6f5;
+  color: #19343b;
+  font-weight: 750;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.taskly-svc-card .taskly-svc-stats .badge.primary {color:#046e50;background:#e7f7f0}
+.taskly-svc-card .taskly-svc-stats .badge.accent {color:#825700;background:#fff6dc}
+.taskly-svc-card .taskly-svc-stats svg {width:17px;height:17px;flex:0 0 17px;max-width:17px;max-height:17px;fill:none}
+body[data-active="services"] .taskly-svc-card .taskly-svc-link,
+body[data-active="home"] #services-carousel .taskly-svc-card .taskly-svc-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(110deg, #078f63, #006844);
+  color: white;
+  box-shadow: none;
+  font-size: clamp(12px, 1vw, 15px);
+  font-weight: 800;
+  text-align: center;
+}
+.taskly-svc-card .taskly-svc-link svg {width:20px;height:20px;flex:0 0 20px}
+.taskly-svc-card .taskly-svc-link:hover {filter: brightness(1.05);color: white}
+body[data-active="home"] #services-carousel .taskly-svc-card .taskly-svc-image-wrap {height: 190px}
+body[data-active="home"] #services-carousel .taskly-svc-card .card-body {padding: 14px;gap: 12px}
+body[data-active="home"] #services-carousel .taskly-svc-card .taskly-svc-copy h3 {font-size: 18px}
+
+@media (max-width: 1100px) {
+  body[data-active="services"] .taskly-services-tools {flex-wrap:wrap;gap:12px}
+  body[data-active="services"] .taskly-services-tools .services-search-shell {flex:1 1 100%}
+  body[data-active="services"] .taskly-services-filter-tabs {width:100%;justify-content:flex-start;flex-wrap:wrap}
+  body[data-active="services"] #services-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width: 640px) {
+  body[data-active="services"] .taskly-services-container {width:calc(100% - 28px)}
+  body[data-active="services"] .taskly-services-hero {padding:24px 0 18px}
+  body[data-active="services"] .taskly-services-hero h1 {font-size:clamp(25px,7.4vw,34px)}
+  body[data-active="services"] .taskly-services-lead {font-size:13px}
+  body[data-active="services"] .taskly-services-tools {display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:12px;border-radius:16px;margin:0 0 18px}
+  body[data-active="services"] .taskly-services-tools .services-search-shell {width:100%;min-width:0}
+  body[data-active="services"] .taskly-services-tools .services-search-form {
+    display:grid;grid-template-columns:32px minmax(0,1fr);grid-template-rows:50px 44px;
+    gap:8px 0;height:auto;min-height:0;border:0;overflow:visible;border-radius:0;
+  }
+  body[data-active="services"] .taskly-services-search-icon {grid-column:1;grid-row:1;align-self:center;margin-left:12px;z-index:1}
+  body[data-active="services"] .taskly-services-search-form input {grid-column:1/-1;grid-row:1;padding-left:43px;border:1px solid #cfded9;border-radius:999px;height:50px;background:#fff}
+  body[data-active="services"] .taskly-services-search-button {grid-column:1/-1;grid-row:2;height:44px;min-height:44px;width:100%;min-width:0;border-radius:12px}
+  body[data-active="services"] .taskly-services-filter-tabs {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;padding:0;overflow:visible}
+  body[data-active="services"] .taskly-services-filter-tabs .btn {white-space:normal;min-width:0;min-height:44px;font-size:11px;padding:7px 6px;gap:5px}
+  body[data-active="services"] .taskly-services-filter-tabs .btn svg {width:17px;height:17px;flex:0 0 17px}
+  body[data-active="services"] #services-grid {grid-template-columns:minmax(0,1fr);gap:16px}
+  body[data-active="services"] .taskly-svc-card .taskly-svc-image-wrap {height:190px}
+  body[data-active="services"] .taskly-svc-card .taskly-svc-copy h3 {font-size:19px}
+  body[data-active="services"] .taskly-svc-card .taskly-svc-copy p {font-size:13px}
+  body[data-active="services"] .taskly-svc-card .card-body {padding:12px 13px 14px}
+  body[data-active="services"] .taskly-svc-card .taskly-svc-stats .badge {font-size:11px}
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-active="services"] .taskly-svc-card,body[data-active="home"] #services-carousel .taskly-svc-card {transition:none}
+  body[data-active="services"] .taskly-svc-card:hover,body[data-active="home"] #services-carousel .taskly-svc-card:hover {transform:none}
+  .taskly-svc-card .service-image {transition:none}
+}
+
+/* Priorite sur les anciens styles de recherche et de filtres. */
+body[data-active="services"] .services-filter-box .taskly-services-search-form input {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0 16px;
+}
+body[data-active="services"] .services-filter-box .taskly-services-filter-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+@media (max-width: 1100px) {
+  body[data-active="services"] .services-filter-box .taskly-services-filter-tabs {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+    overflow: visible;
+  }
+}
+@media (max-width: 640px) {
+  body[data-active="services"] .services-filter-box .taskly-services-search-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+  }
+  body[data-active="services"] .services-filter-box .taskly-services-search-icon {
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    z-index: 1;
+    margin: 0;
+    pointer-events: none;
+  }
+  body[data-active="services"] .services-filter-box .taskly-services-search-form input {
+    flex: 0 0 50px;
+    grid-column: auto;
+    grid-row: auto;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: 50px;
+    border: 1px solid #cfded9;
+    border-radius: 999px;
+    padding: 0 14px 0 43px;
+    background: #fff;
+  }
+  body[data-active="services"] .services-filter-box .taskly-services-search-button {
+    width: 100%;
+    height: 44px;
+    min-height: 44px;
+    border-radius: 12px;
+  }
+  body[data-active="services"] .services-filter-box .taskly-services-filter-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    overflow: visible;
+    flex-wrap: initial;
+  }
+}

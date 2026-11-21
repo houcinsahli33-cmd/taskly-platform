@@ -6,42 +6,39 @@
   <title>Services - Taskly</title>
   <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/taskly-services-premium.css?v=1">
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/services.js"></script>
 </head>
 <body data-active="services">
   <div id="site-header"></div>
-  <main class="page-main">
-    <!-- Hero services -->
-    <section class="photo-hero">
-      <img src="/images/hero/home-service.jpg" alt="Artisan en intervention chez un client">
-      <div class="container">
-        <p class="eyebrow">Catalogue</p>
-        <h1>Trouvez le service adapté à votre besoin</h1>
-        <p class="lead font-700">Explorez les services disponibles, comparez les artisans et choisissez le profil qui correspond à votre projet.</p>
+  <main class="page-main taskly-services-page">
+    <section class="taskly-services-hero" aria-labelledby="services-title">
+      <div class="container taskly-services-container">
+        <p class="taskly-services-eyebrow">SERVICES</p>
+        <h1 id="services-title">Trouvez le service qu’il vous faut</h1>
+        <p class="taskly-services-lead">Explorez nos services, comparez les artisans disponibles et faites votre demande en quelques clics.</p>
       </div>
     </section>
 
-    <!-- Recherche et liste des services -->
-    <section class="section">
-      <div class="container">
-        <div class="filters services-filter-box">
+    <section class="taskly-services-catalogue" aria-label="Catalogue des services">
+      <div class="container taskly-services-container">
+        <div class="filters services-filter-box taskly-services-tools">
           <div class="search-shell services-search-shell">
-            <form class="hero-search services-search-form" id="services-search-form">
-              <input id="service-search" type="search" autocomplete="off" placeholder="Rechercher un service">
-              <button class="hero-search-button" type="submit" aria-label="Rechercher">
-                <img src="/images/icons/search_icon.svg" alt="">
-              </button>
+            <form class="hero-search services-search-form taskly-services-search-form" id="services-search-form" role="search">
+              <label class="taskly-services-search-label" for="service-search">Rechercher un service</label>
+              <span class="taskly-services-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></span>
+              <input id="service-search" type="search" autocomplete="off" placeholder="Rechercher un service…">
+              <button class="hero-search-button taskly-services-search-button" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span>Rechercher</span></button>
             </form>
           </div>
-
-          <div class="filter-tabs mb-0">
-            <button class="btn outline" type="button" data-service-filter="populaires">Services populaires</button>
-            <button class="btn outline" type="button" data-service-filter="notes">Mieux notés</button>
+          <div class="filter-tabs taskly-services-filter-tabs">
+            <button class="btn outline" type="button" data-service-filter="populaires" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.8 0 7.7-3.3 7.7-7.3 0-3-1.5-5.2-4.7-8.2.2 3.1-.7 4.1-1.8 4.7-.6-3.2-1.3-5.4-3.8-8.2C8 7.9 4.2 10.7 4.2 15c0 4 3 7 7.8 7z"/></svg><span>Services populaires</span></button>
+            <button class="btn outline" type="button" data-service-filter="notes" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.5 3.1 6.4 7.1 1-5.1 4.9 1.2 7-6.3-3.3-6.3 3.3 1.2-7-5.1-4.9 7.1-1z"/></svg><span>Mieux notés</span></button>
           </div>
         </div>
-        <div class="grid three" id="services-grid"></div>
+        <div class="grid three taskly-services-grid" id="services-grid" aria-live="polite"></div>
       </div>
     </section>
   </main>

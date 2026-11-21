@@ -1,9 +1,43 @@
+
+// Pictogrammes SVG de presentation, independants des donnees/API.
+function pictogrammeServicePremium(nom) {
+  const name = String(nom || "").toLocaleLowerCase("fr").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const svg = (body) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  if (/carrelage|revetement|faience|sols/.test(name)) return svg('<path d="m12 2 9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/>');
+  if (/climatis|froid|refriger/.test(name)) return svg('<path d="M12 2v20M4 6l16 12M20 6 4 18M9 5l3 3 3-3M9 19l3-3 3 3M3 9l4 1-1 4M21 9l-4 1 1 4"/>');
+  if (/demenag|transport|livraison/.test(name)) return svg('<path d="M2 6h12v12H2zM14 10h4l4 4v4h-8z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>');
+  if (/plomb|sanitaire|canalis/.test(name)) return svg('<path d="m15 6 3 3-9 9-3-3zM14 5l5-3 3 3-3 5M5 14l-3 5 3 3 5-3"/>');
+  if (/electri/.test(name)) return svg('<path d="m13 2-9 12h7l-1 8 10-13h-7z"/>');
+  return svg('<path d="M14 6a5 5 0 0 0-6 6L3 17a3 3 0 0 0 4 4l5-5a5 5 0 0 0 6-6l-3 3-4-4z"/>');
+}
+
+function pictogrammeStatPremium(type) {
+  const svg = (body) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  switch (type) {
+    case "artisans": return svg('<circle cx="9" cy="8" r="3"/><path d="M2 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6M16 14a5 5 0 0 1 6 5v1"/>');
+    case "demandes": return svg('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 2v6M16 2v6M3 10h18M9 15l2 2 4-4"/>');
+    case "notes": return svg('<path d="m12 2 3.1 6.4 7.1 1-5.1 4.9 1.2 7-6.3-3.3-6.3 3.3 1.2-7-5.1-4.9 7.1-1z"/>');
+    case "avis": return svg('<path d="M21 11a8 8 0 0 1-8 8H4l2-5a8 8 0 1 1 15-3z"/>');
+    default: return "";
+  }
+}
+
 let servicesCatalogue = [];
 let filtreServices = "tous";
 
 // Construire les statistiques d'un service
-function statsService(service) {
+function statsService(service, premium = false) {
   const moyenne = Number(service.moyenne_notes || 0);
+  if (premium) {
+    return `
+      <div class="service-stats taskly-svc-stats">
+        <span class="badge primary">${pictogrammeStatPremium("artisans")} ${Number(service.total_artisans || 0)} artisan(s)</span>
+        <span class="badge">${pictogrammeStatPremium("demandes")} ${Number(service.total_demandes || 0)} demande(s)</span>
+        <span class="badge accent">${pictogrammeStatPremium("notes")} ${moyenne ? formatNombre(moyenne) + "/5" : "Nouveau"}</span>
+        <span class="badge">${pictogrammeStatPremium("avis")} ${Number(service.total_avis || 0)} avis</span>
+      </div>
+    `;
+  }
   return `
     <div class="service-stats">
       <span class="badge primary">${Number(service.total_artisans || 0)} artisan(s)</span>
@@ -17,15 +51,18 @@ function statsService(service) {
 // Construire une carte de service
 function carteService(service) {
   return `
-    <article class="card service-card">
-      <img class="service-image" loading="lazy" decoding="async" src="${echapperHTML(imageService(service))}" alt="${echapperHTML(service.nom)}" data-service-image="${echapperHTML(service.nom)}">
+    <article class="card service-card taskly-svc-card">
+      <div class="taskly-svc-image-wrap"><img class="service-image" loading="lazy" decoding="async" src="${echapperHTML(imageService(service))}" alt="${echapperHTML(service.nom)}" data-service-image="${echapperHTML(service.nom)}"></div>
       <div class="card-body">
-        <div>
-          <h3>${echapperHTML(service.nom)}</h3>
-          <p class="muted">${echapperHTML(service.description || "Service proposé par les artisans Taskly.")}</p>
-          ${statsService(service)}
+        <div class="taskly-svc-summary">
+          <span class="taskly-svc-symbol">${pictogrammeServicePremium(service.nom)}</span>
+          <div class="taskly-svc-copy">
+            <h3>${echapperHTML(service.nom)}</h3>
+            <p class="muted">${echapperHTML(service.description || "Service proposé par les artisans Taskly.")}</p>
+          </div>
         </div>
-        <a class="btn outline" href="/service.html?id=${service.id}">Consulter le service</a>
+        ${statsService(service, true)}
+        <a class="btn primary taskly-svc-link" href="/service.html?id=${encodeURIComponent(service.id)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-3.5-9.5L2 9zM22 2 11.5 12.5"/></svg><span>Consulter le service</span><span aria-hidden="true">→</span></a>
       </div>
     </article>
   `;
@@ -140,6 +177,7 @@ function initialiserFiltresServices() {
         item.classList.toggle("active", estActif);
         item.classList.toggle("primary", estActif);
         item.classList.toggle("outline", !estActif);
+        item.setAttribute("aria-pressed", String(estActif));
       });
 
       afficherServicesCatalogue();
