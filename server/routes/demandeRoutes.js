@@ -94,6 +94,12 @@ if (
         chatController.gererAppel
     );
 }
+// Historique durable des appels : fonctionnalite inactive par defaut.
+if (process.env.TASKLY_CHAT_WORKSPACE_ENABLED === 'true' &&
+    process.env.TASKLY_CHAT_CALL_HISTORY_ENABLED === 'true') {
+    router.get('/:id/chat/calls/history',verifierConnexion,
+        limiter({fenetre:60000,max:30,parCompte:true}),chatController.historiqueAppels);
+}
 // Activation après création de taskly_chat_attachments dans TiDB et déploiement du code.
 if(process.env.TASKLY_CHAT_ATTACHMENTS_ENABLED==='true'){
  const chatFiles=require('../controllers/chatAttachmentsController');

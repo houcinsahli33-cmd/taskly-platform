@@ -310,6 +310,21 @@ async function gererAppel(req, res) {
         }
 
 
+        // Historique des appels (optionnel) : aucune erreur SQL ne coupe LiveKit.
+        if (typeof process !== 'undefined' &&
+            process.env?.TASKLY_CHAT_CALL_HISTORY_ENABLED === 'true' &&
+            result.call && [200,201].includes(result.code) &&
+            (['start','accept','reject','end'].includes(action) ||
+             (action === 'heartbeat' && result.call.state === 'ended'))) {
+            try {
+                await require('../services/chatCallHistory').enregistrerTransition(
+                    { demandeId: acces.demandeId, role: acces.role }, action, result
+                );
+            } catch {
+                console.error('Historique Taskly : ecriture indisponible.');
+            }
+        }
+
         // nettoyage immediat LiveKit apres raccrochage
         if (
             action === 'end' &&
@@ -538,6 +553,23 @@ async function appelsEntrants(req, res) {
         });
     }
 }
+async function historiqueAppels(req, res) {
+    try {
+        res.set('Cache-Control', 'private, no-store');
+        const acces = await verifierParticipant(req, res);
+        if (!acces) return;
+        if (!historiqueAutorise(acces.demande)) {
+            return res.status(403).json({message:'Historique indisponible.'});
+        }
+        const appels = await require('../services/chatCallHistory')
+            .listerPourDemande(acces.demandeId);
+        return res.json({ appels });
+    } catch {
+        console.error('Historique Taskly : lecture indisponible.');
+        return res.status(503).json({message:'Historique temporairement indisponible.'});
+    }
+}
+
 module.exports = {
     lireChat,
     envoyerChat,
@@ -548,5 +580,6 @@ module.exports = {
     appelsEntrants,
     emettreJetonLiveKit,
     verifierParticipant,
-    historiqueAutorise
+    historiqueAutorise,
+    historiqueAppels
 };

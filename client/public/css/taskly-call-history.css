@@ -1,0 +1,33 @@
+/* Historique inline : meme alignement que les bulles Client/Artisan.
+   Aucun changement de largeur/hauteur de la messagerie ni des appels LiveKit. */
+.chat-workspace .cw-call-line{margin:14px 0;align-items:flex-start}
+.chat-workspace .cw-call-line .cw-call-event{
+  display:flex;align-items:center;gap:9px;min-width:0;
+  width:fit-content;max-width:min(85%,350px);
+  margin:0;padding:9px 12px;
+  border:1px solid #e0e6e3;border-radius:17px 17px 17px 7px;
+  background:#eff0f3;color:#172c37;font-size:12px;line-height:1.35;
+  box-sizing:border-box;overflow-wrap:anywhere;
+}
+.chat-workspace .cw-call-line.mine .cw-call-event{
+  background:#dff3e9;border-color:#cce9dc;
+  border-radius:17px 17px 7px 17px;
+}
+.chat-workspace .cw-call-event-icon{
+  display:grid;place-items:center;width:32px;height:32px;flex:none;
+  border-radius:10px;background:#d9eee6;font-size:17px;
+}
+.chat-workspace .cw-call-event-content{display:flex;flex-direction:column;gap:3px;min-width:0}
+.chat-workspace .cw-call-event-content strong{font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.chat-workspace .cw-call-event-content small{font-size:11px;color:#57736b;overflow-wrap:anywhere}
+.chat-workspace .cw-call-event[data-status="missed"],
+.chat-workspace .cw-call-event[data-status="declined"]{
+  background:#fff2f0;border-color:#f3d7d3;color:#a92d27;
+}
+.chat-workspace .cw-call-event[data-status="missed"] .cw-call-event-icon,
+.chat-workspace .cw-call-event[data-status="declined"] .cw-call-event-icon{background:#ffe4e1}
+@media(max-width:700px){
+ .chat-workspace .cw-call-line{margin:10px 0}
+ .chat-workspace .cw-call-line .cw-call-event{max-width:88%;padding:8px 10px}
+ .chat-workspace .cw-call-event-icon{width:29px;height:29px}
+}
