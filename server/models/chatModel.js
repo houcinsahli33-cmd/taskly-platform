@@ -37,13 +37,18 @@ async function trouverDemande(demandeId) {
 
 // Lire les 50 derniers messages dans l'ordre chronologique.
 async function listerMessages(demandeId) {
+    const piecesJointes = process.env.TASKLY_CHAT_ATTACHMENTS_ENABLED === 'true';
     const [rows] = await db.promise().query(
-        `SELECT CAST(id AS CHAR) AS id, demande_id, auteur_type,
-                auteur_profil_id, contenu, created_at, lu_at
-         FROM taskly_chat_messages
-         WHERE demande_id = ?
-         ORDER BY id DESC
-         LIMIT 50`,
+        piecesJointes
+        ? `SELECT CAST(m.id AS CHAR) AS id, m.demande_id, m.auteur_type,
+             m.auteur_profil_id, m.contenu, m.created_at, m.lu_at,
+             a.filename AS fichier_nom, a.media_type AS fichier_type, a.byte_size AS fichier_taille
+           FROM taskly_chat_messages m
+           LEFT JOIN taskly_chat_attachments a ON a.message_id=m.id
+           WHERE m.demande_id=? ORDER BY m.id DESC LIMIT 50`
+        : `SELECT CAST(id AS CHAR) AS id, demande_id, auteur_type,
+                 auteur_profil_id, contenu, created_at, lu_at
+           FROM taskly_chat_messages WHERE demande_id=? ORDER BY id DESC LIMIT 50`,
         [demandeId]
     );
 
@@ -80,6 +85,29 @@ async function envoyerMessage(demandeId, auteurType, profilId, contenu) {
     return resultat.affectedRows === 1
         ? resultat.insertId
         : null;
+}
+
+// Stocker le message et le fichier prive dans une transaction unique.
+async function envoyerFichier(demandeId,auteurType,profilId,contenu,file,info){
+ if(!['client','artisan'].includes(auteurType))throw new Error('Rôle invalide.');
+ const conn=await db.promise().getConnection();
+ try{
+  await conn.beginTransaction();
+  const [result]=await conn.query(`INSERT INTO taskly_chat_messages
+   (demande_id,auteur_type,auteur_profil_id,contenu)
+   SELECT d.id,?,?,? FROM demandes d
+   WHERE d.id=? AND d.statut='acceptee'
+   AND EXISTS (SELECT 1 FROM artisans a WHERE a.id=d.artisan_id AND a.autoriser_messagerie=1)
+   AND ((?='client' AND d.client_id=?) OR (?='artisan' AND d.artisan_id=?))`,
+   [auteurType,profilId,contenu,demandeId,auteurType,profilId,auteurType,profilId]);
+  if(result.affectedRows!==1){await conn.rollback();return null;}
+  const fileId=await require('../services/fileStorage').enregistrer(file,true,conn);
+  await conn.query(`INSERT INTO taskly_chat_attachments
+    (message_id,file_id,filename,media_type,byte_size,sha256) VALUES (?,?,?,?,?,?)`,
+   [result.insertId,fileId,info.filename,info.mime,info.size,info.sha256]);
+  await conn.commit();
+  return result.insertId;
+ }catch(e){await conn.rollback();throw e;}finally{conn.release();}
 }
 
 // Les conversations appartiennent uniquement au profil courant. Jamais à son e-mail.
@@ -150,4 +178,4 @@ async function participantsAppelActifs(demandeId) {
     return rows.length === 1;
 }
 
-module.exports = { participantsAppelActifs, trouverDemande,listerMessages,envoyerMessage,conversations,compterNonLus,marquerLus };
+module.exports = { participantsAppelActifs, trouverDemande,listerMessages,envoyerMessage,envoyerFichier,conversations,compterNonLus,marquerLus };

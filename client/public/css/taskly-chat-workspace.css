@@ -120,3 +120,11 @@ body.dashboard-page[data-taskly-artisan-shell] .side-nav a .chat-nav-icon {
         box-sizing: border-box;
     }
 }
+
+/* Pièces jointes : ajout ciblé, sans modifier la grille existante. */
+.cw-composer{flex-wrap:wrap}
+.cw-file-preview:not([hidden]){flex:0 0 100%;order:-1;display:flex;align-items:center;justify-content:space-between;gap:9px;padding:7px 12px;border:1px solid #c6e9d8;border-radius:12px;background:#eefaf3;color:#096c53;font-size:12px;min-width:0;overflow-wrap:anywhere}
+.cw-file-preview>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cw-file-remove{border:0;background:#d6eee3;color:#075a47;border-radius:7px;cursor:pointer;font-size:20px;min-width:26px;min-height:26px}
+.cw-attachment-link{display:flex;align-items:center;gap:7px;max-width:100%;border:1px solid #c7e7d7;background:#fff;border-radius:10px;padding:9px 10px;margin:8px 0;color:#096850;font-size:12px;font-weight:700;overflow-wrap:anywhere;text-decoration:none}
+.cw-attachment-link:hover{text-decoration:underline;background:#f3fcf7}

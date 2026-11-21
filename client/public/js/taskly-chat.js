@@ -99,12 +99,15 @@
           <textarea id="taskly-chat-input"
             maxlength="4000" rows="1"
             placeholder="Écrire votre message..."
-            required></textarea>
+            ></textarea>
 
+          <button type="button" class="btn outline taskly-chat-attach" data-taskly-chat-attach disabled title="Joindre un fichier PDF, JPEG ou PNG (3 Mo max)">📎</button>
+          <input type="file" data-taskly-chat-file hidden accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
           <button type="submit" class="btn primary">
             ➤ Envoyer
           </button>
         </div>
+        <div class="taskly-chat-file-preview" data-taskly-chat-file-preview hidden role="status"></div>
       </form>
 
       <p class="taskly-chat-footnote">
@@ -135,6 +138,19 @@
       });
     dialogue.querySelector("form")
       .addEventListener("submit", envoyerMessage);
+    dialogue.querySelector('[data-taskly-chat-attach]').addEventListener('click',()=>dialogue.querySelector('[data-taskly-chat-file]').click());
+    dialogue.querySelector('[data-taskly-chat-file]').addEventListener('change',()=>{
+      const f=dialogue.querySelector('[data-taskly-chat-file]').files?.[0],p=dialogue.querySelector('[data-taskly-chat-file-preview]');
+      p.replaceChildren();p.hidden=!f;
+      if(!f)return;
+      if(f.size>3*1024*1024||!['application/pdf','image/jpeg','image/png'].includes(f.type)){
+        dialogue.querySelector('.taskly-chat-status').textContent='Fichier refusé : PDF, JPEG ou PNG (3 Mo maximum).';
+        dialogue.querySelector('[data-taskly-chat-file]').value='';p.hidden=true;return;
+      }
+      const txt=document.createElement('span');txt.textContent='📎 '+f.name;
+      const btn=document.createElement('button');btn.type='button';btn.textContent='×';btn.title='Retirer le fichier';btn.addEventListener('click',()=>{dialogue.querySelector('[data-taskly-chat-file]').value='';p.replaceChildren();p.hidden=true;});
+      p.append(txt,btn);
+    });
 
     return dialogue;
   }
@@ -250,7 +266,14 @@
             timeStyle: "short"
           });
 
-      bloc.append(auteur, texte, heure);
+      bloc.append(auteur, texte);
+      if(message.fichier_nom && /^[1-9]\d*$/.test(String(message.id))){
+        const a=document.createElement('a');a.className='taskly-chat-attachment-link';
+        a.href='/api/demandes/'+demandeActive+'/chat/attachment/'+encodeURIComponent(message.id);
+        a.textContent='📎 '+message.fichier_nom+' — Télécharger';a.download=message.fichier_nom;
+        bloc.append(a);
+      }
+      bloc.append(heure);
       fragment.appendChild(bloc);
     }
 
@@ -288,6 +311,7 @@
         : "";
 
       dialogue.querySelector("textarea").disabled = lectureSeule;
+      dialogue.querySelector('[data-taskly-chat-attach]').disabled=lectureSeule||data.piecesJointesActives!==true;
       dialogue.querySelector(
         'button[type="submit"]'
       ).disabled = lectureSeule || envoi;
@@ -314,7 +338,9 @@
     const champ = dialogue.querySelector("textarea");
     const contenu = champ.value.trim();
 
-    if (!contenu || contenu.length > 4000) return;
+    const file=dialogue.querySelector('[data-taskly-chat-file]').files?.[0];
+    if ((!contenu&&!file) || contenu.length > 4000) return;
+    if(file&&dialogue.querySelector('[data-taskly-chat-attach]').disabled)return;
 
     const id = demandeActive;
     const version = generation;
@@ -326,13 +352,15 @@
     bouton.disabled = true;
 
     try {
-      await requeteAPI(`/api/demandes/${id}/chat`, {
-        method: "POST",
-        body: JSON.stringify({ contenu })
-      });
+      let url=`/api/demandes/${id}/chat`,body=JSON.stringify({contenu});
+      if(file){const form=new FormData();form.append('fichier',file);form.append('contenu',contenu);url+='/attachment';body=form;}
+      await requeteAPI(url,{method:'POST',body});
 
       if (version === generation && demandeActive === id) {
         champ.value = "";
+        dialogue.querySelector('[data-taskly-chat-file]').value='';
+        dialogue.querySelector('[data-taskly-chat-file-preview]').hidden=true;
+        dialogue.querySelector('[data-taskly-chat-file-preview]').replaceChildren();
         await chargerMessages(version);
       }
     } catch (erreur) {
@@ -372,6 +400,10 @@
       .textContent = "Chargement de la conversation...";
 
     dialogue.querySelector("textarea").value = "";
+    dialogue.querySelector('[data-taskly-chat-file]').value='';
+    dialogue.querySelector('[data-taskly-chat-file-preview]').replaceChildren();
+    dialogue.querySelector('[data-taskly-chat-file-preview]').hidden=true;
+    dialogue.querySelector('[data-taskly-chat-attach]').disabled=true;
     dialogue.querySelector("textarea").disabled = true;
     dialogue.querySelector('button[type="submit"]').disabled = true;
 

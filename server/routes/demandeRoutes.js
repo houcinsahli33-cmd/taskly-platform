@@ -94,6 +94,12 @@ if (
         chatController.gererAppel
     );
 }
+// Activation après création de taskly_chat_attachments dans TiDB et déploiement du code.
+if(process.env.TASKLY_CHAT_ATTACHMENTS_ENABLED==='true'){
+ const chatFiles=require('../controllers/chatAttachmentsController');
+ router.post('/:id/chat/attachment',verifierConnexion,verifierCsrf,limiter({fenetre:60000,max:8,parCompte:true}),chatFiles.recevoir,chatFiles.envoyer);
+ router.get('/:id/chat/attachment/:messageId',verifierConnexion,limiter({fenetre:60000,max:60}),chatFiles.telecharger);
+}
 router.get("/:id/chat", verifierConnexion, chatController.lireChat);
 router.post("/:id/chat", verifierConnexion, verifierCsrf, limiter({fenetre:60000,max:15}), chatController.envoyerChat);
 module.exports = router;

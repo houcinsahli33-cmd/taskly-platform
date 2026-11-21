@@ -96,7 +96,8 @@ async function lireChat(req, res) {
         clientTelephone: acces.demande.client_telephone || null,
         artisanTelephone: acces.demande.artisan_telephone || null
     },
-    messages
+    messages,
+    piecesJointesActives: typeof process !== 'undefined' && process.env?.TASKLY_CHAT_ATTACHMENTS_ENABLED === 'true'
 });
     } catch (error) {
         console.error("Erreur lecture chat :", error.message);
@@ -545,5 +546,7 @@ module.exports = {
     confirmerLecture,
     gererAppel,
     appelsEntrants,
-    emettreJetonLiveKit
+    emettreJetonLiveKit,
+    verifierParticipant,
+    historiqueAutorise
 };
