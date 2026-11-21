@@ -1,6 +1,7 @@
 'use strict';
 const crypto=require('node:crypto');
 const {createGateway,validateDraft}=require('../services/professionalMailGateway');
+const mailPrefs=require('../services/professionalMailPreferences');
 function activationHash(secret,uid,address,code){
  if(typeof secret!=='string'||Buffer.byteLength(secret)<32)throw Object.assign(new Error('Activation indisponible.'),{status:503});
  return crypto.createHmac('sha256',secret).update(JSON.stringify(['taskly-mail-activation-v4',String(uid),address,code])).digest('hex');
@@ -45,6 +46,16 @@ function mount({artisan,admin,db,transaction,profil,correspond,wrap,erreur,limit
  artisan.get('/mailbox/messages',enabled,reads,wrap(async(req,res)=>res.json(await gateway.list(await own(req),req.query.folder,req.query.cursor))));
  artisan.get('/mailbox/messages/:id',enabled,reads,wrap(async(req,res)=>res.json({message:await gateway.read(await own(req),req.params.id)})));
  artisan.post('/mailbox/send',enabled,sensitive,wrap(async(req,res)=>{const result=await gateway.send(await own(req),req.body);res.status(202).json({message:'Message accepté par le service de messagerie. La livraison finale n’est pas garantie.',id:result.id});}));
+    // Paramètres persistants, limités au profil authentifié et à sa boîte.
+    artisan.get('/mailbox/preferences',enabled,reads,wrap(async(req,res)=>{
+      const preferences=await transaction(async conn=>{await state(conn,uid(req),true);return mailPrefs.load(conn,uid(req));});
+      res.json({preferences});
+    }));
+    artisan.put('/mailbox/preferences',enabled,writes,wrap(async(req,res)=>{
+      const parsed=mailPrefs.validate(req.body);
+      const preferences=await transaction(async conn=>{await state(conn,uid(req),true);return mailPrefs.save(conn,uid(req),parsed);});
+      res.json({preferences,message:'Paramètres enregistrés.'});
+    }));
  artisan.get('/mailbox/draft',enabled,reads,wrap(async(req,res)=>{const draft=await transaction(async conn=>{await state(conn,uid(req),true);const [rows]=await conn.query('SELECT recipient AS `to`,subject,body FROM taskly_professional_mail_drafts WHERE user_id=?',[uid(req)]);return rows[0]||{to:'',subject:'',body:''};});res.json({draft});}));
  artisan.put('/mailbox/draft',enabled,writes,wrap(async(req,res)=>{const d=validateDraft(req.body);await transaction(async conn=>{await state(conn,uid(req),true);await conn.query('INSERT INTO taskly_professional_mail_drafts (user_id,recipient,subject,body) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE recipient=VALUES(recipient),subject=VALUES(subject),body=VALUES(body)',[uid(req),d.to,d.subject,d.body]);});res.json({message:'Brouillon enregistré.'});}));
  artisan.delete('/mailbox/draft',enabled,writes,wrap(async(req,res)=>{await transaction(async conn=>{await state(conn,uid(req),true);await conn.query('DELETE FROM taskly_professional_mail_drafts WHERE user_id=?',[uid(req)]);});res.json({message:'Brouillon supprimé.'});}));

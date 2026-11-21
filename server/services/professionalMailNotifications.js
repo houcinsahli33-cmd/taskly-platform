@@ -44,6 +44,16 @@ function createNotifications({transaction, active, format, env=process.env, send
             const [rows]=await conn.query(`SELECT status,attempts,used_at,(last_attempt IS NULL OR last_attempt < DATE_SUB(UTC_TIMESTAMP(),INTERVAL 5 MINUTE)) AS retry_due FROM taskly_mail_read_notifications WHERE owner_user_id=? AND message_id=? FOR UPDATE`,[owner,id]);
             const row=rows[0];
             if(!row||row.used_at||row.attempts>=5||!['pending','sending','failed'].includes(row.status)||(row.status!=='pending'&&Number(row.retry_due)!==1))return null;
+            // Un utilisateur peut désactiver les notifications externes de cet espace uniquement.
+            if(mailbox){
+                let prefs=[];
+                try{[prefs]=await conn.query('SELECT notify_email FROM taskly_mail_preferences WHERE user_id=?',[owner]);}
+                catch(e){if(e.code!=='ER_NO_SUCH_TABLE' && e.errno!==1146)throw e;}
+                if(prefs[0] && Number(prefs[0].notify_email)===0){
+                    await conn.query("UPDATE taskly_mail_read_notifications SET status='cancelled',token_hash=NULL WHERE owner_user_id=? AND message_id=?",[owner,id]);
+                    return null;
+                }
+            }
             const msg=mailbox&&await inbox(conn,owner,id);
             if(!msg||!email(mailbox.notificationEmail)||msg.to_address!==mailbox.address){
                 await conn.query("UPDATE taskly_mail_read_notifications SET status='cancelled',token_hash=NULL WHERE owner_user_id=? AND message_id=?",[owner,id]);return null;

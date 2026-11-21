@@ -72,6 +72,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
             to: m.to_address,
             subject: m.subject,
             body: m.body,
+            ...(typeof m.preview==='string'?{preview:m.preview}:{}),
             date: new Date(m.created_at).toISOString(),
             isRead: Boolean(m.is_read),
             ...(m.sequence_id?{copyId:String(m.sequence_id),folder:m.folder,starred:Boolean(m.is_starred),archived:Boolean(m.archived_at),trashed:Boolean(m.trashed_at)}:{})
@@ -88,7 +89,7 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
             if(next)copyId(next);
             return transaction(async conn=>{
                 const m=await own(conn,mailbox),params=[m.user_id,q,q];if(next)params.push(next);
-                const [rows]=await conn.query(`SELECT CAST(id AS CHAR) AS sequence_id,message_id,folder,from_address,to_address,subject,created_at,is_read,is_starred,archived_at,trashed_at FROM taskly_professional_mail_messages WHERE owner_user_id=? AND ${filters[box]} AND (?='' OR LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',from_address,to_address,subject,body)))>0) ${next?'AND id<CAST(? AS UNSIGNED)':''} ORDER BY id DESC LIMIT 26`,params);
+                const [rows]=await conn.query(`SELECT CAST(id AS CHAR) AS sequence_id,message_id,folder,from_address,to_address,subject,LEFT(body,120) AS preview,created_at,is_read,is_starred,archived_at,trashed_at FROM taskly_professional_mail_messages WHERE owner_user_id=? AND ${filters[box]} AND (?='' OR LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',from_address,to_address,subject,body)))>0) ${next?'AND id<CAST(? AS UNSIGNED)':''} ORDER BY id DESC LIMIT 26`,params);
                 const page=rows.slice(0,25);return {messages:page.map(format),next:rows.length>25?page.at(-1).sequence_id:null};
             });
         },
@@ -99,8 +100,14 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
         async changeCopy(mailbox,id,action) {
             if(!foldersEnabled)throw error('Dossiers indisponibles.',503);copyId(id);
             const updates={star:'is_starred=1',unstar:'is_starred=0',archive:'archived_at=NOW()',unarchive:'archived_at=NULL',trash:'trashed_at=NOW()',restore:'trashed_at=NULL'};
-            if(!Object.hasOwn(updates,action))throw error('Action invalide.',400);
-            return transaction(async conn=>{const m=await own(conn,mailbox);const [rows]=await conn.query('SELECT trashed_at FROM taskly_professional_mail_messages WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED) FOR UPDATE',[m.user_id,id]);if(!rows[0])throw error('Message introuvable.',404);if(rows[0].trashed_at&&!['restore','trash'].includes(action))throw error('Restaurez le message auparavant.',409);await conn.query(`UPDATE taskly_professional_mail_messages SET ${updates[action]} WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED)`,[m.user_id,id]);return {ok:true};});
+            if(!Object.hasOwn(updates,action)&&action!=='delete')throw error('Action invalide.',400);
+            return transaction(async conn=>{const m=await own(conn,mailbox);const [rows]=await conn.query('SELECT trashed_at FROM taskly_professional_mail_messages WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED) FOR UPDATE',[m.user_id,id]);if(!rows[0])throw error('Message introuvable.',404);if(action==='delete'){
+                    if(!rows[0].trashed_at)throw error('Déplacez le message dans la corbeille auparavant.',409);
+                    await conn.query('DELETE FROM taskly_professional_mail_messages WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED) AND trashed_at IS NOT NULL',[m.user_id,id]);
+                    return {ok:true};
+                }
+                if(rows[0].trashed_at&&!['restore','trash'].includes(action))throw error('Restaurez le message auparavant.',409);
+                await conn.query(`UPDATE taskly_professional_mail_messages SET ${updates[action]} WHERE owner_user_id=? AND id=CAST(? AS UNSIGNED)`,[m.user_id,id]);return {ok:true};});
         },
         async counts(mailbox) {
             if(!foldersEnabled)throw error('Dossiers indisponibles.',503);

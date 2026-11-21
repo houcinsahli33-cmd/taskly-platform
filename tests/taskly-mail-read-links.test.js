@@ -7,6 +7,7 @@ function harness(){
  const address='artisan@plomberie.taskly.test',pers='private@example.test',state={status:'pending',attempts:0,used_at:null,retry_due:1,expired:false,blocked:false,trashed:false,email:pers},msg={message_id:'message-1',folder:'inbox',from_address:'client@client.taskly.test',to_address:address,subject:'Private subject',body:'<script>private body</script>'};const emails=[],queries=[];let fail=false;
  const conn={query:async(sql,p)=>{queries.push([sql,p]);
   if(sql.startsWith('INSERT INTO taskly_mail_read_notifications'))return [{affectedRows:1}];
+  if(sql.startsWith('SELECT notify_email FROM taskly_mail_preferences'))return [[{notify_email:1}]];
   if(sql.startsWith('SELECT status,attempts'))return [[state]];
   if(sql.startsWith('SELECT * FROM taskly_professional_mail_messages')){assert.deepEqual(p,[5,'message-1']);return [state.trashed?[]:[msg]];}
   if(sql.includes("SET status='sending'")){state.status='sending';state.attempts++;state.token_hash=p[0];state.email_hash=p[1];state.retry_due=0;return [{affectedRows:1}];}
@@ -36,6 +37,7 @@ test('Read links: send saves both copies and durable notification before SMTP; r
  const {createInternalGateway}=require('../server/services/professionalMailInternal');const events=[];const addresses={1:'client@client.taskly.test',2:'artisan@plomberie.taskly.test'};let digest,committed=false,id;
  const conn={query:async(sql,p)=>{
   if(sql.startsWith('SELECT user_id FROM taskly_professional_mailboxes'))return [[{user_id:2}]];
+  if(sql.startsWith('SELECT notify_email FROM taskly_mail_preferences'))return [[{notify_email:1}]];
   if(sql.includes('SELECT m.*'))return [[{user_id:p[0],address:addresses[p[0]],proposed_address:addresses[p[0]],provider_id:'internal:'+'a'.repeat(64)}]];
   if(sql.includes('SELECT message_id, to_address'))return [[]];
   if(sql.startsWith('INSERT INTO taskly_professional_mail_messages')){events.push('copies');id=p[1];assert.equal(p[0],1);assert.equal(p[7],2);return [{affectedRows:2}];}
