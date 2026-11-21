@@ -1,0 +1,411 @@
+/* TASKLY PRO DESIGN V2 — strictly scoped to existing messaging and call UI.
+   Do not change site-header, logo, site navigation, login, messaging data or call engine.
+   Real names / services / messages are populated by the existing Taskly application. */
+body[data-workspace-page="messagerie"] #chat-workspace {
+  --t2-forest:#064d3c;
+  --t2-deep:#063d34;
+  --t2-green:#008362;
+  --t2-lime:#19ac7b;
+  --t2-mint:#dff7ed;
+  --t2-soft:#f3faf7;
+  --t2-border:#e2ece8;
+  --t2-muted:#667771;
+  --t2-text:#102d26;
+  color:var(--t2-text);
+  min-width:0;
+  width:100%;
+  overflow:visible;
+}
+body[data-workspace-page="messagerie"] #chat-workspace *,
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium * {box-sizing:border-box}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-heading {
+  position:relative;
+  margin:0 0 18px;
+  padding:19px 24px 20px;
+  border-radius:21px;
+  background:linear-gradient(117deg,#f7fffb 0%,#edf9f4 70%,#d8f5e7 100%);
+  border:1px solid #e2f2e8;
+  overflow:hidden;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-heading::after {
+  content:""; position:absolute; width:170px; height:170px; right:-42px; top:-84px;
+  background:radial-gradient(circle,#99e9c6 0,#c7f4dd 56%,transparent 70%);opacity:.52;pointer-events:none;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-heading h1 {
+  font-size:clamp(24px,2.2vw,32px);font-weight:800;line-height:1.2;
+  color:#152821;letter-spacing:-.048em;margin:0;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-heading p {
+  color:#63766e;font-size:13px;line-height:1.6;margin:6px 0 0;max-width:670px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-count {
+  background:#dcf8e9;border-radius:999px;color:#087650;border:1px solid #d2f0df;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-grid {
+  gap:12px;min-width:0;align-items:stretch;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-card {
+  background:#fff;border:1px solid var(--t2-border)!important;
+  border-radius:18px!important;box-shadow:0 8px 24px rgba(5,61,52,.045)!important;
+  min-width:0;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-list {padding:13px 10px!important;overflow:hidden;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-search {
+  min-height:43px;border:1px solid #dfe7e4!important;background:#f7f9f8!important;
+  border-radius:12px!important;margin:2px 3px 12px!important;box-shadow:none!important;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-search input {
+  background:transparent!important;font-size:12px!important;outline:none!important;min-width:0;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-filters {
+  gap:5px;flex-wrap:wrap;margin:2px 3px 15px;padding:0;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-filters button {
+  border-radius:999px!important;min-height:30px;padding:5px 11px!important;
+  font-size:11px!important;font-weight:700!important;color:#426458;
+  background:#eef3f1!important;border:1px solid transparent!important;cursor:pointer;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-filters button[aria-pressed="true"] {
+  background:var(--t2-forest)!important;color:#fff!important;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-filters button[disabled] {
+  opacity:.54;cursor:not-allowed;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversations {overflow:auto;min-height:0;scrollbar-width:thin;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation {
+  width:100%;border:0!important;background:#fff!important;text-align:left;
+  padding:13px 9px!important;margin:2px 0!important;border-radius:12px!important;
+  min-height:76px;transition:background-color .18s ease,box-shadow .18s ease;
+  display:flex;align-items:center;gap:10px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation:hover {
+  background:#f0faf6!important;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation.active,
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation[aria-current="true"] {
+  background:linear-gradient(112deg,#def6eb,#e9faf4)!important;
+  box-shadow:inset 3px 0 0 #00a875;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation-main {flex:1;min-width:0;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation-head {
+  display:flex;align-items:baseline;justify-content:space-between;gap:7px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation-head strong {
+  color:#172920;font-weight:800;font-size:12.5px;letter-spacing:-.02em;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation-head time {
+  color:#7a8984;font-size:10px;flex:none;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation-main small,
+body[data-workspace-page="messagerie"] #chat-workspace .cw-conversation-sub {
+  color:#71817a;font-size:11px;line-height:1.45;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-unread {
+  background:#057d5a;color:#fff;border-radius:50%;min-width:19px;height:19px;line-height:19px;
+  font-size:10px;text-align:center;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-avatar {
+  background:linear-gradient(135deg,#23ae87,#087557)!important;color:#fff!important;
+  border-radius:50%!important;border:2px solid #fff;
+  box-shadow:0 1px 8px rgba(4,112,81,.15);flex:none;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread {
+  display:flex;flex-direction:column;min-height:0;padding:0!important;overflow:hidden;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-header {
+  display:flex;align-items:center;gap:9px;padding:13px 14px!important;min-height:78px;
+  border-bottom:1px solid #e6edea;
+  background:#fff!important;border-radius:18px 18px 0 0!important;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-title {flex:1;min-width:0;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-title h2 {
+  margin:0;color:#142922;font-size:15px;font-weight:800;letter-spacing:-.035em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-title p {
+  margin:2px 0 0;color:#6b7d75;font-size:11px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions {
+  display:flex;align-items:center;gap:6px;flex:none;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-icon-btn {
+  border-radius:11px!important;transition:background-color .18s ease,transform .18s ease;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions #cw-call-audio,
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions #cw-call-video {
+  min-width:38px;min-height:38px;display:grid;place-items:center;
+  border:1px solid #d5e8de!important;background:#edf8f2!important;color:#086345!important;
+  box-shadow:none;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions #cw-call-video {
+  background:#066d50!important;color:#fff!important;border-color:#066d50!important;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions #cw-call-audio:disabled,
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions #cw-call-video:disabled {opacity:.35;cursor:not-allowed;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions .tc-premium-bell {
+  min-width:35px;min-height:35px;border-radius:11px!important;
+  background:#fff!important;border:1px solid #dfebe4!important;font-size:17px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace #cw-status {padding:0 18px;margin:0;color:#826333;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-messages {
+  min-height:200px;flex:1;overflow:auto;padding:18px 19px 23px!important;
+  background:linear-gradient(180deg,#fff 0,#fff 95%,#fafffc 100%);
+  scrollbar-width:thin;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-date-separator {
+  display:table;margin:0 auto 18px!important;padding:6px 13px!important;
+  border-radius:999px;background:#f0f4f2;color:#7e8984;font-size:10px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-message-line {display:flex;align-items:flex-end;gap:7px;margin-bottom:13px;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-message-line.mine {justify-content:flex-end;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-bubble {
+  max-width:min(83%,520px);min-width:0;border-radius:16px!important;
+  border:0!important;padding:11px 13px 9px!important;
+  color:#23332b;background:#f1f4f3!important;
+  box-shadow:none!important;font-size:12px;line-height:1.6;overflow-wrap:anywhere;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-message-line.mine .cw-bubble {
+  background:#dcf7e4!important;color:#123e2c;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-bubble p {margin:0 0 3px;white-space:pre-wrap;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-bubble small {
+  color:#7a8983;font-size:10px;display:block;text-align:right;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-receipt {color:#0c8d60;font-weight:800;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-composer {
+  display:flex;align-items:center;gap:9px;background:#fff!important;
+  padding:12px!important;border:0!important;border-top:1px solid #e6edea!important;
+  border-radius:0 0 18px 18px!important;box-shadow:none!important;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-composer[hidden] {display:none!important;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-input-wrap {
+  flex:1;min-width:0;border:1px solid #dce6e2!important;border-radius:12px!important;
+  background:#fbfcfb!important;display:flex;align-items:center;
+}
+body[data-workspace-page="messagerie"] #chat-workspace #cw-input {
+  font-size:12px!important;color:#17372c;min-height:35px;max-height:130px;
+  background:transparent!important;border:0!important;outline:none!important;box-shadow:none!important;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-send {
+  background:#057e5a!important;color:#fff!important;border:0!important;
+  box-shadow:0 3px 12px rgba(0,108,81,.16);border-radius:12px!important;
+  min-width:43px;min-height:43px;font-size:0!important;padding:8px!important;
+  display:grid;place-items:center;flex:none;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-send .cw-icon {width:20px;height:20px;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-details {padding:17px!important;overflow:auto;scrollbar-width:thin;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-details h2 {
+  font-size:13px;color:#153329;font-weight:800;letter-spacing:-.025em;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-detail-block {
+  background:#f9fcfa;border:1px solid #edf2ef;border-radius:13px;padding:13px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-detail-row {padding:8px 0;gap:9px;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-details dt {font-size:10px;color:#7c8c84;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-details dd {font-size:12px;color:#17372b;font-weight:650;}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-profile-row {
+  padding:12px 0;align-items:center;gap:10px;
+}
+body[data-workspace-page="messagerie"] #chat-workspace .cw-note {
+  background:#e8f8ee;border:1px solid #d9efe1;border-radius:13px;color:#27634a;padding:12px;
+}
+@media (min-width:1200px) {
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-grid {
+    grid-template-columns:minmax(230px,.82fr) minmax(390px,1.48fr) minmax(220px,.83fr);
+  }
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-card {
+    height:clamp(520px,calc(100dvh - 245px),780px);
+    max-height:780px;
+  }
+}
+@media (min-width:900px) and (max-width:1199px) {
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-grid {
+    grid-template-columns:minmax(195px,.9fr) minmax(0,1.6fr);
+  }
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-details {grid-column:1 / -1;height:auto;max-height:260px;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-list,
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-thread {min-height:535px;height:65dvh;max-height:780px;}
+}
+@media (max-width:899px) {
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-heading {padding:16px;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-card {height:auto;max-height:none;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-thread {min-height:400px;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-messages {min-height:260px;max-height:56dvh;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-details {max-height:none;}
+}
+@media (max-width:480px) {
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-heading h1 {font-size:23px;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-header {padding:10px!important;gap:5px;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions {gap:3px;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions #cw-call-audio,
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-thread-actions #cw-call-video {min-width:34px;min-height:34px;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-messages {padding:13px!important;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-bubble {max-width:87%;}
+  body[data-workspace-page="messagerie"] #chat-workspace .cw-composer {padding:8px!important;gap:5px;}
+}
+/* Call views — only the existing <dialog>, no JS call logic or video-track changes. */
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium {
+  --t2-ink:#122d25;--t2-mint:#e4f8ed;--t2-emerald:#067c57;
+  width:min(790px,calc(100vw - 32px))!important;
+  max-width:calc(100vw - 32px)!important;
+  max-height:calc(100dvh - 30px)!important;
+  border-radius:28px!important;border:1px solid #dfefe8!important;
+  box-shadow:0 24px 90px rgba(3,43,32,.26),0 0 0 1px rgba(13,122,80,.08)!important;
+  padding:0!important;overflow:auto;background:#fff;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium::backdrop {
+  background:rgba(4,27,23,.57)!important;backdrop-filter:blur(6px);
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-panel {
+  display:flex;flex-direction:column;align-items:stretch;
+  padding:20px clamp(16px,3vw,30px) 24px!important;
+  background:radial-gradient(circle at 12% 30%,#ecfcf4 0%,transparent 35%),
+    radial-gradient(circle at 90% 10%,#ddf8eb 0%,transparent 30%),#fff!important;
+  color:var(--t2-ink);text-align:center;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-panel > h2 {
+  color:#112b23;font-size:19px;font-weight:850;letter-spacing:-.04em;margin:0 0 10px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-contact {
+  justify-content:flex-start;margin:0 0 17px!important;padding:10px 15px!important;
+  background:#fff;border-color:#e5eee9!important;border-radius:15px!important;
+  box-shadow:0 3px 18px rgba(6,77,60,.04)!important;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-avatar {
+  height:41px;width:41px;font-size:16px;border-radius:50%;
+  background:linear-gradient(135deg,#18b083,#04694e);
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-contact-name {
+  color:#1b3028;font-weight:800;font-size:15px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium > .tc-panel > [data-tc="name"] {
+  color:#0b3425;font-size:clamp(22px,2.6vw,31px)!important;
+  font-weight:850;letter-spacing:-.045em;margin:5px 0 7px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium [data-tc="status"] {
+  display:table;align-self:center;margin:1px auto 13px!important;
+  background:#e8f9ee;border:1px solid #d8f3e2;border-radius:999px;
+  padding:7px 15px;color:#136744!important;font-weight:700;font-size:12px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-top {
+  justify-content:center;gap:12px;margin:8px 0 12px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-kind {
+  display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.015em;
+  color:#13694d;border:1px solid #daefe2;background:#f2fbf6;
+  border-radius:999px;padding:8px 13px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-duration {
+  font-size:18px;font-weight:850;color:#07533c;background:#e6f7ee;
+  padding:7px 13px;border-radius:999px;letter-spacing:-.03em;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-quality-label {
+  background:#edf8f2;color:#167353;font-size:11px;font-weight:650;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-hero {
+  min-height:230px;margin:13px 0 16px;gap:26px;
+  background:radial-gradient(ellipse at center,#ecfcf3 0%,transparent 70%);
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-avatar-large {
+  width:116px;height:116px;border-radius:50%;font-size:51px;
+  background:linear-gradient(140deg,#159c74,#085f49);
+  box-shadow:0 0 0 10px #e3f6ec,0 0 0 24px #f0faf4,0 8px 30px rgba(3,123,88,.19);
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-note {
+  margin:0;color:#6e887b;font-size:12px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-videos {
+  background:#0b251e;border-radius:20px;overflow:hidden;position:relative;
+  aspect-ratio:16/9;margin:10px 0 16px;box-shadow:0 10px 28px rgba(0,51,36,.16);
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-videos [data-tc="remote"] {
+  display:block;width:100%;height:100%;object-fit:cover;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-videos [data-tc="local"] {
+  position:absolute;right:15px;top:15px;bottom:auto;width:24%;height:auto;
+  aspect-ratio:4/3;object-fit:cover;border-radius:14px;border:3px solid #fff;
+  box-shadow:0 10px 32px rgba(0,0,0,.22);
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium[data-mode="audio"] .tc-videos {
+  position:absolute!important;width:1px!important;height:1px!important;
+  margin:0!important;padding:0!important;overflow:hidden!important;
+  box-shadow:none!important;opacity:0;pointer-events:none;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions {
+  margin:12px 0 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions button {
+  min-height:49px;flex:0 1 130px;border-radius:13px!important;font-weight:750;
+  font-size:12px!important;background:#fff!important;
+  color:#07593f!important;border:1px solid #d6e6df!important;
+  box-shadow:0 3px 11px rgba(2,66,48,.08)!important;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions [data-tc="end"],
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions [data-tc="reject"] {
+  background:#e92d39!important;color:#fff!important;
+  border-color:#e92d39!important;box-shadow:0 8px 19px rgba(233,45,57,.19)!important;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions [data-tc="accept"] {
+  background:#057d5b!important;color:#fff!important;border-color:#057d5b!important;
+  box-shadow:0 8px 19px rgba(5,125,91,.20)!important;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions button[hidden] {display:none!important;}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-extras {
+  justify-content:center;gap:9px;border-top:1px solid #e4efea;margin-top:20px;padding-top:15px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-extra {
+  font-size:12px;font-weight:700;padding:10px 13px;border:1px solid #dbebe2;
+  border-radius:13px;background:#fff;color:#0b6747;box-shadow:none;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-device-panel,
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-chat-drawer {
+  background:#fff;border:1px solid #e2ece7;border-radius:15px;padding:14px;
+  box-shadow:0 4px 18px rgba(4,76,55,.04);max-height:300px;overflow:auto;text-align:left;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-chat-line {
+  border:0;border-radius:13px;background:#eff9f4;color:#25463a;padding:10px 12px;
+  margin:6px 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium button:focus-visible,
+body[data-workspace-page="messagerie"] #chat-workspace button:focus-visible {
+  outline:3px solid #38bd8d;outline-offset:3px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium[data-premium-stage="incoming"] .tc-panel {
+  padding-block:27px 30px!important;
+  background:radial-gradient(circle at 50% 50%,#e9faf0 0,transparent 57%),#fff!important;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium[data-premium-stage="incoming"] .tc-premium-hero {
+  min-height:210px;margin:18px 0;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium[data-premium-stage="incoming"] .tc-actions [data-tc="accept"],
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium[data-premium-stage="incoming"] .tc-actions [data-tc="reject"] {
+  flex:1 1 170px;max-width:260px;min-height:56px;font-size:15px!important;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium[data-mode="video"] .tc-videos {
+  min-height:280px;
+}
+body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium:fullscreen {
+  width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;border-radius:0!important;
+}
+@media (max-width:620px) {
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium {
+    width:calc(100vw - 12px)!important;max-width:calc(100vw - 12px)!important;
+    max-height:calc(100dvh - 12px)!important;border-radius:21px!important;
+  }
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-panel {padding:12px!important;}
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-contact {margin-bottom:7px!important;}
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-hero {min-height:180px;gap:22px;}
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-videos {aspect-ratio:3/4;min-height:210px;}
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-videos [data-tc="local"] {width:30%;right:8px;top:8px;}
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions {gap:6px;}
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-actions button {
+    min-height:44px;flex:1 1 94px;padding:9px 6px!important;font-size:11px!important;
+  }
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-top {gap:6px;}
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium .tc-premium-stats {justify-content:center;flex-wrap:wrap;}
+}
+@media (prefers-reduced-motion:reduce) {
+  body[data-workspace-page="messagerie"] #chat-workspace *,
+  body[data-workspace-page="messagerie"] .taskly-call-dialog.taskly-call-premium * {transition:none!important;animation:none!important;}
+}
