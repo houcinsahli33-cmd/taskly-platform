@@ -26,7 +26,7 @@
    try{if(iframe.contentWindow.location.href===embedded(url) && iframe.contentDocument?.readyState==='complete' && iframe.contentDocument.querySelector('.dashboard-shell > .dashboard-content')){navActive(url);return true;}}catch{/* Recharger si le document n'est pas accessible. */}
   }
   if(target!==selected){if(mode==='push')history.pushState(null,'',target);else if(mode==='replace')history.replaceState(null,'',target);}
-  selected=target;navActive(url);observer?.disconnect();observer=null;modal(null);iframe.src=embedded(url);return true;
+  selected=target;navActive(url);observer?.disconnect();observer=null;modal(null);document.body.classList.add("taskly-frame-loading");iframe.src=embedded(url);return true;
  }
  function canClick(e,a){return !e.defaultPrevented&&e.button===0&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey&&!e.altKey&&!a.hasAttribute('download')&&(!a.target||a.target==='_self');}
  document.querySelector('.sidebar')?.addEventListener('click',e=>{const a=e.target.closest('a[data-dashboard-link]');if(!a||!canClick(e,a)||!validated(a.href))return;e.preventDefault();navigate(a.href);});
@@ -90,7 +90,7 @@ function modal(doc) {
    location.assign(destination.href);
   },true);
   const current=clean(target);if(current!==selected){history.pushState(null,'',current);selected=current;}
-  navActive(target);document.title=doc.title||document.title;modal(doc);
+  navActive(target);document.title=doc.title||document.title;modal(doc);document.body.classList.remove("taskly-frame-loading");
   observer=new MutationObserver(()=>modal(doc));observer.observe(doc.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['open','class','hidden']});
  });
  addEventListener('taskly:open-call', e => {

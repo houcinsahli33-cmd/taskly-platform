@@ -10,3 +10,20 @@ body[data-taskly-client-shell="1"] .client-frame-container {min-width:0;min-heig
  body.dashboard-page[data-require-role="client"][data-taskly-client-shell="1"] .dashboard-shell {display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
  body.dashboard-page[data-require-role="client"][data-taskly-client-shell="1"] .dashboard-shell > .sidebar {height:auto}
 }
+
+/* Masquer seulement le contenu en cours de navigation */
+@media (max-width: 800px) {
+  body.taskly-frame-loading[data-taskly-client-shell="1"]
+  #taskly-client-content-frame,
+  body.taskly-frame-loading[data-taskly-artisan-shell="1"]
+  #taskly-artisan-content-frame {
+    visibility: hidden !important;
+  }
+
+  body.taskly-frame-loading[data-taskly-client-shell="1"]
+  .client-frame-container,
+  body.taskly-frame-loading[data-taskly-artisan-shell="1"]
+  .artisan-frame-container {
+    background: #f4f8f6;
+  }
+}
