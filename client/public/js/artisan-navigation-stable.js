@@ -29,7 +29,7 @@ navActive(url);
 observer?.disconnect();
 observer = null;
 modal(null);
-document.body.classList.add("taskly-frame-loading");iframe.src = embedded(url);
+document.body?.classList?.add("taskly-frame-loading");iframe.src = embedded(url);
 return true;
  }
  function canClick(e,a){return !e.defaultPrevented&&e.button===0&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey&&!e.altKey&&!a.hasAttribute('download')&&(!a.target||a.target==='_self');}
@@ -95,7 +95,7 @@ modal(null);
    location.assign(destination.href);
   },true);
   const current=clean(target);if(current!==selected){history.pushState(null,'',current);selected=current;}
-  navActive(target);document.title=doc.title||document.title;modal(doc);document.body.classList.remove("taskly-frame-loading");
+  navActive(target);document.title=doc.title||document.title;modal(doc);document.body?.classList?.remove("taskly-frame-loading");
   observer=new MutationObserver(()=>modal(doc));observer.observe(doc.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['open','class','hidden']});
  });
  addEventListener('taskly:open-call', e => {

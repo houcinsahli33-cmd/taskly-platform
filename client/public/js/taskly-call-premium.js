@@ -231,39 +231,9 @@
         text(state.contact, person);
         const first = [...person.trim()][0] || '?';
         text(state.avatar, first.toLocaleUpperCase('fr'));
-        const currentName = document.getElementById('cw-person-name')?.textContent?.trim();
-        const existingImage = currentName === person ? document.querySelector('#cw-person-avatar img') : null;
-        let photo = '';
-        if (existingImage?.getAttribute('src')) {
-            try {
-                const url = new URL(existingImage.getAttribute('src'), location.href);
-                if (url.origin === location.origin && ['http:', 'https:'].includes(url.protocol)) photo = url.href;
-            } catch { /* Pas de photo : utiliser l'initiale du profil. */ }
-        }
-        if (state.heroPhoto !== photo) {
-            state.heroPhoto = photo;
-            state.heroAvatar.replaceChildren();
-            if (photo) {
-                const image = make('img', 'tc-v5-avatar-photo');
-                image.src = photo;
-                image.alt = '';
-                image.referrerPolicy = 'same-origin';
-                image.addEventListener('error', () => {
-                    if (state.heroAvatar.contains(image)) state.heroAvatar.replaceChildren(document.createTextNode(first.toLocaleUpperCase('fr')));
-                }, { once: true });
-                state.heroAvatar.append(image);
-            } else state.heroAvatar.textContent = first.toLocaleUpperCase('fr');
-        } else if (!photo && state.heroAvatar.textContent !== first.toLocaleUpperCase('fr')) {
-            state.heroAvatar.textContent = first.toLocaleUpperCase('fr');
-        }
         text(state.kind, incoming ? 'Appel ' + (mode === 'video' ? 'vidéo' : 'audio') + ' entrant' : 'Appel ' + (mode === 'video' ? 'vidéo' : 'audio'));
         text(state.quality, reconnecting ? 'Reconnexion…' : connected ? 'Connecté via Taskly' : incoming ? 'Appel entrant' : 'Connexion…');
         text(state.qualityIcon, reconnecting ? '!' : connected ? '●' : '◌');
-        text($(dialog, '.tc-premium-note'), incoming
-            ? 'Votre correspondant vous appelle'
-            : reconnecting ? 'Reconnexion à votre appel…'
-            : connected ? 'Communication Taskly en cours'
-            : 'En attente de réponse…');
         if (connected) startClock(dialog);
         if (state.startedAt !== null) {
             const seconds = Math.max(0, Math.floor((Date.now() - state.startedAt) / 1000));
@@ -278,7 +248,7 @@
         const panel = $(dialog, '.tc-panel');
         if (!panel) return;
         decorated.add(dialog);
-        dialog.classList.add('taskly-call-premium', 'taskly-call-v5', 'taskly-call-v6');
+        dialog.classList.add('taskly-call-premium');
         const contact = make('section', 'tc-premium-contact');
         const avatar = make('span', 'tc-premium-avatar', '?');
         avatar.setAttribute('aria-hidden', 'true');
@@ -293,10 +263,8 @@
         right.append(duration, qualityIcon, quality);
         top.append(callKind, right);
         const hero = make('div', 'tc-premium-hero');
-        const largeAvatar = make('span', 'tc-premium-avatar-large', '?');
-        largeAvatar.setAttribute('aria-hidden', 'true');
-        hero.append(largeAvatar);
-        const message = make('p', 'tc-premium-note', 'Appel Taskly · Connexion en cours');
+        hero.append(make('span', 'tc-premium-avatar-large', '☎'));
+        const message = make('p', 'tc-premium-note', 'Connexion sécurisée au service d’appels Taskly');
         hero.append(message);
         const bar = make('div', 'tc-premium-extras');
         const devicesButton = make('button', 'tc-premium-extra', '⚙ Appareils');
@@ -321,9 +289,9 @@
         panel.insertBefore(hero, $(panel, '.tc-videos') || null);
         $(panel, '.tc-actions')?.after(bar, devices, drawer);
         states.set(dialog, {
-            avatar, heroAvatar: largeAvatar, contact: person, kind: callKind, duration, quality,
+            avatar, contact: person, kind: callKind, duration, quality,
             qualityIcon, devices, drawer, startedAt: null, clock: null,
-            active: false, scheduled: false, heroPhoto: null
+            active: false, scheduled: false
         });
         devicesButton.addEventListener('click', () => {
             devices.hidden = !devices.hidden;
@@ -362,49 +330,6 @@
         update(dialog);
     }
 
-    // L'appel reste pilote par le document et ses streams LiveKit existants.
-    // Seule la fenetre HTML <dialog> est affichee au-dessus de la navigation
-    // du shell de meme origine : aucune nouvelle connexion n'est creee.
-    function moveToShell(dialog) {
-        if (!dialog || dialog.open || window.top === window) return;
-        try {
-            const target = window.top.document;
-            if (window.top.location.origin !== window.location.origin) return;
-            if (!target.body?.matches('[data-taskly-client-shell="1"], [data-taskly-artisan-shell="1"]')) return;
-            if (target.getElementById('taskly-client-content-frame')?.contentWindow !== window &&
-                target.getElementById('taskly-artisan-content-frame')?.contentWindow !== window) return;
-            if (!target.querySelector('link[data-taskly-call-v5]')) {
-                const css = target.createElement('link');
-                css.rel = 'stylesheet';
-                css.dataset.tasklyCallV5 = '1';
-                css.href = '/css/taskly-call-maquette-v5.css?v=1';
-                target.head.appendChild(css);
-            }
-            if (!target.querySelector('link[data-taskly-call-v6]')) {
-                const cssV6 = target.createElement('link');
-                cssV6.rel = 'stylesheet';
-                cssV6.dataset.tasklyCallV6 = '1';
-                cssV6.href = '/css/taskly-call-maquette-v6.css?v=1';
-                target.head.appendChild(cssV6);
-            }
-            target.adoptNode(dialog);
-            target.body.appendChild(dialog);
-            dialog.classList.add('taskly-call-top-layer');
-            dialog.addEventListener('close', () => {
-                if (!dialog.classList.contains('taskly-call-top-layer')) return;
-                try {
-                    if (document.body?.isConnected) {
-                        document.adoptNode(dialog);
-                        document.body.appendChild(dialog);
-                    }
-                } catch { /* Un appel termine ne doit jamais casser la navigation. */ }
-                dialog.classList.remove('taskly-call-top-layer');
-            }, { once: true });
-        } catch {
-            // Fallback : dialog normal dans la messagerie, toujours fonctionnel.
-        }
-    }
-
     function patchCallPrototype() {
         const proto = window.TasklyCallUI?.prototype;
         if (!proto || proto.__tasklyPremiumPatched) return;
@@ -413,7 +338,6 @@
         const originalStop = proto.stopRing;
         if (typeof originalShow === 'function') {
             proto.show = function (...args) {
-                if (this.dialog) moveToShell(this.dialog);
                 const result = originalShow.apply(this, args);
                 if (this.dialog) {
                     this.dialog.__tasklyCallPremiumUI = this;
@@ -476,28 +400,11 @@
     }
 
     function ensureStyles() {
-        // The dedicated messaging page already loads both styles in its HEAD.
-        // The parent Client/Artisan shell also shows incoming-call banners.
-        if (!document.querySelector('link[href*="taskly-call-premium.css"]')) {
-            const base = document.createElement('link');
-            base.rel = 'stylesheet';
-            base.href = '/css/taskly-call-premium.css?v=1';
-            document.head.append(base);
-        }
-        if (!document.querySelector('link[href*="taskly-call-maquette-v5.css"]')) {
-            const theme = document.createElement('link');
-            theme.rel = 'stylesheet';
-            theme.href = '/css/taskly-call-maquette-v5.css?v=1';
-            theme.dataset.tasklyCallV5 = '1';
-            document.head.append(theme);
-        }
-        if (!document.querySelector('link[href*="taskly-call-maquette-v6.css"]')) {
-            const themeV6 = document.createElement('link');
-            themeV6.rel = 'stylesheet';
-            themeV6.href = '/css/taskly-call-maquette-v6.css?v=1';
-            themeV6.dataset.tasklyCallV6 = '1';
-            document.head.append(themeV6);
-        }
+        if (document.querySelector('link[href*="taskly-call-premium.css"]')) return;
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/css/taskly-call-premium.css?v=1';
+        document.head.append(link);
     }
 
     function setup() {
@@ -507,7 +414,7 @@
         document.querySelectorAll('.taskly-global-call').forEach(addGlobalFeatures);
         addSoundButton();
     }
-    window.TasklyCallPremium = { setup, unlockSound: phone.unlock, testRingtone: phone.preview, version: 6 };
+    window.TasklyCallPremium = { setup, unlockSound: phone.unlock, testRingtone: phone.preview, version: 1 };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup, { once: true });
     else setup();
     const watcher = new MutationObserver((mutations) => {
