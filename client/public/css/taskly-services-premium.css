@@ -769,3 +769,117 @@ body[data-active="services"] .taskly-svc-card .taskly-svc-link svg {
     gap: 12px;
   }
 }
+
+
+/* TASKLY SERVICES V4 : image pleine et pictogrammes réellement revus.
+   Uniquement la page Services, jamais le header, le footer, les formulaires ou le carrousel. */
+@media (min-width: 901px) {
+  body[data-active="services"] .taskly-services-hero {
+    padding-top: 20px;
+    padding-bottom: 22px;
+  }
+  body[data-active="services"] .taskly-services-hero-layout {
+    display: grid;
+    grid-template-columns: minmax(0, .90fr) minmax(0, 1.10fr);
+    gap: clamp(22px, 2.8vw, 44px);
+    min-height: 490px;
+    align-items: stretch;
+  }
+  body[data-active="services"] .taskly-services-hero-content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 0;
+  }
+  body[data-active="services"] .taskly-services-hero-media-v4 {
+    position: relative;
+    width: 100%;
+    height: 490px;
+    min-height: 490px;
+    margin: 0;
+    align-self: stretch;
+    padding: 0;
+    border: 0;
+    border-radius: 22px;
+    overflow: hidden;
+  }
+}
+body[data-active="services"] .taskly-services-hero-media-v4 > img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center center;
+}
+/* Service icons: premium clear contrast, visually different from V3. */
+body[data-active="services"] #services-grid .taskly-svc-symbol {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  min-width: 66px;
+  min-height: 66px;
+  flex: 0 0 66px;
+  border-radius: 19px;
+  border: 1px solid #a6dfc9;
+  background: linear-gradient(155deg, #f7fffb 0%, #c5f0dc 100%);
+  box-shadow: inset 0 1px 0 #fff, 0 5px 15px rgba(2, 114, 70, .11);
+  color: #006b4b;
+}
+body[data-active="services"] #services-grid .taskly-svc-symbol svg {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  max-width: 36px;
+  max-height: 36px;
+  flex: 0 0 36px;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  fill: none;
+  filter: none;
+}
+body[data-active="services"] #services-grid .taskly-svc-summary { gap: 16px; align-items: center; }
+@media (min-width: 901px) and (max-width: 1180px) {
+  body[data-active="services"] .taskly-services-hero-layout { min-height: 400px; }
+  body[data-active="services"] .taskly-services-hero-media-v4 {height:400px;min-height:400px}
+}
+@media (max-width: 900px) {
+  body[data-active="services"] .taskly-services-hero-layout {
+    grid-template-columns: minmax(0,1fr);
+    align-items: stretch;
+    gap: 20px;
+  }
+  body[data-active="services"] .taskly-services-hero-content {padding:0}
+  body[data-active="services"] .taskly-services-hero-media-v4 {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: clamp(290px, 50vw, 380px);
+    min-height: 0;
+    margin: 0;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+}
+@media (max-width: 640px) {
+  body[data-active="services"] .taskly-services-hero-media-v4 {
+    height: clamp(245px, 76vw, 330px);
+    border-radius: 16px;
+  }
+  body[data-active="services"] #services-grid .taskly-svc-symbol {
+    width: 56px;height:56px;min-width:56px;min-height:56px;
+    flex-basis:56px;border-radius:16px;
+  }
+  body[data-active="services"] #services-grid .taskly-svc-symbol svg {
+    width:31px;height:31px;min-width:31px;min-height:31px;
+    max-width:31px;max-height:31px;flex-basis:31px;
+  }
+}

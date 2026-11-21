@@ -4,9 +4,9 @@ function pictogrammeServicePremium(nom) {
   const name = String(nom || "").toLocaleLowerCase("fr").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const svg = (body) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
   if (/carrelage|revetement|faience|sols/.test(name)) return svg('<path d="m12 2 9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/>');
-  if (/climatis|froid|refriger/.test(name)) return svg('<path d="M12 2v20M4 6l16 12M20 6 4 18M9 5l3 3 3-3M9 19l3-3 3 3M3 9l4 1-1 4M21 9l-4 1 1 4"/>');
+  if (/climatis|froid|refriger/.test(name)) return svg('<path d="M12 2v20M4 6l16 12M20 6 4 18"/><path d="m9 4 3 3 3-3m-6 16 3-3 3 3M3 9l4 1-1 4m15-2-4 1 1 4M7 4l1 4-4-1m16 10-4-1 1 4"/><circle cx="12" cy="12" r="2.25"/>');
   if (/demenag|transport|livraison/.test(name)) return svg('<path d="M2 6h12v12H2zM14 10h4l4 4v4h-8z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>');
-  if (/plomb|sanitaire|canalis/.test(name)) return svg('<path d="m15 6 3 3-9 9-3-3zM14 5l5-3 3 3-3 5M5 14l-3 5 3 3 5-3"/>');
+  if (/plomb|sanitaire|canalis/.test(name)) return svg('<path d="M14 3a6 6 0 0 0-6.6 7.2L3 14.6a3.4 3.4 0 0 0 4.8 4.8l4.4-4.4A6 6 0 0 0 21 8.4l-4.2 3.1-4.4-4.4L15.5 3"/><circle cx="5.7" cy="16.9" r=".65" fill="currentColor" stroke="none"/>');
   if (/electri/.test(name)) return svg('<path d="m13 2-9 12h7l-1 8 10-13h-7z"/>');
   return svg('<path d="M14 6a5 5 0 0 0-6 6L3 17a3 3 0 0 0 4 4l5-5a5 5 0 0 0 6-6l-3 3-4-4z"/>');
 }
