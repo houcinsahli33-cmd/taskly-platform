@@ -1,0 +1,243 @@
+/* Taskly — UNIQUEMENT les cartes "Artisans disponibles" de service.html.
+   Reprend les cartes de l'annuaire, sans modifier les données ni les actions.
+   Chargé après taskly-service-detail-premium.css pour remplacer le mode "ligne". */
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans.grid.three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 20px;
+}
+
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans > .artisan-card {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  border: 1px solid #dcecea;
+  border-radius: 19px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(16, 52, 43, .06);
+  overflow: hidden;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans > .artisan-card:hover,
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans > .artisan-card:focus-within {
+  transform: translateY(-3px);
+  border-color: #a2d8c9;
+  box-shadow: 0 20px 40px rgba(16, 52, 43, .10);
+}
+
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 80px;
+  margin: 0 0 14px;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-top > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-top .avatar {
+  display: block;
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+  border: 4px solid #e4f4ed;
+  border-radius: 50%;
+  box-sizing: border-box;
+  object-fit: cover;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-top h3 {
+  margin: 0 0 7px;
+  font-size: 19px;
+  line-height: 1.3;
+  font-weight: 800;
+  color: #102d34;
+  overflow-wrap: anywhere;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-top p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 3px 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #738588;
+  overflow-wrap: anywhere;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-top .taskly-list-service {
+  color: #087e64;
+  font-weight: 750;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans :is(.artisan-top, .meta-row, .request-actions, .taskly-list-description, .ta-badges) svg {
+  display: inline-block;
+  flex: 0 0 17px;
+  width: 17px;
+  height: 17px;
+  min-width: 17px;
+  min-height: 17px;
+  max-width: 17px;
+  max-height: 17px;
+  vertical-align: middle;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 12px 0 0;
+  border: 0;
+  border-top: 1px solid #e0e8e5;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .meta-row .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 0;
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: #f4f7f3;
+  color: #173641;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .meta-row .badge.primary {
+  background: #e3f5ee;
+  color: #006b5b;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .meta-row .badge.accent {
+  background: #fff4cf;
+  color: #885b00;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .ta-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 9px;
+  font-size: 12px;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .taskly-list-description {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  min-height: 85px;
+  margin: 0 0 18px;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .taskly-list-description > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 35px;
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  background: #e4f4ed;
+  color: #087e64;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .taskly-list-description p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  color: #526873;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .request-actions {
+  display: grid;
+  grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  margin: auto 0 0;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .request-actions > .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  min-height: 45px;
+  padding: 8px 7px;
+  margin: 0;
+  border-radius: 10px;
+  font-size: clamp(11px, .9vw, 13px);
+  font-weight: 750;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: center;
+  box-sizing: border-box;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .request-actions > .btn:only-child {
+  grid-column: 1 / -1;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .request-actions > .btn.outline {
+  border: 1px solid #21a48b;
+  background: #fff;
+  color: #008a70;
+}
+body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .request-actions > .btn.outline:hover {
+  background: #e3f5ee;
+}
+@media (max-width: 1100px) {
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans.grid.three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans.grid.three {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .artisan-card .card-body {
+    padding: 16px;
+  }
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .taskly-list-description {
+    min-height: 0;
+  }
+}
+@media (max-width: 380px) {
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .request-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans .request-actions > .btn:only-child {
+    grid-column: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans > .artisan-card {
+    transition: none;
+  }
+  body[data-active="services"][data-taskly-service-detail-premium="1"] #service-artisans > .artisan-card:hover {
+    transform: none;
+  }
+}
