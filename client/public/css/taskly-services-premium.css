@@ -1076,3 +1076,14 @@ body[data-active="services"] #services-grid .taskly-svc-symbol > svg[data-taskly
   fill: none;
   filter: none;
 }
+
+/* TASKLY_CLIMATISATION_ICONE_VALIDEE_20261121 : icone Climatisation seulement. */
+body[data-active="services"] #services-grid .taskly-svc-symbol:has(> svg[data-taskly-service-icon="climatisation"]) {
+  border: 1.5px solid #3fcf97;
+  background: url("/images/icons/taskly-climatisation-premium.svg") center / 42px 42px no-repeat,
+              linear-gradient(145deg, #f2fff9 0%, #e0fdef 45%, #c5f4df 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(0,126,82,.10);
+}
+body[data-active="services"] #services-grid .taskly-svc-symbol > svg[data-taskly-service-icon="climatisation"] {
+  visibility: hidden;
+}
