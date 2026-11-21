@@ -7,9 +7,11 @@
   <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/taskly-services-premium.css?v=7">
+  <link rel="stylesheet" href="/css/taskly-services-search-premium.css?v=1">
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
-  <script defer src="/js/services.js?v=7"></script>
+  <script defer src="/js/algeria-locations.js"></script>
+  <script defer src="/js/services.js?v=search-premium-1"></script>
 </head>
 <body data-active="services">
   <div id="site-header"></div>
@@ -31,20 +33,58 @@
 
     <section class="taskly-services-catalogue" aria-label="Catalogue des services">
       <div class="container taskly-services-container">
-        <div class="filters services-filter-box taskly-services-tools">
-          <div class="search-shell services-search-shell">
-            <form class="hero-search services-search-form taskly-services-search-form" id="services-search-form" role="search">
-              <label class="taskly-services-search-label" for="service-search">Rechercher un service</label>
-              <span class="taskly-services-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></span>
-              <input id="service-search" type="search" autocomplete="off" placeholder="Rechercher un service…">
-              <button class="hero-search-button taskly-services-search-button" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span>Rechercher</span></button>
-            </form>
+        <div class="filters services-filter-box taskly-services-tools taskly-search-v1" aria-label="Recherche et filtres de services">
+          <div class="taskly-search-v1-top">
+            <div class="search-shell services-search-shell">
+              <form class="hero-search services-search-form taskly-services-search-form" id="services-search-form" role="search">
+                <label class="taskly-services-search-label" for="service-search">Rechercher un service</label>
+                <span class="taskly-services-search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg></span>
+                <input id="service-search" type="search" autocomplete="off" placeholder="Rechercher un service (ex. : carrelage, climatisation, déménagement…)" />
+                <button class="hero-search-button taskly-services-search-button" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><span>Rechercher</span></button>
+              </form>
+            </div>
+            <span class="taskly-search-v1-separator" aria-hidden="true"></span>
+            <div class="filter-tabs taskly-services-filter-tabs">
+              <button class="btn outline" type="button" data-service-filter="populaires" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.8 0 7.7-3.3 7.7-7.3 0-3-1.5-5.2-4.7-8.2.2 3.1-.7 4.1-1.8 4.7-.6-3.2-1.3-5.4-3.8-8.2C8 7.9 4.2 10.7 4.2 15c0 4 3 7 7.8 7z"/></svg><span>Services populaires</span></button>
+              <button class="btn outline" type="button" data-service-filter="notes" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.5 3.1 6.4 7.1 1-5.1 4.9 1.2 7-6.3-3.3-6.3 3.3 1.2-7-5.1-4.9 7.1-1z"/></svg><span>Mieux notés</span></button>
+            </div>
           </div>
-          <div class="filter-tabs taskly-services-filter-tabs">
-            <button class="btn outline" type="button" data-service-filter="populaires" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22c4.8 0 7.7-3.3 7.7-7.3 0-3-1.5-5.2-4.7-8.2.2 3.1-.7 4.1-1.8 4.7-.6-3.2-1.3-5.4-3.8-8.2C8 7.9 4.2 10.7 4.2 15c0 4 3 7 7.8 7z"/></svg><span>Services populaires</span></button>
-            <button class="btn outline" type="button" data-service-filter="notes" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2.5 3.1 6.4 7.1 1-5.1 4.9 1.2 7-6.3-3.3-6.3 3.3 1.2-7-5.1-4.9 7.1-1z"/></svg><span>Mieux notés</span></button>
+          <div class="taskly-search-v1-bottom">
+            <div class="taskly-search-v1-left">
+              <span class="taskly-search-v1-filter-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2" fill="white"/><circle cx="16" cy="17" r="2" fill="white"/></svg><span>Filtrer</span></span>
+              <label class="taskly-search-v1-select taskly-search-v1-location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                <span class="taskly-services-search-label">Filtrer par wilaya</span>
+                <select id="services-wilaya" aria-label="Filtrer par localité (wilaya)">
+                  <option value="">Toutes les localités</option>
+                </select>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              </label>
+              <label class="taskly-search-v1-select taskly-search-v1-category">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.7 13.7 13.7 20.7a2 2 0 0 1-2.8 0l-8.2-8.2A2 2 0 0 1 2 11V3a1 1 0 0 1 1-1h8a2 2 0 0 1 1.4.6l8.3 8.3a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1"/></svg>
+                <span class="taskly-services-search-label">Filtrer par catégorie</span>
+                <select id="services-category" aria-label="Filtrer par catégorie">
+                  <option value="">Toutes les catégories</option>
+                </select>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              </label>
+            </div>
+            <label class="taskly-search-v1-sort-group" for="services-sort">
+              <span>Trier par :</span>
+              <span class="taskly-search-v1-select taskly-search-v1-sort"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 4-4 4 4 4M3 8h13M17 20l4-4-4-4M21 16H8"/></svg>
+                <select id="services-sort" aria-label="Trier les services">
+                  <option value="pertinence">Les plus pertinents</option>
+                  <option value="demandes">Les plus demandés</option>
+                  <option value="notes">Les mieux notés</option>
+                  <option value="artisans">Le plus d’artisans</option>
+                  <option value="nom">Nom A à Z</option>
+                </select>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </label>
           </div>
         </div>
+        <p class="taskly-services-filter-info" id="services-filter-info" role="status" aria-live="polite"></p>
         <div class="grid three taskly-services-grid" id="services-grid" aria-live="polite"></div>
       </div>
     </section>

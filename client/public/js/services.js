@@ -24,6 +24,70 @@ function pictogrammeStatPremium(type) {
 
 let servicesCatalogue = [];
 let filtreServices = "tous";
+let triServices = "pertinence";
+let versionFiltrageServices = 0;
+// Ne jamais recalculer une vérification de wilaya déjà effectuée.
+const cacheServicesParWilaya = new Map();
+
+// Les catégories sont basées sur les données du catalogue. Lorsque l'API ne
+// fournit pas de catégorie, un groupe d'affichage est déduit du nom du service.
+function categoriePourService(service) {
+  const brute = service.categorie_nom || service.category_name || service.categorie?.nom || service.categorie || service.category;
+  if (typeof brute === "string" && brute.trim() && !/^\d+$/.test(brute.trim())) return brute.trim();
+  const nom = normaliserTexte(service.nom || "");
+  if (/demenag|transport|livraison|logistique/.test(nom)) return "Transport et déménagement";
+  if (/climatis|plomb|electri|electromenager|chauff|sanitaire|installation|depannage/.test(nom)) return "Installation et dépannage";
+  if (/jardin|paysag|espaces? verts|elaga/.test(nom)) return "Jardin et extérieur";
+  if (/menage|nettoy|entretien|desinfect/.test(nom)) return "Entretien et nettoyage";
+  if (/carrel|macon|menuis|peint|renov|platre|isolation|travaux|construction/.test(nom)) return "Travaux et rénovation";
+  return "Autres services";
+}
+
+function initialiserCategoriesServices(services) {
+  const select = document.getElementById("services-category");
+  if (!select) return;
+  const value = select.value;
+  const categories = [...new Set(services.map(categoriePourService))].sort((a,b) => a.localeCompare(b, "fr"));
+  select.replaceChildren(new Option("Toutes les catégories", ""), ...categories.map(c => new Option(c,c)));
+  if (categories.includes(value)) select.value = value;
+}
+
+function initialiserLocalitesServices() {
+  const select = document.getElementById("services-wilaya");
+  if (!select || typeof wilayasAlgerie === "undefined") return;
+  // Mêmes wilayas que dans l'annuaire Artisans ; aucune liste inventée.
+  const names = [...new Set(wilayasAlgerie.map(w => w.nom))].sort((a,b) => a.localeCompare(b,"fr"));
+  select.replaceChildren(new Option("Toutes les localités", ""), ...names.map(name => new Option(name,name)));
+}
+
+async function serviceEstDisponibleDansWilaya(service, wilaya) {
+  const key = `${wilaya}::${service.id}`;
+  if (!cacheServicesParWilaya.has(key)) {
+    const params = new URLSearchParams({serviceId:String(service.id), wilaya, page:"1", limit:"1"});
+    const requete = requeteAPI(`/api/artisans?${params}`, {cache:"no-store"})
+      .then(resultat => {
+        const total = Number(resultat.total);
+        if (resultat.total !== undefined && Number.isFinite(total)) return total > 0;
+        if (Array.isArray(resultat.artisans) && resultat.artisans.length) return true;
+        // Sans total fiable, ne pas déclarer le service indisponible.
+        return null;
+      })
+      .catch(() => null);
+    cacheServicesParWilaya.set(key, requete);
+  }
+  return cacheServicesParWilaya.get(key);
+}
+
+function trierCatalogueServices(services) {
+  const tri = triServices !== "pertinence" ? triServices : filtreServices === "populaires" ? "demandes" : filtreServices === "notes" ? "notes" : "pertinence";
+  const resultat = [...services];
+  if (tri === "demandes") resultat.sort((a,b) => Number(b.total_demandes||0)-Number(a.total_demandes||0) || Number(b.total_artisans||0)-Number(a.total_artisans||0));
+  else if (tri === "notes") resultat.sort((a,b) => Number(b.moyenne_notes||0)-Number(a.moyenne_notes||0) || Number(b.total_avis||0)-Number(a.total_avis||0));
+  else if (tri === "artisans") resultat.sort((a,b) => Number(b.total_artisans||0)-Number(a.total_artisans||0));
+  else if (tri === "nom") resultat.sort((a,b) => String(a.nom||"").localeCompare(String(b.nom||""),"fr"));
+  return resultat;
+}
+
 
 // Construire les statistiques d'un service
 function statsService(service, premium = false) {
@@ -69,46 +133,50 @@ function carteService(service) {
 }
 
 // Afficher les services dans la page
-function afficherServicesCatalogue() {
+async function afficherServicesCatalogue() {
   const grille = document.getElementById("services-grid");
   if (!grille) return;
-
+  const version = ++versionFiltrageServices;
   const recherche = normaliserTexte(document.getElementById("service-search")?.value || "");
-  let services = servicesCatalogue.filter((service) => normaliserTexte(service.nom).includes(recherche));
+  const categorie = document.getElementById("services-category")?.value || "";
+  const wilaya = document.getElementById("services-wilaya")?.value || "";
+  const info = document.getElementById("services-filter-info");
+  let services = servicesCatalogue.filter(service => {
+    const texte = normaliserTexte(`${service.nom || ""} ${service.description || ""}`);
+    return texte.includes(recherche) && (!categorie || categoriePourService(service) === categorie);
+  });
 
-  if (filtreServices === "populaires") {
-    services = services.sort((a, b) => {
-      const demandesA = Number(a.total_demandes || 0);
-      const demandesB = Number(b.total_demandes || 0);
-
-      const artisansA = Number(a.total_artisans || 0);
-      const artisansB = Number(b.total_artisans || 0);
-
-      return demandesB - demandesA || artisansB - artisansA;
-    });
+  let verificationsInconnues = 0;
+  if (wilaya && services.length) {
+    grille.setAttribute("aria-busy", "true");
+    grille.innerHTML = etatChargement("Recherche des artisans disponibles dans cette wilaya...");
+    if (info) info.textContent = `Recherche des services disponibles à ${wilaya}…`;
+    const candidats = [];
+    // Quatre requêtes simultanées au maximum ; le résultat reste lié à une
+    // wilaya et un service, et les recherches obsolètes sont ignorées.
+    for (let i = 0; i < services.length; i += 4) {
+      const bloc = services.slice(i, i + 4);
+      const etats = await Promise.all(bloc.map(service => serviceEstDisponibleDansWilaya(service, wilaya)));
+      if (version !== versionFiltrageServices) return;
+      bloc.forEach((service, index) => {
+        if (etats[index] !== false) candidats.push(service);
+        if (etats[index] === null) verificationsInconnues++;
+      });
+    }
+    services = candidats;
   }
-
-  if (filtreServices === "notes") {
-    services = services.sort((a, b) => {
-      const noteA = Number(a.moyenne_notes || 0);
-      const noteB = Number(b.moyenne_notes || 0);
-
-      const avisA = Number(a.total_avis || 0);
-      const avisB = Number(b.total_avis || 0);
-
-      return noteB - noteA || avisB - avisA;
-    });
+  if (version !== versionFiltrageServices) return;
+  services = trierCatalogueServices(services);
+  grille.setAttribute("aria-busy", "false");
+  if (info) {
+    info.textContent = `${services.length} service${services.length > 1 ? "s" : ""} trouvé${services.length > 1 ? "s" : ""}${wilaya ? ` · ${wilaya}` : ""}${verificationsInconnues ? " · disponibilité de certains services non vérifiable" : ""}`;
   }
-
   if (!services.length) {
-    grille.innerHTML = etatVide("Aucun service ne correspond à votre recherche.");
+    grille.innerHTML = etatVide("Aucun service ne correspond à ces critères.");
     return;
   }
-
   grille.innerHTML = services.map(carteService).join("");
-  grille.querySelectorAll("[data-service-image]").forEach((img) => {
-    gererImageService(img, img.dataset.serviceImage);
-  });
+  grille.querySelectorAll("[data-service-image]").forEach(img => gererImageService(img, img.dataset.serviceImage));
 }
 
 // Appliquer la recherche venue de l'accueil
@@ -147,7 +215,8 @@ async function chargerPageServices() {
 
   try {
     const { services } = await requeteAPI("/api/services");
-    servicesCatalogue = services;
+    servicesCatalogue = Array.isArray(services) ? services : [];
+    initialiserCategoriesServices(servicesCatalogue);
 
     if (redirigerVersServiceDepuisURL()) return;
 
@@ -160,26 +229,36 @@ async function chargerPageServices() {
 // Initialiser les filtres des services
 function initialiserFiltresServices() {
   document.getElementById("service-search")?.addEventListener("input", afficherServicesCatalogue);
-  document.getElementById("services-search-form")?.addEventListener("submit", (event) => {
+  document.getElementById("services-search-form")?.addEventListener("submit", event => {
     event.preventDefault();
     afficherServicesCatalogue();
   });
-
-  document.querySelectorAll("[data-service-filter]").forEach((bouton) => {
+  document.getElementById("services-wilaya")?.addEventListener("change", afficherServicesCatalogue);
+  document.getElementById("services-category")?.addEventListener("change", afficherServicesCatalogue);
+  document.getElementById("services-sort")?.addEventListener("change", event => {
+    triServices = event.target.value;
+    filtreServices = "tous";
+    document.querySelectorAll("[data-service-filter]").forEach(item => {
+      item.classList.remove("active", "primary");
+      item.classList.add("outline");
+      item.setAttribute("aria-pressed", "false");
+    });
+    afficherServicesCatalogue();
+  });
+  document.querySelectorAll("[data-service-filter]").forEach(bouton => {
     bouton.addEventListener("click", () => {
       const dejaActif = bouton.classList.contains("active");
-
       filtreServices = dejaActif ? "tous" : bouton.dataset.serviceFilter;
-
-      document.querySelectorAll("[data-service-filter]").forEach((item) => {
-        const estActif = !dejaActif && item === bouton;
-
-        item.classList.toggle("active", estActif);
-        item.classList.toggle("primary", estActif);
-        item.classList.toggle("outline", !estActif);
-        item.setAttribute("aria-pressed", String(estActif));
+      triServices = "pertinence";
+      const selectTri = document.getElementById("services-sort");
+      if (selectTri) selectTri.value = "pertinence";
+      document.querySelectorAll("[data-service-filter]").forEach(item => {
+        const actif = !dejaActif && item === bouton;
+        item.classList.toggle("active", actif);
+        item.classList.toggle("primary", actif);
+        item.classList.toggle("outline", !actif);
+        item.setAttribute("aria-pressed", String(actif));
       });
-
       afficherServicesCatalogue();
     });
   });
@@ -242,6 +321,7 @@ async function chargerDetailService() {
 document.addEventListener("DOMContentLoaded", async () => {
   await attendreSession();
   appliquerRechercheDepuisURL();
+  initialiserLocalitesServices();
   initialiserFiltresServices();
   chargerPageServices();
   chargerDetailService();

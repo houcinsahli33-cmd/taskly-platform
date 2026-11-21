@@ -1,0 +1,265 @@
+/* TASKLY SERVICES - SEARCH PREMIUM V1
+   Uniquement la barre de recherche, les filtres et le tri de services.html.
+   N'affecte jamais le header, le footer, les cartes ni la page Artisans. */
+body[data-active="services"] .taskly-search-v1 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
+  gap: 0;
+  padding: 17px 22px 15px;
+  margin-bottom: 8px;
+  border: 1px solid #e1eee9;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 14px 32px rgba(6, 79, 55, .08);
+  box-sizing: border-box;
+}
+body[data-active="services"] .taskly-search-v1 svg {
+  display: block;
+  width: 21px;
+  height: 21px;
+  min-width: 21px;
+  min-height: 21px;
+  max-width: 21px;
+  max-height: 21px;
+  flex: 0 0 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+body[data-active="services"] .taskly-search-v1-top {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  min-width: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e3f0e9;
+}
+body[data-active="services"] .taskly-search-v1 .services-search-shell {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+}
+body[data-active="services"] .taskly-search-v1 .services-search-form {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+  height: 55px;
+  min-height: 55px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #cce7dc;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0, 98, 67, .04);
+}
+body[data-active="services"] .taskly-search-v1 .taskly-services-search-icon {
+  display: grid;
+  place-items: center;
+  position: static;
+  flex: 0 0 54px;
+  width: 54px;
+  height: 44px;
+  min-width: 54px;
+  margin-left: 5px;
+  border-radius: 15px;
+  color: #087b53;
+  background: linear-gradient(145deg, #effcf5, #ddf4e9);
+}
+body[data-active="services"] .taskly-search-v1 .taskly-services-search-icon svg {width:23px;height:23px;min-width:23px;min-height:23px;max-width:23px;max-height:23px}
+body[data-active="services"] .taskly-search-v1 .services-search-form input {
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  padding: 0 12px 0 14px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  box-shadow: none;
+  color: #1c3741;
+  background: transparent;
+  font-size: 14px;
+}
+body[data-active="services"] .taskly-search-v1 .services-search-form input:focus-visible {outline:0;box-shadow:none}
+body[data-active="services"] .taskly-search-v1 .services-search-form:focus-within {border-color:#0b916b;box-shadow:0 0 0 3px rgba(24,164,112,.11)}
+body[data-active="services"] .taskly-search-v1 .taskly-services-search-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: auto;
+  min-width: 154px;
+  height: 54px;
+  min-height: 54px;
+  margin: 0;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(120deg,#009e6a,#00704f);
+  box-shadow: none;
+  font-weight: 800;
+  font-size: 13px;
+  white-space: nowrap;
+}
+body[data-active="services"] .taskly-search-v1 .taskly-services-search-button svg {color:inherit;stroke:currentColor}
+body[data-active="services"] .taskly-search-v1 .taskly-services-search-button:hover {background:linear-gradient(120deg,#00865c,#005d43)}
+body[data-active="services"] .taskly-search-v1-separator {width:1px;height:40px;background:#cbe7d9;flex:0 0 1px}
+body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  gap: 10px;
+}
+body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 50px;
+  padding: 10px 14px;
+  border: 1px solid #c9ebdc;
+  border-radius: 999px;
+  color: #00694a;
+  background: #eaf9f2;
+  box-shadow: none;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs .btn:hover {background:#dcf5e9;border-color:#7dd1ae}
+body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs .btn.active,
+body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs .btn[aria-pressed="true"] {background:#087c5a;color:#fff;border-color:#087c5a}
+body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs svg {width:21px;height:21px;min-width:21px;min-height:21px;max-width:21px;max-height:21px;stroke:currentColor}
+body[data-active="services"] .taskly-search-v1-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding-top: 16px;
+}
+body[data-active="services"] .taskly-search-v1-left {display:flex;align-items:center;gap:12px;min-width:0;flex-wrap:wrap}
+body[data-active="services"] .taskly-search-v1-filter-label {display:inline-flex;align-items:center;gap:10px;white-space:nowrap;color:#07563d;font-weight:800;font-size:14px;padding-right:9px;border-right:1px solid #d4ebe2}
+body[data-active="services"] .taskly-search-v1-filter-label svg {width:22px;height:22px;min-width:22px;min-height:22px;max-width:22px;max-height:22px}
+body[data-active="services"] .services-filter-box label.taskly-search-v1-select {
+  display: inline-flex;
+  grid-template-columns: none;
+  align-items: center;
+  gap: 8px;
+}
+body[data-active="services"] .services-filter-box label.taskly-search-v1-sort-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+body[data-active="services"] .taskly-search-v1-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: stretch;
+  gap: 8px;
+  min-width: 0;
+  min-height: 45px;
+  padding: 0 13px;
+  box-sizing: border-box;
+  border: 1px solid #cbe6dc;
+  border-radius: 999px;
+  background: #fff;
+  color: #045f45;
+  box-shadow: 0 2px 5px rgba(2,90,64,.025);
+}
+body[data-active="services"] .taskly-search-v1-select > svg:first-child {flex-shrink:0}
+body[data-active="services"] .taskly-search-v1-select > svg:last-child {width:17px;height:17px;min-width:17px;min-height:17px;max-width:17px;max-height:17px;flex:0 0 17px}
+body[data-active="services"] .taskly-search-v1-select select {
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+  color: #153c37;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+body[data-active="services"] .taskly-search-v1-select:focus-within {border-color:#0b916b;box-shadow:0 0 0 3px rgba(24,164,112,.12)}
+body[data-active="services"] .taskly-search-v1-location {width: min(220px, 22vw)}
+body[data-active="services"] .taskly-search-v1-category {width: min(224px, 22vw)}
+body[data-active="services"] .taskly-search-v1-sort-group {display:flex;align-items:center;gap:12px;min-width:0;white-space:nowrap;color:#5f7480;font-size:13px}
+body[data-active="services"] .taskly-search-v1-sort {width:220px}
+body[data-active="services"] .taskly-search-v1-sort select {color:#102e2d}
+body[data-active="services"] .taskly-services-filter-info {min-height:1.3em;margin:0 0 14px;padding:0 4px;color:#6d8780;font-size:12px;line-height:1.3}
+@media (max-width: 1150px) {
+  body[data-active="services"] .taskly-search-v1-top {flex-wrap:wrap;gap:12px}
+  body[data-active="services"] .taskly-search-v1-separator {display:none}
+  body[data-active="services"] .taskly-search-v1 .services-search-shell {flex:1 1 100%}
+  body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs {width:100%;justify-content:flex-start}
+}
+@media (max-width: 1060px) {
+  body[data-active="services"] .taskly-search-v1-bottom {align-items:stretch;flex-direction:column;gap:12px}
+  body[data-active="services"] .taskly-search-v1-left {flex-wrap:wrap}
+  body[data-active="services"] .taskly-search-v1-sort-group {justify-content:flex-start}
+  body[data-active="services"] .taskly-search-v1-location,
+  body[data-active="services"] .taskly-search-v1-category {width: min(260px, 36vw)}
+}
+@media (max-width: 640px) {
+  body[data-active="services"] .taskly-search-v1 {display:block;padding:13px; border-radius:17px}
+  body[data-active="services"] .taskly-search-v1-top {display:block;padding-bottom:13px}
+  body[data-active="services"] .taskly-search-v1 .services-search-form {display:grid;grid-template-columns:46px minmax(0,1fr);grid-template-rows:48px 45px;gap:9px 0;height:auto;min-height:0;overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none}
+  body[data-active="services"] .taskly-search-v1 .taskly-services-search-icon {position:relative;grid-column:1;grid-row:1;width:42px;height:45px;min-width:42px;flex-basis:42px;margin:0 0 0 2px;background:#e9f8f0;border-radius:12px 0 0 12px;z-index:1}
+  body[data-active="services"] .taskly-search-v1 .services-search-form input {grid-column:2;grid-row:1;width:100%;height:45px;border:1px solid #d2e7dd;border-left:0;border-radius:0 12px 12px 0;padding:0 9px;font-size:12px;background:#fff}
+  body[data-active="services"] .taskly-search-v1 .taskly-services-search-button {grid-column:1/-1;grid-row:2;width:100%;height:45px;min-height:45px;border-radius:12px;box-shadow:none}
+  body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;margin-top:11px}
+  body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs .btn {width:100%;min-width:0;white-space:normal;padding:8px 6px;min-height:44px;font-size:11px;gap:5px}
+  body[data-active="services"] .taskly-search-v1 .taskly-services-filter-tabs svg {width:17px;height:17px;min-width:17px;min-height:17px;max-width:17px;max-height:17px}
+  body[data-active="services"] .taskly-search-v1-bottom {display:block;padding-top:13px}
+  body[data-active="services"] .taskly-search-v1-left {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  body[data-active="services"] .taskly-search-v1-filter-label {grid-column:1/-1;border:0;margin:0}
+  body[data-active="services"] .taskly-search-v1-location,
+  body[data-active="services"] .taskly-search-v1-category {width:100%;min-width:0;padding:0 8px;gap:4px}
+  body[data-active="services"] .services-filter-box label.taskly-search-v1-select {gap:4px}
+  body[data-active="services"] .taskly-search-v1-select select {font-size:11px}
+  body[data-active="services"] .taskly-search-v1-select svg {width:17px;height:17px;min-width:17px;min-height:17px;max-width:17px;max-height:17px;flex-basis:17px}
+  body[data-active="services"] .taskly-search-v1-sort-group {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+  body[data-active="services"] .taskly-search-v1-sort {width:min(230px,68vw)}
+  body[data-active="services"] .taskly-services-filter-info {margin-bottom:8px}
+}
+@media (max-width: 450px) {
+  body[data-active="services"] .taskly-search-v1-left {grid-template-columns:minmax(0,1fr)}
+  body[data-active="services"] .taskly-search-v1-location,
+  body[data-active="services"] .taskly-search-v1-category {width:100%}
+  body[data-active="services"] .taskly-search-v1-select select {font-size:12px}
+  body[data-active="services"] .taskly-search-v1-sort-group {flex-wrap:wrap}
+  body[data-active="services"] .taskly-search-v1-sort {width:100%}
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-active="services"] .taskly-search-v1 .btn,
+  body[data-active="services"] .taskly-search-v1 button {transition:none}
+}
