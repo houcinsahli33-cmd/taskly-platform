@@ -1,0 +1,113 @@
+﻿/* Taskly - menu vertical mobile Client et Artisan */
+@media (max-width: 800px) {
+  body[data-taskly-client-shell="1"] .dashboard-shell,
+  body[data-taskly-artisan-shell="1"] .dashboard-shell {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    overflow: hidden !important;
+    isolation: isolate;
+  }
+
+  body[data-taskly-client-shell="1"] .dashboard-shell > .sidebar,
+  body[data-taskly-artisan-shell="1"] .dashboard-shell > .sidebar {
+    position: absolute !important;
+    inset: 0 auto 0 0 !important;
+    width: min(82vw, 300px) !important;
+    max-width: 300px;
+    height: 100% !important;
+    min-height: 0;
+    margin: 0 !important;
+    padding: 20px 12px !important;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #064735;
+    z-index: 42 !important;
+    transform: translateX(-105%);
+    transition: transform .25s ease;
+    box-shadow: 8px 0 24px rgba(0,0,0,.12);
+  }
+
+  body.taskly-mobile-menu-open .dashboard-shell > .sidebar {
+    transform: translateX(0);
+  }
+
+  .dashboard-shell > .sidebar [data-dashboard-link] {
+    display: flex !important;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .dashboard-shell > .sidebar [data-dashboard-link].active {
+    background: #e2f7ec;
+    color: #086b49;
+    border-radius: 12px;
+  }
+
+  .taskly-mobile-menu-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    background: rgba(0, 22, 15, .30);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, visibility .25s;
+  }
+
+  body.taskly-mobile-menu-open .taskly-mobile-menu-overlay {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .taskly-mobile-menu-toggle {
+    position: absolute;
+    top: 18px;
+    left: 0;
+    z-index: 43;
+    width: 34px;
+    height: 48px;
+    border: 1px solid #bce6d3;
+    border-radius: 0 15px 15px 0;
+    background: #e2f7ec;
+    color: #086b49;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(0,0,0,.10);
+    transition: left .25s ease;
+  }
+
+  body.taskly-mobile-menu-open .taskly-mobile-menu-toggle {
+    left: calc(min(82vw, 300px) - 2px);
+    border-radius: 0 12px 12px 0;
+  }
+
+  .client-frame-container,
+  .artisan-frame-container {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+  }
+}
+
+@media (min-width: 801px) {
+  .taskly-mobile-menu-overlay,
+  .taskly-mobile-menu-toggle {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .taskly-mobile-menu-toggle,
+  .taskly-mobile-menu-overlay,
+  .dashboard-shell > .sidebar {
+    transition: none !important;
+  }
+}
