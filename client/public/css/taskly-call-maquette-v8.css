@@ -12,15 +12,15 @@
 .taskly-floating-host[data-call-window-state=max] .taskly-floating-call-frame {height:calc(100% - 70px)!important;}
 .taskly-floating-call-frame {background:#fff!important;}
 html[data-taskly-call-host='1'],html[data-taskly-call-host='1'] body {background:#fff!important;}
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 {background:#fff!important;}
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-panel {background:#fff!important;padding:0!important;}
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-v8-board {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium {background:#fff!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium .tc-panel {background:#fff!important;padding:0!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium .tc-v8-board {
  position:absolute;inset:0;z-index:15;box-sizing:border-box;display:none;flex-direction:column;
  padding:12px 15px 7px;overflow:hidden;color:#0a1b20;
  background:radial-gradient(ellipse at 50% 50%,#fff 28%,#f5fcf8 100%)!important;
  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
 }
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-premium-stage=connected] .tc-v8-board {display:flex!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-premium-stage=connected] .tc-v8-board {display:flex!important;}
 .tc-v8-board * {box-sizing:border-box;}
 .tc-v8-board::before {content:'';position:absolute;pointer-events:none;top:12%;right:-2%;width:44%;height:25%;
   background:linear-gradient(130deg,#a6eccb55,#c7ffe655);clip-path:polygon(0% 45%,22% 20%,50% 35%,78% 60%,100% 25%,100% 75%,65% 95%,27% 72%);}
@@ -90,21 +90,21 @@ html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-premium-
   box-shadow:0 7px 25px #07553a35!important;border:1px solid #b8e7d0!important;border-radius:14px!important;padding:12px!important;}
 .tc-v8-video {display:none;position:relative;min-height:0;width:100%;height:100%;border-radius:18px;overflow:hidden;background:#04281e;}
 /* Connected videos reuse real [data-tc=remote/local] nodes and their LiveKit tracks. */
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-video {display:block!important;}
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-hero {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-video {display:block!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-hero {
   justify-content:flex-start!important;gap:0!important;flex:1 1 auto!important;overflow:hidden!important;padding:6px 0!important;
 }
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-hero>.tc-v8-avatar,
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-hero>.tc-v8-name,
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-hero>.tc-v8-wave {display:none!important;}
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-video .tc-videos {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-hero>.tc-v8-avatar,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-hero>.tc-v8-name,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-hero>.tc-v8-wave {display:none!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-video .tc-videos {
  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;
  display:block!important;opacity:1!important;overflow:hidden!important;z-index:0!important;
 }
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-video [data-tc=remote] {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-video [data-tc=remote] {
  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;
 }
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-v8-video [data-tc=local] {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode=video][data-premium-stage=connected] .tc-v8-video [data-tc=local] {
  position:absolute!important;right:10px!important;top:10px!important;left:auto!important;bottom:auto!important;
  width:clamp(72px,22%,144px)!important;height:clamp(92px,30%,175px)!important;object-fit:cover!important;
  border-radius:12px!important;border:2px solid white!important;display:block!important;
@@ -164,23 +164,23 @@ html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-video 
 
 /* V8.1 — Single-source call layout. Corrects the V6/V7/V8 UI collision.
    IMPORTANT: only in persistent call iframe AND only once V8 has mounted. */
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'] .tc-panel {
   position:relative!important;display:block!important;box-sizing:border-box!important;
   padding:0!important;margin:0!important;background:#fff!important;color:#0b2721!important;
 }
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel::before,
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel::after {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'] .tc-panel::before,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'] .tc-panel::after {
   display:none!important;content:none!important;
 }
 /* Hide native V6 controls, V7 toolbar and duplicate hero, while leaving their
    DOM/handlers available for state updates and delegated user actions. */
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel > :not(.tc-v8-board) {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'] .tc-panel > :not(.tc-v8-board) {
   display:none!important;
 }
 /* V8 is THE visible call UI for incoming / ringing / connected / reconnecting.
    Without this rule, V8 appeared only after connection and the old white-on-
    white layout bled through while waiting. */
-html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel > .tc-v8-board {
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'] .tc-panel > .tc-v8-board {
   display:flex!important;position:absolute!important;inset:0!important;
   width:100%!important;height:100%!important;z-index:10!important;
   background:radial-gradient(ellipse at 50% 47%,#ffffff 30%,#f5fcf8 100%)!important;
