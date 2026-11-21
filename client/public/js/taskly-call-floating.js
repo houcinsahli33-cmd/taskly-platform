@@ -28,7 +28,7 @@
     const doc = shell?.document || document;
     if (!doc.querySelector('script[data-taskly-persistent-call-host]')) {
       const script = doc.createElement('script');
-      script.src = '/js/taskly-call-host-shell.js?v=1';
+      script.src = '/js/taskly-call-host-shell.js?v=7';
       script.defer = true;
       script.dataset.tasklyPersistentCallHost = '1';
       doc.head.append(script);
@@ -75,16 +75,20 @@
     bar.className = 'tc-floating-tools';
     bar.setAttribute('role','group');
     bar.setAttribute('aria-label','Commandes de l’appel');
+    const icons = Object.freeze({
+      mic:'<rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/>',
+      sound:'<path d="M11 5 6 9H3v6h3l5 4V5ZM15.5 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/>',
+      chat:'<path d="M4 4h16v13H9l-5 4V4Z"/><path d="M8 9h8m-8 4h5"/>',
+      camera:'<rect x="2" y="5" width="15" height="14" rx="2"/><path d="m17 10 5-4v12l-5-4"/>',
+      max:'<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/>',
+      end:'<path d="M4 17c.5-2 2.5-3.5 4-4.5l2.5 3c1.2-.5 2.6-.5 3.8 0l2.4-3c1.9.9 3.4 2.4 3.8 4.5l-3 2.2a3 3 0 0 1-2-1.5c-2.2-.8-4.6-.8-6.9 0a3 3 0 0 1-2 1.5L4 17Z"/>'
+    });
     const commands = [
-      ['mic','Micro','🎙'],
-      ['sound','Son','◖))'],
-      ['chat','Messagerie','▤'],
-      ['camera','Caméra','▣'],
-      ['max','Agrandir','⤢'],
-      ['end','Raccrocher','☎']
+      ['mic','Micro'],['sound','Haut-parleur'],['chat','Messagerie'],
+      ['camera','Caméra'],['max','Agrandir'],['end','Raccrocher']
     ];
     const buttons = {};
-    for (const [name,label,symbol] of commands) {
+    for (const [name,label] of commands) {
       const btn = document.createElement('button');
       btn.type='button'; btn.className='tc-floating-control';
       btn.dataset.tcFloating=name;
@@ -92,7 +96,8 @@
       const pictogram = document.createElement('span');
       pictogram.className='tc-floating-control-icon';
       pictogram.setAttribute('aria-hidden','true');
-      pictogram.textContent=symbol;
+      // SVG geometry is a fixed trusted string, never message or user data.
+      pictogram.innerHTML='<svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+icons[name]+'</svg>';
       const nameLabel=document.createElement('small'); nameLabel.textContent=label;
       btn.append(pictogram,nameLabel); bar.append(btn); buttons[name]=btn;
     }
@@ -125,6 +130,20 @@
     buttons.end.addEventListener('click', () => {
       if (instance.active) void instance.finish(instance.active.incoming && !instance.active.accepted ? 'reject' : 'end');
     });
+    // This is call presence, not a guessed global online status. Show only
+    // once LiveKit has actually reached its connected stage.
+    const name = panel.querySelector('[data-tc=name]');
+    if (name && !dialog.querySelector('.tc-floating-presence')) {
+      const presence = document.createElement('p');
+      presence.className = 'tc-floating-presence';
+      const dot = document.createElement('span');
+      dot.className = 'tc-floating-presence-dot';
+      dot.setAttribute('aria-hidden','true');
+      const label = document.createElement('span');
+      label.textContent = 'En ligne';
+      presence.append(dot,label);
+      name.insertAdjacentElement('afterend',presence);
+    }
     panel.append(badge,bar);
   }
 

@@ -20,7 +20,7 @@ test('Client and Artisan: CSS and JS loaded only in private messaging pages', ()
 });
 test('Floating window uses actual minimize/maximize/close controls and drag', () => {
   for (const key of ['min','max','close']) assert.ok(shell.includes(`data-call-host=\\"${key}\\"`) || shell.includes(`data-call-host="${key}"`));
-  assert.match(shell, /setState\(state === 'max' \? 'normal' : 'max'\)/);
+  assert.match(shell, /toggleFullscreen\(\)/);
   assert.match(shell, /setState\(state === 'min' \? 'restore' : 'min'\)/);
   assert.match(shell, /title\.addEventListener\('pointermove'/);
   assert.match(shell, /send\('close'\)/);

@@ -15,10 +15,11 @@
   let activeConversation = 0;
   let state = 'normal';
   let priorState = 'normal';
+  let normalBounds = null;
   let dragging = null;
   let cleanupTimer = null;
 
-  const CSS = '/css/taskly-call-floating.css?v=1';
+  const CSS = '/css/taskly-call-floating.css?v=7';
   if (!document.querySelector('link[data-taskly-floating-style]')) {
     const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = CSS;
     css.dataset.tasklyFloatingStyle = '1'; document.head.append(css);
@@ -29,11 +30,11 @@
   }
   function center() {
     if (!host) return;
-    host.style.left = Math.max(12, Math.round((innerWidth - host.offsetWidth) * 0.58)) + 'px';
-    host.style.top = Math.max(12, Math.min(110, Math.round(innerHeight * 0.15))) + 'px';
+    host.style.left = Math.max(8, Math.round((innerWidth - host.offsetWidth) / 2)) + 'px';
+    host.style.top = Math.max(8, Math.min(128, Math.round(innerHeight * 0.13))) + 'px';
   }
   function clampPosition() {
-    if (!host) return;
+    if (!host || state === 'max') return;
     const r = host.getBoundingClientRect();
     const left = Math.max(6, Math.min(r.left, innerWidth - Math.min(74, r.width)));
     const top = Math.max(6, Math.min(r.top, innerHeight - 42));
@@ -42,23 +43,57 @@
   }
   function setState(next) {
     if (!host) return;
+    const previous = state;
     if (next === 'min') { priorState = state === 'min' ? priorState : state; state = 'min'; }
     else if (next === 'restore') state = priorState === 'min' ? 'normal' : priorState;
     else state = next;
+    if (previous === 'normal' && state === 'max') {
+      const rect = host.getBoundingClientRect();
+      normalBounds = {left:rect.left, top:rect.top, width:rect.width, height:rect.height};
+    }
     host.dataset.callWindowState = state;
     const max = host.querySelector('[data-call-host="max"]');
     const min = host.querySelector('[data-call-host="min"]');
-    if (max) { max.textContent = state === 'max' ? '❐' : '□'; max.title = state === 'max' ? 'Restaurer' : 'Agrandir'; max.setAttribute('aria-label', max.title); }
-    if (min) { min.title = state === 'min' ? 'Restaurer l’appel' : 'Réduire l’appel'; min.setAttribute('aria-label', min.title); }
-    if (state === 'max') {
-      host.style.left = Math.max(6, Math.round((innerWidth - Math.min(innerWidth-16, 840)) / 2)) + 'px';
-      host.style.top = Math.max(6, Math.round((innerHeight - Math.min(innerHeight-16, 660)) / 2)) + 'px';
-    } else clampPosition();
+    if (max) {
+      max.textContent = state === 'max' ? '❐' : '□';
+      max.title = state === 'max' ? 'Restaurer la fenêtre' : 'Plein écran';
+      max.setAttribute('aria-label', max.title);
+      max.setAttribute('aria-pressed', String(state === 'max'));
+    }
+    if (min) {
+      min.title = state === 'min' ? 'Restaurer l’appel' : 'Réduire l’appel';
+      min.setAttribute('aria-label', min.title);
+    }
+    if (previous === 'max' && state === 'normal' && normalBounds) {
+      host.style.left = Math.max(6, Math.round(normalBounds.left)) + 'px';
+      host.style.top = Math.max(6, Math.round(normalBounds.top)) + 'px';
+      host.style.width = Math.round(normalBounds.width) + 'px';
+      host.style.height = Math.round(normalBounds.height) + 'px';
+    }
+    if (state !== 'max') clampPosition();
     send('layout:' + state);
+  }
+  function toggleFullscreen() {
+    if (!host) return;
+    if (state === 'min') setState('restore');
+    if (state === 'max') {
+      setState('normal');
+      if (document.fullscreenElement === host) {
+        void document.exitFullscreen?.().catch(() => {});
+      }
+    } else {
+      setState('max');
+      // Native fullscreen when permitted; CSS fullscreen fills the browser
+      // viewport if the platform disallows requestFullscreen.
+      try { void host.requestFullscreen?.().catch(() => {}); } catch {}
+    }
   }
   function clear() {
     if (cleanupTimer) {clearTimeout(cleanupTimer);cleanupTimer=null;}
-    host?.remove(); host=null;frame=null;activeConversation=0;state='normal';dragging=null;
+    if (document.fullscreenElement === host) {
+      try { void document.exitFullscreen?.().catch(() => {}); } catch {}
+    }
+    host?.remove(); host=null;frame=null;activeConversation=0;state='normal';dragging=null;normalBounds=null;
   }
   function close() {
     if (!host) return;
@@ -86,10 +121,7 @@
     el.append(hint);
     el.querySelector('[data-call-host="close"]').addEventListener('click', close);
     el.querySelector('[data-call-host="min"]').addEventListener('click', () => setState(state === 'min' ? 'restore' : 'min'));
-    el.querySelector('[data-call-host="max"]').addEventListener('click', () => {
-      if (state === 'min') setState('restore');
-      setState(state === 'max' ? 'normal' : 'max');
-    });
+    el.querySelector('[data-call-host="max"]').addEventListener('click', toggleFullscreen);
     const title = el.querySelector('.taskly-floating-titlebar');
     title.addEventListener('pointerdown', event => {
       if (event.button !== 0 || event.target.closest('button') || state === 'max') return;
@@ -106,6 +138,10 @@
     title.addEventListener('pointerup', finishDrag);
     title.addEventListener('pointercancel', finishDrag);
     window.addEventListener('resize', clampPosition, {passive:true});
+    // Escape from native fullscreen restores the compact call without hanging up.
+    document.addEventListener('fullscreenchange', () => {
+      if (host === el && state === 'max' && document.fullscreenElement !== el) setState('normal');
+    });
     document.body.append(el);
     host = el; frame = inner; center();
     return el;
@@ -142,7 +178,7 @@
     if (event.data?.type === 'taskly:call-host-ready') return;
     if (event.data?.type === 'taskly:call-host-ended') clear();
     if (event.data?.type === 'taskly:call-host-action') {
-      if (event.data.action === 'max') setState(state === 'max' ? 'normal' : 'max');
+      if (event.data.action === 'max') toggleFullscreen();
       if (event.data.action === 'chat') {
         if (state !== 'min') setState('min');
         window.dispatchEvent(new CustomEvent('taskly:open-call', {detail:{demandeId:activeConversation}}));
@@ -150,7 +186,7 @@
     }
     if (event.data?.type === 'taskly:call-host-mode') {
       host?.querySelector('.taskly-floating-loading')?.remove();
-      if (event.data.mode === 'video' && state === 'normal') setState('max');
+      // Audio and video both start compact; the user chooses fullscreen.
     }
   });
   // Incoming banner on any dashboard section: use the persistent call host
