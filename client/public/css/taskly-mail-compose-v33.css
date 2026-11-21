@@ -274,3 +274,82 @@ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-more 
 @media(prefers-reduced-motion:reduce) {
   body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-control {transition:none;}
 }
+
+/* TASKLY MAIL V3.4 — taille COMPACTE uniquement pour « Nouveau message ».
+   Conserver inchangés le cadre Taskly, le header, les menus, les autres rubriques et LiveKit.
+   L'éditeur défile à l'intérieur de son espace, au lieu d'allonger l'ensemble. */
+@container taskly-mail (min-width:701px) {
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content.tm-compose-view {
+    padding:10px 13px 12px;
+    gap:7px;
+    min-height:0;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-header {
+    min-height:45px;
+    padding-bottom:7px;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-form {
+    min-height:0!important;
+    height:clamp(390px,51vh,465px);
+    max-height:465px;
+    padding:10px 12px;
+    gap:7px;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-from {
+    padding-bottom:6px;
+    margin-bottom:0;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-control {
+    min-height:38px;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-control input {
+    min-height:36px;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-editor {
+    flex:1 1 0%;
+    min-height:0!important;
+    overflow:hidden;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-editor .tm-compose-body {
+    min-height:0!important;
+    flex:1 1 0%;
+    overflow:hidden;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-editor textarea {
+    display:block;
+    flex:1 1 0%;
+    height:100%!important;
+    min-height:0!important;
+    max-height:100%!important;
+    resize:none;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-format-toolbar {
+    min-height:38px;
+    padding:4px 8px;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-format-button {
+    min-height:29px;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-footer {
+    padding-top:6px;
+  }
+}
+/* Sur téléphone et dans une colonne étroite : garder tous les boutons accessibles,
+   sans faire grandir la zone de rédaction. La page reste naturellement défilable. */
+@container taskly-mail (max-width:700px) {
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-form {
+    min-height:0!important;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-editor .tm-compose-body {
+    min-height:0!important;
+  }
+  body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-editor textarea {
+    height:clamp(150px,24dvh,210px)!important;
+    min-height:150px!important;
+    max-height:210px!important;
+    resize:none!important;
+    overflow-y:auto!important;
+  }
+}
