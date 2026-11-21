@@ -231,6 +231,7 @@
         text(state.contact, person);
         const first = [...person.trim()][0] || '?';
         text(state.avatar, first.toLocaleUpperCase('fr'));
+        text(state.heroAvatar, first.toLocaleUpperCase('fr'));
         text(state.kind, incoming ? 'Appel ' + (mode === 'video' ? 'vidéo' : 'audio') + ' entrant' : 'Appel ' + (mode === 'video' ? 'vidéo' : 'audio'));
         text(state.quality, reconnecting ? 'Reconnexion…' : connected ? 'Connecté via Taskly' : incoming ? 'Appel entrant' : 'Connexion…');
         text(state.qualityIcon, reconnecting ? '!' : connected ? '●' : '◌');
@@ -263,7 +264,9 @@
         right.append(duration, qualityIcon, quality);
         top.append(callKind, right);
         const hero = make('div', 'tc-premium-hero');
-        hero.append(make('span', 'tc-premium-avatar-large', '☎'));
+        const largeAvatar = make('span', 'tc-premium-avatar-large', '?');
+        largeAvatar.setAttribute('aria-hidden', 'true');
+        hero.append(largeAvatar);
         const message = make('p', 'tc-premium-note', 'Connexion sécurisée au service d’appels Taskly');
         hero.append(message);
         const bar = make('div', 'tc-premium-extras');
@@ -289,7 +292,7 @@
         panel.insertBefore(hero, $(panel, '.tc-videos') || null);
         $(panel, '.tc-actions')?.after(bar, devices, drawer);
         states.set(dialog, {
-            avatar, contact: person, kind: callKind, duration, quality,
+            avatar, heroAvatar: largeAvatar, contact: person, kind: callKind, duration, quality,
             qualityIcon, devices, drawer, startedAt: null, clock: null,
             active: false, scheduled: false
         });
@@ -400,11 +403,20 @@
     }
 
     function ensureStyles() {
-        if (document.querySelector('link[href*="taskly-call-premium.css"]')) return;
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = '/css/taskly-call-premium.css?v=1';
-        document.head.append(link);
+        // The dedicated messaging page already loads both styles in its HEAD.
+        // The parent Client/Artisan shell also shows incoming-call banners.
+        if (!document.querySelector('link[href*="taskly-call-premium.css"]')) {
+            const base = document.createElement('link');
+            base.rel = 'stylesheet';
+            base.href = '/css/taskly-call-premium.css?v=1';
+            document.head.append(base);
+        }
+        if (!document.querySelector('link[href*="taskly-call-maquette-v4.css"]')) {
+            const theme = document.createElement('link');
+            theme.rel = 'stylesheet';
+            theme.href = '/css/taskly-call-maquette-v4.css?v=1';
+            document.head.append(theme);
+        }
     }
 
     function setup() {
