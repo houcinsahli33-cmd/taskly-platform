@@ -5,7 +5,7 @@
 (() => {
   if (window.TasklyCallMaquetteV8) return;
   const isHost = new URLSearchParams(location.search).get('taskly_call_host') === '1';
-  const version = '8.1';
+  const version = '9';
   const css = '/css/taskly-call-maquette-v8.css?v=' + version;
   // The outer titlebar belongs to the persistent dashboard shell. Add only CSS.
   if (!isHost) {
@@ -57,6 +57,7 @@
     try { if (window.parent !== window) window.parent.postMessage({type:'taskly:call-host-action',action},location.origin); } catch {}
   }
   function status(info, message) { text(info.feedback,message);info.feedback.hidden=!message; }
+  function nameSafe(dialog) {return dialog.querySelector('[data-tc=name]')?.textContent?.trim() || 'Correspondant';}
   function sync(info) {
     const {dialog,instance}=info;
     if (!dialog.open) { if (info.timer) clearInterval(info.timer);info.timer=null;return; }
@@ -67,6 +68,18 @@
     info.incomingRow.hidden=!incoming;
     info.hang.hidden=incoming;
     const mode=dialog.dataset.mode === 'video' ? 'video' : 'audio';
+    // V9: attached LiveKit media must be inside the visible video stage, even
+    // if the original controller recreated its nodes on another call.
+    const videoBox=info.board.querySelector('.tc-v8-video');
+    const videos=dialog.querySelector('.tc-videos');
+    if (videoBox && videos && videos.parentElement!==videoBox) videoBox.prepend(videos);
+    if (info.actionArea && info.hang) {
+      if(mode==='video' && connected && info.hang.parentElement!==info.actionArea)
+        info.actionArea.append(info.hang);
+      if((mode!=='video' || !connected) && info.hang.parentElement!==info.board)
+        info.board.insertBefore(info.hang,info.feedback);
+    }
+    if(info.videoRemoteLabel) info.videoRemoteLabel.textContent=nameSafe(dialog);
     dialog.dataset.tasklyV8Connected=String(connected);
     info.board.dataset.callMode=mode;
     const name=dialog.querySelector('[data-tc=name]')?.textContent?.trim() || 'Votre correspondant';
@@ -91,6 +104,11 @@
     info.buttons.camera.title=mode!=='video'?'Caméra disponible pour les appels vidéo':'Activer ou couper la caméra';
     const remote=instance.get?.('remote');
     info.buttons.sound.classList.toggle('is-off',Boolean(remote?.muted));
+    const shareEnabled=call?.media?.room?.localParticipant?.isScreenShareEnabled;
+    if(typeof shareEnabled==='boolean') {
+      info.buttons.share.setAttribute('aria-pressed',String(shareEnabled));
+      info.buttons.share.classList.toggle('is-active',shareEnabled);
+    }
     if (!info.timer && connected) {
       info.timer=setInterval(()=>{
         if (!dialog.open) {clearInterval(info.timer);info.timer=null;return;}
@@ -134,6 +152,9 @@
     });
     const videoStage=node('div','tc-v8-video');
     const existingVideos=panel.querySelector('.tc-videos');if(existingVideos)videoStage.append(existingVideos);
+    const remoteLabel=node('span','tc-v9-remote-label','Correspondant');
+    const localLabel=node('span','tc-v9-local-label','Vous');
+    videoStage.append(remoteLabel,localLabel);
     hero.append(heroAvatar,heroName,state,clock,wave,videoStage);
     const actionArea=node('div','tc-v8-actions');const buttons={};
     for (const [key,label,glyph] of [
@@ -171,7 +192,7 @@
     // Without this marker, a JS error leaves the original call UI usable.
     dialog.dataset.tasklyV8Ready='1';
     const info={dialog,instance,board,avatar,person,service,badge,presence:badge,heroAvatar,
-      heroName,kind,duration,feedback,buttons,menu,drawer,incomingRow,hang,timer:null,unreadTimer:null};
+      heroName,kind,duration,feedback,buttons,menu,drawer,incomingRow,hang,actionArea,videoRemoteLabel:remoteLabel,timer:null,unreadTimer:null};
     instances.set(dialog,info);
     devices.addEventListener('click',()=>{
       const native=dialog.querySelector('.tc-premium-extra');
@@ -198,6 +219,9 @@
     });
     buttons.share.addEventListener('click',async()=>{
       const room=instance.active?.media?.room;
+      if(dialog.dataset.premiumStage!=='connected') {
+        status(info,'Attendez la connexion avant de partager votre écran.');return;
+      }
       if(typeof room?.localParticipant?.setScreenShareEnabled!=='function'){
         status(info,'Le partage d’écran n’est pas disponible sur cette connexion.');return;
       }

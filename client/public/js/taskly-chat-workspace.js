@@ -37,7 +37,20 @@ document.addEventListener('DOMContentLoaded',async()=>{
      line.append(avatar);
     }
     const card=el('div',null,'cw-call-event');card.dataset.status=m.status;
-    card.append(el('span',view.icon,'cw-call-event-icon'));
+    // V9: consistent SVG from the approved call-history mockup.
+    // Only two static trusted glyphs are rendered, never HTML from API data.
+    card.dataset.callMode=m.mode==='video'?'video':'audio';
+    const iconBox=el('span',null,'cw-call-event-icon');
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+    const svgNode=(tag,attrs)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,v);svg.append(n);};
+    if(m.mode==='video'){
+      svgNode('rect',{x:'2.5',y:'5.5',width:'14',height:'13',rx:'2'});
+      svgNode('path',{d:'m16.5 10 5-3v10l-5-3'});
+    } else {
+      svgNode('path',{d:'M22 16.9v3a2 2 0 0 1-2.2 2 18 18 0 0 1-8-2.8 18 18 0 0 1-5.6-5.6 18 18 0 0 1-2.8-8A2 2 0 0 1 5.4 3h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 2.1L9 11a14 14 0 0 0 4 4l1.2-1.3a2 2 0 0 1 2.1-.5l3 .5a2 2 0 0 1 2.7 3.2Z'});
+    }
+    iconBox.append(svg);card.append(iconBox);
     const content=el('span',null,'cw-call-event-content');
     content.append(el('strong',view.title),el('small',view.state+' · '+date(m.startedAt,true)));
     card.append(content);line.append(card);fragment.append(line);continue;

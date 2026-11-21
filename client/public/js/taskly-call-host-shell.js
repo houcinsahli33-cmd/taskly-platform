@@ -112,7 +112,7 @@
     const inner = document.createElement('iframe');
     inner.className = 'taskly-floating-call-frame';
     inner.title = 'Appel Taskly en cours';
-    inner.setAttribute('allow', 'microphone; camera; autoplay');
+    inner.setAttribute('allow', 'microphone; camera; autoplay; display-capture');
     inner.setAttribute('referrerpolicy', 'same-origin');
     el.append(inner);
     const hint = document.createElement('p');
@@ -187,6 +187,8 @@
     if (event.data?.type === 'taskly:call-host-mode') {
       host?.querySelector('.taskly-floating-loading')?.remove();
       // Audio and video both start compact; the user chooses fullscreen.
+      const title=host?.querySelector('.taskly-floating-titlebar strong');
+      if(title) title.textContent=event.data.mode==='video'?'Appel vidéo Taskly':'Appel Taskly';
     }
   });
   // Incoming banner on any dashboard section: use the persistent call host

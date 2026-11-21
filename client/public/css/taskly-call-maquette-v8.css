@@ -215,3 +215,104 @@ html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-board[
 html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-board[data-call-mode=audio] .tc-v8-wave {
   height:clamp(38px,7dvh,65px)!important;
 }
+
+
+/* V9 VIDEO: faithful compact video card, only once V8 is mounted and the
+   authenticated LiveKit call is truly connected. Audio is intentionally untouched. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-board {
+  display:flex!important;flex-direction:column!important;gap:0!important;padding:8px 10px 6px!important;
+  background:linear-gradient(165deg,#fff 10%,#f8fefa 87%)!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-top {
+  flex:0 0 auto!important;min-height:45px!important;padding:0 2px 8px!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-hero {
+  flex:1 1 0!important;min-height:105px!important;overflow:hidden!important;
+  justify-content:flex-start!important;gap:0!important;padding:1px 0!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-hero>.tc-v8-avatar,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-hero>.tc-v8-name,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-hero>.tc-v8-wave,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-hero>.tc-v8-call-state {display:none!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video {
+  display:block!important;position:relative!important;flex:1 1 auto!important;
+  width:100%!important;height:100%!important;min-height:100px!important;
+  border:1px solid #d3eae0!important;border-radius:17px!important;
+  background:#12392f!important;overflow:hidden!important;isolation:isolate!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video .tc-videos {
+  display:block!important;position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;max-height:none!important;opacity:1!important;
+  overflow:hidden!important;z-index:0!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video [data-tc=remote] {
+  display:block!important;position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;object-fit:cover!important;z-index:1!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video [data-tc=local] {
+  display:block!important;position:absolute!important;top:auto!important;left:auto!important;
+  right:7px!important;bottom:8px!important;width:clamp(65px,24%,125px)!important;
+  height:clamp(80px,35%,145px)!important;max-height:60%!important;
+  object-fit:cover!important;border:2px solid #fff!important;border-radius:12px!important;
+  box-shadow:0 4px 14px #001c1877!important;z-index:4!important;
+}
+.tc-v9-remote-label,.tc-v9-local-label {
+  display:none;position:absolute;z-index:6;background:#003c32b5;color:white;
+  border-radius:8px;padding:3px 7px;font-weight:650;font-size:10px;
+  line-height:1.3;max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog[data-mode='video'][data-premium-stage='connected'] .tc-v9-remote-label {
+  display:block;left:9px;bottom:9px;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog[data-mode='video'][data-premium-stage='connected'] .tc-v9-local-label {
+  display:block;right:9px;bottom:9px;transform:translateY(0);border:1px solid #ffffff36;
+}
+/* The timer sits between the video stage and the toolbar like the approved image. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-clock {
+  display:flex!important;position:relative!important;z-index:4!important;order:1!important;
+  flex:none!important;margin:5px auto 3px!important;padding:3px 12px!important;
+  font-size:13px!important;line-height:1.3!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-actions {
+  order:2!important;display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  gap:2px!important;max-width:none!important;width:100%!important;
+  margin:2px auto 27px!important;align-items:start!important;justify-items:center!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-action,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-actions>.tc-v8-hang {
+  width:100%!important;min-width:0!important;max-width:75px!important;display:flex!important;
+  flex-direction:column!important;gap:3px!important;padding:0 1px!important;margin:0!important;
+  height:auto!important;min-height:0!important;border:0!important;box-shadow:none!important;
+  background:transparent!important;color:#173c32!important;font-size:9px!important;
+  align-items:center!important;justify-content:flex-start!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-actions>.tc-v8-hang>.tc-v8-icon,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-action>.tc-v8-icon {
+  display:grid!important;place-items:center!important;flex:none!important;
+  width:clamp(32px,5vw,45px)!important;height:clamp(32px,5vw,45px)!important;
+  margin:0 auto!important;padding:8px!important;border-radius:12px!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-actions>.tc-v8-hang>.tc-v8-icon {
+  background:linear-gradient(#ff5555,#df1414)!important;color:white!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-actions>.tc-v8-hang .tc-v8-button-text {
+  display:block!important;color:#1c2927!important;font-size:9px!important;font-weight:650!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-mode='video'][data-premium-stage='connected'] .tc-v8-actions>.tc-v8-hang[hidden] {display:none!important;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-board {padding:clamp(12px,2dvh,30px) clamp(15px,3vw,44px) 9px!important;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-hero {min-height:30dvh!important;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-video {max-width:min(100%,1280px);margin:auto;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-actions {max-width:720px!important;gap:12px!important;margin:10px auto 30px!important;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-action>.tc-v8-icon,
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-actions>.tc-v8-hang>.tc-v8-icon {width:62px!important;height:62px!important;border-radius:17px!important;padding:17px!important;}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-action .tc-v8-button-text,
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-actions>.tc-v8-hang .tc-v8-button-text {font-size:14px!important;}
+@media(max-height:500px){
+ html[data-taskly-call-host='1'] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-top {min-height:34px!important;padding:0!important;}
+ html[data-taskly-call-host='1'] .taskly-call-dialog[data-mode=video][data-premium-stage=connected] .tc-v8-actions {margin-bottom:9px!important;}
+}
+/* SVG icons from the approved chat history screenshot, not OS-dependent emoji. */
+.chat-workspace .cw-call-event-icon svg {display:block;width:20px;height:20px;stroke:currentColor;stroke-width:2;fill:none;stroke-linejoin:round;stroke-linecap:round;}
+.chat-workspace .cw-call-event[data-call-mode=video] .cw-call-event-icon {color:#008f60;background:#d5f3e7;}
+.chat-workspace .cw-call-event[data-call-mode=audio] .cw-call-event-icon {color:#ee2581;background:#dff5e9;}
+.chat-workspace .cw-call-event[data-status=cancelled] .cw-call-event-icon {background:#e2f5ed;}

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!document.querySelector('script[data-taskly-persistent-call-host]')) {
         const persistent = document.createElement('script');
         persistent.dataset.tasklyPersistentCallHost = '1';
-        persistent.src = '/js/taskly-call-host-shell.js?v=7';
+        persistent.src = '/js/taskly-call-host-shell.js?v=9';
         document.head.appendChild(persistent);
     }
 
@@ -101,13 +101,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function ring() {
         if (window.TasklyPhoneRing) {
-            if (!current || suppressed(current) || document.visibilityState !== 'visible') {
+            if (!current || suppressed(current)) {
                 window.TasklyPhoneRing.stop('global');
                 return;
             }
             const call = current;
             const playing = window.TasklyPhoneRing.start('global',
-                () => current === call && !suppressed(call) && document.visibilityState === 'visible',
+                () => current === call && !suppressed(call),
                 'incoming');
             get('ring').hidden = playing;
             return;
@@ -127,8 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const beep = () => {
 
-            if (!current || suppressed(current) ||
-                document.visibilityState !== 'visible') {
+            if (!current || suppressed(current)) {
 
                 hide();
                 return;
@@ -244,9 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function refresh() {
 
-        if (closed || busy ||
-            document.visibilityState !== 'visible' ||
-            Date.now() - last < 5000) return;
+        if (closed || busy || Date.now() - last < 5000) return;
 
         busy = true;
         last = Date.now();
@@ -272,8 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     Date.now() < snoozedUntil)
             );
 
-            if (call &&
-                document.visibilityState === 'visible') {
+            if (call) {
                 show(call);
             } else {
                 hide();
@@ -304,6 +300,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         hide();
 
+        // Prefer the persistent authenticated call window, preserve the existing fallback.
+        if (window.TasklyCallHost?.open?.(role, call.demandeId, 'receive')) return;
         dispatchEvent(new CustomEvent('taskly:open-call', {
             detail: { demandeId: call.demandeId }
         }));
@@ -340,12 +338,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const timer = setInterval(refresh, 15000);
 
+    // Background tabs may be timer-throttled; preserve an already-authorized
+    // incoming call rather than silently muting it on tab switch.
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') {
-            refresh();
-        } else {
-            hide();
-        }
+        if (document.visibilityState === 'visible') refresh();
     });
 
     addEventListener('pagehide', () => {
