@@ -32,7 +32,7 @@ function preparerCadreClient(original,id) {
  const aside=original.match(/<aside\b[^>]*class="[^"]*sidebar[^"]*"[^>]*>[\s\S]*?<\/aside>/i)?.[0];
  if(!head||!body||!aside)throw new Error('Document client non reconnu.');
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<\/head>/i,
-  '<link rel="stylesheet" href="/css/client-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/client-navigation-stable.js?v=taskly-mail1"></script></head>');
+  '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=3"><link rel="stylesheet" href="/css/client-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/client-navigation-stable.js?v=taskly-mail1"></script></head>');
  const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=4"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
  const callHead=chatEnabled&&callsPilot.autoriseCompte('client',id)
   ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=3"></script></head>')

@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   'use strict';
 
   const init = () => {
@@ -10,10 +10,7 @@
     if (!shell || !sidebar) return;
     if (shell.querySelector('.taskly-mobile-menu-toggle')) return;
 
-    const css = document.createElement('link');
-    css.rel = 'stylesheet';
-    css.href = '/css/taskly-mobile-sidebar.css';
-    document.head.appendChild(css);
+
 
     if (!sidebar.id) sidebar.id = 'taskly-mobile-sidebar';
 
