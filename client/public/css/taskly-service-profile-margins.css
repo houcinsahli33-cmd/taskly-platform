@@ -1,0 +1,20 @@
+/* Taskly — uniquement les marges de « Consulter le service ».
+   Reference exacte : client/public/css/taskly-public-profile-premium.css
+   (profil artisan public : max-width 1390px, marges 24px par cote
+   et 14px par cote sur mobile <= 700px).
+   Aucune regle sur les cartes, le header, le footer ou les scripts. */
+
+body[data-active="services"][data-taskly-service-detail-premium="1"]
+.page-main > .section > .container {
+  box-sizing: border-box;
+  width: calc(100% - 48px);
+  max-width: 1390px;
+  margin-inline: auto;
+}
+
+@media (max-width: 700px) {
+  body[data-active="services"][data-taskly-service-detail-premium="1"]
+  .page-main > .section > .container {
+    width: calc(100% - 28px);
+  }
+}
