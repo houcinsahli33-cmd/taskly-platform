@@ -278,7 +278,7 @@
         const panel = $(dialog, '.tc-panel');
         if (!panel) return;
         decorated.add(dialog);
-        dialog.classList.add('taskly-call-premium', 'taskly-call-v5');
+        dialog.classList.add('taskly-call-premium', 'taskly-call-v5', 'taskly-call-v6');
         const contact = make('section', 'tc-premium-contact');
         const avatar = make('span', 'tc-premium-avatar', '?');
         avatar.setAttribute('aria-hidden', 'true');
@@ -379,6 +379,13 @@
                 css.dataset.tasklyCallV5 = '1';
                 css.href = '/css/taskly-call-maquette-v5.css?v=1';
                 target.head.appendChild(css);
+            }
+            if (!target.querySelector('link[data-taskly-call-v6]')) {
+                const cssV6 = target.createElement('link');
+                cssV6.rel = 'stylesheet';
+                cssV6.dataset.tasklyCallV6 = '1';
+                cssV6.href = '/css/taskly-call-maquette-v6.css?v=1';
+                target.head.appendChild(cssV6);
             }
             target.adoptNode(dialog);
             target.body.appendChild(dialog);
@@ -484,6 +491,13 @@
             theme.dataset.tasklyCallV5 = '1';
             document.head.append(theme);
         }
+        if (!document.querySelector('link[href*="taskly-call-maquette-v6.css"]')) {
+            const themeV6 = document.createElement('link');
+            themeV6.rel = 'stylesheet';
+            themeV6.href = '/css/taskly-call-maquette-v6.css?v=1';
+            themeV6.dataset.tasklyCallV6 = '1';
+            document.head.append(themeV6);
+        }
     }
 
     function setup() {
@@ -493,7 +507,7 @@
         document.querySelectorAll('.taskly-global-call').forEach(addGlobalFeatures);
         addSoundButton();
     }
-    window.TasklyCallPremium = { setup, unlockSound: phone.unlock, testRingtone: phone.preview, version: 5 };
+    window.TasklyCallPremium = { setup, unlockSound: phone.unlock, testRingtone: phone.preview, version: 6 };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup, { once: true });
     else setup();
     const watcher = new MutationObserver((mutations) => {

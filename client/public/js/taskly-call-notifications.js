@@ -4,7 +4,7 @@
     if (document.querySelector('script[data-taskly-premium-loader]')) return;
     const script = document.createElement('script');
     script.setAttribute('data-taskly-premium-loader', '1');
-    script.src = '/js/taskly-call-premium.js?v=5';
+    script.src = '/js/taskly-call-premium.js?v=6';
     document.head.appendChild(script);
 })();
 
