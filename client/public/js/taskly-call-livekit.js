@@ -123,6 +123,9 @@
                 const stream = this.refreshLocal();
                 this.onState?.('connected');
 
+                // Ne jamais bloquer la connexion audio.
+                void this.enableKrisp(room);
+
                 return stream;
 
             } catch (error) {
@@ -135,6 +138,96 @@
                 }
 
                 throw error;
+            }
+        }
+
+
+        async enableKrisp(room) {
+            let audioTrack = null;
+            let attached = false;
+
+            try {
+                if (this.room !== room) return;
+
+                // Chargement uniquement pendant un appel.
+                if (!window.TasklyKrisp) {
+                    if (typeof document === 'undefined') return;
+
+                    if (!TasklyCallLiveKit.krispLoading) {
+                        const loading = new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src =
+                                '/js/vendor/taskly-krisp.bundle.js?v=1';
+                            script.async = true;
+                            script.onload = resolve;
+                            script.onerror = () => reject(
+                                new Error('Chargement Krisp impossible')
+                            );
+                            document.head.appendChild(script);
+                        });
+
+                        TasklyCallLiveKit.krispLoading =
+                            loading.catch(error => {
+                                TasklyCallLiveKit.krispLoading = null;
+                                throw error;
+                            });
+                    }
+
+                    await TasklyCallLiveKit.krispLoading;
+                }
+
+                if (this.room !== room) return;
+
+                const plugin = window.TasklyKrisp;
+
+                if (!plugin ||
+                    typeof plugin.KrispNoiseFilter !== 'function' ||
+                    typeof plugin.isKrispNoiseFilterSupported !==
+                        'function' ||
+                    !plugin.isKrispNoiseFilterSupported()) {
+                    return;
+                }
+
+                const publication = [
+                    ...room.localParticipant.trackPublications.values()
+                ].find(item =>
+                    item.track?.mediaStreamTrack?.kind === 'audio'
+                );
+
+                audioTrack = publication?.track;
+
+                if (typeof audioTrack?.setProcessor !== 'function') {
+                    return;
+                }
+
+                const processor = plugin.KrispNoiseFilter();
+
+                await audioTrack.setProcessor(processor);
+                attached = true;
+
+                if (this.room !== room) {
+                    await audioTrack.stopProcessor?.();
+                    return;
+                }
+
+                await processor.setEnabled(true);
+
+                if (this.room === room) {
+                    this.refreshLocal();
+                    console.info('[Taskly] Filtre Krisp actif');
+                }
+            } catch (error) {
+                if (attached &&
+                    typeof audioTrack?.stopProcessor === 'function') {
+                    try {
+                        await audioTrack.stopProcessor();
+                    } catch {}
+                }
+
+                console.warn(
+                    '[Taskly] Krisp indisponible : audio standard',
+                    error
+                );
             }
         }
 

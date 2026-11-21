@@ -110,7 +110,7 @@ function environnement(sdkPresent = true) {
     );
 
     return {
-        adapter, states, remote, local,
+        adapter, states, remote, local, window,
         room: () => room
     };
 }
@@ -247,4 +247,53 @@ test('Navigateur : suppression echo et bruit activee', async () => {
     assert.equal(audio.noiseSuppression, true);
     assert.equal(audio.autoGainControl, true);
     assert.equal(audio.channelCount, 1);
+});
+
+
+test('Krisp : traitement applique au microphone', async () => {
+    const e = environnement();
+    await e.adapter.connect({
+        url: URL, token: TOKEN, mode: 'audio'
+    });
+
+    let applied = false;
+    let enabled = false;
+
+    const track = e.room()
+        .localParticipant.trackPublications.get('audio').track;
+
+    track.setProcessor = async () => { applied = true; };
+    track.stopProcessor = async () => {};
+
+    e.window.TasklyKrisp = {
+        isKrispNoiseFilterSupported: () => true,
+        KrispNoiseFilter: () => ({
+            setEnabled: async value => { enabled = value; }
+        })
+    };
+
+    await e.adapter.enableKrisp(e.room());
+
+    assert.equal(applied, true);
+    assert.equal(enabled, true);
+    assert.deepEqual(e.states, ['connected']);
+});
+
+test('Krisp : navigateur incompatible conserve le son', async () => {
+    const e = environnement();
+    await e.adapter.connect({
+        url: URL, token: TOKEN, mode: 'audio'
+    });
+
+    e.window.TasklyKrisp = {
+        isKrispNoiseFilterSupported: () => false,
+        KrispNoiseFilter: () => {
+            throw new Error('Ne doit pas etre execute');
+        }
+    };
+
+    await e.adapter.enableKrisp(e.room());
+
+    assert.equal(e.room() !== null, true);
+    assert.deepEqual(e.states, ['connected']);
 });
