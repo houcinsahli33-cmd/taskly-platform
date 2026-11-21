@@ -1,0 +1,177 @@
+/* Taskly floating calls – mockup-faithful compact chrome + centered and draggable
+   persistent overlay. Scoped to call host; no other Taskly layout changes. */
+.taskly-floating-host {
+  position:fixed!important;left:58%;top:110px;z-index:2147481000;
+  display:flex;flex-direction:column;box-sizing:border-box;
+  width:min(390px,calc(100vw - 24px));height:min(460px,calc(100dvh - 24px));
+  min-width:285px;min-height:42px;overflow:hidden;
+  border:1px solid #d4e2dd;border-radius:16px;
+  background:#e9f4ef;box-shadow:0 16px 48px #002e2473,0 4px 13px #00372b36;
+  resize:both;
+}
+.taskly-floating-titlebar {
+  display:flex;align-items:center;gap:9px;flex:0 0 41px;box-sizing:border-box;
+  padding:0 9px 0 13px;border-bottom:1px solid #d8e1dd;
+  color:#142d24;background:linear-gradient(#fcfdfc,#edf4f0);
+  font:600 12px/1.2 system-ui,-apple-system,'Segoe UI',sans-serif;
+  touch-action:none;cursor:grab;user-select:none;
+}
+.taskly-floating-titlebar:active {cursor:grabbing;}
+.taskly-floating-titlebar strong {flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.taskly-floating-brand {font-size:17px;color:#007d51;}
+.taskly-floating-commands {display:flex;align-items:center;gap:1px;flex:none;}
+.taskly-floating-commands button {
+  display:grid;place-items:center;box-sizing:border-box;width:31px;height:30px;
+  border:0;border-radius:6px;background:transparent;color:#19372d;
+  font:500 20px/1 system-ui,sans-serif;cursor:pointer;
+}
+.taskly-floating-commands button:hover {background:#dcece4;}
+.taskly-floating-commands [data-call-host=close]:hover {background:#db4343;color:white;}
+.taskly-floating-commands button:focus-visible {outline:2px solid #087c55;outline-offset:-2px;}
+.taskly-floating-call-frame {display:block;flex:1 1 auto;width:100%;height:calc(100% - 41px);border:0;background:#003427;}
+.taskly-floating-host[data-call-window-state=max] {
+  width:min(840px,calc(100vw - 16px))!important;
+  height:min(660px,calc(100dvh - 16px))!important;
+  resize:none;
+}
+.taskly-floating-host[data-call-window-state=min] {width:242px!important;height:41px!important;min-height:41px!important;resize:none;}
+.taskly-floating-host[data-call-window-state=min] .taskly-floating-call-frame {flex:0 0 0;height:0;overflow:hidden;opacity:0;pointer-events:none;}
+@media(max-width:700px) {
+  .taskly-floating-host {width:calc(100vw - 18px);height:min(490px,calc(100dvh - 24px));min-width:0;resize:none;}
+  .taskly-floating-host[data-call-window-state=max] {width:calc(100vw - 8px)!important;height:calc(100dvh - 8px)!important;}
+}
+/* The call-owner document remains alive for auth, polling and LiveKit; hide
+   its ordinary chat page while keeping its original DOM and JS functional. */
+html[data-taskly-call-host='1'],html[data-taskly-call-host='1'] body {
+  width:100%!important;height:100%!important;max-width:none!important;
+  margin:0!important;overflow:hidden!important;background:#003629!important;
+}
+html[data-taskly-call-host='1'] body > :not(.taskly-call-dialog) {visibility:hidden!important;}
+html[data-taskly-call-host='1'] body > .taskly-call-dialog {visibility:visible!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6 {
+  position:fixed!important;inset:0!important;top:0!important;left:0!important;
+  width:100%!important;max-width:100%!important;height:100%!important;max-height:100%!important;
+  margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;overflow:hidden!important;background:#003b2c!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog::backdrop {background:#003629!important;backdrop-filter:none!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-panel {
+  padding:12px 14px 15px!important;
+  background:radial-gradient(ellipse at 50% 30%,#09644b,#003126 65%,#00251e)!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-panel::before {display:none!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-premium-hero {gap:6px!important;padding:6px 0 0!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-premium-avatar-large {
+  width:clamp(74px,19dvh,102px)!important;height:clamp(74px,19dvh,102px)!important;
+  font-size:40px!important;border-width:3px!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 [data-tc=name] {
+  font-size:clamp(20px,4dvh,27px)!important;margin-top:0!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-premium-note {height:20px!important;}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-actions {
+  flex:0 0 auto!important;gap:4px!important;min-height:55px!important;margin:4px 0 0!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-actions button {
+  flex:1 1 0!important;width:auto!important;min-width:0!important;max-width:72px!important;
+  min-height:58px!important;gap:4px!important;font-size:9px!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-actions button::before {
+  width:42px!important;height:42px!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-premium-extras {
+  min-height:0!important;margin:2px auto 0!important;padding:3px 0 0!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-premium-extra {min-height:29px!important;font-size:10px!important;}
+/* Preserve live remote and local video, expand automatically when video connects. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-videos {
+  display:block!important;position:absolute!important;inset:0!important;width:100%!important;
+  height:100%!important;max-height:none!important;opacity:1!important;overflow:hidden!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-actions {
+  position:absolute!important;bottom:52px!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-premium-extras {
+  position:absolute!important;bottom:8px!important;
+}
+@media(max-height:520px) {
+  html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-premium-hero {gap:4px!important;}
+  html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-panel {padding:6px 9px!important;}
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] [data-tc=remote] {
+  display:block!important;position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;object-fit:cover!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] [data-tc=local] {
+  display:block!important;position:absolute!important;top:14px!important;right:14px!important;
+  width:min(26%,155px)!important;height:auto!important;aspect-ratio:3/4!important;
+  object-fit:cover!important;border:2px solid white!important;border-radius:14px!important;
+}
+
+.taskly-floating-loading {
+  position:absolute;top:41px;left:0;right:0;bottom:0;z-index:3;
+  display:grid;place-items:center;padding:20px;margin:0;text-align:center;
+  background:linear-gradient(#004c38,#002b22);color:#ddfbed;
+  font:600 13px/1.4 system-ui,sans-serif;pointer-events:none;
+}
+.taskly-floating-host[data-call-window-state=min] .taskly-floating-loading {display:none;}
+
+/* Five screenshot-faithful controls, plus camera only for video. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-floating-secure {
+  display:none!important;order:8!important;flex:0 0 auto!important;
+  margin:5px auto 0!important;padding:5px 12px!important;
+  border-radius:99px!important;color:#d9ffec!important;background:#0a6d50!important;
+  font:600 11px/1.15 system-ui,sans-serif!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-floating-tools {
+  display:none!important;order:9!important;flex:0 0 auto!important;width:100%!important;
+  justify-content:space-between!important;align-items:center!important;gap:3px!important;
+  padding:4px 0!important;margin:auto 0 0!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-premium-stage=connected] .tc-floating-tools {
+  display:flex!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-premium-stage=connected] .tc-floating-secure {
+  display:block!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-premium-stage=connected] .tc-actions,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-premium-stage=connected] .tc-premium-extras {
+  display:none!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-floating-control {
+  display:flex!important;flex:1 1 0!important;min-width:0!important;max-width:73px!important;
+  flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  gap:4px!important;padding:1px!important;margin:0!important;
+  background:transparent!important;border:0!important;border-radius:9px!important;
+  color:#eefff7!important;font:550 9px/1.2 system-ui,sans-serif!important;
+  cursor:pointer!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-floating-control small {
+  font-size:9px!important;font-weight:550!important;white-space:normal!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-floating-control-icon {
+  display:grid!important;place-items:center!important;flex:none!important;
+  width:clamp(33px,9dvh,41px)!important;height:clamp(33px,9dvh,41px)!important;
+  border:1px solid #ffffff24!important;border-radius:50%!important;background:#157b60!important;
+  color:#fff!important;font:700 19px/1 system-ui,sans-serif!important;
+  box-shadow:0 6px 13px #001e1655!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-floating-control[data-tc-floating=end] .tc-floating-control-icon {
+  background:#df3e40!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6 .tc-floating-control:focus-visible {
+  outline:2px solid #b6ffdf!important;outline-offset:0!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=audio] .tc-floating-control[data-tc-floating=camera] {
+  display:none!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-floating-tools {
+  position:absolute!important;z-index:10!important;left:0!important;right:0!important;bottom:6px!important;
+  width:100%!important;max-width:490px!important;margin:0 auto!important;
+  background:#00231fc7!important;padding:9px!important;border-radius:20px!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-v6[data-mode=video][data-premium-stage=connected] .tc-floating-secure {
+  position:absolute!important;z-index:7!important;left:50%!important;bottom:88px!important;transform:translateX(-50%)!important;
+}

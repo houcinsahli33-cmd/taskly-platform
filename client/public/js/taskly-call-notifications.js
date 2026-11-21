@@ -10,6 +10,12 @@
 
 
 document.addEventListener('DOMContentLoaded', async () => {
+    if (!document.querySelector('script[data-taskly-persistent-call-host]')) {
+        const persistent = document.createElement('script');
+        persistent.dataset.tasklyPersistentCallHost = '1';
+        persistent.src = '/js/taskly-call-host-shell.js?v=1';
+        document.head.appendChild(persistent);
+    }
 
     await attendreSession();
 
@@ -66,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const data = frame.contentDocument?.body?.dataset;
 
-            return Boolean(data?.tasklyCallActive) ||
+            return Boolean(window.TasklyCallHost?.isActive()) || Boolean(data?.tasklyCallActive) ||
                 data?.tasklyCallConversation ===
                     String(call.demandeId);
 
