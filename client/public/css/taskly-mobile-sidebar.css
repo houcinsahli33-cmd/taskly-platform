@@ -214,3 +214,11 @@
     transition: none !important;
   }
 }
+
+/* Anti-clignotement du menu mobile */
+@media (max-width: 800px) {
+  body[data-taskly-client-shell="1"]:not(.taskly-mobile-ready) .dashboard-shell > .sidebar,
+  body[data-taskly-artisan-shell="1"]:not(.taskly-mobile-ready) .dashboard-shell > .sidebar {
+    visibility: hidden !important;
+  }
+}

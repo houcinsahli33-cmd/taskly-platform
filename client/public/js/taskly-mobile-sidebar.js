@@ -47,6 +47,7 @@
     }
 
     setOpen(false);
+    document.body.classList.add('taskly-mobile-ready');
 
     toggle.addEventListener('click', () => {
       const open = document.body.classList.contains(
@@ -60,6 +61,7 @@
     sidebar.addEventListener('click', (event) => {
       if (event.target.closest('a[data-dashboard-link]')) {
         setOpen(false);
+    document.body.classList.add('taskly-mobile-ready');
       }
     });
 
@@ -69,6 +71,7 @@
             'taskly-mobile-menu-open'
           )) {
         setOpen(false);
+    document.body.classList.add('taskly-mobile-ready');
         toggle.focus();
       }
     });
