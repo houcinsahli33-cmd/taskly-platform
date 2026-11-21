@@ -10,6 +10,8 @@
     if (!sidebar || !content || document.getElementById('tm-workspace-mobile-head')) return;
 
     const media = window.matchMedia('(max-width: 767px)');
+    let headerToggle = null;
+    let detachHeader = null;
     const title = (sidebar.querySelector('.sidebar-title')?.textContent || 'Espace Taskly').trim();
     sidebar.id = sidebar.id || 'tm-workspace-sidebar';
 
@@ -65,6 +67,7 @@
       if (!narrow) document.body.classList.remove('tm-workspace-menu-open');
       sidebar.inert = narrow && !isOpen();
       openButton.setAttribute('aria-expanded', String(narrow && isOpen()));
+      if (headerToggle) headerToggle.setAttribute('aria-expanded', String(narrow && isOpen()));
       sidebar.setAttribute('aria-hidden', String(narrow && !isOpen()));
     }
     function open() {
@@ -77,8 +80,73 @@
       const hadOpen = isOpen();
       document.body.classList.remove('tm-workspace-menu-open');
       sync();
-      if (hadOpen && restoreFocus && media.matches) openButton.focus();
+      if (hadOpen && restoreFocus && media.matches) (headerToggle || openButton).focus();
     }
+    // One mobile menu only: the existing Taskly header button controls this
+    // workspace drawer instead of expanding its own duplicate navigation.
+    // Prefer the visible top header (some workspaces embed the Mail page).
+    function accessibleDocuments() {
+      const docs = [document];
+      let frame = window;
+      try {
+        while (frame.parent !== frame) {
+          frame = frame.parent;
+          docs.unshift(frame.document);
+        }
+      } catch (_) { /* No cross-origin access: keep the internal fallback. */ }
+      return docs;
+    }
+    function bindExistingHeader() {
+      if (headerToggle) return true;
+      for (const doc of accessibleDocuments()) {
+        const toggle = doc.querySelector('#site-header [data-menu-toggle], header.site-header [data-menu-toggle]');
+        if (!toggle) continue;
+        const siteHeader = toggle.closest('.site-header');
+        if (!siteHeader) continue;
+        const onClick = event => {
+          if (!media.matches) return;
+          // Capture before the global header's menu-open listener.
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          siteHeader.classList.remove('menu-open');
+          if (isOpen()) close(false);
+          else open();
+        };
+        const oldLabel = toggle.getAttribute('aria-label');
+        const oldExpanded = toggle.getAttribute('aria-expanded');
+        toggle.addEventListener('click', onClick, true);
+        siteHeader.classList.remove('menu-open');
+        headerToggle = toggle;
+        document.body.classList.add('tm-header-controls-drawer');
+        toggle.setAttribute('aria-label', 'Ouvrir le menu de l’espace Taskly');
+        detachHeader = () => {
+          toggle.removeEventListener('click', onClick, true);
+          document.body.classList.remove('tm-header-controls-drawer');
+          siteHeader.classList.remove('menu-open');
+          if (oldLabel === null) toggle.removeAttribute('aria-label');
+          else toggle.setAttribute('aria-label', oldLabel);
+          if (oldExpanded === null) toggle.removeAttribute('aria-expanded');
+          else toggle.setAttribute('aria-expanded', oldExpanded);
+        };
+        sync();
+        return true;
+      }
+      return false;
+    }
+    // Authentication may render the header after DOMContentLoaded.
+    document.addEventListener('taskly:auth-ready', bindExistingHeader);
+    const headerObserver = new MutationObserver(() => {
+      if (bindExistingHeader()) headerObserver.disconnect();
+    });
+    for (const doc of accessibleDocuments()) {
+      const target = doc.getElementById('site-header');
+      if (target) headerObserver.observe(target, {childList:true, subtree:true});
+    }
+    if (bindExistingHeader()) headerObserver.disconnect();
+    window.addEventListener('pagehide', () => {
+      headerObserver.disconnect();
+      if (detachHeader) detachHeader();
+    }, {once:true});
     openButton.addEventListener('click', () => isOpen() ? close(true) : open());
     closeButton.addEventListener('click', () => close(true));
     backdrop.addEventListener('click', () => close(true));

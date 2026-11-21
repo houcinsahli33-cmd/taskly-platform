@@ -345,3 +345,15 @@
   body[data-workspace-page="taskly-mail"] .dashboard-shell>aside.sidebar,
   body[data-workspace-page="taskly-mail"] .tm-workspace-menu-backdrop{transition:none!important}
 }
+
+/* V3.6: the Taskly site header hamburger is the ONLY mobile drawer trigger.
+   Keep an internal fallback only when the header is unavailable. */
+@media (max-width:767px) {
+  body[data-workspace-page="taskly-mail"].tm-header-controls-drawer .tm-workspace-menu-toggle,
+  body[data-workspace-page="taskly-mail"].tm-header-controls-drawer .tm-workspace-mobile-area {
+    display:none!important;
+  }
+  body[data-workspace-page="taskly-mail"].tm-header-controls-drawer .tm-workspace-mobile-head {
+    min-height:48px;
+  }
+}
