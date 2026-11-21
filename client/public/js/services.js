@@ -2,10 +2,10 @@
 // Pictogrammes SVG de presentation, independants des donnees/API.
 function pictogrammeServicePremium(nom) {
   const name = String(nom || "").toLocaleLowerCase("fr").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const svg = (body) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  const svg = (body, icon = "") => `<svg${icon ? ` data-taskly-service-icon="${icon}"` : ""} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
   if (/carrelage|revetement|faience|sols/.test(name)) return svg('<path d="m12 2 9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/>');
-  if (/climatis|froid|refriger/.test(name)) return svg('<path d="M12 2v20M4 6l16 12M20 6 4 18"/><path d="m9 4 3 3 3-3m-6 16 3-3 3 3M3 9l4 1-1 4m15-2-4 1 1 4M7 4l1 4-4-1m16 10-4-1 1 4"/><circle cx="12" cy="12" r="2.25"/>');
-  if (/demenag|transport|livraison/.test(name)) return svg('<path d="M2 6h12v12H2zM14 10h4l4 4v4h-8z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>');
+  if (/climatis|froid|refriger/.test(name)) return svg('<path d="M12 2.4v19.2M3.7 7.2l16.6 9.6M20.3 7.2l-16.6 9.6"/><path d="m9.1 4.5 2.9 2.9 2.9-2.9m-5.8 15 2.9-2.9 2.9 2.9M4.8 10.95l3.95-1.1-1.05-3.95m11.5 7.15-3.95 1.1 1.05 3.95M7.7 18.1l1.05-3.95-3.95-1.1m11.5-7.15-1.05 3.95 3.95 1.1"/><circle cx="12" cy="12" r="1.45"/>', "climatisation");
+  if (/demenag|transport|livraison/.test(name)) return svg('<path d="M2.5 6.2h11.3v10.3H2.5zM13.8 9.2h3.8l3.2 4.1v3.2h-2M13.8 16.5H9.6"/><path d="M5.7 6.2v3.3h4V6.2M16.2 11.7h1.7l1.4 1.9h-3.1z"/><path d="M2.5 16.5h2.2M16.4 16.5h-1.1"/><circle cx="7" cy="17.1" r="2"/><circle cx="17.5" cy="17.1" r="2"/>', "demenagement");
   if (/plomb|sanitaire|canalis/.test(name)) return svg('<path d="M14 3a6 6 0 0 0-6.6 7.2L3 14.6a3.4 3.4 0 0 0 4.8 4.8l4.4-4.4A6 6 0 0 0 21 8.4l-4.2 3.1-4.4-4.4L15.5 3"/><circle cx="5.7" cy="16.9" r=".65" fill="currentColor" stroke="none"/>');
   if (/electri/.test(name)) return svg('<path d="m13 2-9 12h7l-1 8 10-13h-7z"/>');
   return svg('<path d="M14 6a5 5 0 0 0-6 6L3 17a3 3 0 0 0 4 4l5-5a5 5 0 0 0 6-6l-3 3-4-4z"/>');
