@@ -3,25 +3,30 @@
 (function(){
  const $=id=>document.getElementById(id);
  let step=0, busy=false, checking=false, initialized=false, previousFocus=null;
+ let heureEnAttente='';
  let creneauKey='', creneauVersion=0, creneauTimer=null, creneauEtat='vide', heuresLibres=new Set();
  const hhmm=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');
  function cleCreneaux(){return val('request-artisan-id')+'|'+val('request-date');}
  function reinitialiserCreneaux(){
+  fermerHeures();heureEnAttente='';
   creneauVersion++;creneauKey='';creneauEtat='vide';
-  $('rw-hour').value='';$('rw-hour').disabled=true;$('rw-hour-period').disabled=true;$('rw-hour-grid').replaceChildren();heuresLibres=new Set();$('rw-hours').hidden=true;
+  $('rw-hour').value='';actualiserLibelleHeure();$('rw-hour-launch').disabled=true;$('rw-hour').disabled=true;$('rw-hour-period').disabled=true;$('rw-hour-grid').replaceChildren();heuresLibres=new Set();$('rw-hours').hidden=true;
  }
  function dessinerHeures(){
   const grille=$('rw-hour-grid'),debut=Number($('rw-hour-period').value);grille.replaceChildren();
   for(let n=debut;n<debut+360&&n<1440;n+=15){
    const bouton=document.createElement('button');bouton.type='button';bouton.className='rw-hour-option';bouton.textContent=hhmm(n);bouton.disabled=!heuresLibres.has(n);
-   bouton.setAttribute('aria-pressed',String(val('rw-hour')===hhmm(n)));if(bouton.disabled)bouton.setAttribute('aria-label',hhmm(n)+' indisponible');
-   bouton.addEventListener('click',()=>{ $('rw-hour').value=hhmm(n);grille.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===bouton)));summary();error(''); });
+   bouton.setAttribute('aria-pressed',String(heureEnAttente===hhmm(n)));if(bouton.disabled)bouton.setAttribute('aria-label',hhmm(n)+' indisponible');
+   bouton.addEventListener('click',()=>{ heureEnAttente=hhmm(n);grille.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===bouton)));$('rw-hour-confirm').disabled=false; });
    grille.append(bouton);
   }
  }
+ function fermerHeures(){const p=$('rw-hour-popup');if(!p)return;if(window.tasklyRequestPickerUI)window.tasklyRequestPickerUI.hide(p);else p.hidden=true;const b=$('rw-hour-launch');if(b)b.setAttribute('aria-expanded','false');}
+ function afficherHeures(){const p=$('rw-hour-popup'),b=$('rw-hour-launch');if(!p.hidden){fermerHeures();return;}heureEnAttente=val('rw-hour');$('rw-hour-confirm').disabled=!heureEnAttente;dessinerHeures();if(window.tasklyRequestPickerUI)window.tasklyRequestPickerUI.show(p,b);else p.hidden=false;b.setAttribute('aria-expanded','true');}
+ function actualiserLibelleHeure(){const b=$('rw-hour-launch');if(b)b.textContent=val('rw-hour')||'Choisir une heure';}
  function installerCreneaux(){
   const bloc=document.createElement('div');bloc.id='rw-hours';bloc.hidden=true;
-  const label=document.createElement('label');label.htmlFor='rw-hour-period';label.textContent='Heure souhaitée (heure d’Algérie)';
+  const label=document.createElement('label');label.htmlFor='rw-hour-launch';label.textContent='Heure souhaitée (heure d’Algérie)';
   const select=document.createElement('input');select.type='hidden';select.id='rw-hour';select.disabled=true;
   const periode=document.createElement('select');periode.id='rw-hour-period';periode.className='form-control';periode.disabled=true;
   for(const [n,texte] of [[0,'Nuit · 00 h – 06 h'],[360,'Matin · 06 h – 12 h'],[720,'Après-midi · 12 h – 18 h'],[1080,'Soir · 18 h – minuit']])periode.add(new Option(texte,String(n)));
@@ -30,7 +35,13 @@
   const info=document.createElement('p');info.id='rw-hour-info';info.className='muted';info.setAttribute('role','status');periode.setAttribute('aria-describedby',info.id);
   const retry=document.createElement('button');retry.type='button';retry.className='rw-date-clear';retry.textContent='Actualiser les créneaux';
   retry.addEventListener('click',()=>{creneauKey='';synchroniserCreneaux();});
-  bloc.append(label,select,periode,grille,info,retry);$('rw-date-clear').insertAdjacentElement('afterend',bloc);
+  const launch=document.createElement('button');launch.type='button';launch.id='rw-hour-launch';launch.className='rw-hour-launch';launch.textContent='Choisir une heure';launch.disabled=true;launch.setAttribute('aria-haspopup','dialog');launch.setAttribute('aria-expanded','false');launch.addEventListener('click',afficherHeures);
+  const popup=document.createElement('div');popup.id='rw-hour-popup';popup.className='rw-picker-hour';popup.hidden=true;popup.setAttribute('role','dialog');popup.setAttribute('aria-label','Heure souhaitée');popup.addEventListener('rw-picker-close',fermerHeures);
+  const head=document.createElement('div');head.className='rw-picker-head';const titre=document.createElement('strong');titre.textContent='◷  Heure souhaitée';const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Fermer');x.addEventListener('click',fermerHeures);head.append(titre,x);
+  const actions=document.createElement('div');actions.className='rw-picker-actions';const clear=document.createElement('button');clear.type='button';clear.textContent='Réinitialiser';clear.addEventListener('click',()=>{heureEnAttente='';select.value='';actualiserLibelleHeure();dessinerHeures();confirm.disabled=true;summary();});
+  const confirm=document.createElement('button');confirm.type='button';confirm.id='rw-hour-confirm';confirm.className='rw-picker-confirm';confirm.textContent='✓ Valider';confirm.disabled=true;confirm.addEventListener('click',()=>{const [h,m]=heureEnAttente.split(':').map(Number);if(creneauEtat!=='pret'||creneauKey!==cleCreneaux()||!heuresLibres.has(h*60+m))return;select.value=heureEnAttente;actualiserLibelleHeure();summary();error('');fermerHeures();launch.focus();});actions.append(clear,confirm);
+  popup.append(head,periode,grille,actions);bloc.append(label,select,launch,popup,info,retry);$('rw-date-clear').insertAdjacentElement('afterend',bloc);
+  document.addEventListener('pointerdown',e=>{if(!popup.hidden&&!bloc.contains(e.target))fermerHeures();});
  }
  async function synchroniserCreneaux(){
   if(!dialog().open||form().hidden||step!==2)return;
@@ -47,7 +58,7 @@
    heuresLibres=new Set(data.heures);
    const periode=$('rw-hour-period');periode.disabled=false;
    const plages=[360,720,1080,0];periode.value=String(plages.find(d=>data.heures.some(n=>n>=d&&n<d+360))??360);
-   select.disabled=false;creneauEtat='pret';dessinerHeures();
+   select.disabled=false;$('rw-hour-launch').disabled=!heuresLibres.size;creneauEtat='pret';dessinerHeures();
    info.textContent=heuresLibres.size?'Heure indicative : l’artisan choisira la durée avant acceptation.':'Aucun début horaire possible pour cette date.';
   }catch(e){
    if(version!==creneauVersion||cleCreneaux()!==key||!dialog().open)return;
@@ -74,7 +85,7 @@
    synchroniserCreneaux();
    if(creneauEtat==='chargement'||creneauKey!==cleCreneaux())return error('Attendez le chargement des créneaux.');
    if(creneauEtat!=='pret')return error('Actualisez les créneaux ou retirez la date.');
-   if(!heureSelection())return error('Choisissez un créneau libre.',$('rw-hour-period'));
+   if(!heureSelection())return error('Choisissez un créneau libre.',$('rw-hour-launch'));
   }
   return true;
  }
@@ -131,7 +142,7 @@
   $('request-address').addEventListener('input',()=>{if(val('request-address'))error('');});
   $('request-date').addEventListener('change',()=>{synchroniserCreneaux();summary();});
   $('rw-date-clear').addEventListener('click',()=>{$('request-date').value='';synchroniserCreneaux();summary();error('');});
-  $('rw-back').addEventListener('click',()=>{if(!busy&&step>0){step--;render();$(step===0?'request-message':'request-address').focus();}});
+  $('rw-back').addEventListener('click',()=>{if(!busy&&step>0){fermerHeures();step--;render();$(step===0?'request-message':'request-address').focus();}});
   $('rw-next').addEventListener('click',()=>{if(!busy&&step<2&&validate(step)){step++;render();$(step===1?'request-address':'request-date').focus();}});
   form().addEventListener('submit',async e=>{
    e.preventDefault();if(busy||step!==2)return;

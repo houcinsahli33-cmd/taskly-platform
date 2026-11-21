@@ -12,3 +12,27 @@
 /* Icône calendrier de la référence : violet et fond lavande uniquement dans le formulaire. */
 .taskly-calendar-launch{display:grid;place-items:center;color:#7045ed;background:#f0ebff;border:1px solid #e4dbff}
 .taskly-calendar-launch:hover{background:#e7dcff}.taskly-calendar-launch svg{display:block;flex:none}
+
+/* Taskly — uniquement les sélecteurs de l'étape Date & validation. */
+#request-modal .taskly-calendar-launch{top:50%;background:#e1f4e9;color:#087c50;border:1px solid #c8e9dc}
+#request-modal .taskly-calendar-popover,#request-modal .rw-picker-hour{box-sizing:border-box;background:#fff;border:1px solid #087c50;border-radius:16px;padding:14px;box-shadow:0 14px 35px #123c3026;color:#142b35;width:min(300px,100%);margin-top:8px}
+#request-modal .rw-picker-side[popover]{position:fixed!important;inset:auto!important;left:var(--rw-picker-left)!important;top:var(--rw-picker-top)!important;margin:0!important;width:300px!important;max-height:calc(100dvh - 24px);overflow:auto;z-index:9999}
+#request-modal .taskly-calendar-header{font-size:15px;color:#152b34}
+#request-modal .taskly-calendar-header button,#request-modal .rw-picker-head button{border:0;background:#f3f7f5;color:#102e29;font-size:22px;border-radius:8px;width:32px;height:32px;cursor:pointer}
+#request-modal .taskly-calendar-grid{gap:4px}
+#request-modal .taskly-calendar-grid button{height:32px;background:#f3f6f5;font-weight:700;color:#18312d}
+#request-modal .taskly-calendar-grid button.chosen,#request-modal .taskly-calendar-grid button:not(:disabled):hover{background:#087c50;color:#fff}
+#request-modal .taskly-calendar-grid button.blocked{color:#75847f;background:#eef1f0}
+#request-modal .rw-picker-actions{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:12px;padding-top:8px;border-top:1px solid #e5efea}
+#request-modal .rw-picker-actions button{border:0;border-radius:9px;background:#fff;color:#087c50;font-weight:750;font-size:12px;padding:9px 11px;cursor:pointer}
+#request-modal .rw-picker-actions .rw-picker-confirm{background:#087c50;color:#fff;min-width:100px}
+#request-modal.request-wizard #rw-hours{padding:0;border:0;background:transparent;margin:8px 0}
+#request-modal .rw-hour-launch{width:100%;text-align:left;border:1px solid #cbdad5;border-radius:9px;background:#fff;min-height:42px;padding:10px 12px;color:#253b34;font:inherit;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+#request-modal .rw-hour-launch::after{content:'⌄';color:#087c50;font-size:18px}
+#request-modal .rw-hour-launch[aria-expanded=true]{border-color:#087c50;outline:1px solid #087c50}
+#request-modal .rw-picker-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:8px;font-size:15px}
+#request-modal #rw-hour-popup #rw-hour-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-height:215px;gap:5px}
+#request-modal #rw-hour-popup .rw-hour-option{border-radius:8px;min-height:29px;font-size:12px;border-color:#b7dacf;color:#075a40}
+#request-modal #rw-hour-popup .rw-hour-option[aria-pressed=true]{background:#087c50;color:white}
+#request-modal #rw-hour-popup .rw-hour-option:disabled{color:#76827e;background:#edf0ee}
+#request-modal .rw-picker-hour[hidden]{display:none!important}
