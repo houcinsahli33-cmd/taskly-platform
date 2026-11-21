@@ -34,9 +34,17 @@
             this.close();
 
             const generation = this.generation;
+            const audioCaptureOptions = {
+                echoCancellation: true,
+                noiseSuppression: true,
+                autoGainControl: true,
+                channelCount: 1
+            };
+
             const room = new sdk.Room({
                 adaptiveStream: true,
-                dynacast: true
+                dynacast: true,
+                audioCaptureDefaults: audioCaptureOptions
             });
 
             this.room = room;
@@ -98,7 +106,10 @@
                     throw new Error('Appel annule.');
                 }
 
-                await room.localParticipant.setMicrophoneEnabled(true);
+                await room.localParticipant.setMicrophoneEnabled(
+                    true,
+                    audioCaptureOptions
+                );
 
                 if (mode === 'video') {
                     await room.localParticipant.setCameraEnabled(true);

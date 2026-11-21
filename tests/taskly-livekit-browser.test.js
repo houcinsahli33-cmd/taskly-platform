@@ -30,7 +30,8 @@ function environnement(sdkPresent = true) {
     }
 
     class Room {
-        constructor() {
+        constructor(options) {
+            this.options = options;
             room = this;
             this.events = {};
             this.actions = [];
@@ -230,4 +231,20 @@ test('Navigateur : scripts charges dans les deux espaces', () => {
 
         assert.ok(sdk >= 0 && sdk < adapter && adapter < ui);
     }
+});
+
+
+test('Navigateur : suppression echo et bruit activee', async () => {
+    const e = environnement();
+
+    await e.adapter.connect({
+        url: URL, token: TOKEN, mode: 'audio'
+    });
+
+    const audio = e.room().options.audioCaptureDefaults;
+
+    assert.equal(audio.echoCancellation, true);
+    assert.equal(audio.noiseSuppression, true);
+    assert.equal(audio.autoGainControl, true);
+    assert.equal(audio.channelCount, 1);
 });
