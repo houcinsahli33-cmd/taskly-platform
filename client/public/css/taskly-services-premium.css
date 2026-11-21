@@ -1077,13 +1077,43 @@ body[data-active="services"] #services-grid .taskly-svc-symbol > svg[data-taskly
   filter: none;
 }
 
-/* TASKLY_CLIMATISATION_ICONE_VALIDEE_20261121 : icone Climatisation seulement. */
+/* TASKLY_CLIMATISATION_SVG_VISIBLE_V2_20261121 : meme format que Carrelage, uniquement Climatisation. */
 body[data-active="services"] #services-grid .taskly-svc-symbol:has(> svg[data-taskly-service-icon="climatisation"]) {
-  border: 1.5px solid #3fcf97;
-  background: url("/images/icons/taskly-climatisation-premium.svg") center / 42px 42px no-repeat,
-              linear-gradient(145deg, #f2fff9 0%, #e0fdef 45%, #c5f4df 100%);
+  flex: 0 0 66px;
+  width: 66px;
+  height: 66px;
+  min-width: 66px;
+  min-height: 66px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #f2fff9 0%, #e0fdef 48%, #c5f4df 100%);
+  border: 1px solid #99dfc3;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 4px 12px rgba(0,126,82,.10);
 }
 body[data-active="services"] #services-grid .taskly-svc-symbol > svg[data-taskly-service-icon="climatisation"] {
-  visibility: hidden;
+  display: block;
+  visibility: visible;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  max-width: 36px;
+  max-height: 36px;
+}
+@media (max-width: 640px) {
+  body[data-active="services"] #services-grid .taskly-svc-symbol:has(> svg[data-taskly-service-icon="climatisation"]) {
+    flex-basis: 56px;
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
+    border-radius: 16px;
+  }
+  body[data-active="services"] #services-grid .taskly-svc-symbol > svg[data-taskly-service-icon="climatisation"] {
+    width: 31px;
+    height: 31px;
+    min-width: 31px;
+    min-height: 31px;
+    max-width: 31px;
+    max-height: 31px;
+  }
 }
