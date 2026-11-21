@@ -1,4 +1,13 @@
 'use strict';
+// Premium calling UI + phone-style ring: self-hosted, no external service.
+(function loadTasklyPremium() {
+    if (document.querySelector('script[data-taskly-premium-loader]')) return;
+    const script = document.createElement('script');
+    script.setAttribute('data-taskly-premium-loader', '1');
+    script.src = '/js/taskly-call-premium.js?v=1';
+    document.head.appendChild(script);
+})();
+
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -67,6 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function stopRing() {
+        window.TasklyPhoneRing?.stop('global');
 
         clearInterval(ringTimer);
         ringTimer = null;
@@ -84,6 +94,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function ring() {
+        if (window.TasklyPhoneRing) {
+            if (!current || suppressed(current) || document.visibilityState !== 'visible') {
+                window.TasklyPhoneRing.stop('global');
+                return;
+            }
+            const call = current;
+            const playing = window.TasklyPhoneRing.start('global',
+                () => current === call && !suppressed(call) && document.visibilityState === 'visible',
+                'incoming');
+            get('ring').hidden = playing;
+            return;
+        }
 
         if (!current) return;
 
@@ -148,6 +170,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function unlock() {
+        if (window.TasklyPhoneRing) {
+            if (!closed) {
+                await window.TasklyPhoneRing.unlock();
+                ring();
+            }
+            return;
+        }
         if (closed) return;
 
         try {
