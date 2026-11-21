@@ -4,7 +4,7 @@
     if (document.querySelector('script[data-taskly-premium-loader]')) return;
     const script = document.createElement('script');
     script.setAttribute('data-taskly-premium-loader', '1');
-    script.src = '/js/taskly-call-premium.js?v=1';
+    script.src = '/js/taskly-call-premium.js?v=5';
     document.head.appendChild(script);
 })();
 
@@ -40,7 +40,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     panel.setAttribute('aria-label', 'Appel entrant');
 
     panel.innerHTML = `
-        <strong>Taskly - Appel entrant</strong>
+        <span class="tgc-brand" aria-hidden="true">taskly</span>
+        <strong>Appel entrant</strong>
+        <div class="tgc-avatar" aria-hidden="true">?</div>
         <p data-call="name"></p>
         <p data-call="type" role="status"></p>
         <div class="tgc-actions">
@@ -223,8 +225,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         current = call;
 
-        get('name').textContent =
-            call.nom || 'Interlocuteur';
+        const callerName = call.nom || 'Interlocuteur';
+        get('name').textContent = callerName;
+        const avatar = panel.querySelector('.tgc-avatar');
+        if (avatar) avatar.textContent = [...callerName.trim()][0]?.toLocaleUpperCase('fr') || '?';
 
         get('type').textContent =
             call.mode === 'video'
@@ -298,6 +302,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         hide();
 
+        // Fenetre separee sur ordinateur uniquement, declenchee par le clic
+        // de l'utilisateur. Si le navigateur bloque les popups, retour au
+        // parcours original de navigation vers la messagerie.
+        if (window.matchMedia('(min-width: 960px)').matches) {
+            try {
+                const route = '/espace/' + role + '/messagerie?conversation=' + call.demandeId;
+                const popup = window.open(
+                    route,
+                    'taskly-appel-' + call.demandeId,
+                    'popup=yes,width=570,height=780,resizable=yes,scrollbars=yes'
+                );
+                if (popup) {
+                    try { popup.focus(); } catch { /* La fenetre peut etre derriere. */ }
+                    return;
+                }
+            } catch { /* Le navigateur peut interdire une fenetre externe. */ }
+        }
         dispatchEvent(new CustomEvent('taskly:open-call', {
             detail: { demandeId: call.demandeId }
         }));
