@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="210" viewBox="0 0 240 210" role="img" aria-labelledby="title">
+<title id="title">Enveloppe Taskly en attente de lecture</title>
+<defs>
+  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#e0faed"/></linearGradient>
+  <linearGradient id="envelope" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#18c98b"/><stop offset="1" stop-color="#007c5d"/></linearGradient>
+</defs>
+<circle cx="111" cy="107" r="83" fill="#e9faf1"/>
+<path d="M17 168q23-35 42 7M23 148q9-20 23 2M177 178q11-45 37-31M186 147q19-26 38-15" stroke="#83d8ad" stroke-width="9" fill="none" stroke-linecap="round" opacity=".65"/>
+<path d="M158 50q24-11 53 4" fill="none" stroke="#86dabc" stroke-width="2" stroke-dasharray="5 6"/>
+<path d="M188 35 222 19l-12 38-7-13-15-9Z" fill="#00a86e"/>
+<path d="m203 44 19-25" stroke="#005e49" stroke-width="1.6"/>
+<path d="M71 90l42-34 52 34v68H71V90Z" fill="#007b5a"/>
+<rect x="82" y="67" width="70" height="70" rx="6" fill="url(#paper)" stroke="#9fe2bf" stroke-width="1.5"/>
+<path d="M95 85h45M95 98h43M95 111h31" stroke="#8bcfb0" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M71 95q46 29 47 33 9 0 47-33v63H71V95Z" fill="url(#envelope)" stroke="#006f55" stroke-width="2" stroke-linejoin="round"/>
+<path d="m72 157 46-36 46 36" fill="none" stroke="#006f55" stroke-width="2" stroke-linejoin="round"/>
+<path d="M71 96l47 33 47-33" fill="none" stroke="#a5f2d0" stroke-width="2"/>
+<path d="M113 28v-9M91 35l-5-9M135 36l7-8" stroke="#00865f" stroke-width="3" stroke-linecap="round"/>
+<ellipse cx="120" cy="177" rx="69" ry="5" fill="#8adbb8" opacity=".25"/>
+</svg>

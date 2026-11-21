@@ -1,0 +1,214 @@
+/* Taskly Mail V3.2 — fenêtre compacte Taskly (client et artisan uniquement).
+   Ajout incrémental : aucune modification du header, du menu principal, des routes
+   API, de la messagerie ou de la politique des liens de consultation. */
+body[data-workspace-page="taskly-mail"] .tm-page #professional-mail-pilot.tm-app{
+  width:100%;max-width:100%;min-width:0;margin-inline:auto;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2{
+  width:100%;max-width:100%;min-width:0;
+  grid-template-columns:194px minmax(0,1fr);
+  grid-template-rows:58px auto;
+  min-height:0;height:auto;
+  overflow:hidden;border-radius:15px;
+  border:1px solid #dbece3;
+  box-shadow:0 7px 19px rgba(12,79,56,.075);
+  background:#fff;
+}
+/* Menu blanc validé : réduire seulement ses dimensions intérieures. */
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-nav{
+  padding:15px 10px 12px;gap:2px;min-width:0;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-brand{
+  font-size:19px;letter-spacing:-.03em;margin:0 5px 12px;gap:8px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-brand .tm-icon{
+  width:24px;height:24px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-nav>.tm-new{
+  width:100%;min-height:39px;margin:0 0 11px;padding:8px 7px;
+  border-radius:9px;font-size:11.5px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-folder{
+  min-height:35px;padding:7px 9px;font-size:11.5px;gap:9px;border-radius:8px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-folder .tm-icon{
+  width:17px;height:17px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-folder.active{
+  background:linear-gradient(100deg,#e6f9ee,#d2f3e2);
+  box-shadow:inset 3px 0 #008866;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-folder[data-folder="settings"]{
+  margin-top:11px;padding-top:13px;min-height:43px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-nav-foot{
+  margin-top:18px;padding:11px 6px 3px;font-size:10px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-nav-foot-copy{gap:2px}
+/* Barre interne : ne jamais déplacer/retoucher le header Taskly du site. */
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-tools{
+  min-height:58px;padding:8px 12px;gap:10px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-search{
+  min-height:40px;padding:4px 7px 4px 11px;
+  border-radius:999px;background:#f3f8f5;border-color:#dceee4;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-search input{
+  font-size:12px;height:28px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-search-button{
+  padding:7px 10px;min-height:29px;font-size:11px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-toolbar-icon{
+  width:33px;height:33px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-app-heading{
+  max-width:175px;gap:7px;padding-left:9px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-profile-avatar{
+  width:33px;height:33px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-account-details small{
+  max-width:130px;
+}
+/* Contenu central plus bas et deux panneaux de hauteur contrôlée. */
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content{
+  min-height:0;padding:12px 13px 13px;gap:11px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-view-name h3{
+  font-size:21px!important;gap:8px;line-height:1.25;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-view-name h3 .tm-icon{
+  width:22px;height:22px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-view-name p{
+  font-size:11px;margin-top:3px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-refresh-button{
+  min-height:34px;padding:7px 10px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-reader{
+  grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr);
+  grid-template-rows:minmax(0,1fr);
+  gap:9px;flex:none;
+  height:clamp(365px,51vh,495px);min-height:0;max-height:none;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-column{
+  display:flex;flex-direction:column;min-width:0;
+  min-height:0;height:100%;overflow:hidden;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-toolbar{
+  min-height:42px;padding:7px 9px;gap:8px;
+  background:#fbfefd;border-color:#dcebe3;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-filter{
+  color:#075d46;font-size:11px;font-weight:800;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-sort{
+  min-width:0;max-width:115px;font-size:10.5px;padding:6px 8px;
+  border-radius:999px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-count{
+  color:#3c8a67;font-size:10px;font-weight:750;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-panel{
+  flex:1;min-height:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;
+  border:1px solid #dcebe3;border-top:0;border-radius:0 0 11px 11px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-entry{
+  min-height:70px;gap:5px;padding:5px 7px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-item{
+  min-height:59px;gap:7px;padding:7px 4px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-avatar{
+  width:33px;height:33px;flex-basis:33px;font-size:12px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-summary{
+  gap:3px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-summary strong,
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-summary b{font-size:11px}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-summary small{font-size:10px}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-item-meta{
+  min-width:0;gap:3px;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-item-meta time{font-size:9.5px}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel{
+  grid-column:2;grid-row:1;min-height:0;height:100%;
+  overflow-y:auto;padding:13px;
+  border:1px solid #dcebe3;border-radius:12px;
+  box-shadow:0 5px 16px #0b51330b;
+  background:#fff;
+}
+/* Petit état vide soigné, proche de la maquette retenue. Illustration locale SVG. */
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel>.tm-empty-state{
+  position:relative;flex:1;min-height:0;height:100%;
+  overflow:hidden;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;gap:9px;
+  padding:20px 12px 60px;
+  border-radius:10px;
+  background:radial-gradient(ellipse at 50% 48%,#f0fff6 0%,#fff 66%);
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel>.tm-empty-state::after{
+  content:"";pointer-events:none;position:absolute;left:0;right:0;bottom:0;
+  height:70px;opacity:.9;
+  background:linear-gradient(160deg,transparent 38%,#dff8eb 39%,#bff1d8 100%);
+  clip-path:polygon(0 64%,15% 48%,32% 74%,46% 72%,67% 37%,85% 26%,100% 10%,100% 100%,0 100%);
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel .tm-empty-art{
+  width:170px;height:154px;flex:0 0 auto;
+  margin:0 0 4px;border-radius:0;box-shadow:none;
+  background:transparent url('/images/taskly-mail-empty-compact.svg') center/contain no-repeat;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel .tm-empty-art .tm-icon{display:none}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel .tm-empty-state h4{
+  font-size:19px;font-weight:850;line-height:1.25;color:#054a38;
+}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel .tm-empty-state p{
+  font-size:11.5px;line-height:1.45;color:#557a6d;max-width:270px;
+}
+/* Autres rubriques : conserver l'agencement V3.1 mais supprimer les hauteurs excessives. */
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-draft-board{min-height:315px}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-settings-card{min-height:250px;padding:18px 20px}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-form{min-height:480px}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-editor{min-height:250px}
+body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-compose-editor textarea{min-height:210px}
+/* Adapter la disposition à la VRAIE largeur disponible, pas à la largeur totale du navigateur. */
+@container taskly-mail (max-width:1020px){
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2{grid-template-columns:174px minmax(0,1fr)}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-tools{padding:7px 9px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content{padding:10px}
+}
+@container taskly-mail (max-width:950px){
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-reader{height:auto;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-column{min-height:0;height:auto;grid-column:1;grid-row:1}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-panel{max-height:430px;min-height:170px;overflow-y:auto}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-reader-panel{grid-column:1;grid-row:2;height:auto;min-height:330px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content.tm-split-view:not(.tm-reading-open) .tm-reader-panel{display:none}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content.tm-reading-open .tm-list-column{display:none}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content.tm-reading-open .tm-reader-panel{grid-row:1}
+}
+@container taskly-mail (max-width:700px){
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2{display:flex;flex-direction:column;min-height:0}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-nav{padding:9px;gap:4px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-brand{font-size:18px;width:100%;margin:0 0 3px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-nav>.tm-new{width:100%;margin:0 0 5px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-folder{width:auto;min-height:32px;padding:6px 8px;font-size:10.5px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-folder[data-folder="settings"]{margin:0;border:0;padding:6px 8px;min-height:32px;border-radius:8px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-nav-foot{display:none}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-tools{width:100%;min-height:53px;padding:7px 9px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content{padding:10px;min-height:0}
+}
+@container taskly-mail (max-width:440px){
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-app-heading{max-width:42px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-toolbar{flex-wrap:wrap}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-list-count{width:100%}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-entry{padding:4px;gap:3px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-summary strong,
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-summary b{font-size:10px}
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 .tm-mail-content.tm-split-view:not(.tm-reading-open) .tm-reader-panel{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-workspace-page="taskly-mail"] .tm-app .tm-premium-v2 *{transition:none!important}
+}
