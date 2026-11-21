@@ -160,3 +160,58 @@ html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-video 
  content:'';position:absolute;left:17%;right:17%;top:50%;height:2px;background:#d32f2f;
  border-radius:3px;transform:rotate(45deg);box-shadow:0 1px #fff;
 }
+
+
+/* V8.1 — Single-source call layout. Corrects the V6/V7/V8 UI collision.
+   IMPORTANT: only in persistent call iframe AND only once V8 has mounted. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel {
+  position:relative!important;display:block!important;box-sizing:border-box!important;
+  padding:0!important;margin:0!important;background:#fff!important;color:#0b2721!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel::before,
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel::after {
+  display:none!important;content:none!important;
+}
+/* Hide native V6 controls, V7 toolbar and duplicate hero, while leaving their
+   DOM/handlers available for state updates and delegated user actions. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel > :not(.tc-v8-board) {
+  display:none!important;
+}
+/* V8 is THE visible call UI for incoming / ringing / connected / reconnecting.
+   Without this rule, V8 appeared only after connection and the old white-on-
+   white layout bled through while waiting. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium.taskly-call-v6[data-taskly-v8-ready='1'] .tc-panel > .tc-v8-board {
+  display:flex!important;position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;z-index:10!important;
+  background:radial-gradient(ellipse at 50% 47%,#ffffff 30%,#f5fcf8 100%)!important;
+  opacity:1!important;visibility:visible!important;isolation:isolate!important;
+}
+.tc-v8-incoming {position:relative;z-index:2;flex:none;display:flex;justify-content:center;gap:12px;width:100%;max-width:350px;margin:10px auto 12px;}
+.tc-v8-incoming[hidden],.tc-v8-hang[hidden] {display:none!important;}
+.tc-v8-incoming .tc-v8-button {flex:1;flex-direction:row;gap:8px;border-radius:999px!important;
+  padding:12px 16px;min-height:47px;background:#effbf4;color:#006943;font-size:14px;font-weight:800;}
+.tc-v8-incoming .tc-v8-icon {width:21px;height:21px;}
+.tc-v8-incoming .tc-v8-reject {background:#f33!important;color:white!important;border:1px solid #db2525!important;}
+.tc-v8-incoming .tc-v8-accept {background:#008f5b!important;color:white!important;border:1px solid #008253!important;}
+.tc-v8-board[data-call-stage='incoming'] .tc-v8-actions {display:none!important;}
+.tc-v8-board[data-call-stage='incoming'] .tc-v8-wave {opacity:.65;}
+.tc-v8-board[data-call-stage='connecting'] .tc-v8-live-dot,
+.tc-v8-board[data-call-stage='reconnecting'] .tc-v8-live-dot {display:none!important;}
+.tc-v8-board[data-call-stage='connecting'] .tc-v8-call-state,
+.tc-v8-board[data-call-stage='reconnecting'] .tc-v8-call-state {color:#215c4b!important;font-weight:650;}
+.tc-v8-board[data-call-stage='connected'] .tc-v8-call-state {color:#113c30!important;}
+/* Keep the compact 390px floating call usable without duplicate rows or cutoff. */
+@media (max-height:520px) {
+  .tc-v8-incoming {margin:3px auto 6px;}
+  .tc-v8-incoming .tc-v8-button {min-height:36px;padding:6px 10px;}
+}
+/* Do not clip the contact name when vertical space is consumed by avatar and controls. */
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-board[data-call-mode=audio] .tc-v8-hero > :not(.tc-v8-video) {
+  flex-shrink:0!important;
+}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-board[data-call-mode=audio] .tc-v8-avatar {
+  width:clamp(110px,19dvh,190px)!important;height:clamp(110px,19dvh,190px)!important;
+}
+html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .tc-v8-board[data-call-mode=audio] .tc-v8-wave {
+  height:clamp(38px,7dvh,65px)!important;
+}

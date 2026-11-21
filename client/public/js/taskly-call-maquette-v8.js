@@ -5,7 +5,7 @@
 (() => {
   if (window.TasklyCallMaquetteV8) return;
   const isHost = new URLSearchParams(location.search).get('taskly_call_host') === '1';
-  const version = '8';
+  const version = '8.1';
   const css = '/css/taskly-call-maquette-v8.css?v=' + version;
   // The outer titlebar belongs to the persistent dashboard shell. Add only CSS.
   if (!isHost) {
@@ -61,6 +61,11 @@
     const {dialog,instance}=info;
     if (!dialog.open) { if (info.timer) clearInterval(info.timer);info.timer=null;return; }
     const connected = dialog.dataset.premiumStage === 'connected';
+    const stage=dialog.dataset.premiumStage || 'connecting';
+    const incoming=stage==='incoming';
+    info.board.dataset.callStage=stage;
+    info.incomingRow.hidden=!incoming;
+    info.hang.hidden=incoming;
     const mode=dialog.dataset.mode === 'video' ? 'video' : 'audio';
     dialog.dataset.tasklyV8Connected=String(connected);
     info.board.dataset.callMode=mode;
@@ -71,8 +76,9 @@
     const service=document.querySelector('#cw-person-service')?.textContent?.trim().replace(/\s*[•·]\s*En ligne.*$/i,'') || '';
     if (service && !/sélectionnez|demande/i.test(service)) text(info.service,service);
     else text(info.service,'Appel '+mode);
-    text(info.kind,mode==='video'?'Appel vidéo en cours':'Appel audio en cours');
-    text(info.duration,dialog.querySelector('.tc-premium-duration')?.textContent?.trim() || '00:00');
+    text(info.kind,incoming ? `Appel ${mode} entrant` : connected ? `Appel ${mode} en cours` :
+      stage==='reconnecting' ? 'Reconnexion à votre appel…' : 'En attente de votre interlocuteur…');
+    text(info.duration,connected ? (dialog.querySelector('.tc-premium-duration')?.textContent?.trim() || '00:00') : '00:00');
     info.presence.hidden=!connected;
     info.badge.textContent=connected?'● En ligne':'Connexion…';
     info.board.classList.toggle('tc-v8-on',connected);
@@ -140,6 +146,12 @@
         unread.setAttribute('aria-live','polite');b.append(unread);infoSetUnread(unread);}
       actionArea.append(b);
     }
+    const incomingRow=node('div','tc-v8-incoming');incomingRow.hidden=true;
+    const reject=button('Refuser','hang','tc-v8-reject');
+    const accept=button('Décrocher','mic','tc-v8-accept');
+    incomingRow.append(reject,accept);
+    reject.addEventListener('click',()=>dialog.querySelector('[data-tc=reject]')?.click());
+    accept.addEventListener('click',()=>dialog.querySelector('[data-tc=accept]')?.click());
     const hang=button('Raccrocher','hang','tc-v8-hang');
     const feedback=node('p','tc-v8-feedback');feedback.setAttribute('role','status');feedback.hidden=true;
     const bottom=node('div','tc-v8-bottom-art');bottom.setAttribute('aria-hidden','true');
@@ -153,10 +165,13 @@
       ['Plein écran / Restaurer',()=>notify('max')],
       ['Retour à la messagerie',()=>notify('chat')]
     ]) {const b=node('button','',label);b.type='button';b.addEventListener('click',()=>{menu.hidden=true;fn();});menu.append(b);}
-    board.append(top,hero,actionArea,hang,feedback,drawer,menu,bottom);
+    board.append(top,hero,actionArea,incomingRow,hang,feedback,drawer,menu,bottom);
     panel.append(board);
+    // Only suppress the legacy presentation once the replacement is mounted.
+    // Without this marker, a JS error leaves the original call UI usable.
+    dialog.dataset.tasklyV8Ready='1';
     const info={dialog,instance,board,avatar,person,service,badge,presence:badge,heroAvatar,
-      heroName,kind,duration,feedback,buttons,menu,drawer,timer:null,unreadTimer:null};
+      heroName,kind,duration,feedback,buttons,menu,drawer,incomingRow,hang,timer:null,unreadTimer:null};
     instances.set(dialog,info);
     devices.addEventListener('click',()=>{
       const native=dialog.querySelector('.tc-premium-extra');
