@@ -320,3 +320,36 @@ html[data-taskly-call-host='1'][data-taskly-call-window-state=max] .taskly-call-
 /* Finalisation: the video frame covers available space without grey sidebars. */
 html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video {max-width:100%!important;margin:0!important;background:#e5f8ee!important;}
 html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected'] .tc-v8-video [data-tc='remote'] {object-fit:cover!important;background:#e5f8ee!important;}
+
+
+/* TASKLY_CALL_FULLBLEED_FIX_V1 */
+html[data-taskly-call-host='1']
+.taskly-call-dialog.taskly-call-premium {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    background: #fff !important;
+}
+
+html[data-taskly-call-host='1']
+.taskly-call-dialog.taskly-call-premium .tc-panel {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+html[data-taskly-call-host='1']
+.taskly-call-dialog::backdrop {
+    background: transparent !important;
+    backdrop-filter: none !important;
+}

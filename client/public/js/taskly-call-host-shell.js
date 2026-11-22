@@ -19,7 +19,7 @@
   let dragging = null;
   let cleanupTimer = null;
 
-  const CSS = '/css/taskly-call-floating.css?v=10';
+  const CSS = '/css/taskly-call-floating.css?v=11';
   if (!document.querySelector('link[data-taskly-floating-style]')) {
     const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = CSS;
     css.dataset.tasklyFloatingStyle = '1'; document.head.append(css);
