@@ -70,6 +70,7 @@
                 if (typeof sdk.ExternalE2EEKeyProvider !== 'function' ||
                     typeof sdk.isE2EESupported !== 'function' ||
                     !sdk.isE2EESupported() ||
+                    !sdk.RoomEvent.EncryptionError ||
                     typeof Worker !== 'function') {
                     throw new Error('E2EE non compatible avec cet appareil.');
                 }
@@ -161,6 +162,14 @@
                     this.onState?.('disconnected');
                 }
             });
+
+            if (e2eeRequired) {
+                room.on(sdk.RoomEvent.EncryptionError, () => {
+                    if (this.room !== room) return;
+                    this.close();
+                    this.onState?.('disconnected');
+                });
+            }
 
             try {
                 if (e2eeRequired) {

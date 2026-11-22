@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -42,7 +42,15 @@ function createHarness({ activationFails = false } = {}) {
       };
     }
 
-    on() { return this; }
+    on(event, callback) {
+      this.handlers ||= new Map();
+      this.handlers.set(event, callback);
+      return this;
+    }
+
+    emit(event, ...args) {
+      this.handlers?.get(event)?.(...args);
+    }
 
     async setE2EEEnabled(value) {
       events.push('e2ee:enable');
@@ -71,7 +79,7 @@ function createHarness({ activationFails = false } = {}) {
   const window = {
     LivekitClient: {
       Room: FakeRoom,
-      RoomEvent: new Proxy({}, { get: (_, key) => key }),
+      RoomEvent: new Proxy({}, { get: (_, key) => key === 'EncryptionError' ? 'encryptionError' : key }),
       ExternalE2EEKeyProvider: FakeKeyProvider,
       isE2EESupported: () => true
     }
@@ -174,4 +182,39 @@ test('V20 : erreur E2EE sans connexion et avec nettoyage', async () => {
   assert.ok(!events.includes('room:connect'));
   assert.ok(!events.includes('microphone'));
   assert.ok(events.includes('worker:terminate'));
+});
+test('V20 : erreur E2EE ferme la salle et libere le Worker', async () => {
+  const { media, events } = createHarness();
+
+  await media.connect({
+    ...connection,
+    e2eeRequired: true,
+    e2eeKey: new ArrayBuffer(32)
+  });
+
+  const room = media.room;
+  room.emit('encryptionError', new Error('Erreur de chiffrement'));
+
+  await flush();
+
+  assert.equal(media.room, null);
+  assert.ok(events.includes('room:disconnect'));
+  assert.equal(
+    events.filter(e => e === 'worker:terminate').length,
+    1
+  );
+});
+
+test('V20 : appel standard non affecte par le pilote E2EE', async () => {
+  const { media, events } = createHarness();
+
+  await media.connect(connection);
+
+  const room = media.room;
+  room.emit('encryptionError', new Error('Erreur simulee'));
+
+  assert.equal(media.room, room);
+  assert.ok(!events.includes('worker:terminate'));
+
+  media.close();
 });
