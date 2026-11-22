@@ -93,8 +93,27 @@ async function mesMessagesSupport(req, res) {
     }
 }
 
+
+async function detailsMessageSupport(req,res) {
+    const user=req.session?.utilisateur;
+    if(!user||!['client','artisan'].includes(user.role))
+        return res.status(403).json({message:'Espace client ou artisan requis.'});
+    const id=Number(req.params.id);
+    if(!Number.isSafeInteger(id)||id<1)return res.status(400).json({message:'Numero de demande invalide.'});
+    try {
+        const details=await contactModel.detailMessageCompte(user.id,id);
+        res.set('Cache-Control','no-store, private');
+        if(!details)return res.status(404).json({message:'Demande introuvable.'});
+        return res.json(details);
+    } catch(err) {
+        console.error('Detail support indisponible :',err.code||err.name);
+        return res.status(503).json({message:'Detail temporairement indisponible.'});
+    }
+}
+
 module.exports = {
     envoyerMessageContact,
     mesMessagesSupport,
+    detailsMessageSupport,
     consulterMessageContact
 };

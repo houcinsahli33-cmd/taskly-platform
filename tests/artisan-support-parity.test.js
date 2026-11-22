@@ -18,7 +18,7 @@ test('support artisan : mêmes formulaires et mêmes points d’accès au suivi 
   for (const klass of ['dashboard-content taskly-support-redesign','ts-hero','ts-actions','ts-history','client-follow-form']) {
     assert.ok(artisan.includes(`class="${klass}`), klass);
   }
-  assert.ok((artisan.match(/data-open-support-follow/g) || []).length >= 2);
+  assert.ok((artisan.match(/data-open-support-follow/g) || []).length >= 1);
   assert.match(artisan, /data-require-role="artisan"/);
   assert.match(artisan, /\/js\/contact\.js/);
   assert.match(artisan, /\/js\/client-support-follow-modal\.js/);

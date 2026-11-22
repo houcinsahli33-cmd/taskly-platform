@@ -95,10 +95,27 @@ async function derniersMessagesContact() {
     );
 }
 
+
+// Détails accessibles exclusivement au propriétaire identifié par sa session.
+async function detailMessageCompte(userId,contactId) {
+    const [messages]=await db.promise().query(
+        "SELECT id,sujet,message,statut,created_at FROM contacts_support WHERE id=? AND user_id=? AND contexte='public' LIMIT 1",
+        [contactId,userId]
+    );
+    const message=messages[0];
+    if(!message)return null;
+    const [reponses]=await db.promise().query(
+        "SELECT corps,envoyee_at FROM support_reponses WHERE contact_id=? AND statut='sent' AND envoyee_at IS NOT NULL ORDER BY envoyee_at ASC,id ASC LIMIT 100",
+        [contactId]
+    );
+    return {message,reponses};
+}
+
 module.exports = {
     creerMessageContact,
     creerMessageCompte,
     listerMessagesCompte,
+    detailMessageCompte,
     trouverMessageContactParIdEtEmail,
     listerMessagesContact,
     traiterMessageContact,

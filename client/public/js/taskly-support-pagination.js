@@ -104,21 +104,12 @@
 
       const actionsCell = document.createElement("td");
 
-      const details = document.createElement("details");
-      details.className = "ts-row-detail";
-
-      const summary = document.createElement("summary");
-      summary.textContent = "Voir";
-      summary.setAttribute(
-        "aria-label",
-        "Voir le message " + message.id
-      );
-
-      const detailText = document.createElement("p");
-      detailText.textContent = message.message || "";
-
-      details.append(summary, detailText);
-      actionsCell.appendChild(details);
+      const view = document.createElement("button");
+      view.type = "button";
+      view.textContent = "◉ Voir";
+      view.dataset.supportView = String(message.id);
+      view.setAttribute("aria-label", "Voir les détails de la demande " + message.id);
+      actionsCell.appendChild(view);
       row.appendChild(actionsCell);
 
       list.appendChild(row);

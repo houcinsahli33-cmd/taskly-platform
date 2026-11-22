@@ -12,6 +12,9 @@ router.post("/",require('../middleware/securityMiddleware').limiter({max:8}),con
 // Les anciens messages anonymes restent consultables uniquement par numero et e-mail.
 router.get('/mes-messages',require('../middleware/authMiddleware').verifierConnexion,contactController.mesMessagesSupport);
 
+// Consulter uniquement sa propre demande et les reponses admin envoyees.
+router.get('/mes-messages/:id',require('../middleware/authMiddleware').verifierConnexion,contactController.detailsMessageSupport);
+
 // Consulter l'état d'un message de contact avec id + email
 router.get("/suivi",contactController.consulterMessageContact);
 

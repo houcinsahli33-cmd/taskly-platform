@@ -1168,3 +1168,35 @@ body[data-workspace-page="support"] :is(
     width: 100%;
   }
 }
+
+/* Taskly Support - fenetre Details; partagee client / artisan; aucune modification du header/sidebar */
+#ts-support-details-dialog {
+  width:min(580px,calc(100vw - 32px));max-width:580px;max-height:min(90dvh,850px);
+  padding:0;border:0;border-radius:22px;background:#fff;color:#123528;
+  box-shadow:0 28px 75px rgba(4,40,26,.25);overflow:auto;
+}
+#ts-support-details-dialog::backdrop {background:rgba(7,35,25,.46);backdrop-filter:none;}
+#ts-support-details-dialog .ts-detail-head {display:flex;align-items:center;gap:14px;padding:22px 24px;background:linear-gradient(125deg,#006a42,#00855a);color:#fff;}
+#ts-support-details-dialog .ts-detail-head-copy {flex:1;min-width:0;}
+#ts-support-details-dialog .ts-detail-head h2 {color:#fff;font-weight:800;font-size:1.3rem;margin:0 0 4px;line-height:1.2;}
+#ts-support-details-dialog .ts-detail-head p {color:#dff6ec;font-size:.85rem;margin:0;}
+#ts-support-details-dialog .ts-detail-icon {display:grid;place-items:center;flex:none;width:46px;height:46px;background:rgba(255,255,255,.14);border-radius:12px;font-size:24px;}
+#ts-support-details-dialog .ts-detail-close {display:grid;place-items:center;width:38px;height:38px;flex:none;border:0;border-radius:10px;background:#fff;color:#006a42;font-size:23px;cursor:pointer;}
+#ts-support-details-dialog .ts-detail-body {padding:22px 24px 24px;display:grid;gap:15px;}
+#ts-support-details-dialog .ts-detail-summary {display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
+#ts-support-details-dialog .ts-detail-summary h3 {font-size:1.05rem;margin:5px 0;color:#102e25;overflow-wrap:anywhere;}
+#ts-support-details-dialog .ts-detail-label {font-size:.76rem;color:#54806b;font-weight:700;}
+#ts-support-details-dialog .ts-detail-status {border-radius:999px;background:#e6f6ed;color:#006b43;padding:6px 10px;font-size:.8rem;font-weight:700;white-space:nowrap;}
+#ts-support-details-dialog .ts-detail-date {font-size:.83rem;color:#647b70;}
+#ts-support-details-dialog .ts-detail-section h4 {display:flex;align-items:center;gap:8px;color:#006c45;margin:0 0 9px;font-size:.94rem;}
+#ts-support-details-dialog .ts-detail-message {padding:15px;border-radius:13px;background:#f3f7f5;border:1px solid #dce9e3;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:.9rem;}
+#ts-support-details-dialog .ts-detail-reply {background:#ebf9f2;border:1px solid #c3e8d3;border-radius:13px;padding:13px 15px;margin-bottom:9px;overflow-wrap:anywhere;}
+#ts-support-details-dialog .ts-detail-reply strong {display:block;color:#006a42;font-size:.85rem;}
+#ts-support-details-dialog .ts-detail-reply p {white-space:pre-wrap;line-height:1.5;font-size:.9rem;margin:9px 0;}
+#ts-support-details-dialog .ts-detail-reply small {display:block;text-align:right;color:#587a68;}
+#ts-support-details-dialog .ts-detail-pending {border:1px solid #d9eae2;border-radius:12px;background:#f4faf7;padding:13px;font-size:.9rem;}
+#ts-support-details-dialog .ts-detail-error {color:#9b1c2c;background:#fff0f0;border-radius:9px;padding:10px;}
+#ts-support-details-dialog .ts-detail-button {width:100%;border:0;border-radius:999px;background:linear-gradient(110deg,#008c58,#006c43);color:#fff;font-weight:750;padding:13px 16px;cursor:pointer;}
+.ts-history-table [data-support-view] {border:1px solid #cde9da;background:#fff;border-radius:999px;padding:8px 13px;color:#006b43;font-weight:750;cursor:pointer;}
+.ts-history-table [data-support-view]:focus-visible,#ts-support-details-dialog button:focus-visible {outline:3px solid #00a96b;outline-offset:3px;}
+@media(max-width:560px) {#ts-support-details-dialog .ts-detail-head {padding:15px 16px;gap:9px;}#ts-support-details-dialog .ts-detail-body {padding:17px 16px;}#ts-support-details-dialog .ts-detail-head h2 {font-size:1.1rem;}}

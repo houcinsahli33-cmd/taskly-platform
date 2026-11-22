@@ -48,7 +48,6 @@
           <div class="ts-history-table-wrap"><table class="ts-history-table"><thead><tr><th>N° de demande</th><th>Objet</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead><tbody data-support-history-list role="status" aria-live="polite"></tbody></table></div>
           <div class="ts-history-pager" data-support-pagination aria-label="Pagination de l’historique"></div>
           <button type="button" class="btn outline taskly-history-more" data-support-history-more hidden>Afficher les messages précédents</button>
-          <a href="#suivre-message" class="taskly-history-old" data-open-support-follow>Retrouver un ancien message avec son numéro de suivi</a>
         </div>
       </section>
     </section>
@@ -198,8 +197,24 @@
     </div>
   </form>
 </dialog>
+<dialog id="ts-support-details-dialog" aria-labelledby="ts-support-details-title">
+  <div class="ts-detail-head">
+    <span class="ts-detail-icon" aria-hidden="true">🎧</span>
+    <div class="ts-detail-head-copy"><h2 id="ts-support-details-title">Détails de ma demande</h2><p>Consultez vos échanges avec notre équipe.</p></div>
+    <button type="button" class="ts-detail-close" data-support-detail-close aria-label="Fermer">×</button>
+  </div>
+  <div class="ts-detail-body">
+    <div class="ts-detail-summary"><div><span class="ts-detail-label" data-support-detail="number"></span><h3 data-support-detail="subject"></h3></div><span class="ts-detail-status" data-support-detail="status"></span></div>
+    <div class="ts-detail-date">Envoyée le <span data-support-detail="date"></span></div>
+    <section class="ts-detail-section"><h4>Mon message</h4><div class="ts-detail-message" data-support-detail="message"></div></section>
+    <section class="ts-detail-section"><h4>Réponse de l'administration</h4><div data-support-detail="replies" aria-live="polite"></div></section>
+    <p class="ts-detail-error" data-support-detail="error" role="alert" hidden></p>
+    <button type="button" class="ts-detail-button" data-support-detail-close>Fermer la fenêtre</button>
+  </div>
+</dialog>
   <script defer src="/js/client-support-follow-modal.js"></script>
 <script defer src="/js/taskly-support-pagination.js"></script>
+<script defer src="/js/taskly-support-details.js"></script>
 <script defer src="/js/taskly-support-redesign.js"></script>
 </body>
 </html>

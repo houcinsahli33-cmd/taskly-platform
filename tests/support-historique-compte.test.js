@@ -36,7 +36,7 @@ for(const role of ['client','artisan'])test(`support ${role}: petite carte histo
 test('UI: les informations sont toujours du texte, jamais du HTML non nettoye',()=>{
  const js=read('client/public/js/taskly-support-pagination.js');
  assert.match(js,/cell\.textContent/);
- assert.match(js,/detailText\.textContent/);
+ assert.match(js,/view\.dataset\.supportView/);
  assert.doesNotMatch(js,/innerHTML/);
  assert.match(js,/page=\$\{apiPage\}/);
 });
