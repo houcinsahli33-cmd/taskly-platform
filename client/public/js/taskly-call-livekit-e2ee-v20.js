@@ -178,10 +178,6 @@
                 if (e2eeRequired) {
                     await keyProvider.setKey(e2eeKey);
                     await room.setE2EEEnabled(true);
-
-                    if (room.isE2EEEnabled !== true) {
-                        throw new Error('Activation E2EE non confirmee.');
-                    }
                 }
 
                 await room.connect(url, token);
@@ -189,6 +185,13 @@
                 if (this.room !== room ||
                     generation !== this.generation) {
                     throw new Error('Appel annule.');
+                }
+
+                // Le SDK n'annonce l'etat de chiffrement de l'emetteur local
+                // qu'une fois la salle connectee. Controler ici, AVANT
+                // toute publication du microphone ou de la camera.
+                if (e2eeRequired && room.isE2EEEnabled !== true) {
+                    throw new Error('Activation E2EE non confirmee.');
                 }
 
                 await room.localParticipant.setMicrophoneEnabled(
