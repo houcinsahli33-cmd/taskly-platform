@@ -1,7 +1,7 @@
 /* TASKLY_ARTISAN_CONTACT: consultation volontaire, API protegee, aucune coordonnee en cache. */
 (() => {
  'use strict';
- const internalMail=/^[a-z0-9._%+-]+@[a-z0-9-]+\.taskly\.test$/i;
+ const internalMail=/^[a-z0-9._%+-]+@[a-z0-9-]+\.taskly\.(?:test|dz)$/i;
  function contactView(c) {
    if(!c || typeof c !== 'object') throw Error('Coordonnées indisponibles.');
    return {

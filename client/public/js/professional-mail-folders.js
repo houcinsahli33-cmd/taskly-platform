@@ -120,7 +120,7 @@ window.afficherTasklyMailFolders=async function(section,status,account){
   else{bar.append(action(m.starred?'Retirer des favoris':'Ajouter aux favoris',m.starred?'unstar':'star','favorites'),action(m.archived?'Désarchiver':'Archiver',m.archived?'unarchive':'archive','archive'),action('Corbeille','trash','trash','tm-button tm-danger'));}
   const title=el('h3',m.subject||'Sans objet','tm-reader-subject'),sender=el('div',null,'tm-reader-sender'),info=el('div',null,'tm-reader-names');info.append(el('strong',m.from),el('small','À : '+m.to),el('small',date(m.date)));sender.append(avatar(m.from),info);
   const body=safeBody(m.body),bottom=el('div',null,'tm-reader-bottom');
-  if(!m.trashed){const to=m.folder==='sent'?m.to:m.from;if(/^[^@]+@[a-z0-9-]+\.taskly\.test$/i.test(to))bottom.append(withIcon('Répondre','reply',()=>run(()=>compose({to,subject:('Re : '+(m.subject||'')).slice(0,200),body:''})),'tm-new'));bottom.append(withIcon('Transférer','forward',()=>run(()=>compose({to:'',subject:('Tr : '+(m.subject||'')).slice(0,200),body:'\n\n--- Message transféré ---\nDe : '+m.from+'\n'+m.body}))));}
+  if(!m.trashed){const to=m.folder==='sent'?m.to:m.from;if(/^[^@]+@[a-z0-9-]+\.taskly\.(?:test|dz)$/i.test(to))bottom.append(withIcon('Répondre','reply',()=>run(()=>compose({to,subject:('Re : '+(m.subject||'')).slice(0,200),body:''})),'tm-new'));bottom.append(withIcon('Transférer','forward',()=>run(()=>compose({to:'',subject:('Tr : '+(m.subject||'')).slice(0,200),body:'\n\n--- Message transféré ---\nDe : '+m.from+'\n'+m.body}))));}
   const files=el('section',null,'tm-reader-bottom');
   if(Array.isArray(m.attachments)&&m.attachments.length){files.append(el('strong','Pièces jointes ('+m.attachments.length+')'));for(const f of m.attachments){const link=el('a',null,'tm-button');link.href=base+'/copies/'+encodeURIComponent(id)+'/attachment';link.setAttribute('download',f.name);link.append(icon('attach'),el('span',f.name+' · '+Math.ceil(f.size/1024)+' Ko'));files.append(link);}}
   reader.replaceChildren(bar,title,sender,body,...(files.children.length?[files]:[]),bottom);await counts();notice('');
@@ -172,7 +172,7 @@ window.afficherTasklyMailFolders=async function(section,status,account){
   const cancelButton=withIcon('Annuler','close',()=>run(()=>switchFolder('inbox')));
   const sendButton=withIcon('Envoyer','sent',()=>run(async()=>{
    stopAuto();const v=currentValues();if(!v.to||!to.input.checkValidity()||!v.subject.trim()||!v.body.trim())throw Error('Destinataire, objet et message requis.');
-   if(!/^[^@]+@[a-z0-9-]+\.taskly\.test$/i.test(v.to))throw Error('Seules les adresses Taskly internes sont disponibles actuellement.');
+   if(!/^[^@]+@[a-z0-9-]+\.taskly\.(?:test|dz)$/i.test(v.to))throw Error('Seules les adresses Taskly internes sont disponibles actuellement.');
    if(!confirm('Envoyer ce message à '+v.to+' ?'))return;
    const sig=JSON.stringify(v);if(sendSignature!==sig||!sendKey){sendKey=uuid();sendSignature=sig;}
    let response;if(pendingAttachment){const formData=new FormData();for(const [key,value] of Object.entries({...v,key:sendKey}))formData.append(key,value);formData.append('attachment',pendingAttachment);response=await requeteAPI(base+'/send-file',{method:'POST',body:formData});}else response=await request('/send','POST',{...v,key:sendKey});pendingAttachment=null;dirty=false;sendKey=null;sendSignature=null;await list('sent');notice((response.message||'Message envoyé.')+' Le brouillon enregistré reste disponible.');
