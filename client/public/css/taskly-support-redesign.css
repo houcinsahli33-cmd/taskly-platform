@@ -1,0 +1,624 @@
+
+/* ==================================================
+   TASKLY SUPPORT - DESIGN RESPONSIVE
+   Uniquement le contenu de la page Support.
+   Ne modifie ni le header ni la sidebar.
+================================================== */
+
+body.dashboard-page[data-workspace-page="support"]
+.dashboard-content.taskly-support-redesign {
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 20px clamp(14px, 2vw, 28px) 38px;
+  background: #f7faf9;
+  color: #102b23;
+}
+
+/* BANNIERE SUPPORT */
+
+.taskly-support-redesign .ts-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-height: 150px;
+  padding: 20px 26px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-radius: 21px;
+  background: linear-gradient(
+    115deg,
+    #dcf5e9,
+    #f2fcf7 64%,
+    #a4efc6
+  );
+}
+
+.ts-headset,
+.ts-action-icon,
+.ts-modal-ico {
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: linear-gradient(145deg, #008654, #00582e);
+  color: #fff;
+  border-radius: 18px;
+  box-shadow: 0 5px 12px #07553c26;
+}
+
+.ts-headset {
+  width: 72px;
+  height: 72px;
+  font-size: 48px;
+  line-height: 1;
+}
+
+.ts-hero-copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.ts-hero-copy h1 {
+  margin: 0 0 8px;
+  font-size: clamp(24px, 2.8vw, 38px);
+  letter-spacing: -0.8px;
+  font-weight: 850;
+  color: #081c18;
+}
+
+.ts-hero-copy p {
+  margin: 0;
+  font-size: clamp(12px, 1.15vw, 17px);
+  line-height: 1.55;
+  font-weight: 550;
+  color: #112922;
+}
+
+.ts-hero-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  gap: 14px;
+  margin-left: auto;
+  min-width: 185px;
+}
+
+.ts-bubble {
+  align-self: flex-start;
+  padding: 7px 17px;
+  border-radius: 20px 20px 3px 20px;
+  background: #087c4c;
+  color: #fff;
+  font-size: 20px;
+}
+
+.ts-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 95px;
+  border: 7px solid #12271e;
+  border-radius: 9px;
+  background: linear-gradient(145deg, #007f4d, #07b866);
+  box-shadow: 0 8px 0 -3px #69756e;
+  color: #fff;
+  font-size: 22px;
+  transform: rotate(3deg);
+}
+
+.ts-screen span {
+  font-size: 26px;
+}
+
+/* LES TROIS CARTES */
+
+.ts-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin: 18px 0;
+}
+
+.ts-action {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  column-gap: 13px;
+  row-gap: 13px;
+  align-content: start;
+  min-width: 0;
+  padding: 19px;
+  box-sizing: border-box;
+  border: 1px solid #e2e9e6;
+  border-radius: 21px;
+  background: #fff;
+  box-shadow: 0 4px 12px #0b412010;
+}
+
+.ts-action-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 17px;
+  background: #d9f3e6;
+  color: #007844;
+  font-size: 34px;
+  box-shadow: none;
+}
+
+.ts-action h2 {
+  margin: 0 0 6px;
+  font-size: clamp(16px, 1.6vw, 22px);
+  line-height: 1.25;
+  color: #0b1714;
+}
+
+.ts-action p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #304039;
+}
+
+/* BOUTONS */
+
+.ts-btn {
+  min-height: 43px;
+  padding: 10px 15px;
+  border-radius: 28px;
+  font: 750 14px Arial, sans-serif;
+  white-space: normal;
+  cursor: pointer;
+}
+
+.ts-action .ts-btn {
+  grid-column: 1 / -1;
+  width: 100%;
+  align-self: end;
+}
+
+.ts-primary {
+  border: 1px solid #007d4b;
+  background: linear-gradient(180deg, #00995d, #006f43);
+  color: #fff;
+}
+
+.ts-outline {
+  border: 1.5px solid #008452;
+  background: #fff;
+  color: #00643c;
+}
+
+.ts-btn:hover {
+  filter: brightness(0.97);
+}
+
+.ts-btn:focus-visible {
+  outline: 3px solid #48b68f;
+  outline-offset: 2px;
+}
+
+/* HISTORIQUE DES MESSAGES */
+
+body.dashboard-page[data-workspace-page="support"]
+.ts-history {
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid #e2eae5;
+  border-radius: 21px;
+  background: #fff;
+  box-shadow: 0 4px 12px #0b412013;
+}
+
+.ts-history .taskly-history-toggle {
+  padding: 20px 24px;
+}
+
+.ts-history .taskly-history-label strong {
+  font-size: 20px;
+  color: #071a14;
+}
+
+.ts-history .taskly-history-label small {
+  font-size: 13px;
+  color: #3f5148;
+}
+
+.ts-history .taskly-history-icon {
+  background: #dff5e9;
+  color: #007342;
+}
+
+.ts-history .taskly-history-content {
+  padding: 12px 20px 20px;
+}
+
+.ts-history-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ts-history-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: 13px;
+}
+
+.ts-history-table th {
+  padding: 13px 12px;
+  background: #e5f5eb;
+  color: #152d21;
+  font-size: 13px;
+}
+
+.ts-history-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e7eee9;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.ts-history-table tr:nth-child(even) {
+  background: #fafcfb;
+}
+
+.ts-number {
+  font-weight: 800;
+  color: #11251a;
+  white-space: nowrap;
+}
+
+.ts-status {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 25px;
+  background: #e6f5ea;
+  color: #11683f;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ts-status.is-progress {
+  background: #fff0bd;
+  color: #966000;
+}
+
+.ts-status.is-done {
+  background: #dfe7e7;
+  color: #394a4b;
+}
+
+.ts-row-detail summary {
+  padding: 6px 12px;
+  border: 1px solid #d8e8dd;
+  border-radius: 18px;
+  color: #006a3d;
+  cursor: pointer;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ts-row-detail p {
+  margin: 9px 0 0;
+  max-width: 210px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.ts-empty-row {
+  text-align: center;
+  color: #637b70;
+}
+
+/* PAGINATION */
+
+.ts-history-pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 16px 0 4px;
+}
+
+.ts-page-btn {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 6px 11px;
+  border: 1px solid #cce7d8;
+  border-radius: 10px;
+  background: #fff;
+  color: #00663d;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ts-page-btn.is-current {
+  border-color: #008451;
+  background: #008451;
+  color: #fff;
+}
+
+.ts-page-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ts-history .taskly-history-more {
+  display: none !important;
+}
+
+.ts-history-error {
+  color: #a33333;
+  font-size: 13px;
+}
+
+/* FENETRES MODALES */
+
+body.dashboard-page[data-workspace-page="support"]
+.ts-dialog,
+body.dashboard-page[data-workspace-page="support"]
+.client-support-follow-dialog {
+  width: min(600px, calc(100vw - 28px));
+  max-width: 600px;
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  border-radius: 19px;
+  overflow: auto;
+  box-sizing: border-box;
+  color: #132e24;
+  box-shadow: 0 20px 70px #082e263a;
+}
+
+.ts-dialog::backdrop,
+.client-support-follow-dialog::backdrop {
+  background: #091c1d85;
+}
+
+.ts-dialog-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  position: relative;
+  padding: 18px 21px;
+  background: linear-gradient(120deg, #087d51, #005c3c);
+  color: #fff;
+}
+
+.ts-modal-ico {
+  width: 51px;
+  height: 51px;
+  background: #ffffff20;
+  font-size: 31px;
+}
+
+.ts-dialog-head h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #fff;
+}
+
+.ts-dialog-head p {
+  margin: 0;
+  font-size: 12px;
+  color: #e1fff1;
+}
+
+.ts-close {
+  align-self: flex-start;
+  margin-left: auto;
+  width: 35px;
+  height: 35px;
+  border: 0;
+  border-radius: 9px;
+  background: #fff;
+  color: #006c48;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ts-dialog-body {
+  padding: 20px 24px 23px;
+}
+
+/* FORMULAIRE */
+
+.ts-form {
+  display: grid;
+  gap: 13px;
+}
+
+.ts-form label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.ts-form label span {
+  color: #c12131;
+}
+
+.ts-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ts-form input,
+.ts-form select,
+.ts-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #7ac5a3;
+  border-radius: 9px;
+  background: #fbfffc;
+  color: #152c21;
+  font: 14px Arial, sans-serif;
+}
+
+.ts-form textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.ts-dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.ts-dialog-buttons .ts-btn {
+  min-width: 140px;
+}
+
+.ts-follow-inline {
+  font-size: 12px;
+  color: #007c4a;
+  text-align: right;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* QUESTIONS FREQUENTES */
+
+.ts-faq {
+  display: grid;
+  gap: 9px;
+}
+
+.ts-faq details {
+  border: 1px solid #9bd9bc;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.ts-faq details[open] {
+  background: #f4fcf7;
+}
+
+.ts-faq summary {
+  padding: 11px 13px;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.ts-faq p {
+  padding: 0 14px 12px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* TABLETTES */
+
+@media (max-width: 1000px) {
+  .ts-actions {
+    gap: 10px;
+  }
+
+  .ts-action {
+    padding: 14px;
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .ts-action-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 26px;
+  }
+
+  .ts-action h2 {
+    font-size: 16px;
+  }
+
+  .ts-action p {
+    font-size: 12px;
+  }
+
+  .ts-hero-art {
+    min-width: 135px;
+  }
+
+  .ts-screen {
+    width: 105px;
+    height: 74px;
+  }
+}
+
+/* TELEPHONES */
+
+@media (max-width: 760px) {
+  .ts-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-action {
+    grid-template-columns: 55px minmax(0, 1fr);
+  }
+
+  .ts-action-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .ts-hero {
+    padding: 18px;
+    gap: 12px;
+  }
+
+  .ts-headset {
+    width: 52px;
+    height: 52px;
+    font-size: 32px;
+  }
+
+  .ts-hero-art {
+    display: none;
+  }
+
+  .ts-hero-copy h1 {
+    font-size: 25px;
+  }
+
+  .ts-hero-copy p br {
+    display: none;
+  }
+
+  .ts-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ts-dialog-body {
+    padding: 16px;
+  }
+
+  .ts-dialog-buttons {
+    flex-wrap: wrap;
+  }
+
+  .ts-dialog-buttons .ts-btn {
+    flex: 1 1 140px;
+  }
+
+  .ts-history .taskly-history-content {
+    padding: 10px;
+  }
+
+  .ts-history .taskly-history-toggle {
+    padding: 15px;
+  }
+}
