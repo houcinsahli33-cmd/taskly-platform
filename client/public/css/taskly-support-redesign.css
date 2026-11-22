@@ -1,624 +1,97 @@
+/* Taskly Support — contenu interne uniquement. Header et sidebar intacts. */
+body.dashboard-page[data-require-role="client"][data-workspace-page="support"] .dashboard-content.taskly-support-redesign{width:100%;max-width:none;min-width:0;padding:20px clamp(14px,2vw,28px) 38px;box-sizing:border-box;background:#f7faf9;color:#102b23}
+.taskly-support-redesign .ts-hero{position:relative;display:flex;align-items:center;gap:22px;min-height:150px;overflow:hidden;border-radius:21px;padding:20px 26px;background:linear-gradient(115deg,#dcf5e9,#f2fcf7 64%,#a4efc6);box-sizing:border-box}
+.ts-headset,.ts-action-icon,.ts-modal-ico{display:grid;place-items:center;flex:none;background:linear-gradient(145deg,#008654,#00582e);color:#fff;border-radius:18px;box-shadow:0 5px 12px #07553c26}
+.ts-headset{height:72px;width:72px;font-size:48px;line-height:1}
+.ts-hero-copy{position:relative;z-index:1;min-width:0}.ts-hero-copy h1{font-size:clamp(24px,2.8vw,38px);margin:0 0 8px;letter-spacing:-.8px;color:#081c18;font-weight:850}.ts-hero-copy p{font-size:clamp(12px,1.15vw,17px);line-height:1.55;margin:0;color:#112922;font-weight:550}
+.ts-hero-art{margin-left:auto;min-width:185px;display:flex;gap:14px;align-items:center;justify-content:center;align-self:stretch}.ts-bubble{background:#087c4c;color:white;padding:7px 17px;border-radius:20px 20px 3px 20px;font-size:20px;align-self:flex-start}.ts-screen{width:150px;height:95px;transform:rotate(3deg);background:linear-gradient(145deg,#007f4d,#07b866);border:7px solid #12271e;border-radius:9px;box-shadow:0 8px 0 -3px #69756e;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;font-size:22px}.ts-screen span{font-size:26px}
+.ts-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin:18px 0}.ts-action{display:grid;grid-template-columns:56px minmax(0,1fr);column-gap:13px;row-gap:13px;padding:19px;align-content:start;min-width:0;border:1px solid #e2e9e6;border-radius:21px;box-shadow:0 4px 12px #0b412010;background:white;box-sizing:border-box}.ts-action-icon{width:54px;height:54px;background:#d9f3e6;color:#007844;border-radius:17px;font-size:34px;box-shadow:none}.ts-action h2{font-size:clamp(16px,1.6vw,22px);line-height:1.25;margin:0 0 6px;color:#0b1714}.ts-action p{font-size:13px;line-height:1.45;margin:0;color:#304039}.ts-btn{cursor:pointer;min-height:43px;border-radius:28px;padding:10px 15px;font:750 14px Arial,sans-serif;white-space:normal}.ts-action .ts-btn{grid-column:1/-1;width:100%;align-self:end}.ts-primary{border:1px solid #007d4b;background:linear-gradient(180deg,#00995d,#006f43);color:white}.ts-outline{border:1.5px solid #008452;background:white;color:#00643c}.ts-btn:hover{filter:brightness(.97)}.ts-btn:focus-visible{outline:3px solid #48b68f;outline-offset:2px}
+body.dashboard-page[data-workspace-page="support"] .ts-history{border:1px solid #e2eae5;border-radius:21px;overflow:hidden;box-shadow:0 4px 12px #0b412013;background:white;margin-top:16px}
+.ts-history .taskly-history-toggle{padding:20px 24px}.ts-history .taskly-history-label strong{font-size:20px;color:#071a14}.ts-history .taskly-history-label small{font-size:13px;color:#3f5148}.ts-history .taskly-history-icon{background:#dff5e9;color:#007342}.ts-history .taskly-history-content{padding:12px 20px 20px}.ts-history-table-wrap{width:100%;overflow-x:auto}.ts-history-table{width:100%;border-collapse:separate;border-spacing:0;text-align:left;font-size:13px;min-width:620px}.ts-history-table th{background:#e5f5eb;color:#152d21;padding:13px 12px;font-size:13px}.ts-history-table td{padding:12px;border-bottom:1px solid #e7eee9;vertical-align:middle;overflow-wrap:anywhere}.ts-history-table tr:nth-child(even){background:#fafcfb}.ts-number{font-weight:800;color:#11251a;white-space:nowrap}.ts-status{display:inline-block;border-radius:25px;padding:6px 11px;background:#e6f5ea;color:#11683f;font-weight:800;white-space:nowrap}.ts-status.is-progress{background:#fff0bd;color:#966000}.ts-status.is-done{background:#dfe7e7;color:#394a4b}.ts-row-detail summary{border:1px solid #d8e8dd;border-radius:18px;padding:6px 12px;color:#006a3d;cursor:pointer;font-weight:700;white-space:nowrap}.ts-row-detail p{margin:9px 0 0;max-width:210px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.ts-empty-row{text-align:center;color:#637b70}.ts-history-pager{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:7px;margin:16px 0 4px}.ts-page-btn{border:1px solid #cce7d8;border-radius:10px;min-height:36px;min-width:36px;padding:6px 11px;background:white;color:#00663d;cursor:pointer;font-weight:700}.ts-page-btn.is-current{background:#008451;color:white;border-color:#008451}.ts-page-btn:disabled{opacity:.45;cursor:default}.ts-history .taskly-history-more{display:none!important}.ts-history-error{color:#a33333;font-size:13px}
+body.dashboard-page[data-workspace-page="support"] .ts-dialog,body.dashboard-page[data-workspace-page="support"] .client-support-follow-dialog{width:min(600px,calc(100vw - 28px));max-width:600px;max-height:calc(100dvh - 32px);padding:0;border:0;border-radius:19px;box-shadow:0 20px 70px #082e263a;overflow:auto;box-sizing:border-box;color:#132e24}
+.ts-dialog::backdrop,.client-support-follow-dialog::backdrop{background:#091c1d85}.ts-dialog-head{display:flex;align-items:center;gap:13px;background:linear-gradient(120deg,#087d51,#005c3c);color:white;padding:18px 21px;position:relative}.ts-modal-ico{width:51px;height:51px;font-size:31px;background:#ffffff20}.ts-dialog-head h2{font-size:22px;margin:0 0 4px;color:white}.ts-dialog-head p{font-size:12px;margin:0;color:#e1fff1}.ts-close{margin-left:auto;align-self:flex-start;border:0;border-radius:9px;background:white;color:#006c48;font-size:26px;line-height:1;width:35px;height:35px;cursor:pointer}.ts-dialog-body{padding:20px 24px 23px}.ts-form{display:grid;gap:13px}.ts-form label{display:grid;gap:7px;font-size:13px;font-weight:750}.ts-form label span{color:#c12131}.ts-form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ts-form input,.ts-form select,.ts-form textarea{width:100%;box-sizing:border-box;border:1px solid #7ac5a3;border-radius:9px;background:#fbfffc;padding:11px 12px;font:14px Arial,sans-serif;color:#152c21}.ts-form textarea{min-height:92px;resize:vertical}.ts-dialog-buttons{display:flex;gap:12px;justify-content:flex-end;margin-top:5px}.ts-dialog-buttons .ts-btn{min-width:140px}.ts-faq{display:grid;gap:9px}.ts-faq details{border:1px solid #9bd9bc;border-radius:9px;overflow:hidden}.ts-faq details[open]{background:#f4fcf7}.ts-faq summary{cursor:pointer;padding:11px 13px;font-weight:750;font-size:13px}.ts-faq p{padding:0 14px 12px;margin:0;font-size:13px;line-height:1.5}
+@media(max-width:1000px){.ts-actions{gap:10px}.ts-action{padding:14px;grid-template-columns:42px minmax(0,1fr)}.ts-action-icon{width:42px;height:42px;font-size:26px}.ts-action h2{font-size:16px}.ts-action p{font-size:12px}.ts-hero-art{min-width:135px}.ts-screen{width:105px;height:74px}}
+@media(max-width:760px){.ts-actions{grid-template-columns:1fr}.ts-action{grid-template-columns:55px minmax(0,1fr)}.ts-action-icon{width:52px;height:52px}.ts-hero{padding:18px;gap:12px}.ts-headset{width:52px;height:52px;font-size:32px}.ts-hero-art{display:none}.ts-hero-copy h1{font-size:25px}.ts-hero-copy p br{display:none}.ts-form-row{grid-template-columns:1fr}.ts-dialog-body{padding:16px}.ts-dialog-buttons{flex-wrap:wrap}.ts-dialog-buttons .ts-btn{flex:1 1 140px}.ts-history .taskly-history-content{padding:10px}.ts-history .taskly-history-toggle{padding:15px}}
 
-/* ==================================================
-   TASKLY SUPPORT - DESIGN RESPONSIVE
-   Uniquement le contenu de la page Support.
-   Ne modifie ni le header ni la sidebar.
-================================================== */
+.ts-follow-inline{font-size:12px;color:#007c4a;text-align:right;font-weight:700;text-decoration:underline}
 
-body.dashboard-page[data-workspace-page="support"]
-.dashboard-content.taskly-support-redesign {
-  width: 100%;
-  max-width: none;
-  min-width: 0;
-  box-sizing: border-box;
-  padding: 20px clamp(14px, 2vw, 28px) 38px;
-  background: #f7faf9;
-  color: #102b23;
+/* ================================================================
+   SUPPORT TASKLY - FIDELITE MAQUETTE V2
+   Scope strict: dashboard-content et dialog du support uniquement.
+   Header et barre laterale volontairement exclus.
+   ================================================================ */
+body.dashboard-page[data-workspace-page="support"] .dashboard-content.taskly-support-redesign {
+  --ts-green:#007b45; --ts-ink:#101811;
+  padding:18px clamp(16px,1.5vw,25px) 28px !important;
+  background:linear-gradient(#fafdfb,#f8fbf9) !important;
+  font-family:Arial,Helvetica,sans-serif;
 }
-
-/* BANNIERE SUPPORT */
-
 .taskly-support-redesign .ts-hero {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  min-height: 150px;
-  padding: 20px 26px;
-  overflow: hidden;
-  box-sizing: border-box;
-  border-radius: 21px;
-  background: linear-gradient(
-    115deg,
-    #dcf5e9,
-    #f2fcf7 64%,
-    #a4efc6
-  );
-}
-
-.ts-headset,
-.ts-action-icon,
-.ts-modal-ico {
-  display: grid;
-  place-items: center;
-  flex: none;
-  background: linear-gradient(145deg, #008654, #00582e);
-  color: #fff;
-  border-radius: 18px;
-  box-shadow: 0 5px 12px #07553c26;
-}
-
-.ts-headset {
-  width: 72px;
-  height: 72px;
-  font-size: 48px;
-  line-height: 1;
-}
-
-.ts-hero-copy {
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-}
-
-.ts-hero-copy h1 {
-  margin: 0 0 8px;
-  font-size: clamp(24px, 2.8vw, 38px);
-  letter-spacing: -0.8px;
-  font-weight: 850;
-  color: #081c18;
-}
-
-.ts-hero-copy p {
-  margin: 0;
-  font-size: clamp(12px, 1.15vw, 17px);
-  line-height: 1.55;
-  font-weight: 550;
-  color: #112922;
-}
-
-.ts-hero-art {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  align-self: stretch;
-  gap: 14px;
-  margin-left: auto;
-  min-width: 185px;
-}
-
-.ts-bubble {
-  align-self: flex-start;
-  padding: 7px 17px;
-  border-radius: 20px 20px 3px 20px;
-  background: #087c4c;
-  color: #fff;
-  font-size: 20px;
-}
-
-.ts-screen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 150px;
-  height: 95px;
-  border: 7px solid #12271e;
-  border-radius: 9px;
-  background: linear-gradient(145deg, #007f4d, #07b866);
-  box-shadow: 0 8px 0 -3px #69756e;
-  color: #fff;
-  font-size: 22px;
-  transform: rotate(3deg);
-}
-
-.ts-screen span {
-  font-size: 26px;
-}
-
-/* LES TROIS CARTES */
-
-.ts-actions {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 15px;
-  margin: 18px 0;
-}
-
-.ts-action {
-  display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  column-gap: 13px;
-  row-gap: 13px;
-  align-content: start;
-  min-width: 0;
-  padding: 19px;
-  box-sizing: border-box;
-  border: 1px solid #e2e9e6;
-  border-radius: 21px;
-  background: #fff;
-  box-shadow: 0 4px 12px #0b412010;
-}
-
-.ts-action-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 17px;
-  background: #d9f3e6;
-  color: #007844;
-  font-size: 34px;
-  box-shadow: none;
-}
-
-.ts-action h2 {
-  margin: 0 0 6px;
-  font-size: clamp(16px, 1.6vw, 22px);
-  line-height: 1.25;
-  color: #0b1714;
-}
-
-.ts-action p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.45;
-  color: #304039;
-}
-
-/* BOUTONS */
-
-.ts-btn {
-  min-height: 43px;
-  padding: 10px 15px;
-  border-radius: 28px;
-  font: 750 14px Arial, sans-serif;
-  white-space: normal;
-  cursor: pointer;
-}
-
-.ts-action .ts-btn {
-  grid-column: 1 / -1;
-  width: 100%;
-  align-self: end;
-}
-
-.ts-primary {
-  border: 1px solid #007d4b;
-  background: linear-gradient(180deg, #00995d, #006f43);
-  color: #fff;
-}
-
-.ts-outline {
-  border: 1.5px solid #008452;
-  background: #fff;
-  color: #00643c;
-}
-
-.ts-btn:hover {
-  filter: brightness(0.97);
-}
-
-.ts-btn:focus-visible {
-  outline: 3px solid #48b68f;
-  outline-offset: 2px;
-}
-
-/* HISTORIQUE DES MESSAGES */
-
-body.dashboard-page[data-workspace-page="support"]
-.ts-history {
-  margin-top: 16px;
-  overflow: hidden;
-  border: 1px solid #e2eae5;
-  border-radius: 21px;
-  background: #fff;
-  box-shadow: 0 4px 12px #0b412013;
-}
-
-.ts-history .taskly-history-toggle {
-  padding: 20px 24px;
-}
-
-.ts-history .taskly-history-label strong {
-  font-size: 20px;
-  color: #071a14;
-}
-
-.ts-history .taskly-history-label small {
-  font-size: 13px;
-  color: #3f5148;
-}
-
-.ts-history .taskly-history-icon {
-  background: #dff5e9;
-  color: #007342;
-}
-
-.ts-history .taskly-history-content {
-  padding: 12px 20px 20px;
-}
-
-.ts-history-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.ts-history-table {
-  width: 100%;
-  min-width: 620px;
-  border-collapse: separate;
-  border-spacing: 0;
-  text-align: left;
-  font-size: 13px;
-}
-
-.ts-history-table th {
-  padding: 13px 12px;
-  background: #e5f5eb;
-  color: #152d21;
-  font-size: 13px;
-}
-
-.ts-history-table td {
-  padding: 12px;
-  border-bottom: 1px solid #e7eee9;
-  vertical-align: middle;
-  overflow-wrap: anywhere;
-}
-
-.ts-history-table tr:nth-child(even) {
-  background: #fafcfb;
-}
-
-.ts-number {
-  font-weight: 800;
-  color: #11251a;
-  white-space: nowrap;
-}
-
-.ts-status {
-  display: inline-block;
-  padding: 6px 11px;
-  border-radius: 25px;
-  background: #e6f5ea;
-  color: #11683f;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.ts-status.is-progress {
-  background: #fff0bd;
-  color: #966000;
-}
-
-.ts-status.is-done {
-  background: #dfe7e7;
-  color: #394a4b;
-}
-
-.ts-row-detail summary {
-  padding: 6px 12px;
-  border: 1px solid #d8e8dd;
-  border-radius: 18px;
-  color: #006a3d;
-  cursor: pointer;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.ts-row-detail p {
-  margin: 9px 0 0;
-  max-width: 210px;
-  line-height: 1.45;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.ts-empty-row {
-  text-align: center;
-  color: #637b70;
-}
-
-/* PAGINATION */
-
-.ts-history-pager {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin: 16px 0 4px;
-}
-
-.ts-page-btn {
-  min-width: 36px;
-  min-height: 36px;
-  padding: 6px 11px;
-  border: 1px solid #cce7d8;
-  border-radius: 10px;
-  background: #fff;
-  color: #00663d;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.ts-page-btn.is-current {
-  border-color: #008451;
-  background: #008451;
-  color: #fff;
-}
-
-.ts-page-btn:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
-.ts-history .taskly-history-more {
-  display: none !important;
-}
-
-.ts-history-error {
-  color: #a33333;
-  font-size: 13px;
-}
-
-/* FENETRES MODALES */
-
-body.dashboard-page[data-workspace-page="support"]
-.ts-dialog,
-body.dashboard-page[data-workspace-page="support"]
-.client-support-follow-dialog {
-  width: min(600px, calc(100vw - 28px));
-  max-width: 600px;
-  max-height: calc(100dvh - 32px);
-  padding: 0;
-  border: 0;
-  border-radius: 19px;
-  overflow: auto;
-  box-sizing: border-box;
-  color: #132e24;
-  box-shadow: 0 20px 70px #082e263a;
-}
-
-.ts-dialog::backdrop,
-.client-support-follow-dialog::backdrop {
-  background: #091c1d85;
-}
-
-.ts-dialog-head {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  position: relative;
-  padding: 18px 21px;
-  background: linear-gradient(120deg, #087d51, #005c3c);
-  color: #fff;
-}
-
-.ts-modal-ico {
-  width: 51px;
-  height: 51px;
-  background: #ffffff20;
-  font-size: 31px;
-}
-
-.ts-dialog-head h2 {
-  margin: 0 0 4px;
-  font-size: 22px;
-  color: #fff;
-}
-
-.ts-dialog-head p {
-  margin: 0;
-  font-size: 12px;
-  color: #e1fff1;
-}
-
-.ts-close {
-  align-self: flex-start;
-  margin-left: auto;
-  width: 35px;
-  height: 35px;
-  border: 0;
-  border-radius: 9px;
-  background: #fff;
-  color: #006c48;
-  font-size: 26px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.ts-dialog-body {
-  padding: 20px 24px 23px;
-}
-
-/* FORMULAIRE */
-
-.ts-form {
-  display: grid;
-  gap: 13px;
-}
-
-.ts-form label {
-  display: grid;
-  gap: 7px;
-  font-size: 13px;
-  font-weight: 750;
-}
-
-.ts-form label span {
-  color: #c12131;
-}
-
-.ts-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.ts-form input,
-.ts-form select,
-.ts-form textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 11px 12px;
-  border: 1px solid #7ac5a3;
-  border-radius: 9px;
-  background: #fbfffc;
-  color: #152c21;
-  font: 14px Arial, sans-serif;
-}
-
-.ts-form textarea {
-  min-height: 92px;
-  resize: vertical;
-}
-
-.ts-dialog-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 5px;
-}
-
-.ts-dialog-buttons .ts-btn {
-  min-width: 140px;
-}
-
-.ts-follow-inline {
-  font-size: 12px;
-  color: #007c4a;
-  text-align: right;
-  font-weight: 700;
-  text-decoration: underline;
-}
-
-/* QUESTIONS FREQUENTES */
-
-.ts-faq {
-  display: grid;
-  gap: 9px;
-}
-
-.ts-faq details {
-  border: 1px solid #9bd9bc;
-  border-radius: 9px;
-  overflow: hidden;
-}
-
-.ts-faq details[open] {
-  background: #f4fcf7;
-}
-
-.ts-faq summary {
-  padding: 11px 13px;
-  font-size: 13px;
-  font-weight: 750;
-  cursor: pointer;
-}
-
-.ts-faq p {
-  padding: 0 14px 12px;
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-/* TABLETTES */
-
-@media (max-width: 1000px) {
-  .ts-actions {
-    gap: 10px;
-  }
-
-  .ts-action {
-    padding: 14px;
-    grid-template-columns: 42px minmax(0, 1fr);
-  }
-
-  .ts-action-icon {
-    width: 42px;
-    height: 42px;
-    font-size: 26px;
-  }
-
-  .ts-action h2 {
-    font-size: 16px;
-  }
-
-  .ts-action p {
-    font-size: 12px;
-  }
-
-  .ts-hero-art {
-    min-width: 135px;
-  }
-
-  .ts-screen {
-    width: 105px;
-    height: 74px;
-  }
-}
-
-/* TELEPHONES */
-
-@media (max-width: 760px) {
-  .ts-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .ts-action {
-    grid-template-columns: 55px minmax(0, 1fr);
-  }
-
-  .ts-action-icon {
-    width: 52px;
-    height: 52px;
-  }
-
-  .ts-hero {
-    padding: 18px;
-    gap: 12px;
-  }
-
-  .ts-headset {
-    width: 52px;
-    height: 52px;
-    font-size: 32px;
-  }
-
-  .ts-hero-art {
-    display: none;
-  }
-
-  .ts-hero-copy h1 {
-    font-size: 25px;
-  }
-
-  .ts-hero-copy p br {
-    display: none;
-  }
-
-  .ts-form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .ts-dialog-body {
-    padding: 16px;
-  }
-
-  .ts-dialog-buttons {
-    flex-wrap: wrap;
-  }
-
-  .ts-dialog-buttons .ts-btn {
-    flex: 1 1 140px;
-  }
-
-  .ts-history .taskly-history-content {
-    padding: 10px;
-  }
-
-  .ts-history .taskly-history-toggle {
-    padding: 15px;
-  }
-}
+  min-height:165px; padding:19px 23px; gap:22px;
+  border-radius:23px; isolation:isolate;
+  background:linear-gradient(107deg,#ddf6e9 0%,#e8f9ef 62%,#a0edc6 100%);
+}
+.taskly-support-redesign .ts-hero::before,
+.taskly-support-redesign .ts-hero::after {
+  content:"";position:absolute;pointer-events:none;z-index:-1;
+  width:45%;height:180px;right:-6%;bottom:-126px;
+  border-radius:50% 50% 0 0;background:#56d99b67;transform:rotate(-12deg);
+}
+.taskly-support-redesign .ts-hero::after{width:36%;right:-15%;bottom:-108px;background:#25bd80a1;transform:rotate(17deg)}
+.taskly-support-redesign .ts-headset{
+  width:77px;height:77px;border-radius:20px;
+  background:linear-gradient(135deg,#009152,#006331);
+  box-shadow:0 5px 12px #0a65472b;
+}
+.taskly-support-redesign .ts-headset svg{width:49px;height:49px;color:#fff}
+.taskly-support-redesign .ts-hero-copy h1{font-size:clamp(27px,2.6vw,39px)!important;font-weight:850;letter-spacing:-.9px;color:#080e0b}
+.taskly-support-redesign .ts-hero-copy p{font-size:clamp(13px,1.16vw,17px);font-weight:550;line-height:1.6;color:#17231b}
+.taskly-support-redesign .ts-hero-art{position:relative;min-width:305px;justify-content:flex-end;padding-right:18px;gap:17px}
+.taskly-support-redesign .ts-bubble{z-index:2;align-self:flex-start;margin-top:0;background:#008d56;padding:7px 15px;box-shadow:0 5px 10px #006a3a23;font-weight:900}
+.taskly-support-redesign .ts-laptop{position:relative;z-index:2;width:205px;flex:none;transform:rotate(2deg)}
+.taskly-support-redesign .ts-screen{width:190px;height:112px;box-sizing:border-box;border:8px solid #101718;border-radius:9px;background:linear-gradient(140deg,#03b464,#007e43);transform:none;box-shadow:0 4px 0 #404949}
+.taskly-support-redesign .ts-screen svg{width:38px;height:38px;color:white}
+.taskly-support-redesign .ts-screen strong{font-size:25px;letter-spacing:-.6px}
+.taskly-support-redesign .ts-keyboard{height:9px;width:215px;margin-left:-12px;background:linear-gradient(#647b73,#a9bcb5);border-radius:0 0 16px 16px;transform:perspective(70px) rotateX(20deg)}
+.taskly-support-redesign .ts-plant{position:relative;align-self:flex-end;width:48px;height:82px;margin-right:-25px;z-index:1}
+.taskly-support-redesign .ts-plant::before{content:"";position:absolute;width:4px;height:66px;left:23px;bottom:4px;background:#20944d;transform:rotate(12deg)}
+.taskly-support-redesign .ts-plant i{position:absolute;width:23px;height:14px;border-radius:90% 0 90% 0;background:#08b844;transform:rotate(-28deg)}
+.taskly-support-redesign .ts-plant i:nth-child(1){left:4px;top:8px;transform:rotate(42deg)}
+.taskly-support-redesign .ts-plant i:nth-child(2){left:25px;top:19px;transform:rotate(-39deg)}
+.taskly-support-redesign .ts-plant i:nth-child(3){left:1px;top:37px;transform:rotate(39deg)}
+.taskly-support-redesign .ts-plant i:nth-child(4){left:26px;top:48px;transform:rotate(-35deg)}
+.taskly-support-redesign .ts-plant i:nth-child(5){left:12px;top:0;transform:rotate(7deg)}
+.taskly-support-redesign .ts-plant b{position:absolute;bottom:0;left:11px;width:27px;height:17px;background:#a9b9a4;clip-path:polygon(0 0,100% 0,85% 100%,15% 100%)}
+.taskly-support-redesign .ts-actions{gap:17px;margin:20px 0 20px}
+.taskly-support-redesign .ts-action{padding:19px 19px 18px;border-radius:22px;border:1px solid #e0e5e3;box-shadow:0 4px 13px #17382e1c;grid-template-columns:65px minmax(0,1fr);gap:11px 14px;min-height:181px}
+.taskly-support-redesign .ts-action-icon{width:63px;height:63px;border-radius:19px;background:linear-gradient(135deg,#d8f4e3,#e5f8ed);box-shadow:none}
+.taskly-support-redesign .ts-action-icon svg{width:38px;height:38px;stroke:#006f37}
+.taskly-support-redesign .ts-action h2{font-size:clamp(18px,1.45vw,23px);font-weight:800;line-height:1.2;margin:1px 0 6px;letter-spacing:-.35px}
+.taskly-support-redesign .ts-action p{font-size:clamp(12px,1.05vw,15px);line-height:1.42;color:#141d19}
+.taskly-support-redesign .ts-btn{min-height:46px;border-radius:999px;font-size:clamp(13px,1.08vw,16px);font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.taskly-support-redesign .ts-btn svg, .ts-dialog .ts-btn svg{width:23px;height:23px;flex:none}
+.taskly-support-redesign .ts-primary{background:linear-gradient(180deg,#009855,#006b36);box-shadow:inset 0 1px #ffffff39}
+.taskly-support-redesign .ts-outline{border:2px solid #00863f;background:#fff;color:#006b36}
+body.dashboard-page[data-workspace-page="support"] .ts-history{margin-top:21px;border-radius:23px;border:1px solid #e1e6e3;box-shadow:0 5px 13px #153d321b;background:white}
+.taskly-support-redesign .ts-history .taskly-history-toggle{padding:20px 21px 18px;min-height:80px}
+.taskly-support-redesign .ts-history .taskly-history-icon{width:62px;height:62px;flex:none;background:#d9f6e6;border-radius:17px;display:grid;place-items:center;font-size:0}
+.taskly-support-redesign .ts-history .taskly-history-icon svg{width:37px;height:37px;stroke:#006b34}
+.taskly-support-redesign .ts-history .taskly-history-label strong{font-size:21px;font-weight:800;letter-spacing:-.35px}
+.taskly-support-redesign .ts-history .taskly-history-label small{font-size:14px;line-height:1.35;margin-top:5px}
+.taskly-support-redesign .ts-history .taskly-history-content{padding:0 19px 18px}
+.taskly-support-redesign .ts-history-table-wrap{border:1px solid #e3e8e5;border-radius:15px;overflow-x:auto}
+.taskly-support-redesign .ts-history-table{border-spacing:0;min-width:640px;font-size:14px}
+.taskly-support-redesign .ts-history-table th{background:#e4f4eb;padding:14px 14px;color:#080e0a;text-transform:none;font-weight:800;font-size:14px}
+.taskly-support-redesign .ts-history-table td{padding:13px 14px;color:#17251d;font-size:14px}
+.taskly-support-redesign .ts-history-table tr:nth-child(even){background:#fbfcfd}
+.taskly-support-redesign .ts-history-pager{margin:12px 0 4px;gap:7px}
+.taskly-support-redesign .ts-page-btn{min-height:32px;min-width:33px;border-radius:8px;padding:5px 10px}
+body.dashboard-page[data-workspace-page="support"] .ts-dialog{max-width:610px;border-radius:21px}
+body.dashboard-page[data-workspace-page="support"] .ts-dialog-head{background:linear-gradient(120deg,#00844e,#006739 80%);padding:18px 24px}
+body.dashboard-page[data-workspace-page="support"] .ts-modal-ico{background:#ffffff1e;width:55px;height:55px;border-radius:15px}
+body.dashboard-page[data-workspace-page="support"] .ts-modal-ico svg{width:34px;height:34px}
+body.dashboard-page[data-workspace-page="support"] .ts-dialog-head h2{font-size:24px;font-weight:800}
+body.dashboard-page[data-workspace-page="support"] .ts-dialog-body{padding:18px 24px 20px}
+body.dashboard-page[data-workspace-page="support"] .ts-faq details{border-radius:9px}
+@media(max-width:1150px){.taskly-support-redesign .ts-hero-art{min-width:185px;padding-right:0}.taskly-support-redesign .ts-plant{display:none}.taskly-support-redesign .ts-laptop{width:160px}.taskly-support-redesign .ts-screen{width:155px;height:100px}.taskly-support-redesign .ts-keyboard{width:172px}.taskly-support-redesign .ts-action{grid-template-columns:48px minmax(0,1fr);padding:14px;min-height:180px}.taskly-support-redesign .ts-action-icon{width:46px;height:46px}.taskly-support-redesign .ts-action-icon svg{width:30px;height:30px}}
+@media(max-width:760px){.taskly-support-redesign .ts-hero{min-height:125px;padding:17px;gap:12px}.taskly-support-redesign .ts-headset{width:53px;height:53px;border-radius:14px}.taskly-support-redesign .ts-headset svg{width:34px;height:34px}.taskly-support-redesign .ts-hero-art{display:none}.taskly-support-redesign .ts-actions{grid-template-columns:1fr;gap:12px}.taskly-support-redesign .ts-action{grid-template-columns:56px minmax(0,1fr);min-height:auto}.taskly-support-redesign .ts-action-icon{width:53px;height:53px}.taskly-support-redesign .ts-history .taskly-history-toggle{padding:12px}.taskly-support-redesign .ts-history .taskly-history-icon{width:47px;height:47px}.taskly-support-redesign .ts-history .taskly-history-icon svg{width:27px;height:27px}.taskly-support-redesign .ts-history .taskly-history-label strong{font-size:17px}.taskly-support-redesign .ts-history .taskly-history-label small{font-size:12px}.taskly-support-redesign .ts-history .taskly-history-content{padding:0 9px 12px}}
