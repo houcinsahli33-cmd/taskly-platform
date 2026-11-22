@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             const call = current;
             const playing = window.TasklyPhoneRing.start('global',
-                () => current === call && !suppressed(call),
+                () => current?.id === call.id && !suppressed(current),
                 'incoming');
             get('ring').hidden = playing;
             return;
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             panel.hidden = true;
             // Audio plays only if the browser has already allowed sound.
             window.TasklyPhoneRing?.start('global',
-                () => current === call && Boolean(window.TasklyCallHost?.isActive()),
+                () => current?.id === call.id && !suppressed(current) && Boolean(window.TasklyCallHost?.isActive()),
                 'incoming');
             return;
         }
