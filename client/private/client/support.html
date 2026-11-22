@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -10,405 +9,104 @@
   <script defer src="/js/api.js"></script>
   <script defer src="/js/auth.js"></script>
   <script defer src="/js/client-dashboard.js"></script>
-  <link rel="stylesheet" href="/css/account-profile.css">
-  <link rel="stylesheet" href="/css/taskly-workspace-forms.css">
-  <script defer src="/js/account-confirmation.js"></script>
-  <script defer src="/js/contact.js"></script>
-  <link rel="stylesheet" href="/css/workspace-pro.css">
-  <script defer src="/js/workspace-dialogs.js"></script>
-  <link rel="stylesheet" href="/css/client-refonte.css">
-  <link rel="stylesheet" href="/css/client-design-fidele.css?v=20261012-maquette">
-  <link rel="stylesheet" href="/css/taskly-support-history.css">
-  <link rel="stylesheet" href="/css/taskly-support-redesign.css">
-</head>
-<body class="dashboard-page taskly-support-paginated"
-      data-require-role="client"
-      data-workspace-page="support">
-
+<link rel="stylesheet" href="/css/account-profile.css"><link rel="stylesheet" href="/css/taskly-workspace-forms.css"><script defer src="/js/account-confirmation.js"></script><script defer src="/js/contact.js"></script><link rel="stylesheet" href="/css/workspace-pro.css"><script defer src="/js/workspace-dialogs.js"></script>  <link rel="stylesheet" href="/css/client-refonte.css"><link rel="stylesheet" href="/css/client-design-fidele.css?v=20261012-maquette">
+<link rel="stylesheet" href="/css/taskly-support-history.css"><link rel="stylesheet" href="/css/taskly-support-redesign.css"></head>
+<body class="dashboard-page taskly-support-paginated" data-require-role="client" data-workspace-page="support">
   <div id="site-header"></div>
-
   <main class="dashboard-shell">
-    <!-- Navigation client conservée -->
+    <!-- Navigation client -->
     <aside class="sidebar">
       <p class="sidebar-title">Espace client</p>
-      <nav class="side-nav">
-        <a href="/espace/client/accueil"
-           data-dashboard-link="accueil">Vue d’ensemble</a>
-        <a href="/espace/client/demandes"
-           data-dashboard-link="demandes">Mes demandes</a>
-        <a href="/espace/client/profil"
-           data-dashboard-link="profil">Mon profil</a>
-        <a href="/espace/client/support"
-           class="active"
-           aria-current="page"
-           data-dashboard-link="support">Support</a>
+      <nav class="side-nav"><a href="/espace/client/accueil" data-dashboard-link="accueil">Vue d’ensemble</a>
+        <a href="/espace/client/demandes" data-dashboard-link="demandes">Mes demandes</a>
+        <a href="/espace/client/profil" data-dashboard-link="profil">Mon profil</a>
+        <a href="/espace/client/support" class="active" aria-current="page" data-dashboard-link="support">Support</a>
+
       </nav>
-      <div class="client-side-bottom">
-        <button type="button" data-logout>
-          <svg aria-hidden="true" viewBox="0 0 24 24">
-            <path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 7l5 5-5 5M20 12H9"></path>
-          </svg>
-          Déconnexion
-        </button>
-        <p>Votre espace personnel Taskly</p>
-      </div>
+      <div class="client-side-bottom"><button type="button" data-logout><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 7l5 5-5 5M20 12H9"></path></svg>Déconnexion</button><p>Votre espace personnel Taskly</p></div>
     </aside>
 
-    <!-- Nouvelle interface Support -->
+    <!-- Contenu client -->
     <section class="dashboard-content taskly-support-redesign">
-
-      <!-- Bannière -->
       <header class="ts-hero">
-        <span class="ts-headset" aria-hidden="true">☏</span>
-        <div class="ts-hero-copy">
-          <h1>Support Taskly</h1>
-          <p>
-            Une question, un problème ou un besoin d’assistance ?
-            <br>
-            Notre équipe est là pour vous aider rapidement.
-          </p>
-        </div>
-        <div class="ts-hero-art" aria-hidden="true">
-          <span class="ts-bubble">•••</span>
-          <div class="ts-screen">
-            <span>◉</span>
-            <strong>taskly</strong>
-          </div>
-        </div>
+        <span class="ts-headset" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="2" y="13" width="4" height="7" rx="2"/><rect x="18" y="13" width="4" height="7" rx="2"/><path d="M20 20c0 2-3 3-7 3h-2"/></svg></span>
+        <div class="ts-hero-copy"><h1>Support Taskly</h1><p>Une question, un problème ou un besoin d’assistance ?<br>Notre équipe est là pour vous aider rapidement.</p></div>
+        <div class="ts-hero-art" aria-hidden="true"><span class="ts-bubble">•••</span><div class="ts-plant"><i></i><i></i><i></i><i></i><i></i><b></b></div><div class="ts-laptop"><div class="ts-screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="2" y="13" width="4" height="7" rx="2"/><rect x="18" y="13" width="4" height="7" rx="2"/><path d="M20 20c0 2-3 3-7 3h-2"/></svg><strong>taskly</strong></div><div class="ts-keyboard"></div></div></div>
       </header>
-
-      <!-- Trois cartes principales -->
       <div class="ts-actions">
-        <article class="ts-action">
-          <span class="ts-action-icon" aria-hidden="true">✉</span>
-          <div>
-            <h2>Nous contacter</h2>
-            <p>Envoyez-nous un message et obtenez une réponse.</p>
-          </div>
-          <button type="button"
-                  class="ts-btn ts-primary"
-                  data-ts-open="contact">
-            ✉ &nbsp; Nouvelle demande
-          </button>
-        </article>
-
-        <article class="ts-action">
-          <span class="ts-action-icon" aria-hidden="true">⌕</span>
-          <div>
-            <h2>Suivre ma demande</h2>
-            <p>
-              Consultez l’état de votre message avec votre
-              e-mail et votre numéro de suivi.
-            </p>
-          </div>
-          <button type="button"
-                  class="ts-btn ts-outline"
-                  data-open-support-follow>
-            ⌕ &nbsp; Suivre mon message
-          </button>
-        </article>
-
-        <article class="ts-action">
-          <span class="ts-action-icon" aria-hidden="true">?</span>
-          <div>
-            <h2>Questions fréquentes</h2>
-            <p>
-              Trouvez rapidement des réponses aux questions
-              les plus courantes.
-            </p>
-          </div>
-          <button type="button"
-                  class="ts-btn ts-outline"
-                  data-ts-open="faq">
-            ▣ &nbsp; Voir la FAQ
-          </button>
-        </article>
+        <article class="ts-action"><span class="ts-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></span><div><h2>Nous contacter</h2><p>Envoyez-nous un message et obtenez une réponse.</p></div><button type="button" class="ts-btn ts-primary" data-ts-open="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg> Nouvelle demande</button></article>
+        <article class="ts-action"><span class="ts-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 6 6"/></svg></span><div><h2>Suivre ma demande</h2><p>Consultez l’état de votre message avec votre e-mail et votre numéro de suivi.</p></div><button type="button" class="ts-btn ts-outline" data-open-support-follow><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7.5"/><path d="m16 16 6 6"/></svg> Suivre mon message</button></article>
+        <article class="ts-action"><span class="ts-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 4.5 1.5C13 11.5 12 12 12 14"/><path d="M12 17h.01"/></svg></span><div><h2>Questions fréquentes</h2><p>Trouvez rapidement des réponses aux questions les plus courantes.</p></div><button type="button" class="ts-btn ts-outline" data-ts-open="faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-3-2-7-2-10-1v15c3-1 7-1 10 1m0-15c3-2 7-2 10-1v15c-3-1-7-1-10 1m0-15v15"/></svg> Voir la FAQ</button></article>
       </div>
-
-      <!-- Historique compact -->
-      <section class="client-support-history panel ts-history"
-               data-support-history
-               aria-label="Historique des messages au support">
-
-        <button type="button"
-                class="taskly-history-toggle"
-                data-support-history-toggle
-                aria-controls="taskly-history-content"
-                aria-expanded="false">
-          <span class="taskly-history-icon"
-                aria-hidden="true">▤</span>
-          <span class="taskly-history-label">
-            <strong>Mes messages de support</strong>
-            <small>
-              Suivez l’historique de vos échanges
-              avec notre équipe.
-            </small>
-          </span>
-          <span class="taskly-history-chevron"
-                aria-hidden="true">⌄</span>
+      <section class="client-support-history panel ts-history" data-support-history aria-label="Historique des messages au support">
+        <button type="button" class="taskly-history-toggle" data-support-history-toggle aria-controls="taskly-history-content" aria-expanded="false">
+          <span class="taskly-history-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+          <span class="taskly-history-label"><strong>Mes messages de support</strong><small>Suivez l’historique de vos échanges avec notre équipe.</small></span>
+          <span class="taskly-history-chevron" aria-hidden="true">⌄</span>
         </button>
-
-        <div class="taskly-history-content"
-             id="taskly-history-content" hidden>
-
-          <div class="ts-history-table-wrap">
-            <table class="ts-history-table">
-              <thead>
-                <tr>
-                  <th>N° de demande</th>
-                  <th>Objet</th>
-                  <th>Statut</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody data-support-history-list
-                     role="status"
-                     aria-live="polite"></tbody>
-            </table>
-          </div>
-
-          <!-- Pagination réelle alimentée par JavaScript -->
-          <div class="ts-history-pager"
-               data-support-pagination
-               aria-label="Pagination de l’historique">
-          </div>
-
-          <button type="button"
-                  class="btn outline taskly-history-more"
-                  data-support-history-more hidden>
-            Afficher les messages précédents
-          </button>
-
-          <a href="#suivre-message"
-             class="taskly-history-old"
-             data-open-support-follow>
-            Retrouver un ancien message avec son numéro de suivi
-          </a>
+        <div class="taskly-history-content" id="taskly-history-content" hidden>
+          <div class="ts-history-table-wrap"><table class="ts-history-table"><thead><tr><th>N° de demande</th><th>Objet</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead><tbody data-support-history-list role="status" aria-live="polite"></tbody></table></div>
+          <div class="ts-history-pager" data-support-pagination aria-label="Pagination de l’historique"></div>
+          <button type="button" class="btn outline taskly-history-more" data-support-history-more hidden>Afficher les messages précédents</button>
+          <a href="#suivre-message" class="taskly-history-old" data-open-support-follow>Retrouver un ancien message avec son numéro de suivi</a>
         </div>
       </section>
     </section>
   </main>
 
-  <!-- Fenêtre Nouvelle demande -->
-  <dialog id="ts-contact-dialog"
-          class="ts-dialog"
-          aria-labelledby="ts-contact-title">
 
-    <div class="ts-dialog-head">
-      <span class="ts-modal-ico" aria-hidden="true">☏</span>
-      <div>
-        <h2 id="ts-contact-title">Nouvelle demande</h2>
-        <p>
-          Créez une nouvelle demande de support
-          en quelques étapes.
-        </p>
-      </div>
-      <button type="button"
-              class="ts-close"
-              data-ts-close
-              aria-label="Fermer">×</button>
-    </div>
-
-    <div class="ts-dialog-body">
-      <div id="contact-alert"
-           class="alert"
-           role="status"
-           aria-live="polite"></div>
-
+  <dialog id="ts-contact-dialog" class="ts-dialog" aria-labelledby="ts-contact-title">
+    <div class="ts-dialog-head"><span aria-hidden="true" class="ts-modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="2" y="13" width="4" height="7" rx="2"/><rect x="18" y="13" width="4" height="7" rx="2"/><path d="M20 20c0 2-3 3-7 3h-2"/></svg></span><div><h2 id="ts-contact-title">Nouvelle demande</h2><p>Créez une nouvelle demande de support en quelques étapes.</p></div><button type="button" class="ts-close" data-ts-close aria-label="Fermer">×</button></div>
+    <div class="ts-dialog-body"><div id="contact-alert" class="alert" role="status" aria-live="polite"></div>
       <form id="contact-form" class="ts-form">
-        <div class="ts-form-row">
-          <label>
-            Nom complet <span>*</span>
-            <input class="form-control"
-                   id="contact-name"
-                   maxlength="150"
-                   autocomplete="name"
-                   required>
-          </label>
-          <label>
-            Adresse e-mail <span>*</span>
-            <input class="form-control"
-                   id="contact-email"
-                   type="email"
-                   maxlength="254"
-                   autocomplete="email"
-                   required>
-          </label>
-        </div>
-
-        <label>
-          Sujet de votre demande <span>*</span>
-          <select class="form-select"
-                  id="contact-subject"
-                  data-support-subjects
-                  required></select>
-        </label>
-
-        <label>
-          Votre message <span>*</span>
-          <textarea class="form-textarea"
-                    id="contact-message"
-                    minlength="10"
-                    maxlength="5000"
-                    required
-                    placeholder="Décrivez votre demande en détail…"></textarea>
-        </label>
-
-        <a href="#suivre-message"
-           class="ts-follow-inline"
-           data-open-support-follow>
-          Déjà envoyé ? Suivre mon message
-        </a>
-
-        <div class="ts-dialog-buttons">
-          <button type="button"
-                  class="ts-btn ts-outline"
-                  data-ts-close>Annuler</button>
-          <button type="submit"
-                  class="ts-btn ts-primary">
-            ➤ &nbsp; Envoyer ma demande
-          </button>
-        </div>
+        <div class="ts-form-row"><label>Nom complet <span>*</span><input class="form-control" id="contact-name" maxlength="150" required autocomplete="name"></label><label>Adresse e-mail <span>*</span><input class="form-control" id="contact-email" type="email" maxlength="254" required autocomplete="email"></label></div>
+        <label>Sujet de votre demande <span>*</span><select class="form-select" id="contact-subject" data-support-subjects required></select></label>
+        <label>Votre message <span>*</span><textarea class="form-textarea" id="contact-message" minlength="10" maxlength="5000" required placeholder="Décrivez votre demande en détail…"></textarea></label>
+        <a href="#suivre-message" class="ts-follow-inline" data-open-support-follow>Déjà envoyé ? Suivre mon message</a>
+        <div class="ts-dialog-buttons"><button type="button" class="ts-btn ts-outline" data-ts-close>Annuler</button><button type="submit" class="ts-btn ts-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg> Envoyer ma demande</button></div>
       </form>
     </div>
   </dialog>
-
-  <!-- Fenêtre Questions fréquentes -->
-  <dialog id="ts-faq-dialog"
-          class="ts-dialog"
-          aria-labelledby="ts-faq-title">
-
-    <div class="ts-dialog-head">
-      <span class="ts-modal-ico" aria-hidden="true">?</span>
-      <div>
-        <h2 id="ts-faq-title">Questions fréquentes</h2>
-        <p>
-          Retrouvez ici les réponses aux questions
-          les plus courantes sur Taskly.
-        </p>
-      </div>
-      <button type="button"
-              class="ts-close"
-              data-ts-close
-              aria-label="Fermer">×</button>
-    </div>
-
+  <dialog id="ts-faq-dialog" class="ts-dialog" aria-labelledby="ts-faq-title">
+    <div class="ts-dialog-head"><span class="ts-modal-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 4.5 1.5C13 11.5 12 12 12 14"/><path d="M12 17h.01"/></svg></span><div><h2 id="ts-faq-title">Questions fréquentes</h2><p>Retrouvez ici les réponses aux questions les plus courantes sur Taskly.</p></div><button type="button" class="ts-close" data-ts-close aria-label="Fermer">×</button></div>
     <div class="ts-dialog-body ts-faq">
-      <details>
-        <summary>Comment créer un compte artisan ?</summary>
-        <p>
-          Choisissez l’inscription artisan, remplissez
-          les informations demandées et suivez les
-          étapes de vérification de votre compte.
-        </p>
-      </details>
-
-      <details>
-        <summary>
-          Comment envoyer une demande de service ?
-        </summary>
-        <p>
-          Depuis l’espace client, recherchez un artisan,
-          ouvrez son profil et utilisez le formulaire
-          de demande de service.
-        </p>
-      </details>
-
-      <details>
-        <summary>Comment suivre ma demande ?</summary>
-        <p>
-          Retrouvez vos demandes de service dans
-          « Mes demandes ». Pour une demande de support,
-          utilisez « Suivre mon message » avec votre
-          e-mail et votre numéro de suivi.
-        </p>
-      </details>
-
-      <details>
-        <summary>Comment contacter un artisan ?</summary>
-        <p>
-          Utilisez les moyens de contact autorisés
-          sur le profil de l’artisan, notamment
-          la messagerie privée si elle est disponible.
-        </p>
-      </details>
-
-      <details>
-        <summary>Comment modifier mon profil ?</summary>
-        <p>
-          Accédez à « Mon profil » dans votre espace
-          personnel pour mettre à jour les
-          informations autorisées.
-        </p>
-      </details>
+      <details><summary>Comment créer un compte artisan ?</summary><p>Choisissez l’inscription artisan, remplissez les informations demandées et suivez les étapes de vérification de votre compte.</p></details>
+      <details><summary>Comment envoyer une demande de service ?</summary><p>Depuis l’espace client, recherchez un artisan, ouvrez son profil et utilisez le formulaire de demande de service.</p></details>
+      <details><summary>Comment suivre ma demande ?</summary><p>Retrouvez vos demandes de service dans « Mes demandes ». Pour une demande de support, utilisez « Suivre mon message » avec votre e-mail et votre numéro de suivi.</p></details>
+      <details><summary>Comment contacter un artisan ?</summary><p>Utilisez les moyens de contact autorisés sur le profil de l’artisan, notamment la messagerie privée si elle est disponible.</p></details>
+      <details><summary>Comment modifier mon profil ?</summary><p>Accédez à « Mon profil » dans votre espace personnel pour mettre à jour les informations autorisées.</p></details>
     </div>
   </dialog>
 
-  <noscript>
-    <p>
-      <a href="/follow-message.html">
-        Suivre un message sans JavaScript
-      </a>
-    </p>
-  </noscript>
+  <!-- Modale avis -->
+  
 
-  <!-- Fenêtre de suivi existante : logique conservée -->
-  <dialog id="client-support-follow-dialog"
-          class="client-support-follow-dialog"
-          aria-labelledby="client-follow-title"
-          aria-describedby="client-follow-description">
+  <!-- Modale signalement -->
+  
 
+  <noscript><p><a href="/follow-message.html">Suivre un message sans JavaScript</a></p></noscript>
+  <!-- Suivi réel via /api/contact/suivi : mêmes champs et même script métier que la page existante. -->
+  <dialog id="client-support-follow-dialog" class="client-support-follow-dialog" aria-labelledby="client-follow-title" aria-describedby="client-follow-description">
     <div class="client-follow-header">
-      <div>
-        <h2 id="client-follow-title">Suivre mon message</h2>
-        <p id="client-follow-description">
-          Retrouvez votre message avec l’e-mail
-          utilisé et son numéro de suivi.
-        </p>
-      </div>
-      <button type="button"
-              class="client-follow-close"
-              data-close-support-follow
-              aria-label="Fermer la fenêtre">×</button>
+      <div><h2 id="client-follow-title">Suivre mon message</h2>
+      <p id="client-follow-description">Retrouvez votre message avec l’e-mail utilisé et son numéro de suivi.</p></div>
+      <button type="button" class="client-follow-close" data-close-support-follow aria-label="Fermer la fenêtre">×</button>
     </div>
-
     <form id="follow-form" class="client-follow-form">
       <label for="follow-email">Adresse e-mail</label>
-      <input class="form-control"
-             id="follow-email"
-             type="email"
-             required
-             maxlength="254"
-             autocomplete="email"
-             placeholder="Adresse e-mail du message">
-
+      <input class="form-control" id="follow-email" type="email" required maxlength="254" autocomplete="email" placeholder="Adresse e-mail du message">
       <label for="follow-id">Numéro de suivi</label>
-      <input class="form-control"
-             id="follow-id"
-             type="text"
-             required
-             inputmode="numeric"
-             maxlength="30"
-             placeholder="Exemple : 123">
-
-      <div id="follow-result"
-           role="status"
-           aria-live="polite"></div>
-
+      <input class="form-control" id="follow-id" type="text" required inputmode="numeric" maxlength="30" placeholder="Exemple : 123">
+      <div id="follow-result" role="status" aria-live="polite"></div>
       <div class="client-follow-actions">
-        <button type="button"
-                class="btn outline"
-                data-close-support-follow>Annuler</button>
-        <button type="submit"
-                class="btn primary">Rechercher</button>
+        <button type="button" class="btn outline" data-close-support-follow>Annuler</button>
+        <button type="submit" class="btn primary">Rechercher</button>
       </div>
     </form>
   </dialog>
-
-  <!-- Scripts métiers et nouveaux scripts de présentation -->
   <script defer src="/js/client-support-follow-modal.js"></script>
-  <script defer src="/js/taskly-support-pagination.js"></script>
-  <script defer src="/js/taskly-support-redesign.js"></script>
+<script defer src="/js/taskly-support-history.js"></script>
+<script defer src="/js/taskly-support-pagination.js"></script>
+<script defer src="/js/taskly-support-redesign.js"></script>
 </body>
 </html>
