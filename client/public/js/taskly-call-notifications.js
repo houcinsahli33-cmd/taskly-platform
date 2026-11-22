@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 c.demandeId <= 2147483647 &&
                 typeof c.id === 'string' &&
                 ['audio', 'video'].includes(c.mode) &&
-                (!suppressed(c) || (current?.id === c.id && window.TasklyCallHost?.isActive())) &&
+                (!suppressed(c) || (window.TasklyCallHost?.isActive() && window.TasklyCallHost?.currentConversation?.() === c.demandeId)) &&
                 !(c.id === snoozedId &&
                     Date.now() < snoozedUntil)
             );
