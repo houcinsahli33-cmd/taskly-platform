@@ -10,7 +10,7 @@ function error(message, status = 403) {
 
 function internalAddress(address) {
     return email(address) &&
-        /^[a-z0-9-]+\.taskly\.test$/.test(address.split('@')[1]);
+        /^[a-z0-9-]+\.taskly\.(?:test|dz)$/.test(address.split('@')[1]);
 }
 
 function createInternalGateway({transaction, profil, correspond, env = process.env, clientEnabled = false, enableNotifications = false, sendNotification, attachmentStorage}) {

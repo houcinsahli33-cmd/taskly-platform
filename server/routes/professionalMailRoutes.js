@@ -93,7 +93,7 @@ function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){consol
 artisan.get('/',wrap(async(req,res)=>{if(req.session.utilisateur.role==='client')await transaction(conn=>profil(conn,req.session.utilisateur.id));const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal});}));
 artisan.post('/request',sensible,wrap(async(req,res)=>{
  if(internalMode&&!gateway.configured)throw erreur('Configuration interne invalide.',503);
- const domain=domaine(internalMode?'taskly.test':process.env.TASKLY_MAIL_DOMAIN);if(!domain||!require('../services/emailService').estConfigure())throw erreur('Domaine ou service de confirmation non configuré.',503);
+ const domain=domaine(internalMode?'taskly.dz':process.env.TASKLY_MAIL_DOMAIN);if(!domain||!require('../services/emailService').estConfigure())throw erreur('Domaine ou service de confirmation non configuré.',503);
  const code=crypto.randomInt(0,1000000).toString().padStart(6,'0'),uid=req.session.utilisateur.id;
  const data=await transaction(async conn=>{
   const p=await profil(conn,uid);
