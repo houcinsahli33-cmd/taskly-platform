@@ -31,13 +31,13 @@
   function center() {
     if (!host) return;
     host.style.left = Math.max(8, Math.round((innerWidth - host.offsetWidth) / 2)) + 'px';
-    host.style.top = Math.max(8, Math.min(128, Math.round(innerHeight * 0.13))) + 'px';
+    host.style.top = Math.max(8, Math.min(innerWidth <= 700 ? Math.round((innerHeight - host.offsetHeight) / 2) : Math.min(128, Math.round(innerHeight * 0.13)), innerHeight - host.offsetHeight - 8)) + 'px';
   }
   function clampPosition() {
     if (!host || state === 'max') return;
     const r = host.getBoundingClientRect();
-    const left = Math.max(6, Math.min(r.left, innerWidth - Math.min(74, r.width)));
-    const top = Math.max(6, Math.min(r.top, innerHeight - 42));
+    const left = innerWidth <= 700 ? Math.max(6, Math.min(r.left, Math.max(6, innerWidth - r.width - 6))) : Math.max(6, Math.min(r.left, innerWidth - Math.min(74, r.width)));
+    const top = innerWidth <= 700 ? Math.max(6, Math.min(r.top, Math.max(6, innerHeight - r.height - 6))) : Math.max(6, Math.min(r.top, innerHeight - 42));
     host.style.left = Math.round(left) + 'px';
     host.style.top = Math.round(top) + 'px';
   }
@@ -131,8 +131,8 @@
     });
     title.addEventListener('pointermove', event => {
       if (!dragging) return;
-      el.style.left = Math.round(Math.max(6, Math.min(dragging.left + event.clientX - dragging.x, innerWidth - 74))) + 'px';
-      el.style.top = Math.round(Math.max(6, Math.min(dragging.top + event.clientY - dragging.y, innerHeight - 42))) + 'px';
+      el.style.left = Math.round(Math.max(6, Math.min(dragging.left + event.clientX - dragging.x, innerWidth <= 700 ? Math.max(6, innerWidth - el.offsetWidth - 6) : innerWidth - 74))) + 'px';
+      el.style.top = Math.round(Math.max(6, Math.min(dragging.top + event.clientY - dragging.y, innerWidth <= 700 ? Math.max(6, innerHeight - el.offsetHeight - 6) : innerHeight - 42))) + 'px';
     });
     const finishDrag = () => { dragging = null; };
     title.addEventListener('pointerup', finishDrag);

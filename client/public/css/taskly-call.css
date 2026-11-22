@@ -12,7 +12,7 @@
 }
 
 .taskly-call-dialog::backdrop {
-    background: #061d19b0;
+    background: transparent;
 }
 
 .taskly-call-dialog [hidden] {
