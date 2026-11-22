@@ -94,3 +94,183 @@ body.dashboard-page[data-workspace-page="support"] .ts-dialog-head h2{font-size:
 body.dashboard-page[data-workspace-page="support"] .ts-dialog-body{padding:18px 24px 20px}
 body.dashboard-page[data-workspace-page="support"] .ts-faq details{border-radius:9px}
 @media(max-width:1150px){.taskly-support-redesign .ts-hero-art{min-width:185px;padding-right:0}.taskly-support-redesign .ts-plant{display:none}.taskly-support-redesign .ts-laptop{width:160px}.taskly-support-redesign .ts-screen{width:155px;height:100px}.taskly-support-redesign .ts-keyboard{width:172px}.taskly-support-redesign .ts-action{grid-template-columns:48px minmax(0,1fr);padding:14px;min-height:180px}.taskly-support-redesign .ts-action-icon{width:46px;height:46px}.taskly-support-redesign .ts-action-icon svg{width:30px;height:30px}}
+
+
+/* ==============================================
+   TASKLY SUPPORT - HISTORIQUE DESIGN FINAL
+   Uniquement "Mes messages de support"
+   ============================================== */
+
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.client-support-history.ts-history {
+  background: #ffffff !important;
+  border: 1px solid #e5eae7 !important;
+  border-radius: 24px !important;
+  box-shadow: 0 6px 22px rgba(15, 44, 31, .10) !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+/* En-tête blanc sans séparation ni bordure */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history .taskly-history-toggle {
+  display: flex !important;
+  align-items: center !important;
+  gap: 17px !important;
+  width: 100% !important;
+  min-height: 104px !important;
+  margin: 0 !important;
+  padding: 20px 22px 16px !important;
+  background: #ffffff !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-align: left !important;
+}
+
+/* Icône */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history .taskly-history-icon {
+  width: 62px !important;
+  height: 62px !important;
+  flex: 0 0 62px !important;
+  border-radius: 18px !important;
+  background: #dff5e9 !important;
+  color: #087544 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* Titre et description */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history .taskly-history-label strong {
+  font-size: clamp(19px, 1.6vw, 23px) !important;
+  font-weight: 800 !important;
+  color: #0b1912 !important;
+  line-height: 1.25 !important;
+}
+
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history .taskly-history-label small {
+  font-size: 14px !important;
+  color: #435449 !important;
+  line-height: 1.5 !important;
+  margin-top: 5px !important;
+}
+
+/* Masquer la flèche décorative */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history .taskly-history-chevron {
+  display: none !important;
+}
+
+/* Contenu blanc sans séparation */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history .taskly-history-content {
+  padding: 0 20px 20px !important;
+  background: #ffffff !important;
+  border: 0 !important;
+  border-top: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Tableau comme la maquette */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history-table-wrap {
+  width: 100%;
+  border: 1px solid #e2e8e5 !important;
+  border-radius: 16px !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  background: #ffffff !important;
+}
+
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history-table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+/* En-têtes vert menthe */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history-table thead th {
+  padding: 16px 20px !important;
+  background: #e3f4e9 !important;
+  color: #101b15 !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  text-align: left !important;
+  border: none !important;
+  text-transform: none !important;
+}
+
+/* Lignes de l'historique */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history-table tbody td {
+  padding: 17px 20px !important;
+  border-bottom: 1px solid #e7ece9 !important;
+  color: #17231d !important;
+  font-size: 14px !important;
+  vertical-align: middle !important;
+}
+
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history-table tbody tr:nth-child(even) {
+  background: #f8faf9 !important;
+}
+
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history-table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+/* Conserver les boutons de pagination */
+body[data-workspace-page="support"]
+.taskly-support-redesign
+.ts-history .ts-history-pager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0 10px;
+}
+
+/* Adaptation téléphone */
+@media (max-width: 760px) {
+  body[data-workspace-page="support"]
+  .taskly-support-redesign
+  .ts-history .taskly-history-toggle {
+    min-height: 84px !important;
+    padding: 15px !important;
+    gap: 12px !important;
+  }
+
+  body[data-workspace-page="support"]
+  .taskly-support-redesign
+  .ts-history .taskly-history-icon {
+    width: 48px !important;
+    height: 48px !important;
+    flex-basis: 48px !important;
+  }
+
+  body[data-workspace-page="support"]
+  .taskly-support-redesign
+  .ts-history .taskly-history-content {
+    padding: 0 10px 15px !important;
+  }
+}
