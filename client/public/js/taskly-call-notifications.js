@@ -174,11 +174,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         beep();
     }
 
+    // Une interaction utilisateur peut debloquer le son alors que la fenetre
+    // d'appel persistante est deja ouverte. Ne pas appeler ring() dans ce cas :
+    // ring() ignore volontairement l'overlay et arreterait la sonnerie globale.
+    function reprendreSonnerieEntrante() {
+        if (closed || !current) return;
+        if (window.TasklyCallHost?.isActive()) {
+            const id = current.id;
+            window.TasklyPhoneRing?.start('global',
+                () => current?.id === id && Boolean(window.TasklyCallHost?.isActive()),
+                'incoming');
+            return;
+        }
+        ring();
+    }
+
     async function unlock() {
         if (window.TasklyPhoneRing) {
             if (!closed) {
-                await window.TasklyPhoneRing.unlock();
-                ring();
+                if (await window.TasklyPhoneRing.unlock()) {
+                    reprendreSonnerieEntrante();
+                }
             }
             return;
         }
