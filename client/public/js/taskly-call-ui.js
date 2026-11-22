@@ -261,13 +261,14 @@
                 : this.api(url);
         }
 
-        show(context, mode, incoming, transport = 'webrtc') {
+        show(context, mode, incoming, transport = 'webrtc', e2eeRequired = false) {
 
             const call = {
                 context,
                 mode,
                 incoming,
                 transport,
+                e2eeRequired: e2eeRequired === true,
                 accepted: false,
                 pending: false,
                 microphone: true,
@@ -281,9 +282,11 @@
             };
 
             call.media = new (
-                transport === 'livekit'
-                    ? window.TasklyCallLiveKit
-                    : window.TasklyCallMedia
+                call.e2eeRequired
+                    ? window.TasklyCallLiveKitE2EE
+                    : transport === 'livekit'
+                        ? window.TasklyCallLiveKit
+                        : window.TasklyCallMedia
             )(
                 stream => {
                     if (this.active !== call) return;
@@ -350,15 +353,28 @@
                 throw new Error('Appel annule.');
             }
 
+            // Verifier la presence de la cle avant de demander le jeton.
+            if (call.e2eeRequired &&
+                !window.TasklyE2EEManualKeys?.ready()) {
+                throw new Error('Cle E2EE requise.');
+            }
+
             const data = await this.api(
                 '/api/demandes/' +
                 call.context.id +
                 '/chat/call/livekit-token',
                 {
                     method: 'POST',
-                    body: JSON.stringify({ id: call.id })
+                    body: JSON.stringify({
+                        id: call.id,
+                        ...(call.e2eeRequired ? { e2eeRequired: true } : {})
+                    })
                 }
             );
+
+            if ((data?.e2eeRequired === true) !== call.e2eeRequired) {
+                throw new Error('Chiffrement non confirme par le serveur.');
+            }
 
             if (this.active !== call) {
                 throw new Error('Appel annule.');
@@ -371,11 +387,25 @@
                 throw new Error('Jeton LiveKit indisponible.');
             }
 
-            const stream = await call.media.connect({
-                url,
-                token,
-                mode: call.mode
-            });
+            const key = call.e2eeRequired
+                ? window.TasklyE2EEManualKeys.requireKey()
+                : null;
+
+            let stream;
+            try {
+                stream = await call.media.connect({
+                    url,
+                    token,
+                    mode: call.mode,
+                    ...(call.e2eeRequired ? {
+                        e2eeRequired: true,
+                        e2eeKey: key
+                    } : {})
+                });
+            } finally {
+                // La cle copiee est effacee apres importation par le SDK.
+                if (key) new Uint8Array(key).fill(0);
+            }
 
             if (this.active !== call) {
                 throw new Error('Appel annule.');
@@ -403,9 +433,26 @@
                     typeof window.TasklyCallLiveKit === 'function' &&
                     Boolean(window.LivekitClient?.Room);
 
-                const transport = livekit ? 'livekit' : 'webrtc';
+                const e2eeRequired = configuration.e2eeRequired === true;
 
-                call = this.show(context, mode, false, transport);
+                if (e2eeRequired) {
+                    if (!livekit) {
+                        throw new Error('LiveKit requis pour un appel chiffre.');
+                    }
+                    if (!window.TasklyE2EEManualKeys?.ready()) {
+                        throw new Error('Importez la cle E2EE de test avant l appel.');
+                    }
+                    await window.TasklyE2EESdk?.load();
+                    if (typeof window.TasklyCallLiveKitE2EE !== 'function') {
+                        throw new Error('Pilote E2EE V20 indisponible.');
+                    }
+                    if (!this.context || this.context.id !== context.id || this.active) return;
+                }
+
+                const transport = e2eeRequired
+                    ? 'livekit' : (livekit ? 'livekit' : 'webrtc');
+
+                call = this.show(context, mode, false, transport, e2eeRequired);
                 call.pending = true;
 
                 let sdp;
@@ -424,7 +471,8 @@
                 const demande = {
                     action: 'start',
                     mode,
-                    transport
+                    transport,
+                    ...(call.e2eeRequired ? { e2eeRequired: true } : {})
                 };
 
                 if (sdp) demande.sdp = sdp;
@@ -478,6 +526,12 @@
             if (!call?.incoming ||
                 call.pending || call.accepted) return;
 
+            if (call.e2eeRequired &&
+                !window.TasklyE2EEManualKeys?.ready()) {
+                this.status('Importez la cle E2EE de test pour accepter.');
+                return;
+            }
+
             call.pending = true;
             this.get('accept').hidden = true;
             this.get('reject').hidden = true;
@@ -502,7 +556,8 @@
                 const demande = {
                     action: 'accept',
                     id: call.id,
-                    transport: call.transport
+                    transport: call.transport,
+                    ...(call.e2eeRequired ? { e2eeRequired: true } : {})
                 };
 
                 if (sdp) demande.sdp = sdp;
@@ -628,12 +683,29 @@
                             return;
                         }
 
+                        const e2eeRequired = remote.e2eeRequired === true;
+                        if (e2eeRequired) {
+                            if (remote.transport !== 'livekit' ||
+                                typeof window.TasklyCallLiveKitE2EE !== 'function') {
+                                this.notify('Appel chiffre incompatible.');
+                                return;
+                            }
+                            try {
+                                await window.TasklyE2EESdk?.load();
+                            } catch {
+                                this.notify('Chiffrement non disponible sur cet appareil.');
+                                return;
+                            }
+                            if (this.active || this.context?.id !== context.id) return;
+                        }
+
                         const incoming = this.show(
                             context,
                             remote.mode,
                             true,
                             remote.transport === 'livekit'
-                                ? 'livekit' : 'webrtc'
+                                ? 'livekit' : 'webrtc',
+                            e2eeRequired
                         );
 
                         incoming.id = remote.id;
@@ -644,6 +716,12 @@
                 }
 
                 if (active.pending || !active.id) return;
+
+                if (remote && active.e2eeRequired !==
+                    (remote.e2eeRequired === true)) {
+                    await this.finish('end', 'Mode E2EE modifie : appel interrompu.');
+                    return;
+                }
 
                 if (!remote || remote.id !== active.id ||
                     ['ended', 'rejected'].includes(remote.state)) {
@@ -773,6 +851,7 @@
             if (this.active !== call) return;
 
             this.stopRing();
+            if (call.e2eeRequired) window.TasklyE2EEManualKeys?.clear();
             delete document.body.dataset.tasklyCallActive;
             this.active = null;
             this.get('local').srcObject = null;

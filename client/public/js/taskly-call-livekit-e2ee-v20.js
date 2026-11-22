@@ -16,7 +16,10 @@
             this.mode = null;
         }
 
-        async connect({ url, token, mode, e2eeRequired = false, e2eeKey = null }) {
+        async connect({ url, token, mode, e2eeRequired = true, e2eeKey = null }) {
+            if (e2eeRequired !== true) {
+                throw new Error('Le pilote V20 exige le chiffrement E2EE.');
+            }
             if (!['audio', 'video'].includes(mode)) {
                 throw new Error('Mode LiveKit invalide.');
             }
@@ -28,7 +31,7 @@
                 throw new Error('Connexion LiveKit invalide.');
             }
 
-            const sdk = window.LivekitClient;
+            const sdk = window.TasklyE2EESdk?.get();
 
             if (!sdk?.Room || !sdk.RoomEvent) {
                 throw new Error('SDK LiveKit indisponible.');
@@ -167,7 +170,7 @@
                 room.on(sdk.RoomEvent.EncryptionError, () => {
                     if (this.room !== room) return;
                     this.close();
-                    this.onState?.('disconnected');
+                    this.onState?.('failed');
                 });
             }
 
@@ -380,5 +383,5 @@
         }
     }
 
-    window.TasklyCallLiveKit = TasklyCallLiveKit;
+    window.TasklyCallLiveKitE2EE = TasklyCallLiveKit;
 })();

@@ -77,12 +77,12 @@ function createHarness({ activationFails = false } = {}) {
   }
 
   const window = {
-    LivekitClient: {
+    TasklyE2EESdk: { get: () => ({
       Room: FakeRoom,
       RoomEvent: new Proxy({}, { get: (_, key) => key === 'EncryptionError' ? 'encryptionError' : key }),
       ExternalE2EEKeyProvider: FakeKeyProvider,
       isE2EESupported: () => true
-    }
+    }) }
   };
 
   vm.runInNewContext(source, {
@@ -93,7 +93,7 @@ function createHarness({ activationFails = false } = {}) {
     console
   });
 
-  const media = new window.TasklyCallLiveKit();
+  const media = new window.TasklyCallLiveKitE2EE();
   media.enableKrisp = async () => {};
 
   return { media, events };
@@ -107,16 +107,17 @@ const connection = {
 
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
-test('V20 : appel standard sans Worker E2EE', async () => {
+test('V20 : pilote refuse un appel non chiffre', async () => {
   const { media, events } = createHarness();
 
-  await media.connect(connection);
+  await assert.rejects(
+    media.connect({ ...connection, e2eeRequired: false }),
+    /exige le chiffrement/
+  );
 
-  assert.ok(events.includes('room:connect'));
-  assert.ok(events.includes('microphone'));
+  assert.ok(!events.includes('room:connect'));
+  assert.ok(!events.includes('microphone'));
   assert.ok(!events.includes('worker:create'));
-
-  media.close();
 });
 
 test('V20 : cle absente refusee avant connexion', async () => {
@@ -205,16 +206,16 @@ test('V20 : erreur E2EE ferme la salle et libere le Worker', async () => {
   );
 });
 
-test('V20 : appel standard non affecte par le pilote E2EE', async () => {
+test('V20 : erreur chiffrement interrompt immediatement l appel', async () => {
   const { media, events } = createHarness();
+  let failed = false;
+  media.onState = state => { if (state === 'failed') failed = true; };
 
-  await media.connect(connection);
+  await media.connect({ ...connection, e2eeKey: new ArrayBuffer(32) });
+  media.room.emit('encryptionError', new Error('Erreur simulee'));
+  await flush();
 
-  const room = media.room;
-  room.emit('encryptionError', new Error('Erreur simulee'));
-
-  assert.equal(media.room, room);
-  assert.ok(!events.includes('worker:terminate'));
-
-  media.close();
+  assert.equal(media.room, null);
+  assert.equal(failed, true);
+  assert.ok(events.includes('worker:terminate'));
 });

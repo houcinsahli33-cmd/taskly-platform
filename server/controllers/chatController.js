@@ -12,6 +12,17 @@ const STATUTS_HISTORIQUE = new Set([
     "conteste"
 ]);
 
+// Pilote manuel V20 : uniquement les demandes explicitement autorisees sur Vercel.
+// Ex.: TASKLY_E2EE_TEST_DEMANDE_IDS=123,456. Aucune cle ne transite ici.
+function e2eeRequisPourDemande(demandeId) {
+    const ids = process.env.TASKLY_E2EE_TEST_DEMANDE_IDS || '';
+    return ids.split(',').some(value => {
+        const id = value.trim();
+        return /^[1-9][0-9]{0,9}$/.test(id) &&
+            Number(id) === Number(demandeId);
+    });
+}
+
 // Verifier que la demande appartient au profil connecte.
 async function verifierParticipant(req, res) {
     const role = req.session?.utilisateur?.role;
@@ -284,6 +295,25 @@ async function gererAppel(req, res) {
             }
         }
 
+        const e2eeRequired = e2eeRequisPourDemande(acces.demandeId);
+
+        if (e2eeRequired &&
+            (process.env.TASKLY_LIVEKIT_ENABLED !== 'true' ||
+             process.env.TASKLY_LIVEKIT_BROWSER_ENABLED !== 'true')) {
+            return res.status(503).json({ message: 'Pilote E2EE non disponible.' });
+        }
+
+        // Tous les participants doivent rejoindre le MEME mode. Aucun downgrade.
+        if (['start', 'accept'].includes(action)) {
+            const demandeE2EE = req.body?.e2eeRequired === true;
+            if (demandeE2EE !== e2eeRequired ||
+                (e2eeRequired && req.body?.transport !== 'livekit')) {
+                return res.status(409).json({
+                    message: 'Mode de chiffrement incompatible avec cet appel.'
+                });
+            }
+        }
+
         const service = require('../services/chatCallService');
 
         const result = await service.signaler({
@@ -360,7 +390,10 @@ async function gererAppel(req, res) {
 
         return res.status(result.code).json({
             message: result.message,
-            call: result.call,
+            call: result.call && e2eeRequired
+                ? { ...result.call, e2eeRequired: true }
+                : result.call,
+            ...(e2eeRequired ? { e2eeRequired: true } : {}),
             ...(req.method === 'GET' &&
                 process.env.TASKLY_LIVEKIT_ENABLED === 'true' &&
                 process.env.TASKLY_LIVEKIT_BROWSER_ENABLED === 'true'
@@ -421,6 +454,13 @@ async function emettreJetonLiveKit(req, res) {
             ))) {
             return res.status(403).json({
                 message: 'Participants non autorises.'
+            });
+        }
+
+        const e2eeRequired = e2eeRequisPourDemande(acces.demandeId);
+        if ((req.body?.e2eeRequired === true) !== e2eeRequired) {
+            return res.status(409).json({
+                message: 'Mode de chiffrement incompatible.'
             });
         }
 
@@ -486,7 +526,10 @@ async function emettreJetonLiveKit(req, res) {
             });
         }
 
-        return res.status(200).json(jeton);
+        return res.status(200).json({
+            ...jeton,
+            ...(e2eeRequired ? { e2eeRequired: true } : {})
+        });
 
     } catch (error) {
         console.error('Taskly LiveKit : delivrance impossible.');
