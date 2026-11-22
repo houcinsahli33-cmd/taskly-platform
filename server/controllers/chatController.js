@@ -24,6 +24,17 @@ function e2eeRequisPourDemande(demandeId) {
     });
 }
 
+// V25 strict identity verification pilot; disabled unless specifically listed.
+// A trusted peer fingerprint is NOT provisioned by the server.
+function identiteV25Requise(demandeId) {
+    if (!e2eeRequisPourDemande(demandeId)) return false;
+    const ids = process.env.TASKLY_E2EE_V25_TEST_DEMANDE_IDS || '';
+    return ids.split(',').some(v => {
+        const id = v.trim();
+        return /^[1-9][0-9]{0,9}$/.test(id) && Number(id) === Number(demandeId);
+    });
+}
+
 // Verifier que la demande appartient au profil connecte.
 async function verifierParticipant(req, res) {
     const role = req.session?.utilisateur?.role;
@@ -253,7 +264,8 @@ async function gererAppel(req, res) {
             : req.body?.action;
 
         if (req.method !== 'GET' &&
-            !['start', 'accept', 'reject', 'end', 'heartbeat', 'e2ee-confirm'].includes(action)) {
+            !['start', 'accept', 'reject', 'end', 'heartbeat',
+              'e2ee-confirm','e2ee-identity-offer'].includes(action)) {
             return res.status(400).json({
                 message: 'Action invalide.'
             });
@@ -297,6 +309,11 @@ async function gererAppel(req, res) {
         }
 
         const e2eeRequired = e2eeRequisPourDemande(acces.demandeId);
+        const identityRequired = identiteV25Requise(acces.demandeId);
+        const identitySelf = {role:acces.role, accountId:Number(acces.profilId)};
+        const identityPeer = {role:acces.role === 'client' ? 'artisan' : 'client',
+            accountId:Number(acces.role === 'client'
+                ? acces.demande.artisan_id : acces.demande.client_id)};
 
         if (e2eeRequired &&
             (process.env.TASKLY_LIVEKIT_ENABLED !== 'true' ||
@@ -308,6 +325,17 @@ async function gererAppel(req, res) {
         if (action === 'e2ee-confirm' && !e2eeRequired) {
             return res.status(409).json({message:'Aucun chiffrement actif.'});
         }
+        if (action === 'e2ee-identity-offer' && !identityRequired) {
+            return res.status(409).json({message:'Identite V25 inactive.'});
+        }
+        if (identityRequired &&
+            ['start','accept','e2ee-confirm','e2ee-identity-offer'].includes(action) &&
+            req.body?.e2eeIdentityRequired !== true) {
+            return res.status(409).json({message:'Authentification V25 obligatoire.'});
+        }
+        if (!identityRequired && req.body?.e2eeIdentityRequired === true) {
+            return res.status(409).json({message:'Identite V25 non active.'});
+        }
         if (['start', 'accept'].includes(action)) {
             const demandeE2EE = req.body?.e2eeRequired === true;
             if (demandeE2EE !== e2eeRequired ||
@@ -315,6 +343,20 @@ async function gererAppel(req, res) {
                 return res.status(409).json({
                     message: 'Mode de chiffrement incompatible avec cet appel.'
                 });
+            }
+        }
+
+        // Server authenticates session/role/account binding, never supplies a trusted fingerprint.
+        if (identityRequired &&
+            ['accept','e2ee-confirm','e2ee-identity-offer'].includes(action)) {
+            const packet = req.body?.e2eeIdentityPacket;
+            const epk = req.body?.e2eePublicKey;
+            if (!packet || packet.role !== acces.role ||
+                packet.accountId !== Number(acces.profilId) ||
+                packet.demandeId !== acces.demandeId ||
+                packet.callId !== req.body?.id ||
+                (epk && packet.ephemeralPublicKey !== epk)) {
+                return res.status(400).json({message:'Identite V25 invalide.'});
             }
         }
 
@@ -398,6 +440,8 @@ async function gererAppel(req, res) {
                 ? { ...result.call, e2eeRequired: true }
                 : result.call,
             ...(e2eeRequired ? { e2eeRequired: true } : {}),
+            ...(identityRequired ? {identityRequired:true,
+                identitySelf,identityPeer} : {}),
             ...(req.method === 'GET' &&
                 process.env.TASKLY_LIVEKIT_ENABLED === 'true' &&
                 process.env.TASKLY_LIVEKIT_BROWSER_ENABLED === 'true'
@@ -462,6 +506,10 @@ async function emettreJetonLiveKit(req, res) {
         }
 
         const e2eeRequired = e2eeRequisPourDemande(acces.demandeId);
+        const identityRequired = identiteV25Requise(acces.demandeId);
+        if ((req.body?.identityRequired === true) !== identityRequired) {
+            return res.status(409).json({message:'Mode identite V25 incompatible.'});
+        }
         if ((req.body?.e2eeRequired === true) !== e2eeRequired) {
             return res.status(409).json({
                 message: 'Mode de chiffrement incompatible.'
@@ -510,6 +558,12 @@ async function emettreJetonLiveKit(req, res) {
             return res.status(409).json({message:'Echange E2EE non confirme.'});
         }
 
+        if (identityRequired && (!call.e2eeIdentityRequired ||
+            !call.e2eeOfferIdentity || !call.e2eeAnswerIdentity ||
+            !call.e2eeConfirmIdentity)) {
+            return res.status(409).json({message:'Identites V25 non confirmees.'});
+        }
+
         const { creerJetonLiveKit } =
             require('../services/livekitTokenService');
 
@@ -538,7 +592,8 @@ async function emettreJetonLiveKit(req, res) {
 
         return res.status(200).json({
             ...jeton,
-            ...(e2eeRequired ? { e2eeRequired: true } : {})
+            ...(e2eeRequired ? { e2eeRequired: true } : {}),
+            ...(identityRequired ? {identityRequired:true} : {})
         });
 
     } catch (error) {

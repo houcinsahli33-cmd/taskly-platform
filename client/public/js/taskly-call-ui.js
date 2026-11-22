@@ -261,7 +261,7 @@
                 : this.api(url);
         }
 
-        show(context, mode, incoming, transport = 'webrtc', e2eeRequired = false) {
+        show(context, mode, incoming, transport = 'webrtc', e2eeRequired = false, identityRequired = false, identityMeta = null) {
 
             const call = {
                 context,
@@ -269,6 +269,10 @@
                 incoming,
                 transport,
                 e2eeRequired: e2eeRequired === true,
+                identityRequired: identityRequired === true,
+                identityMeta,
+                identityValidatedRemote: false,
+                identitySignedOffer: null,
                 e2eeSession: null,
                 e2eeKey: null,
                 e2eePeerPublicKey: null,
@@ -357,6 +361,9 @@
             }
 
             // Fail closed : la cle n'est derivée qu'apres un accord ECDH confirme.
+            if (call.identityRequired && !call.identityValidatedRemote) {
+                throw new Error('Identite du participant non verifiee.');
+            }
             if (call.e2eeRequired &&
                 (!(call.e2eeKey instanceof ArrayBuffer) || call.e2eeKey.byteLength !== 32)) {
                 throw new Error('Echange de cles E2EE non confirme.');
@@ -370,12 +377,14 @@
                     method: 'POST',
                     body: JSON.stringify({
                         id: call.id,
-                        ...(call.e2eeRequired ? { e2eeRequired: true } : {})
+                        ...(call.e2eeRequired ? { e2eeRequired: true } : {}),
+                        ...(call.identityRequired ? {identityRequired:true} : {})
                     })
                 }
             );
 
-            if ((data?.e2eeRequired === true) !== call.e2eeRequired) {
+            if ((data?.e2eeRequired === true) !== call.e2eeRequired ||
+                (data?.identityRequired === true) !== call.identityRequired) {
                 throw new Error('Chiffrement non confirme par le serveur.');
             }
 
@@ -418,6 +427,41 @@
         }
 
 
+        async verifyIdentityPacket(call, packet, ephemeralPublicKey) {
+            if (!call.identityRequired) return;
+            const meta=call.identityMeta;
+            if (!meta?.self || !meta?.peer ||
+                !window.TasklyE2EEIdentityGateV25?.verify) {
+                throw new Error('Verification de l identite V25 indisponible.');
+            }
+            await window.TasklyE2EEIdentityGateV25.verify({
+                packet,
+                selfRole:meta.self.role,
+                selfAccountId:meta.self.accountId,
+                peerRole:meta.peer.role,
+                peerAccountId:meta.peer.accountId,
+                demandeId:call.context.id,
+                callId:call.id,
+                ephemeralPublicKey
+            });
+            if (this.active !== call) throw new Error('Appel annule.');
+            call.identityValidatedRemote=true;
+        }
+
+        async signIdentityPacket(call) {
+            if (!call.identityRequired) return null;
+            const own=call.identityMeta?.self;
+            if (!own || !call.e2eeSession ||
+                !window.TasklyE2EEIdentityGateV25?.sign) {
+                throw new Error('Identite V25 indisponible.');
+            }
+            return window.TasklyE2EEIdentityGateV25.sign({
+                role:own.role,accountId:own.accountId,
+                demandeId:call.context.id,callId:call.id,
+                session:call.e2eeSession
+            });
+        }
+
         async start(mode) {
             if (!this.context || this.active || this.starting) return;
 
@@ -437,6 +481,15 @@
                     Boolean(window.LivekitClient?.Room);
 
                 const e2eeRequired = configuration.e2eeRequired === true;
+                const identityRequired = configuration.identityRequired === true;
+                const identityMeta = identityRequired
+                    ? {self:configuration.identitySelf,peer:configuration.identityPeer}
+                    : null;
+                if (identityRequired && (!e2eeRequired ||
+                    !window.TasklyE2EEIdentityGateV25?.sign ||
+                    !identityMeta?.self || !identityMeta?.peer)) {
+                    throw new Error('Authentification V25 indisponible.');
+                }
 
                 if (e2eeRequired) {
                     if (!livekit) {
@@ -455,7 +508,8 @@
                 const transport = e2eeRequired
                     ? 'livekit' : (livekit ? 'livekit' : 'webrtc');
 
-                call = this.show(context, mode, false, transport, e2eeRequired);
+                call = this.show(context, mode, false, transport,
+                    e2eeRequired, identityRequired, identityMeta);
                 call.pending = true;
                 if (e2eeRequired) {
                     call.e2eeSession = await window.TasklyE2EEAutoKeys.create();
@@ -482,7 +536,8 @@
                     ...(call.e2eeRequired ? {
                         e2eeRequired: true,
                         e2eePublicKey: call.e2eeSession.publicKey
-                    } : {})
+                    } : {}),
+                    ...(call.identityRequired ? {e2eeIdentityRequired:true} : {})
                 };
 
                 if (sdp) demande.sdp = sdp;
@@ -495,6 +550,17 @@
 
                 call.id = data.call.id;
                 call.lastSignalAt = Date.now();
+                if (call.identityRequired) {
+                    // callId is issued by Redis at START, so sign only afterwards.
+                    call.identitySignedOffer = await this.signIdentityPacket(call);
+                    if (this.active !== call) return;
+                    await this.request(context.id, {
+                        action:'e2ee-identity-offer',id:call.id,
+                        e2eeRequired:true,e2eeIdentityRequired:true,
+                        e2eeIdentityPacket:call.identitySignedOffer
+                    });
+                    if (this.active !== call) return;
+                }
 
                 if (this.active !== call) {
                     await this.request(context.id, {
@@ -540,6 +606,13 @@
                     throw new Error('Appel E2EE termine ou modifie.');
                 }
                 if (remote.e2eeCallerProof) {
+                    if (call.identityRequired) {
+                        if (!remote.e2eeConfirmIdentity) {
+                            throw new Error('Confirmation d identite V25 absente.');
+                        }
+                        await this.verifyIdentityPacket(call,
+                            remote.e2eeConfirmIdentity,call.e2eePeerPublicKey);
+                    }
                     const valid = await window.TasklyE2EEAutoKeys.verify(
                         call.e2eeKey,call.id,'caller',remote.e2eeCallerProof
                     );
@@ -574,6 +647,9 @@
                 let sdp;
                 let e2eeAnswer = null;
                 if (call.e2eeRequired) {
+                    if (call.identityRequired && !call.identityValidatedRemote) {
+                        throw new Error('Identite distante non verifiee.');
+                    }
                     call.e2eeSession = await window.TasklyE2EEAutoKeys.create();
                     call.e2eeKey = await window.TasklyE2EEAutoKeys.derive(
                         call.e2eeSession, call.e2eePeerPublicKey,
@@ -583,7 +659,11 @@
                         e2eePublicKey: call.e2eeSession.publicKey,
                         e2eeProof: await window.TasklyE2EEAutoKeys.proof(
                             call.e2eeKey,call.id,'accept'
-                        )
+                        ),
+                        ...(call.identityRequired ? {
+                            e2eeIdentityRequired:true,
+                            e2eeIdentityPacket:await this.signIdentityPacket(call)
+                        } : {})
                     };
                 }
 
@@ -733,6 +813,34 @@
                         }
 
                         const e2eeRequired = remote.e2eeRequired === true;
+                        const identityRequired = data.identityRequired === true;
+                        const identityMeta = identityRequired
+                            ? {self:data.identitySelf,peer:data.identityPeer}
+                            : null;
+                        if (identityRequired && (!e2eeRequired ||
+                            !window.TasklyE2EEIdentityGateV25?.verify ||
+                            !remote.e2eeOfferIdentity)) {
+                            // Offer not yet signed or V25 unavailable: do not ring an unverified caller.
+                            if (remote.e2eeOfferIdentity) this.notify('Authentification V25 indisponible.');
+                            return;
+                        }
+                        if (identityRequired) {
+                            try {
+                                const meta=identityMeta;
+                                if (!meta?.self || !meta?.peer) throw new Error('Compte invalide.');
+                                await window.TasklyE2EEIdentityGateV25.verify({
+                                    packet:remote.e2eeOfferIdentity,
+                                    selfRole:meta.self.role,selfAccountId:meta.self.accountId,
+                                    peerRole:meta.peer.role,peerAccountId:meta.peer.accountId,
+                                    demandeId:context.id,callId:remote.id,
+                                    ephemeralPublicKey:remote.e2eeOfferKey
+                                });
+                            } catch {
+                                this.notify('Identite du correspondant non verifiee.');
+                                return;
+                            }
+                            if (this.active || this.context?.id !== context.id) return;
+                        }
                         if (e2eeRequired) {
                             if (remote.transport !== 'livekit' ||
                                 typeof window.TasklyCallLiveKitE2EE !== 'function') {
@@ -754,9 +862,10 @@
                             true,
                             remote.transport === 'livekit'
                                 ? 'livekit' : 'webrtc',
-                            e2eeRequired
+                            e2eeRequired,identityRequired,identityMeta
                         );
 
+                        if (identityRequired) incoming.identityValidatedRemote=true;
                         incoming.id = remote.id;
                         incoming.offer = remote.offer;
                         if (e2eeRequired) incoming.e2eePeerPublicKey = remote.e2eeOfferKey;
@@ -809,6 +918,13 @@
                                 !remote.e2eeAcceptProof) {
                                 throw new Error('Echange E2EE incomplet.');
                             }
+                            if (active.identityRequired) {
+                                if (!remote.e2eeAnswerIdentity) {
+                                    throw new Error('Reponse identite V25 absente.');
+                                }
+                                await this.verifyIdentityPacket(active,
+                                    remote.e2eeAnswerIdentity,remote.e2eeAnswerKey);
+                            }
                             active.e2eeKey = await window.TasklyE2EEAutoKeys.derive(
                                 active.e2eeSession,remote.e2eeAnswerKey,
                                 active.id,active.context.id
@@ -822,7 +938,11 @@
                                 e2eeRequired:true,
                                 e2eeProof:await window.TasklyE2EEAutoKeys.proof(
                                     active.e2eeKey,active.id,'caller'
-                                )
+                                ),
+                                ...(active.identityRequired ? {
+                                    e2eeIdentityRequired:true,
+                                    e2eeIdentityPacket:active.identitySignedOffer
+                                } : {})
                             });
                         }
                         if (active.transport === 'livekit') {
@@ -925,6 +1045,8 @@
             if (call.e2eeKey) new Uint8Array(call.e2eeKey).fill(0);
             call.e2eeKey = null;
             call.e2eeSession = null;
+            call.identitySignedOffer = null;
+            call.identityValidatedRemote = false;
             delete document.body.dataset.tasklyCallActive;
             this.active = null;
             this.get('local').srcObject = null;
