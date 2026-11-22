@@ -15,6 +15,32 @@
 
     // Original, locally generated analogue telephone motif; no audio file or API key.
     // A browser cannot override system volume or its user-gesture/autoplay policy.
+    const RING_SETTING = 'taskly:ringtone-enabled:v18';
+    let ringEnabled = false;
+
+    try {
+        ringEnabled = localStorage.getItem(RING_SETTING) === '1';
+    } catch {}
+
+    function updateRingButton(button) {
+        button.textContent = ringEnabled ? '\uD83D\uDD14' : '\uD83D\uDD15';
+        button.title = ringEnabled
+            ? 'Sonnerie activee - cliquer pour desactiver'
+            : 'Sonnerie desactivee - cliquer pour activer';
+        button.setAttribute('aria-label', button.title);
+        button.setAttribute('aria-pressed', String(ringEnabled));
+    }
+
+    function setRingEnabled(value) {
+        ringEnabled = Boolean(value);
+        try {
+            localStorage.setItem(RING_SETTING, ringEnabled ? '1' : '0');
+        } catch {}
+        if (!ringEnabled) phone.stop();
+        document.querySelectorAll('.tc-premium-bell').forEach(updateRingButton);
+        return ringEnabled;
+    }
+
     const phone = (() => {
         let ctx = null;
         let owner = null;
@@ -84,8 +110,12 @@
             playBurst(t + (outgoing ? 0.65 : 0.92), outgoing ? 0.32 : 0.72, outgoing);
         }
         function start(requester, predicate, requestedMode) {
+            if (requestedMode !== 'outgoing' && !ringEnabled) return false;
             if (!ctx || ctx.state !== 'running') return false;
-            if (owner === requester && interval !== null) return true;
+            if (owner === requester && interval !== null) {
+                valid = predicate;
+                return true;
+            }
             stop();
             owner = requester;
             valid = predicate;
@@ -104,14 +134,28 @@
             stop();
             if (ctx?.state !== 'closed') ctx?.close().catch(() => {});
         }, { once: true });
-        return { unlock, start, stop, preview, get unlocked() { return ctx?.state === 'running'; } };
+        return { unlock, start, stop, preview, setEnabled: setRingEnabled, get enabled() { return ringEnabled; }, get unlocked() { return ctx?.state === 'running'; } };
     })();
 
     window.TasklyPhoneRing = phone;
 
+    window.addEventListener('storage', event => {
+        if (event.key !== RING_SETTING) return;
+        ringEnabled = event.newValue === '1';
+        if (!ringEnabled) phone.stop();
+        document.querySelectorAll('.tc-premium-bell').forEach(updateRingButton);
+    });
+
     // Unlock only from an actual user's interaction. This improves reliability
     // when an incoming call arrives after the user has navigated on Taskly.
-    function tryUnlock() { void phone.unlock(); }
+    function tryUnlock() {
+        void phone.unlock();
+        if (window.parent !== window) {
+            try {
+                void window.parent.TasklyPhoneRing?.unlock?.();
+            } catch {}
+        }
+    }
     document.addEventListener('pointerdown', tryUnlock, { passive: true });
     document.addEventListener('keydown', tryUnlock);
 
@@ -375,17 +419,38 @@
     function addSoundButton() {
         const actions = document.querySelector('.cw-thread-actions');
         if (!actions || actions.querySelector('.tc-premium-bell')) return;
-        const button = make('button', 'cw-icon-btn tc-premium-bell', '🔔');
+
+        const button = make('button', 'cw-icon-btn tc-premium-bell', '');
         button.type = 'button';
-        button.title = 'Activer et écouter la sonnerie Taskly';
-        button.setAttribute('aria-label', 'Tester et activer la sonnerie');
-        button.addEventListener('click', async () => {
-            const success = await phone.preview();
-            button.title = success ? 'Sonnerie activée sur cet appareil' : 'Vérifiez l’autorisation de lecture audio';
+        updateRingButton(button);
+
+        button.addEventListener('click', () => {
+            const enabled = phone.setEnabled(!phone.enabled);
+
+            let parentPhone = null;
+            if (window.parent !== window) {
+                try {
+                    parentPhone = window.parent.TasklyPhoneRing;
+                    parentPhone?.setEnabled?.(enabled);
+                } catch {}
+            }
+
+            if (!enabled) return;
+
+            const localUnlock = phone.unlock();
+            let parentUnlock = null;
+
+            try {
+                parentUnlock = parentPhone?.unlock?.();
+            } catch {}
+
+            void Promise.allSettled(
+                [localUnlock, parentUnlock].filter(Boolean)
+            );
         });
+
         actions.append(button);
     }
-
     function addGlobalFeatures(panel) {
         if (panel.dataset.tasklyPremium === '1') return;
         panel.dataset.tasklyPremium = '1';
