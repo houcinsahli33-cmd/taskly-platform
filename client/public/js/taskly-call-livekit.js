@@ -11,12 +11,11 @@
             this.onLocal = onLocal;
             this.getRemoteVideo = getRemoteVideo;
             this.attachedRemoteVideoTracks = new Set();
-            this.e2eeWorker = null;
             this.generation = 0;
             this.mode = null;
         }
 
-        async connect({ url, token, mode, e2eeRequired = false, e2eeKey = null }) {
+        async connect({ url, token, mode }) {
             if (!['audio', 'video'].includes(mode)) {
                 throw new Error('Mode LiveKit invalide.');
             }
@@ -59,41 +58,7 @@
                     frameRate: 24
                 };
             }
-            let keyProvider = null;
-
-            if (e2eeRequired) {
-                if (!(e2eeKey instanceof ArrayBuffer) ||
-                    e2eeKey.byteLength !== 32) {
-                    throw new Error('Cle E2EE absente ou invalide.');
-                }
-
-                if (typeof sdk.ExternalE2EEKeyProvider !== 'function' ||
-                    typeof sdk.isE2EESupported !== 'function' ||
-                    !sdk.isE2EESupported() ||
-                    !sdk.RoomEvent.EncryptionError ||
-                    typeof Worker !== 'function') {
-                    throw new Error('E2EE non compatible avec cet appareil.');
-                }
-
-                keyProvider = new sdk.ExternalE2EEKeyProvider();
-
-                options.encryption = {
-                    keyProvider,
-                    worker: new Worker(
-                        '/js/vendor/livekit-client.e2ee.worker.v20.js'
-                    )
-                };
-            }
-
-            let room;
-            try {
-                room = new sdk.Room(options);
-            } catch (error) {
-                try { options.encryption?.worker?.terminate(); } catch {}
-                throw error;
-            }
-
-            this.e2eeWorker = options.encryption?.worker || null;
+            const room = new sdk.Room(options);
 
             this.room = room;
             this.mode = mode;
@@ -163,24 +128,7 @@
                 }
             });
 
-            if (e2eeRequired) {
-                room.on(sdk.RoomEvent.EncryptionError, () => {
-                    if (this.room !== room) return;
-                    this.close();
-                    this.onState?.('disconnected');
-                });
-            }
-
             try {
-                if (e2eeRequired) {
-                    await keyProvider.setKey(e2eeKey);
-                    await room.setE2EEEnabled(true);
-
-                    if (room.isE2EEEnabled !== true) {
-                        throw new Error('Activation E2EE non confirmee.');
-                    }
-                }
-
                 await room.connect(url, token);
 
                 if (this.room !== room ||
@@ -356,8 +304,6 @@
             this.attachedRemoteVideoTracks.clear();
 
             const room = this.room;
-            const worker = this.e2eeWorker;
-            this.e2eeWorker = null;
 
             this.room = null;
             this.stream = null;
@@ -367,15 +313,8 @@
             if (room) {
                 try {
                     Promise.resolve(room.disconnect())
-                        .catch(() => {})
-                        .finally(() => {
-                            try { worker?.terminate(); } catch {}
-                        });
-                } catch {
-                    try { worker?.terminate(); } catch {}
-                }
-            } else {
-                try { worker?.terminate(); } catch {}
+                        .catch(() => {});
+                } catch {}
             }
         }
     }

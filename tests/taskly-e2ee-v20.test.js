@@ -7,7 +7,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const source = fs.readFileSync(
-  path.join(__dirname, '..', 'client', 'public', 'js', 'taskly-call-livekit.js'),
+  path.join(__dirname, '..', 'client', 'public', 'js', 'taskly-call-livekit-e2ee-v20.js'),
   'utf8'
 );
 

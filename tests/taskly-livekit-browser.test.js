@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -337,7 +337,7 @@ test('LiveKit HD: les deux pages chargent le script corrigé après cache bust',
     assert.match(ui,/\(\) => this\.get\('remote'\)/);
     for(const role of ['client','artisan']) {
         const html=fs.readFileSync(`client/private/${role}/messagerie.html`,'utf8');
-        assert.match(html,/taskly-call-livekit\.js\?v=4/);
+        assert.match(html,/taskly-call-livekit\.js\?v=19-restored/);
         assert.match(html,/taskly-call-ui\.js\?v=5/);
     }
 });
