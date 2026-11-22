@@ -55,28 +55,107 @@
   </main>
 
 
-  <dialog id="ts-contact-dialog" class="ts-dialog" aria-labelledby="ts-contact-title">
-    <div class="ts-dialog-head"><span aria-hidden="true" class="ts-modal-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="2" y="13" width="4" height="7" rx="2"/><rect x="18" y="13" width="4" height="7" rx="2"/><path d="M20 20c0 2-3 3-7 3h-2"/></svg></span><div><h2 id="ts-contact-title">Nouvelle demande</h2><p>Créez une nouvelle demande de support en quelques étapes.</p></div><button type="button" class="ts-close" data-ts-close aria-label="Fermer">×</button></div>
-    <div class="ts-dialog-body"><div id="contact-alert" class="alert" role="status" aria-live="polite"></div>
-      <form id="contact-form" class="ts-form">
-        <div class="ts-form-row"><label>Nom complet <span>*</span><input class="form-control" id="contact-name" maxlength="150" required autocomplete="name"></label><label>Adresse e-mail <span>*</span><input class="form-control" id="contact-email" type="email" maxlength="254" required autocomplete="email"></label></div>
-        <label>Sujet de votre demande <span>*</span><select class="form-select" id="contact-subject" data-support-subjects required></select></label>
-        <label>Votre message <span>*</span><textarea class="form-textarea" id="contact-message" minlength="10" maxlength="5000" required placeholder="Décrivez votre demande en détail…"></textarea></label>
-        <a href="#suivre-message" class="ts-follow-inline" data-open-support-follow>Déjà envoyé ? Suivre mon message</a>
-        <div class="ts-dialog-buttons"><button type="button" class="ts-btn ts-outline" data-ts-close>Annuler</button><button type="submit" class="ts-btn ts-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg> Envoyer ma demande</button></div>
-      </form>
+ <dialog id="ts-contact-dialog" class="ts-dialog" aria-labelledby="ts-contact-title">
+  <div class="ts-dialog-head">
+    <span class="ts-modal-ico" aria-hidden="true">🎧</span>
+    <div>
+      <h2 id="ts-contact-title">Nouvelle demande</h2>
+      <p>Créez une nouvelle demande de support en quelques étapes.</p>
     </div>
-  </dialog>
+    <button type="button" class="ts-close" data-ts-close aria-label="Fermer">×</button>
+  </div>
+
+  <div class="ts-dialog-body">
+    <div id="contact-alert" class="alert" role="status" aria-live="polite"></div>
+
+    <form id="contact-form" class="ts-form ts-form-support-compact">
+      <div class="ts-form-row ts-form-row-compact">
+        <label>
+          Nom complet <span>*</span>
+          <input class="form-control" id="contact-name" maxlength="150" autocomplete="name" required>
+        </label>
+        <label>
+          Adresse e-mail <span>*</span>
+          <input class="form-control" id="contact-email" type="email" maxlength="254" autocomplete="email" required>
+        </label>
+      </div>
+
+      <label>
+        Sujet de votre demande <span>*</span>
+        <select class="form-select" id="contact-subject" data-support-subjects required></select>
+      </label>
+
+      <label>
+        Votre message <span>*</span>
+        <textarea
+          class="form-textarea"
+          id="contact-message"
+          minlength="10"
+          maxlength="5000"
+          required
+          placeholder="Décrivez votre demande en détail..."
+        ></textarea>
+      </label>
+
+      <div class="ts-upload-block">
+        <p class="ts-upload-title">Joindre un fichier <small>(facultatif)</small></p>
+        <input id="support-file" class="ts-upload-input" type="file" accept=".jpg,.jpeg,.png,.pdf">
+        <label for="support-file" class="ts-upload-dropzone">
+          <span class="ts-upload-icon">⇪</span>
+          <strong>Glissez-déposez un fichier ici</strong>
+          <span>ou <u>cliquez pour parcourir</u></span>
+          <small>Formats acceptés : JPG, PNG, PDF — Taille max. : 10 Mo</small>
+        </label>
+      </div>
+
+      <div class="ts-dialog-buttons ts-dialog-buttons-compact">
+        <button type="button" class="ts-btn ts-outline" data-ts-close>Annuler</button>
+        <button type="submit" class="ts-btn ts-primary">✈ Envoyer ma demande</button>
+      </div>
+    </form>
+  </div>
+</dialog>
   <dialog id="ts-faq-dialog" class="ts-dialog" aria-labelledby="ts-faq-title">
-    <div class="ts-dialog-head"><span class="ts-modal-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 4.5 1.5C13 11.5 12 12 12 14"/><path d="M12 17h.01"/></svg></span><div><h2 id="ts-faq-title">Questions fréquentes</h2><p>Retrouvez ici les réponses aux questions les plus courantes sur Taskly.</p></div><button type="button" class="ts-close" data-ts-close aria-label="Fermer">×</button></div>
-    <div class="ts-dialog-body ts-faq">
-      <details><summary>Comment créer un compte artisan ?</summary><p>Choisissez l’inscription artisan, remplissez les informations demandées et suivez les étapes de vérification de votre compte.</p></details>
-      <details><summary>Comment envoyer une demande de service ?</summary><p>Depuis l’espace client, recherchez un artisan, ouvrez son profil et utilisez le formulaire de demande de service.</p></details>
-      <details><summary>Comment suivre ma demande ?</summary><p>Retrouvez vos demandes de service dans « Mes demandes ». Pour une demande de support, utilisez « Suivre mon message » avec votre e-mail et votre numéro de suivi.</p></details>
-      <details><summary>Comment contacter un artisan ?</summary><p>Utilisez les moyens de contact autorisés sur le profil de l’artisan, notamment la messagerie privée si elle est disponible.</p></details>
-      <details><summary>Comment modifier mon profil ?</summary><p>Accédez à « Mon profil » dans votre espace personnel pour mettre à jour les informations autorisées.</p></details>
+  <div class="ts-dialog-head">
+    <span class="ts-modal-ico" aria-hidden="true">🎧</span>
+    <div>
+      <h2 id="ts-faq-title">Questions fréquentes</h2>
+      <p>Retrouvez ici les réponses aux questions les plus courantes sur Taskly.</p>
     </div>
-  </dialog>
+    <button type="button" class="ts-close" data-ts-close aria-label="Fermer">×</button>
+  </div>
+
+  <div class="ts-dialog-body ts-faq ts-faq-compact">
+    <details>
+      <summary>Comment créer un compte artisan ?</summary>
+      <p>Choisissez l’inscription artisan, remplissez les informations demandées et suivez les étapes de vérification de votre compte.</p>
+    </details>
+
+    <details open>
+      <summary>Comment envoyer une demande de service ?</summary>
+      <p>Depuis votre espace client, cliquez sur « Nouvelle demande », décrivez votre besoin, puis validez. Votre demande sera transmise à notre équipe et vous recevrez un numéro de suivi par e-mail.</p>
+    </details>
+
+    <details>
+      <summary>Comment suivre ma demande ?</summary>
+      <p>Utilisez « Suivre mon message » avec votre e-mail et votre numéro de suivi.</p>
+    </details>
+
+    <details>
+      <summary>Comment contacter un artisan ?</summary>
+      <p>Utilisez les moyens de contact autorisés sur le profil de l’artisan, notamment la messagerie privée si elle est disponible.</p>
+    </details>
+
+    <details>
+      <summary>Comment modifier mon profil ?</summary>
+      <p>Accédez à « Mon profil » dans votre espace personnel pour mettre à jour les informations autorisées.</p>
+    </details>
+
+    <button type="button" class="ts-faq-footer-btn" data-ts-close>
+      📖 Voir toutes les questions
+    </button>
+  </div>
+</dialog>
 
   <!-- Modale avis -->
   
@@ -87,23 +166,50 @@
   <noscript><p><a href="/follow-message.html">Suivre un message sans JavaScript</a></p></noscript>
   <!-- Suivi réel via /api/contact/suivi : mêmes champs et même script métier que la page existante. -->
   <dialog id="client-support-follow-dialog" class="client-support-follow-dialog" aria-labelledby="client-follow-title" aria-describedby="client-follow-description">
-    <div class="client-follow-header">
-      <div><h2 id="client-follow-title">Suivre mon message</h2>
-      <p id="client-follow-description">Retrouvez votre message avec l’e-mail utilisé et son numéro de suivi.</p></div>
-      <button type="button" class="client-follow-close" data-close-support-follow aria-label="Fermer la fenêtre">×</button>
+  <div class="client-follow-header">
+    <span class="ts-modal-ico" aria-hidden="true">🎧</span>
+    <div>
+      <h2 id="client-follow-title">Suivre mon message</h2>
+      <p id="client-follow-description">Consultez l'état de votre demande en quelques secondes.</p>
     </div>
-    <form id="follow-form" class="client-follow-form">
-      <label for="follow-email">Adresse e-mail</label>
-      <input class="form-control" id="follow-email" type="email" required maxlength="254" autocomplete="email" placeholder="Adresse e-mail du message">
-      <label for="follow-id">Numéro de suivi</label>
-      <input class="form-control" id="follow-id" type="text" required inputmode="numeric" maxlength="30" placeholder="Exemple : 123">
-      <div id="follow-result" role="status" aria-live="polite"></div>
-      <div class="client-follow-actions">
-        <button type="button" class="btn outline" data-close-support-follow>Annuler</button>
-        <button type="submit" class="btn primary">Rechercher</button>
-      </div>
-    </form>
-  </dialog>
+    <button type="button" class="client-follow-close" data-close-support-follow aria-label="Fermer la fenêtre">×</button>
+  </div>
+
+  <form id="follow-form" class="client-follow-form client-follow-form-compact">
+    <label for="follow-email">Adresse e-mail <span>*</span></label>
+    <input
+      class="form-control"
+      id="follow-email"
+      type="email"
+      required
+      maxlength="254"
+      autocomplete="email"
+      placeholder="Adresse e-mail du message"
+    >
+
+    <label for="follow-id">Numéro de suivi <span>*</span></label>
+    <input
+      class="form-control"
+      id="follow-id"
+      type="text"
+      required
+      inputmode="numeric"
+      maxlength="30"
+      placeholder="Exemple : 330002"
+    >
+
+    <div id="follow-result" role="status" aria-live="polite"></div>
+
+    <div class="client-follow-actions client-follow-actions-compact">
+      <button type="submit" class="btn primary">⌕ Rechercher ma demande</button>
+    </div>
+
+    <div class="ts-follow-note">
+      <span aria-hidden="true">ⓘ</span>
+      <p>Le numéro de suivi vous a été envoyé par e-mail lors de la création de votre demande.</p>
+    </div>
+  </form>
+</dialog>
   <script defer src="/js/client-support-follow-modal.js"></script>
 <script defer src="/js/taskly-support-history.js"></script>
 <script defer src="/js/taskly-support-pagination.js"></script>
