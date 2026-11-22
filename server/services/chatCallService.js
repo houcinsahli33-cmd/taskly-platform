@@ -61,6 +61,7 @@ if action == 'start' then
         state = 'ringing',
         offer = sdp,
         transport = ARGV[10],
+        e2eeOfferKey = ARGV[11] ~= '' and ARGV[11] or nil,
         startedAt = now
     }
 
@@ -81,6 +82,16 @@ if action == 'accept' then
         return result(409, 'Acceptation impossible.')
     end
 
+    if call.e2eeOfferKey ~= nil then
+        if ARGV[12] == '' or ARGV[13] == '' then
+            return result(409,'Confirmation chiffrement absente.')
+        end
+        call.e2eeAnswerKey = ARGV[12]
+        call.e2eeAcceptProof = ARGV[13]
+    elseif ARGV[12] ~= '' or ARGV[13] ~= '' then
+        return result(409,'Mode chiffrement incompatible.')
+    end
+
     call.answer = sdp
     call.state = 'accepted'
     call.acceptedAt = now
@@ -90,6 +101,17 @@ if action == 'accept' then
 
     save(call, 60)
     return result(200, 'Appel accepte.', call)
+end
+
+if action == 'e2ee-confirm' then
+    if call.state ~= 'accepted' or call.callerRole ~= role or
+       call.e2eeOfferKey == nil or call.e2eeAnswerKey == nil or
+       call.e2eeAcceptProof == nil or ARGV[14] == '' then
+        return result(409,'Confirmation E2EE impossible.')
+    end
+    call.e2eeCallerProof = ARGV[14]
+    save(call,60)
+    return result(200,'Confirmation recue.',call)
 end
 
 if action == 'livekit' then
@@ -196,7 +218,7 @@ async function signaler(acces, action, payload = {}) {
         return failure(403, 'Acces refuse.');
     }
 
-    if (!['read', 'start', 'accept', 'reject', 'end', 'heartbeat', 'livekit'].includes(action)) {
+    if (!['read', 'start', 'accept', 'reject', 'end', 'heartbeat', 'livekit', 'e2ee-confirm'].includes(action)) {
         return failure(400, 'Action invalide.');
     }
 
@@ -236,6 +258,31 @@ async function signaler(acces, action, payload = {}) {
         return failure(400, 'Identifiant invalide.');
     }
 
+    function validPublicKey(value) {
+        if (typeof value !== 'string' || !/^[A-Za-z0-9_-]{87}$/.test(value)) return false;
+        try {
+            const bytes = Buffer.from(value.replace(/-/g,'+').replace(/_/g,'/'),'base64');
+            return bytes.length === 65 && bytes[0] === 4;
+        } catch { return false; }
+    }
+    function validProof(value) {
+        return typeof value === 'string' && /^[A-Za-z0-9_-]{43}$/.test(value);
+    }
+    if (action === 'start' && payload.e2eeRequired === true &&
+        (transport !== 'livekit' || !validPublicKey(payload.e2eePublicKey))) {
+        return failure(400,'Cle publique E2EE invalide.');
+    }
+    if (action === 'accept' && payload.e2eeRequired === true &&
+        (!validPublicKey(payload.e2eePublicKey) || !validProof(payload.e2eeProof))) {
+        return failure(400,'Reponse E2EE invalide.');
+    }
+    if (action === 'e2ee-confirm' && !validProof(payload.e2eeProof)) {
+        return failure(400,'Confirmation E2EE invalide.');
+    }
+    if (payload.e2eeRequired !== true && (payload.e2eePublicKey || payload.e2eeProof)) {
+        return failure(409,'Mode E2EE incompatible.');
+    }
+
     const redis = obtenirClientRedis();
 
     if (!redis) {
@@ -268,7 +315,11 @@ async function signaler(acces, action, payload = {}) {
             String(acces.demandeId),
             String(acces.clientId),
             String(acces.artisanId),
-            transport
+            transport,
+            action === 'start' ? (payload.e2eePublicKey || '') : '',
+            action === 'accept' ? (payload.e2eePublicKey || '') : '',
+            action === 'accept' ? (payload.e2eeProof || '') : '',
+            action === 'e2ee-confirm' ? (payload.e2eeProof || '') : ''
         ]
     });
 

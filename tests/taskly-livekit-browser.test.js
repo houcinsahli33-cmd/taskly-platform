@@ -338,6 +338,6 @@ test('LiveKit HD: les deux pages chargent le script corrigé après cache bust',
     for(const role of ['client','artisan']) {
         const html=fs.readFileSync(`client/private/${role}/messagerie.html`,'utf8');
         assert.match(html,/taskly-call-livekit\.js\?v=19-restored/);
-        assert.match(html,/taskly-call-ui\.js\?v=5/);
+        assert.match(html,/taskly-call-ui\.js\?v=6-e2ee22/);
     }
 });

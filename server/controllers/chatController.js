@@ -15,6 +15,7 @@ const STATUTS_HISTORIQUE = new Set([
 // Pilote manuel V20 : uniquement les demandes explicitement autorisees sur Vercel.
 // Ex.: TASKLY_E2EE_TEST_DEMANDE_IDS=123,456. Aucune cle ne transite ici.
 function e2eeRequisPourDemande(demandeId) {
+    if (process.env.TASKLY_E2EE_ALL_CALLS === 'true') return true;
     const ids = process.env.TASKLY_E2EE_TEST_DEMANDE_IDS || '';
     return ids.split(',').some(value => {
         const id = value.trim();
@@ -252,7 +253,7 @@ async function gererAppel(req, res) {
             : req.body?.action;
 
         if (req.method !== 'GET' &&
-            !['start', 'accept', 'reject', 'end', 'heartbeat'].includes(action)) {
+            !['start', 'accept', 'reject', 'end', 'heartbeat', 'e2ee-confirm'].includes(action)) {
             return res.status(400).json({
                 message: 'Action invalide.'
             });
@@ -303,7 +304,10 @@ async function gererAppel(req, res) {
             return res.status(503).json({ message: 'Pilote E2EE non disponible.' });
         }
 
-        // Tous les participants doivent rejoindre le MEME mode. Aucun downgrade.
+        // Aucun downgrade : l'E2EE doit etre coherent dans les deux sens.
+        if (action === 'e2ee-confirm' && !e2eeRequired) {
+            return res.status(409).json({message:'Aucun chiffrement actif.'});
+        }
         if (['start', 'accept'].includes(action)) {
             const demandeE2EE = req.body?.e2eeRequired === true;
             if (demandeE2EE !== e2eeRequired ||
@@ -498,6 +502,12 @@ async function emettreJetonLiveKit(req, res) {
             return res.status(409).json({
                 message: 'Appel non actif.'
             });
+        }
+
+        // Le jeton ne doit jamais etre emis pour une negotiation E2EE incomplete.
+        if (e2eeRequired && (!call.e2eeOfferKey || !call.e2eeAnswerKey ||
+                             !call.e2eeAcceptProof || !call.e2eeCallerProof)) {
+            return res.status(409).json({message:'Echange E2EE non confirme.'});
         }
 
         const { creerJetonLiveKit } =

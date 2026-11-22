@@ -96,7 +96,9 @@ function mockServer(env) {
     };
     const mockCall = {
         id: '8d3b8856-ccf3-4acd-9566-6f4737c1dc92',
-        state: 'accepted', transport: 'livekit', mode: 'audio'
+        state: 'accepted', transport: 'livekit', mode: 'audio',
+        e2eeOfferKey: 'public-offer', e2eeAnswerKey: 'public-answer',
+        e2eeAcceptProof: 'accept-proof', e2eeCallerProof: 'caller-proof'
     };
     const service = {
         async signaler(access, action, body) {
@@ -199,5 +201,26 @@ test('V20 : appels normaux V19 restent disponibles hors pilote', async () => {
     assert.equal(r.result.body.call.e2eeRequired,undefined);
     r=e.response();
     await e.controller.gererAppel(e.req('POST',{action:'start',mode:'audio',transport:'livekit',e2eeRequired:true}),r);
+    assert.equal(r.result.code,409);
+});
+
+
+test('V22 : activation globale possible en gardant les validations du serveur', async () => {
+    const e=mockServer({
+        TASKLY_E2EE_ALL_CALLS:'true',
+        TASKLY_LIVEKIT_ENABLED:'true',
+        TASKLY_LIVEKIT_BROWSER_ENABLED:'true'
+    });
+    let r=e.response();
+    await e.controller.gererAppel(e.req('GET'),r);
+    assert.equal(r.result.code,200);
+    assert.equal(r.result.body.e2eeRequired,true);
+    r=e.response();
+    await e.controller.gererAppel(e.req('POST',{action:'start',mode:'audio',transport:'livekit'}),r);
+    assert.equal(r.result.code,409);
+    assert.equal(e.calls.filter(x=>x.action==='start').length,0);
+    delete e.mockCall.e2eeCallerProof;
+    r=e.response();
+    await e.controller.emettreJetonLiveKit(e.req('POST',{id:e.mockCall.id,e2eeRequired:true}),r);
     assert.equal(r.result.code,409);
 });

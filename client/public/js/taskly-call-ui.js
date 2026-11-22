@@ -269,6 +269,9 @@
                 incoming,
                 transport,
                 e2eeRequired: e2eeRequired === true,
+                e2eeSession: null,
+                e2eeKey: null,
+                e2eePeerPublicKey: null,
                 accepted: false,
                 pending: false,
                 microphone: true,
@@ -353,10 +356,10 @@
                 throw new Error('Appel annule.');
             }
 
-            // Verifier la presence de la cle avant de demander le jeton.
+            // Fail closed : la cle n'est derivée qu'apres un accord ECDH confirme.
             if (call.e2eeRequired &&
-                !window.TasklyE2EEManualKeys?.ready()) {
-                throw new Error('Cle E2EE requise.');
+                (!(call.e2eeKey instanceof ArrayBuffer) || call.e2eeKey.byteLength !== 32)) {
+                throw new Error('Echange de cles E2EE non confirme.');
             }
 
             const data = await this.api(
@@ -388,7 +391,7 @@
             }
 
             const key = call.e2eeRequired
-                ? window.TasklyE2EEManualKeys.requireKey()
+                ? call.e2eeKey.slice(0)
                 : null;
 
             let stream;
@@ -439,8 +442,8 @@
                     if (!livekit) {
                         throw new Error('LiveKit requis pour un appel chiffre.');
                     }
-                    if (!window.TasklyE2EEManualKeys?.ready()) {
-                        throw new Error('Importez la cle E2EE de test avant l appel.');
+                    if (!window.TasklyE2EEAutoKeys?.create) {
+                        throw new Error('Echange automatique E2EE indisponible.');
                     }
                     await window.TasklyE2EESdk?.load();
                     if (typeof window.TasklyCallLiveKitE2EE !== 'function') {
@@ -454,6 +457,10 @@
 
                 call = this.show(context, mode, false, transport, e2eeRequired);
                 call.pending = true;
+                if (e2eeRequired) {
+                    call.e2eeSession = await window.TasklyE2EEAutoKeys.create();
+                    if (this.active !== call) return;
+                }
 
                 let sdp;
 
@@ -472,7 +479,10 @@
                     action: 'start',
                     mode,
                     transport,
-                    ...(call.e2eeRequired ? { e2eeRequired: true } : {})
+                    ...(call.e2eeRequired ? {
+                        e2eeRequired: true,
+                        e2eePublicKey: call.e2eeSession.publicKey
+                    } : {})
                 };
 
                 if (sdp) demande.sdp = sdp;
@@ -520,6 +530,27 @@
         }
 
 
+        async waitForE2EEConfirmation(call) {
+            // Le serveur transporte une preuve HMAC, jamais la cle secrete.
+            for (let i = 0; i < 30; i++) {
+                if (this.active !== call) throw new Error('Appel annule.');
+                const result = await this.request(call.context.id);
+                const remote = result.call;
+                if (!remote || remote.id !== call.id || remote.state !== 'accepted') {
+                    throw new Error('Appel E2EE termine ou modifie.');
+                }
+                if (remote.e2eeCallerProof) {
+                    const valid = await window.TasklyE2EEAutoKeys.verify(
+                        call.e2eeKey,call.id,'caller',remote.e2eeCallerProof
+                    );
+                    if (!valid) throw new Error('Confirmation E2EE incorrecte.');
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve,400));
+            }
+            throw new Error('Confirmation E2EE expiree.');
+        }
+
         async accept() {
             const call = this.active;
 
@@ -527,8 +558,8 @@
                 call.pending || call.accepted) return;
 
             if (call.e2eeRequired &&
-                !window.TasklyE2EEManualKeys?.ready()) {
-                this.status('Importez la cle E2EE de test pour accepter.');
+                (!window.TasklyE2EEAutoKeys?.create || !call.e2eePeerPublicKey)) {
+                this.status('Echange E2EE non disponible.');
                 return;
             }
 
@@ -541,6 +572,20 @@
 
             try {
                 let sdp;
+                let e2eeAnswer = null;
+                if (call.e2eeRequired) {
+                    call.e2eeSession = await window.TasklyE2EEAutoKeys.create();
+                    call.e2eeKey = await window.TasklyE2EEAutoKeys.derive(
+                        call.e2eeSession, call.e2eePeerPublicKey,
+                        call.id, call.context.id
+                    );
+                    e2eeAnswer = {
+                        e2eePublicKey: call.e2eeSession.publicKey,
+                        e2eeProof: await window.TasklyE2EEAutoKeys.proof(
+                            call.e2eeKey,call.id,'accept'
+                        )
+                    };
+                }
 
                 if (call.transport === 'webrtc') {
                     const stream = await call.media.prepare(call.mode);
@@ -557,7 +602,10 @@
                     action: 'accept',
                     id: call.id,
                     transport: call.transport,
-                    ...(call.e2eeRequired ? { e2eeRequired: true } : {})
+                    ...(call.e2eeRequired ? {
+                        e2eeRequired: true,
+                        ...e2eeAnswer
+                    } : {})
                 };
 
                 if (sdp) demande.sdp = sdp;
@@ -570,6 +618,7 @@
                 call.lastSignalAt = Date.now();
 
                 if (call.transport === 'livekit') {
+                    if (call.e2eeRequired) await this.waitForE2EEConfirmation(call);
                     await this.connectLiveKit(call);
                 }
 
@@ -710,6 +759,7 @@
 
                         incoming.id = remote.id;
                         incoming.offer = remote.offer;
+                        if (e2eeRequired) incoming.e2eePeerPublicKey = remote.e2eeOfferKey;
                     }
 
                     return;
@@ -754,6 +804,27 @@
             this.status('Connexion en cours...');
 
                     try {
+                        if (active.e2eeRequired) {
+                            if (!active.e2eeSession || !remote.e2eeAnswerKey ||
+                                !remote.e2eeAcceptProof) {
+                                throw new Error('Echange E2EE incomplet.');
+                            }
+                            active.e2eeKey = await window.TasklyE2EEAutoKeys.derive(
+                                active.e2eeSession,remote.e2eeAnswerKey,
+                                active.id,active.context.id
+                            );
+                            const ok = await window.TasklyE2EEAutoKeys.verify(
+                                active.e2eeKey,active.id,'accept',remote.e2eeAcceptProof
+                            );
+                            if (!ok) throw new Error('Verification E2EE impossible.');
+                            await this.request(active.context.id, {
+                                action:'e2ee-confirm',id:active.id,
+                                e2eeRequired:true,
+                                e2eeProof:await window.TasklyE2EEAutoKeys.proof(
+                                    active.e2eeKey,active.id,'caller'
+                                )
+                            });
+                        }
                         if (active.transport === 'livekit') {
                             await this.connectLiveKit(active);
 
@@ -851,7 +922,9 @@
             if (this.active !== call) return;
 
             this.stopRing();
-            if (call.e2eeRequired) window.TasklyE2EEManualKeys?.clear();
+            if (call.e2eeKey) new Uint8Array(call.e2eeKey).fill(0);
+            call.e2eeKey = null;
+            call.e2eeSession = null;
             delete document.body.dataset.tasklyCallActive;
             this.active = null;
             this.get('local').srcObject = null;
