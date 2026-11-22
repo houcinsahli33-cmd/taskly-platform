@@ -274,3 +274,112 @@ body[data-workspace-page="support"]
     padding: 0 10px 15px !important;
   }
 }
+
+
+/* ==========================================
+   TASKLY SUPPORT - FORMAT PLUS COMPACT
+   Seulement le contenu de la page Support
+   ========================================== */
+
+@media (min-width: 761px) {
+
+  /* Espacement général */
+  body[data-workspace-page="support"]
+  .dashboard-content.taskly-support-redesign {
+    padding: 14px 20px 24px !important;
+  }
+
+  /* Bannière légèrement réduite */
+  .taskly-support-redesign .ts-hero {
+    min-height: 125px !important;
+    padding: 14px 22px !important;
+  }
+
+  .taskly-support-redesign .ts-headset {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .taskly-support-redesign .ts-hero-copy h1 {
+    font-size: 30px !important;
+  }
+
+  .taskly-support-redesign .ts-hero-copy p {
+    font-size: 14px !important;
+  }
+
+  /* Trois cartes compactes */
+  .taskly-support-redesign .ts-actions {
+    gap: 12px !important;
+    margin: 14px 0 !important;
+  }
+
+  .taskly-support-redesign .ts-action {
+    padding: 15px !important;
+    row-gap: 9px !important;
+  }
+
+  .taskly-support-redesign .ts-action-icon {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .taskly-support-redesign .ts-action h2 {
+    font-size: 18px !important;
+  }
+
+  .taskly-support-redesign .ts-action p {
+    font-size: 12px !important;
+  }
+
+  .taskly-support-redesign .ts-action .ts-btn {
+    min-height: 39px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Historique plus compact */
+  .taskly-support-redesign .ts-history {
+    margin-top: 12px !important;
+  }
+
+  .taskly-support-redesign
+  .ts-history .taskly-history-toggle {
+    min-height: 83px !important;
+    padding: 13px 19px !important;
+  }
+
+  .taskly-support-redesign
+  .ts-history .taskly-history-icon {
+    width: 49px !important;
+    height: 49px !important;
+    flex-basis: 49px !important;
+  }
+
+  .taskly-support-redesign
+  .ts-history .taskly-history-label strong {
+    font-size: 19px !important;
+  }
+
+  .taskly-support-redesign
+  .ts-history .taskly-history-label small {
+    font-size: 12px !important;
+  }
+
+  .taskly-support-redesign
+  .ts-history-table thead th {
+    padding: 12px 15px !important;
+    font-size: 13px !important;
+  }
+
+  .taskly-support-redesign
+  .ts-history-table tbody td {
+    padding: 12px 15px !important;
+    font-size: 13px !important;
+  }
+
+  /* Pagination conservée */
+  .taskly-support-redesign .ts-history-pager {
+    margin: 10px 0 6px !important;
+  }
+}
+
