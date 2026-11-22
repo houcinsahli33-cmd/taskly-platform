@@ -172,8 +172,10 @@
     url.searchParams.set(role === 'client' ? 'taskly_client_embed' : 'taskly_artisan_embed', '1');
     frame.src = url.pathname + url.search;
     setTimeout(() => {
-      if (host?.querySelector('.taskly-floating-loading') && activeConversation === id) {
-        host.querySelector('.taskly-floating-loading').textContent = 'Appel indisponible. Vérifiez la conversation ou fermez la fenêtre.';
+      const hint = host?.querySelector('.taskly-floating-loading');
+      if (hint && activeConversation === id &&
+          /^(Connexion à votre appel|Chargement de la conversation)/.test(hint.textContent)) {
+        hint.textContent = 'Appel indisponible. Vérifiez la conversation ou fermez la fenêtre.';
       }
     }, 18000);
     frame.addEventListener('load', () => {
@@ -183,7 +185,21 @@
   }
   window.addEventListener('message', event => {
     if (event.origin !== location.origin || !frame || event.source !== frame.contentWindow) return;
-    if (event.data?.type === 'taskly:call-host-ready') return;
+    if (event.data?.type === 'taskly:call-host-ready') {
+      const hint = host?.querySelector('.taskly-floating-loading');
+      if (hint) hint.textContent = 'Chargement de la conversation…';
+      return;
+    }
+    if (event.data?.type === 'taskly:call-host-error') {
+      const hint = host?.querySelector('.taskly-floating-loading');
+      const messages = {
+        'calls-disabled':'Appels indisponibles pour ce compte.',
+        'not-eligible':'Appel non autorisé pour cette demande.',
+        'conversation-unavailable':'Conversation indisponible. Vérifiez la connexion ou la demande.'
+      };
+      if (hint) hint.textContent = messages[event.data.reason] || 'Impossible de préparer cet appel.';
+      return;
+    }
     if (event.data?.type === 'taskly:call-host-ended') {
       window.dispatchEvent(new Event('taskly:persistent-call-ended'));
       clear();

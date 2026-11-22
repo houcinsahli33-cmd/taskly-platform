@@ -57,6 +57,12 @@
           started = true;
           // UI selection is already validated by GET /api/demandes/:id/chat.
           Promise.resolve().then(() => this.start(requestedMode));
+        } else if (enabled && Number(id) === selectedId && requestedMode === 'receive') {
+          // An iPhone's call iframe should check the currently ringing call
+          // as soon as the authenticated conversation is ready.
+          Promise.resolve().then(() => {
+            if (this.context?.id === selectedId && !this.active) void this.poll();
+          });
         }
       }
       return result;
@@ -172,6 +178,12 @@
   if (typeof originalPoll === 'function') {
     proto.poll = function (...args) {
       if (!isHost && !this.active && parentHost()?.isActive()) return;
+      if (isHost && requestedMode === 'receive' && !this.active &&
+          this.context?.id === selectedId) {
+        // This dedicated iframe is opened for an incoming call. Do not use
+        // the ordinary idle-chat 10-second throttle while it is waiting.
+        this.lastIdlePoll = 0;
+      }
       return originalPoll.apply(this, args);
     };
   }
