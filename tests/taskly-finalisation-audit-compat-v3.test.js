@@ -15,7 +15,7 @@ test('V3: V9 media and V8 call maquette preserved in both spaces',()=>{
  for(const role of ['client','artisan']){
   const html=load(`client/private/${role}/messagerie.html`);
   assert.match(html,/taskly-call-livekit\.js/);
-  assert.match(html,/taskly-call-maquette-v8\.js\?v=10/);
+  assert.match(html,/taskly-call-maquette-v8\.js\?v=11/);
   assert.match(html,/taskly-chat-workspace\.js\?v=calls-v10/);
   assert.match(html,/taskly-call-floating\.css\?v=10/);
  }

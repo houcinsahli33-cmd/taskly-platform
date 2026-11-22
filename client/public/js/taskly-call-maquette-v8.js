@@ -5,7 +5,7 @@
 (() => {
   if (window.TasklyCallMaquetteV8) return;
   const isHost = new URLSearchParams(location.search).get('taskly_call_host') === '1';
-  const version = '9';
+  const version = '11';
   const css = '/css/taskly-call-maquette-v8.css?v=' + version;
   // The outer titlebar belongs to the persistent dashboard shell. Add only CSS.
   if (!isHost) {

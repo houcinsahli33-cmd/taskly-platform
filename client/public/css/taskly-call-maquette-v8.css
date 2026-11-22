@@ -353,3 +353,29 @@ html[data-taskly-call-host='1']
     background: transparent !important;
     backdrop-filter: none !important;
 }
+
+/* TASKLY_CALL_CASCADE_V2 — Override the obsolete V3 video width/height limits
+   only inside the persistent call iframe. Normal site dialogs stay unchanged. */
+html[data-taskly-call-host='1'] body[data-workspace-page='messagerie']
+.taskly-call-dialog.taskly-call-premium[data-mode='audio'],
+html[data-taskly-call-host='1'] body[data-workspace-page='messagerie']
+.taskly-call-dialog.taskly-call-premium[data-mode='video'] {
+  position:fixed!important;
+  inset:0!important;
+  top:0!important;
+  left:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  transform:none!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  resize:none!important;
+}

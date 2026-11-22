@@ -8,8 +8,8 @@ const css=read('client/public/css/taskly-call-maquette-v8.css');
 for(const role of ['client','artisan']) {
  test('V8 loaded in '+role+' private messaging after persistent window',()=>{
   const html=read('client/private/'+role+'/messagerie.html');
-  assert.match(html,/taskly-call-maquette-v8\.css\?v=10/);
-  assert.match(html,/taskly-call-maquette-v8\.js\?v=10/);
+  assert.match(html,/taskly-call-maquette-v8\.css\?v=11/);
+  assert.match(html,/taskly-call-maquette-v8\.js\?v=11/);
   assert.ok(html.indexOf('taskly-call-floating.js')<html.indexOf('taskly-call-maquette-v8.js'));
   assert.match(html,/taskly-call-livekit\.js/);
  });
@@ -74,4 +74,12 @@ test('V8 uses a separate CSS/JS layer, keeping LiveKit V7 and V6 intact',()=>{
  assert.match(html,/taskly-call-premium\.js/);
  assert.match(html,/taskly-call-floating\.js/);
  assert.doesNotMatch(js,/fetch\('\/api\/demandes\/.*calls\//);
+});
+
+test('Persistent call iframe overrides V3 width and height without altering other dialogs',()=>{
+ assert.match(css,/TASKLY_CALL_CASCADE_V2/);
+ assert.match(css,/html\[data-taskly-call-host='1'\] body\[data-workspace-page='messagerie'\]/);
+ assert.match(css,/\[data-mode='video'\]/);
+ assert.match(css,/width:100%!important/);
+ assert.match(css,/height:100%!important/);
 });
