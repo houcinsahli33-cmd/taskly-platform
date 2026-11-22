@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
@@ -226,7 +226,7 @@ test('Navigateur : scripts charges dans les deux espaces', () => {
             'utf8'
         );
 
-        const sdk = html.indexOf('/js/vendor/livekit-client.umd.js');
+        const sdk = html.indexOf('/js/vendor/livekit-client-e2ee-pilot.umd.js');
         const adapter = html.indexOf('/js/taskly-call-livekit.js');
         const ui = html.indexOf('/js/taskly-call-ui.js');
 
