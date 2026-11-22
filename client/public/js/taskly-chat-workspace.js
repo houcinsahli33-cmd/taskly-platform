@@ -5,11 +5,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
  function clearFile(){const f=$('cw-file');if(f)f.value='';$('cw-file-preview').hidden=true;$('cw-file-preview').replaceChildren();}
  function sizeLabel(n){return n>=1048576?(n/1048576).toFixed(1)+' Mo':Math.max(1,Math.ceil(n/1024))+' Ko';}
 
- const back=document.createElement('a');
- back.className='cw-return-site';back.textContent='← Retour au site';
- back.href='/espace/'+role+'/accueil';back.setAttribute('data-dashboard-link','accueil');
- const heading=root.querySelector('.cw-heading');
- if(heading && !heading.querySelector('.cw-return-site'))heading.prepend(back);
 
  const calls=document.body?.dataset?.tasklyChatCalls==='1'&&typeof window.TasklyCallUI==='function'?new window.TasklyCallUI(requeteAPI,role):null;
  const statuts={en_attente:'En attente',attente:'En attente',refusee:'Refusée',acceptee:'Acceptée',attente_confirmation:'À confirmer',terminee:'Terminée',conteste:'Contestée',annulee:'Annulée'};
