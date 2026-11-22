@@ -617,3 +617,15 @@ html[data-taskly-call-host='1'] body[data-workspace-page='messagerie']
     margin:4px auto 10px!important;
   }
 }
+
+/* TASKLY_CALL_V14_REMOTE_FIT: portrait phone video stays fully visible on wide
+   desktop windows; use the approved mint-green palette, never grey bars. */
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected']
+.tc-v8-video[data-remote-fit='contain'] {
+  background:linear-gradient(115deg,#d6f7e8,#f4fcf8 48%,#d6f7e8)!important;
+}
+html[data-taskly-call-host='1'] .taskly-call-dialog.taskly-call-premium[data-taskly-v8-ready='1'][data-mode='video'][data-premium-stage='connected']
+.tc-v8-video[data-remote-fit='contain'] [data-tc='remote'] {
+  object-fit:contain!important;
+  background:transparent!important;
+}

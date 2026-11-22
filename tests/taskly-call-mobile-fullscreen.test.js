@@ -23,8 +23,8 @@ test('Fullscreen restore recenters original-size call instead of returning to le
 test('Mobile assets are versioned for both accounts and persistent call host',()=>{
   for(const role of ['client','artisan']){
     const html=read(`client/private/${role}/messagerie.html`);
-    assert.match(html,/taskly-call-maquette-v8\.css\?v=12/);
-    assert.match(html,/taskly-call-maquette-v8\.js\?v=12/);
+    assert.match(html,/taskly-call-maquette-v8\.css\?v=13/);
+    assert.match(html,/taskly-call-maquette-v8\.js\?v=13/);
   }
   assert.match(read('client/public/js/taskly-call-notifications.js'),/taskly-call-host-shell\.js\?v=11/);
   assert.match(read('client/public/js/taskly-call-floating.js'),/taskly-call-host-shell\.js\?v=11/);

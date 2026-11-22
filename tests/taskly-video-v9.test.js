@@ -46,8 +46,8 @@ test('Sonnerie si Taskly reste ouvert: invitation vérifiée côté API, même o
 test('Les pages Client et Artisan gardent leur interface et chargent les nouveaux fichiers',()=>{
  for(const role of ['client','artisan']){
   const html=read(`client/private/${role}/messagerie.html`);
-  assert.match(html,/taskly-call-maquette-v8\.css\?v=12/);
-  assert.match(html,/taskly-call-maquette-v8\.js\?v=12/);
+  assert.match(html,/taskly-call-maquette-v8\.css\?v=13/);
+  assert.match(html,/taskly-call-maquette-v8\.js\?v=13/);
   assert.match(html,/taskly-chat-workspace\.js\?v=calls-v10/);
   assert.match(html,/taskly-call-livekit\.js/);
  }

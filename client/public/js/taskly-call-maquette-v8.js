@@ -5,7 +5,7 @@
 (() => {
   if (window.TasklyCallMaquetteV8) return;
   const isHost = new URLSearchParams(location.search).get('taskly_call_host') === '1';
-  const version = '12';
+  const version = '13';
   const css = '/css/taskly-call-maquette-v8.css?v=' + version;
   // The outer titlebar belongs to the persistent dashboard shell. Add only CSS.
   if (!isHost) {
@@ -58,6 +58,23 @@
   }
   function status(info, message) { text(info.feedback,message);info.feedback.hidden=!message; }
   function nameSafe(dialog) {return dialog.querySelector('[data-tc=name]')?.textContent?.trim() || 'Correspondant';}
+  // V14: Match the actual received video aspect ratio to the call stage.
+  // A portrait iPhone stream must not be enlarged/cropped to fill a wide monitor.
+  function syncRemoteVideoFit(info) {
+    const stage=info.board.querySelector('.tc-v8-video');
+    const remote=info.dialog.querySelector('video[data-tc="remote"]');
+    if (!stage || !remote) return;
+    if (info.dialog.dataset.premiumStage!=='connected') {
+      delete stage.dataset.remoteFit;
+      return;
+    }
+    const sourceWidth=Number(remote.videoWidth), sourceHeight=Number(remote.videoHeight);
+    const frameWidth=stage.clientWidth, frameHeight=stage.clientHeight;
+    if (!(sourceWidth>0 && sourceHeight>0 && frameWidth>0 && frameHeight>0)) return;
+    const sourceRatio=sourceWidth/sourceHeight, frameRatio=frameWidth/frameHeight;
+    const mismatch=Math.max(sourceRatio/frameRatio,frameRatio/sourceRatio);
+    stage.dataset.remoteFit=mismatch>=1.45?'contain':'cover';
+  }
   function sync(info) {
     const {dialog,instance}=info;
     if (!dialog.open) { if (info.timer) clearInterval(info.timer);info.timer=null;return; }
@@ -78,6 +95,7 @@
     const videoBox=info.board.querySelector('.tc-v8-video');
     const videos=dialog.querySelector('.tc-videos');
     if (videoBox && videos && videos.parentElement!==videoBox) videoBox.prepend(videos);
+    syncRemoteVideoFit(info);
     if (info.actionArea && info.hang) {
       if(mode==='video' && connected && info.hang.parentElement!==info.actionArea)
         info.actionArea.append(info.hang);
@@ -199,6 +217,13 @@
     const info={dialog,instance,board,avatar,person,service,badge,presence:badge,heroAvatar,
       heroName,kind,duration,feedback,buttons,menu,drawer,incomingRow,hang,actionArea,videoRemoteLabel:remoteLabel,timer:null,unreadTimer:null};
     instances.set(dialog,info);
+    // Re-check after metadata, track replacement or resize/fullscreen.
+    const remoteVideo=dialog.querySelector('video[data-tc="remote"]');
+    const updateRemoteFit=()=>syncRemoteVideoFit(info);
+    remoteVideo?.addEventListener('loadedmetadata',updateRemoteFit);
+    remoteVideo?.addEventListener('resize',updateRemoteFit);
+    window.addEventListener('resize',updateRemoteFit,{passive:true});
+
     devices.addEventListener('click',()=>{
       const native=dialog.querySelector('.tc-premium-extra');
       if (native) native.click();else status(info,'Choix des appareils indisponible.');

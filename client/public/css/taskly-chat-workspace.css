@@ -143,3 +143,27 @@ body.dashboard-page[data-taskly-artisan-shell] .side-nav a .chat-nav-icon {
 }
 .chat-workspace .cw-return-site:hover {background:#e8f8f0;}
 @media(max-width:700px) {.chat-workspace .cw-return-site {position:static;margin:0 0 9px 0;}}
+
+/* TASKLY_CHAT_V14_MESSAGE_FIT: keep long messages, attachments and the composer
+   inside the conversation area without changing the site header or sidebar. */
+body.dashboard-page .dashboard-content.chat-workspace { box-sizing:border-box!important; max-width:100%!important; }
+.chat-workspace .cw-grid,
+.chat-workspace .cw-thread,
+.chat-workspace .cw-messages,
+.chat-workspace .cw-message-line,
+.chat-workspace .cw-composer,
+.chat-workspace .cw-input-wrap { min-width:0;max-width:100%;box-sizing:border-box; }
+.chat-workspace .cw-message-line { width:100%; }
+.chat-workspace .cw-bubble {
+  box-sizing:border-box;min-width:0;max-width:min(85%,calc(100% - 46px));
+  overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap;
+}
+.chat-workspace .cw-bubble img,
+.chat-workspace .cw-bubble video,
+.chat-workspace .cw-attachment-link { max-width:100%;height:auto; }
+.chat-workspace .cw-composer textarea {min-width:0;width:100%;box-sizing:border-box;}
+@media (max-width:700px) {
+  .chat-workspace .cw-messages {overflow-x:hidden;}
+  .chat-workspace .cw-bubble {max-width:calc(100% - 42px);}
+  .chat-workspace .cw-composer {width:100%;}
+}
