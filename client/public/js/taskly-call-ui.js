@@ -490,6 +490,19 @@
                     !identityMeta?.self || !identityMeta?.peer)) {
                     throw new Error('Authentification V25 indisponible.');
                 }
+                if (identityRequired) {
+                    // Fail before inviting/ringing when local trust is absent.
+                    // Never provision a trusted peer via Taskly signaling.
+                    await window.TasklyE2EEIdentityGateV25.trustedFingerprint({
+                        selfRole:identityMeta.self.role,
+                        selfAccountId:identityMeta.self.accountId,
+                        peerRole:identityMeta.peer.role,
+                        peerAccountId:identityMeta.peer.accountId
+                    });
+                    await window.TasklyE2EEIdentityGateV25.getOwnIdentity(
+                        identityMeta.self.role,identityMeta.self.accountId
+                    );
+                }
 
                 if (e2eeRequired) {
                     if (!livekit) {
@@ -835,10 +848,19 @@
                                     demandeId:context.id,callId:remote.id,
                                     ephemeralPublicKey:remote.e2eeOfferKey
                                 });
-                            } catch {
+                            } catch (error) {
+                                // Fail closed. Report the rejection reason only to DevTools.
+                                // No key, fingerprint or signed packet is logged.
+                                const reason=String(error?.message || 'Erreur inconnue')
+                                    .slice(0,160);
+                                if (this.lastV25IdentityError !== reason) {
+                                    this.lastV25IdentityError=reason;
+                                    console.warn('[Taskly E2EE V25] Appel entrant refuse :',reason);
+                                }
                                 this.notify('Identite du correspondant non verifiee.');
                                 return;
                             }
+                            this.lastV25IdentityError=null;
                             if (this.active || this.context?.id !== context.id) return;
                         }
                         if (e2eeRequired) {

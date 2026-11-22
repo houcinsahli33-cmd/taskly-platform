@@ -43,9 +43,13 @@
         try {
             return await new Promise((resolve,reject)=>{
                 const tx=db.transaction(STORE,mode);
-                const store=tx.objectStore(STORE);
-                const req=mode==='readonly'?store.get(key):store.put(value,key);
-                req.onsuccess=()=>resolve(req.result);
+                const req=mode==='readonly'
+                    ? tx.objectStore(STORE).get(key)
+                    : tx.objectStore(STORE).put(value,key);
+                // Writes are trusted only after their IndexedDB transaction commits.
+                // A successful put request alone does not prove durability.
+                tx.oncomplete=()=>{if(mode!=='readonly') resolve(req.result);};
+                req.onsuccess=()=>{if(mode==='readonly') resolve(req.result);};
                 req.onerror=()=>reject(req.error || new Error('Empreinte indisponible.'));
                 tx.onerror=()=>reject(tx.error || new Error('Stockage interrompu.'));
                 tx.onabort=()=>reject(tx.error || new Error('Stockage annule.'));
@@ -101,7 +105,28 @@
             ephemeralPublicKey
         },fp);
     }
+    // Read-only local diagnostic. No trust is automatically added or changed.
+    // These fingerprints are public. NEVER expose the private identity key.
+    async function inspectTrust({selfRole,selfAccountId,peerRole,peerAccountId}) {
+        const own=await getOwnIdentity(selfRole,selfAccountId);
+        let peerFingerprint=null;
+        try {
+            peerFingerprint=await trustedFingerprint({
+                selfRole,selfAccountId,peerRole,peerAccountId
+            });
+        } catch (err) {
+            if (!/Interlocuteur non verifie/.test(String(err?.message))) throw err;
+        }
+        return Object.freeze({
+            role:selfRole,accountId:selfAccountId,
+            identityCode:own.verificationCode,
+            ownFingerprint:own.fingerprint,
+            peerRole,peerAccountId,
+            trustedPeerFingerprint:peerFingerprint,
+            peerTrusted:Boolean(peerFingerprint)
+        });
+    }
     global.TasklyE2EEIdentityGateV25=Object.freeze({
-        getOwnIdentity,trustPeer,trustedFingerprint,sign,verify
+        getOwnIdentity,trustPeer,trustedFingerprint,sign,verify,inspectTrust
     });
 })(window);
