@@ -160,10 +160,55 @@ body.dashboard-page .dashboard-content.chat-workspace { box-sizing:border-box!im
 }
 .chat-workspace .cw-bubble img,
 .chat-workspace .cw-bubble video,
-.chat-workspace .cw-attachment-link { max-width:100%;height:auto; }
+.chat-workspace .cw-attachment-link { max-width:100%;height:auto; } 
 .chat-workspace .cw-composer textarea {min-width:0;width:100%;box-sizing:border-box;}
 @media (max-width:700px) {
   .chat-workspace .cw-messages {overflow-x:hidden;}
   .chat-workspace .cw-bubble {max-width:calc(100% - 42px);}
   .chat-workspace .cw-composer {width:100%;}
+
+   
+/* TASKLY - Correction badges rouges uniquement */
+body.dashboard-page .dashboard-shell > .sidebar
+.side-nav a[data-dashboard-link="messagerie"],
+body.dashboard-page .dashboard-shell > .sidebar
+.side-nav a[data-dashboard-link="demandes"] {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+body.dashboard-page .dashboard-shell > .sidebar
+.side-nav a[data-dashboard-link="messagerie"]
+> :is(.chat-nav-count, .nav-badge, .notification-badge),
+body.dashboard-page .dashboard-shell > .sidebar
+.side-nav a[data-dashboard-link="demandes"]
+> :is(.chat-nav-count, .nav-badge, .notification-badge) {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  margin-left: auto;
+  margin-right: 0;
+  min-width: 21px;
+  max-width: 44px;
+  height: 21px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  line-height: 1;
+  overflow: hidden;
+  background: #e3323a;
+  color: #fff !important;
+  border-radius: 20px;
+}
+
+body.dashboard-page .dashboard-shell > .sidebar
+.side-nav a[data-dashboard-link="messagerie"]
+> :is(.chat-nav-count, .nav-badge, .notification-badge)[hidden],
+body.dashboard-page .dashboard-shell > .sidebar
+.side-nav a[data-dashboard-link="demandes"]
+> :is(.chat-nav-count, .nav-badge, .notification-badge)[hidden] {
+  display: none !important;
+}
+
 }
