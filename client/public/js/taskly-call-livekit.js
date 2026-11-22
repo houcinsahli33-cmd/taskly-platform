@@ -2,13 +2,15 @@
 
 (function () {
     class TasklyCallLiveKit {
-        constructor(onRemote, onState, onLocal) {
+        constructor(onRemote, onState, onLocal, getRemoteVideo) {
             this.room = null;
             this.stream = null;
             this.remoteStream = null;
             this.onRemote = onRemote;
             this.onState = onState;
             this.onLocal = onLocal;
+            this.getRemoteVideo = getRemoteVideo;
+            this.attachedRemoteVideoTracks = new Set();
             this.generation = 0;
             this.mode = null;
         }
@@ -41,11 +43,22 @@
                 channelCount: 1
             };
 
-            const room = new sdk.Room({
+            const options = {
                 adaptiveStream: true,
                 dynacast: true,
                 audioCaptureDefaults: audioCaptureOptions
-            });
+            };
+            // HD is an ideal capture size, never a mandatory device constraint.
+            // LiveKit will still select a lower simulcast layer on slow networks.
+            if (mode === 'video') {
+                options.videoCaptureDefaults = {
+                    resolution: sdk.VideoPresets?.h720?.resolution || {
+                        width: 1280, height: 720
+                    },
+                    frameRate: 24
+                };
+            }
+            const room = new sdk.Room(options);
 
             this.room = room;
             this.mode = mode;
@@ -62,6 +75,20 @@
                     !remote.getTracks().some(t => t.id === mediaTrack.id)) {
                     remote.addTrack(mediaTrack);
                     this.onRemote?.(remote);
+                    // With adaptiveStream, the SDK must observe the actual
+                    // displayed video. srcObject alone does not report its size.
+                    if (mediaTrack.kind === 'video' &&
+                        typeof track.attach === 'function') {
+                        const element = this.getRemoteVideo?.();
+                        if (element) {
+                            try {
+                                track.attach(element);
+                                this.attachedRemoteVideoTracks.add(track);
+                            } catch (error) {
+                                console.warn('[Taskly] Attachement vidéo adaptatif indisponible.', error);
+                            }
+                        }
+                    }
                 }
             });
 
@@ -70,6 +97,9 @@
 
                 const mediaTrack = track.mediaStreamTrack;
 
+                if (this.attachedRemoteVideoTracks.delete(track)) {
+                    try { track.detach?.(this.getRemoteVideo?.()); } catch {}
+                }
                 if (mediaTrack) {
                     const old = remote.getTracks().find(
                         t => t.id === mediaTrack.id
@@ -268,6 +298,10 @@
 
         close() {
             this.generation++;
+            for (const track of this.attachedRemoteVideoTracks) {
+                try { track.detach?.(this.getRemoteVideo?.()); } catch {}
+            }
+            this.attachedRemoteVideoTracks.clear();
 
             const room = this.room;
 

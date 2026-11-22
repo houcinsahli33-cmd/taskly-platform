@@ -314,7 +314,8 @@
                     if (this.active === call) {
                         this.get('local').srcObject = stream;
                     }
-                }
+                },
+                () => this.get('remote')
             );
 
             this.active = call;
