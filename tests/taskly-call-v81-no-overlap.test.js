@@ -9,8 +9,8 @@ const css=read('client/public/css/taskly-call-maquette-v8.css');
 const js=read('client/public/js/taskly-call-maquette-v8.js');
 for(const role of ['client','artisan'])test('V8.1 cache-busted in '+role+' while LiveKit sources are retained',()=>{
   const page=read(`client/private/${role}/messagerie.html`);
-  assert.match(page,/taskly-call-maquette-v8\.css\?v=11/);
-  assert.match(page,/taskly-call-maquette-v8\.js\?v=11/);
+  assert.match(page,/taskly-call-maquette-v8\.css\?v=12/);
+  assert.match(page,/taskly-call-maquette-v8\.js\?v=12/);
   assert.match(page,/taskly-call-floating\.js/);
   assert.match(page,/taskly-call-livekit\.js/);
 });

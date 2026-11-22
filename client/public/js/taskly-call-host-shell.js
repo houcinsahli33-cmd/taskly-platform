@@ -64,11 +64,19 @@
       min.title = state === 'min' ? 'Restaurer l’appel' : 'Réduire l’appel';
       min.setAttribute('aria-label', min.title);
     }
-    if (previous === 'max' && state === 'normal' && normalBounds) {
-      host.style.left = Math.max(6, Math.round(normalBounds.left)) + 'px';
-      host.style.top = Math.max(6, Math.round(normalBounds.top)) + 'px';
-      host.style.width = Math.round(normalBounds.width) + 'px';
-      host.style.height = Math.round(normalBounds.height) + 'px';
+    if (previous === 'max' && state === 'normal') {
+      // Restore the original compact size, then return to the same centered
+      // location as a new call (never the previous dragged left position).
+      if (normalBounds) {
+        host.style.width = Math.round(normalBounds.width) + 'px';
+        host.style.height = Math.round(normalBounds.height) + 'px';
+      }
+      center();
+      if (document.fullscreenElement === host) {
+        document.addEventListener('fullscreenchange', () => {
+          if (host && state === 'normal') requestAnimationFrame(center);
+        }, {once:true});
+      }
     }
     if (state !== 'max') clampPosition();
     send('layout:' + state);

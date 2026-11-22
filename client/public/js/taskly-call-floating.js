@@ -28,7 +28,7 @@
     const doc = shell?.document || document;
     if (!doc.querySelector('script[data-taskly-persistent-call-host]')) {
       const script = doc.createElement('script');
-      script.src = '/js/taskly-call-host-shell.js?v=9';
+      script.src = '/js/taskly-call-host-shell.js?v=11';
       script.defer = true;
       script.dataset.tasklyPersistentCallHost = '1';
       doc.head.append(script);

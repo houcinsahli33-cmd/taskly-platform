@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!document.querySelector('script[data-taskly-persistent-call-host]')) {
         const persistent = document.createElement('script');
         persistent.dataset.tasklyPersistentCallHost = '1';
-        persistent.src = '/js/taskly-call-host-shell.js?v=10';
+        persistent.src = '/js/taskly-call-host-shell.js?v=11';
         document.head.appendChild(persistent);
     }
 
