@@ -751,4 +751,420 @@ body[data-workspace-page="support"]
   }
 }
 
+/* =========================================================
+   TASKLY SUPPORT - MODALES EXACTES + COMPACTES
+   ========================================================= */
 
+/* Réduction légère des cartes principales */
+.taskly-support-redesign .ts-actions {
+  gap: 12px !important;
+  margin: 12px 0 !important;
+}
+
+.taskly-support-redesign .ts-action {
+  padding: 14px 16px !important;
+  border-radius: 20px !important;
+  min-height: 160px !important;
+}
+
+.taskly-support-redesign .ts-action h2 {
+  font-size: 17px !important;
+  margin-bottom: 5px !important;
+}
+
+.taskly-support-redesign .ts-action p {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.taskly-support-redesign .ts-action .ts-btn {
+  min-height: 40px !important;
+  padding: 8px 14px !important;
+  margin-top: 8px !important;
+  font-size: 14px !important;
+}
+
+/* 3 fenêtres */
+body[data-workspace-page="support"] dialog:is(
+  #ts-contact-dialog,
+  #ts-faq-dialog,
+  #client-support-follow-dialog
+) {
+  width: min(560px, calc(100vw - 24px)) !important;
+  max-width: 560px !important;
+  max-height: calc(100dvh - 24px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 20px !important;
+  overflow: hidden auto !important;
+  background: #fff !important;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, .22) !important;
+}
+
+body[data-workspace-page="support"] dialog:is(
+  #ts-contact-dialog,
+  #ts-faq-dialog,
+  #client-support-follow-dialog
+)::backdrop {
+  background: rgba(12, 26, 23, .42);
+  backdrop-filter: blur(2px);
+}
+
+/* Bandeau haut */
+body[data-workspace-page="support"] :is(.ts-dialog-head, .client-follow-header) {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  padding: 16px 18px !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(90, 255, 180, .15), transparent 42%),
+    linear-gradient(120deg, #007b49, #00653d 70%, #0a8f54);
+  color: #fff !important;
+  min-height: 82px !important;
+  box-sizing: border-box;
+}
+
+body[data-workspace-page="support"] .ts-modal-ico {
+  width: 50px !important;
+  height: 50px !important;
+  flex: 0 0 50px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,.12) !important;
+  font-size: 28px !important;
+  color: #fff !important;
+}
+
+body[data-workspace-page="support"] :is(.ts-dialog-head, .client-follow-header) h2 {
+  margin: 0 0 3px !important;
+  color: #fff !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+}
+
+body[data-workspace-page="support"] :is(.ts-dialog-head, .client-follow-header) p {
+  margin: 0 !important;
+  color: #ecfff5 !important;
+  font-size: 11px !important;
+  line-height: 1.4 !important;
+}
+
+body[data-workspace-page="support"] :is(.ts-close, .client-follow-close) {
+  width: 36px !important;
+  height: 36px !important;
+  margin-left: auto !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: #007345 !important;
+  font-size: 24px !important;
+  display: grid !important;
+  place-items: center !important;
+  cursor: pointer;
+  flex: 0 0 36px !important;
+}
+
+/* Corps */
+body[data-workspace-page="support"] .ts-dialog-body,
+body[data-workspace-page="support"] .client-follow-form {
+  padding: 16px 18px 18px !important;
+  background: #fff !important;
+  box-sizing: border-box;
+}
+
+/* Formulaires compacts */
+.ts-form-support-compact,
+.client-follow-form-compact {
+  display: grid;
+  gap: 10px;
+}
+
+.ts-form-support-compact label,
+.client-follow-form-compact label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #152921;
+}
+
+.ts-form-support-compact label span,
+.client-follow-form-compact label span {
+  color: #e2414d;
+}
+
+.ts-form-row-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+body[data-workspace-page="support"] :is(
+  #ts-contact-dialog,
+  #client-support-follow-dialog
+) :is(input, select, textarea) {
+  width: 100%;
+  min-height: 43px !important;
+  padding: 10px 12px !important;
+  border: 1px solid #8ed3ae !important;
+  border-radius: 10px !important;
+  background: #fbfefd !important;
+  color: #173127 !important;
+  box-sizing: border-box;
+  font-size: 14px !important;
+  box-shadow: none !important;
+}
+
+body[data-workspace-page="support"] :is(
+  #ts-contact-dialog,
+  #client-support-follow-dialog
+) textarea {
+  min-height: 86px !important;
+  resize: vertical;
+}
+
+body[data-workspace-page="support"] :is(
+  #ts-contact-dialog,
+  #client-support-follow-dialog
+) :is(input, select, textarea):focus {
+  outline: 2px solid #57c08e !important;
+  outline-offset: 0 !important;
+}
+
+/* Zone upload */
+.ts-upload-block {
+  margin-top: 2px;
+}
+
+.ts-upload-title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #162b22;
+}
+
+.ts-upload-title small {
+  font-weight: 500;
+  color: #5e7269;
+}
+
+.ts-upload-input {
+  display: none;
+}
+
+.ts-upload-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 88px;
+  padding: 12px;
+  border: 1.5px dashed #8ed0ae;
+  border-radius: 14px;
+  background: #fbfffd;
+  text-align: center;
+  cursor: pointer;
+}
+
+.ts-upload-icon {
+  font-size: 26px;
+  color: #0a8a54;
+  line-height: 1;
+}
+
+.ts-upload-dropzone strong {
+  color: #264237;
+  font-size: 13px;
+}
+
+.ts-upload-dropzone span {
+  color: #51675d;
+  font-size: 13px;
+}
+
+.ts-upload-dropzone small {
+  color: #677c73;
+  font-size: 11px;
+}
+
+/* Boutons compactés */
+.ts-dialog-buttons-compact,
+.client-follow-actions-compact {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px !important;
+}
+
+.ts-dialog-buttons-compact .ts-btn,
+.client-follow-actions-compact .btn {
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  padding: 10px 16px !important;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ts-dialog-buttons-compact .ts-btn.ts-outline {
+  min-width: 130px;
+  background: #fff !important;
+  border: 1.5px solid #0a8a54 !important;
+  color: #006f42 !important;
+}
+
+.ts-dialog-buttons-compact .ts-btn.ts-primary {
+  min-width: 220px;
+  background: linear-gradient(180deg, #07955d, #006e42) !important;
+  color: #fff !important;
+}
+
+.client-follow-actions-compact .btn.primary {
+  width: 100%;
+  background: linear-gradient(180deg, #07975f, #006b41) !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+/* Note suivi */
+.ts-follow-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #e9f9ef;
+  color: #355247;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ts-follow-note p {
+  margin: 0;
+}
+
+/* FAQ compacte */
+.ts-faq-compact {
+  display: grid;
+  gap: 8px;
+}
+
+.ts-faq-compact details {
+  border: 1px solid #a5ddbd !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  overflow: hidden;
+}
+
+.ts-faq-compact details[open] {
+  background: #f3fcf7 !important;
+}
+
+.ts-faq-compact summary {
+  position: relative;
+  display: block;
+  padding: 11px 38px 11px 14px !important;
+  cursor: pointer;
+  list-style: none;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  color: #1b2b23;
+}
+
+.ts-faq-compact summary::-webkit-details-marker {
+  display: none;
+}
+
+.ts-faq-compact summary::after {
+  content: "⌄";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  color: #007846;
+}
+
+.ts-faq-compact details[open] summary {
+  background: #def8e7 !important;
+}
+
+.ts-faq-compact details[open] summary::after {
+  content: "⌃";
+}
+
+.ts-faq-compact details p {
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  color: #374d42 !important;
+}
+
+.ts-faq-footer-btn {
+  margin-top: 8px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #0a965d, #006a41);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 680px) {
+  .ts-form-row-compact {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-workspace-page="support"] dialog:is(
+    #ts-contact-dialog,
+    #ts-faq-dialog,
+    #client-support-follow-dialog
+  ) {
+    width: calc(100vw - 18px) !important;
+    max-width: calc(100vw - 18px) !important;
+    max-height: calc(100dvh - 18px) !important;
+    border-radius: 16px !important;
+  }
+
+  body[data-workspace-page="support"] :is(.ts-dialog-head, .client-follow-header) {
+    padding: 14px !important;
+    min-height: auto !important;
+    gap: 10px !important;
+  }
+
+  body[data-workspace-page="support"] .ts-modal-ico {
+    width: 42px !important;
+    height: 42px !important;
+    flex-basis: 42px !important;
+    font-size: 22px !important;
+  }
+
+  body[data-workspace-page="support"] :is(.ts-dialog-head, .client-follow-header) h2 {
+    font-size: 18px !important;
+  }
+
+  body[data-workspace-page="support"] .ts-dialog-body,
+  body[data-workspace-page="support"] .client-follow-form {
+    padding: 14px !important;
+  }
+
+  .ts-dialog-buttons-compact,
+  .client-follow-actions-compact {
+    flex-direction: column;
+  }
+
+  .ts-dialog-buttons-compact .ts-btn,
+  .client-follow-actions-compact .btn {
+    width: 100%;
+  }
+}
