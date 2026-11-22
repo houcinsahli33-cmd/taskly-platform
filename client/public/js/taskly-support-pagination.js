@@ -1,7 +1,7 @@
 
 /*
  * TASKLY - Pagination Support
- * 5 messages par page.
+ * 3 messages par page.
  * Utilise l'API existante /api/contact/mes-messages
  * Sans modification du serveur, du header ou de la sidebar.
  */
@@ -35,7 +35,7 @@
     if (container.dataset.paginationReady === "true") return;
     container.dataset.paginationReady = "true";
 
-    const PER_PAGE = 5;
+    const PER_PAGE = 3;
     const API_LIMIT = 20;
 
     let currentPage = 1;

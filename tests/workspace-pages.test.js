@@ -12,7 +12,7 @@ function parse(file){
   else{
    const attributes=Object.fromEntries([...match[3].matchAll(/([\w-]+)="([^"]*)"/g)].map(a=>[a[1],a[2]]));
    const node={tag,attributes,parents:[...stack]};nodes.push(node);
-   if(!voids.has(tag))stack.push(node);
+   if(!voids.has(tag) && !/\/\s*$/.test(match[3]))stack.push(node);
   }
  }
  assert.equal(stack.length,0,file+' : blocs non fermés');

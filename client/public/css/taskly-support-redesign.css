@@ -1,5 +1,5 @@
 /* Taskly Support — contenu interne uniquement. Header et sidebar intacts. */
-body.dashboard-page[data-require-role="client"][data-workspace-page="support"] .dashboard-content.taskly-support-redesign{width:100%;max-width:none;min-width:0;padding:20px clamp(14px,2vw,28px) 38px;box-sizing:border-box;background:#f7faf9;color:#102b23}
+body.dashboard-page[data-workspace-page="support"] .dashboard-content.taskly-support-redesign{width:100%;max-width:none;min-width:0;padding:20px clamp(14px,2vw,28px) 38px;box-sizing:border-box;background:#f7faf9;color:#102b23}
 .taskly-support-redesign .ts-hero{position:relative;display:flex;align-items:center;gap:22px;min-height:150px;overflow:hidden;border-radius:21px;padding:20px 26px;background:linear-gradient(115deg,#dcf5e9,#f2fcf7 64%,#a4efc6);box-sizing:border-box}
 .ts-headset,.ts-action-icon,.ts-modal-ico{display:grid;place-items:center;flex:none;background:linear-gradient(145deg,#008654,#00582e);color:#fff;border-radius:18px;box-shadow:0 5px 12px #07553c26}
 .ts-headset{height:72px;width:72px;font-size:48px;line-height:1}
@@ -417,7 +417,7 @@ body[data-workspace-page="support"] dialog:is(
   #client-support-follow-dialog
 )::backdrop {
   background: rgba(14, 28, 24, .46);
-  backdrop-filter: blur(3px);
+  backdrop-filter: none;
 }
 
 /* Bandeau vert des fenêtres */
@@ -807,7 +807,7 @@ body[data-workspace-page="support"] dialog:is(
   #client-support-follow-dialog
 )::backdrop {
   background: rgba(12, 26, 23, .42);
-  backdrop-filter: blur(2px);
+  backdrop-filter: none;
 }
 
 /* Bandeau haut */

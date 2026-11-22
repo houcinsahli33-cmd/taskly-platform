@@ -15,21 +15,20 @@ test('support artisan : mêmes formulaires et mêmes points d’accès au suivi 
     assert.ok(artisan.includes(`id="${id}"`), `artisan ${id}`);
     assert.equal((artisan.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, `${id} unique`);
   }
-  for (const klass of ['client-heading','client-support-banner','client-support-columns','client-support-aside',
-    'client-support-history','client-follow-form']) {
+  for (const klass of ['dashboard-content taskly-support-redesign','ts-hero','ts-actions','ts-history','client-follow-form']) {
     assert.ok(artisan.includes(`class="${klass}`), klass);
   }
-  assert.ok((artisan.match(/data-open-support-follow/g) || []).length >= 3);
+  assert.ok((artisan.match(/data-open-support-follow/g) || []).length >= 2);
   assert.match(artisan, /data-require-role="artisan"/);
   assert.match(artisan, /\/js\/contact\.js/);
   assert.match(artisan, /\/js\/client-support-follow-modal\.js/);
-  assert.match(artisan, /\/css\/artisan-support-fidele\.css/);
+  assert.match(artisan, /\/css\/taskly-support-redesign\.css/);
   assert.match(artisan, /<noscript>[\s\S]*href="\/follow-message\.html"/);
   assert.doesNotMatch(artisan, /href="\/follow-message\.html"[^>]*data-open-support-follow/);
   assert.match(artisan, /href="\/espace\/artisan\/support" class="active"/);
 });
 
-test('support artisan : CSS exclusivement dans la page artisan/support et suppression rouge', () => {
+test('support artisan : CSS partage du support et suppression rouge preservee', () => {
   const css = read('client/public/css/artisan-support-fidele.css');
   assert.match(css, /data-require-role="artisan"\]\[data-workspace-page="support"\]/);
   assert.match(css, /\.client-support-banner/);
@@ -45,6 +44,21 @@ test('support artisan : CSS exclusivement dans la page artisan/support et suppre
   assert.match(profile, /\.workspace-dialog \.account-danger \.btn\.danger[\s\S]*background:#c72e44!important/);
   assert.match(profile, /\.taskly-confirm-dialog \[data-delete\]/);
   assert.match(read('client/public/js/account-profile.js'), /confirmation:'SUPPRIMER'/);
+});
+
+test('support client et artisan : contenu et fenetres strictement identiques', () => {
+  const client = read('client/private/client/support.html');
+  const artisan = read('client/private/artisan/support.html');
+  const extract = (html) => html.slice(html.indexOf('<section class="dashboard-content'));
+  assert.equal(extract(artisan), extract(client));
+  for (const html of [client, artisan]) {
+    assert.match(html, /taskly-support-paginated/);
+    assert.match(html, /\/js\/taskly-support-pagination\.js/);
+    assert.doesNotMatch(html, /\/js\/taskly-support-history\.js/);
+    assert.doesNotMatch(html, /id="support-file"/);
+  }
+  const js = read('client/public/js/taskly-support-pagination.js');
+  assert.match(js, /const PER_PAGE = 3;/);
 });
 
 for (const role of ['client', 'artisan']) {

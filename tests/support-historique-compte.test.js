@@ -28,15 +28,15 @@ for(const role of ['client','artisan'])test(`support ${role}: petite carte histo
  assert.match(h,/data-support-history-toggle/);
  assert.match(h,/data-support-history-list/);
  assert.match(h,/aria-expanded="false"/);
- assert.match(h,/\/js\/taskly-support-history\.js/);
+ assert.match(h,/\/js\/taskly-support-pagination\.js/);
  assert.match(h,/\/css\/taskly-support-history\.css/);
  assert.match(h,/id="follow-form"/);
  assert.match(h,/id="contact-form"/);
 });
 test('UI: les informations sont toujours du texte, jamais du HTML non nettoye',()=>{
- const js=read('client/public/js/taskly-support-history.js');
- assert.match(js,/subject\.textContent/);
- assert.match(js,/body\.textContent/);
+ const js=read('client/public/js/taskly-support-pagination.js');
+ assert.match(js,/cell\.textContent/);
+ assert.match(js,/detailText\.textContent/);
  assert.doesNotMatch(js,/innerHTML/);
- assert.match(js,/page=\$\{page\}/);
+ assert.match(js,/page=\$\{apiPage\}/);
 });
