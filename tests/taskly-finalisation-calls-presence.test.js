@@ -45,14 +45,27 @@ test('Video: ni toile grise ni bandes sombre en plein ecran; capture du flux con
  assert.match(video,/\.tc-v8-video \{max-width:100%!important;margin:0!important/);
  assert.match(video,/\[data-tc='remote'\] \{object-fit:cover/);
 });
-test('Navigation: bouton retour au site adapte a la rubrique du compte',()=>{
+test('Navigation: aucun bouton retour au site dans la messagerie',()=>{
  const js=read('client/public/js/taskly-chat-workspace.js');
- assert.match(js,/back\.href='\/espace\/'\+role\+'\/accueil'/);
- assert.match(js,/heading\.prepend\(back\)/);
+ assert.doesNotMatch(js,/back\.className='cw-return-site'/);
+ assert.doesNotMatch(js,/heading\.prepend\(back\)/);
 });
 test('Presence: migration isolee et explicitement requise, aucune activation anticipee',()=>{
  const sql=read('database/migration_taskly_chat_presence.sql');
  assert.match(sql,/CREATE TABLE IF NOT EXISTS taskly_chat_presence/);
  assert.match(sql,/FOREIGN KEY \(user_id\) REFERENCES users\(id\)/);
  assert.match(read('server/models/chatModel.js'),/presenceActive = \(\) => typeof process !== 'undefined'/);
+});
+test('Presence: signal independant des appels LiveKit',()=>{
+ const chat=read('client/public/js/taskly-chat-notifications.js');
+ const calls=read('client/public/js/taskly-call-notifications.js');
+ const client=read('server/routes/clientWorkspaceNavigation.js');
+ const artisan=read('server/routes/artisanWorkspaceNavigation.js');
+
+ assert.match(chat,/\/api\/demandes\/chat\/presence/);
+ assert.match(chat,/setInterval\(pulsePresence,60000\)/);
+ assert.match(chat,/visibilitychange/);
+ assert.doesNotMatch(calls,/\/api\/demandes\/chat\/presence/);
+ assert.match(client,/taskly-chat-notifications\.js/);
+ assert.match(artisan,/taskly-chat-notifications\.js/);
 });

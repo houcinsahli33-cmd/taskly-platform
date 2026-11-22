@@ -66,7 +66,7 @@ test('Historique : lecture limitée à la demande avec limite 50',async()=>{
 test('Historique : endpoint protégé par vérification du participant et lecture autorisée',()=>{
  const ctrl=read('server/controllers/chatController.js');
  const routes=read('server/routes/demandeRoutes.js');
- const block=ctrl.match(/async function historiqueAppels\([\s\S]*?\n\}\n\nmodule\.exports/);
+ const block=ctrl.match(/async function historiqueAppels\([\s\S]*?\r?\n\}/);
  assert(block);
  assert.match(block[0],/verifierParticipant\(req, res\)/);
  assert.match(block[0],/historiqueAutorise\(acces.demande\)/);

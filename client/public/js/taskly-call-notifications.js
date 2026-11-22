@@ -23,23 +23,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!['client', 'artisan'].includes(role)) return;
 
-    // Short-lived server presence, with explicit opt-in on the backend.
-    // If the feature has not been deployed/migrated, stop after 404.
-    let presenceAvailable = true;
-    async function pulsePresence() {
-        if (!presenceAvailable || document.hidden) return;
-        try {
-            await requeteAPI('/api/demandes/chat/presence', {method:'POST',body:'{}'});
-        } catch (error) {
-            if ([403,404].includes(Number(error?.status))) presenceAvailable = false;
-        }
-    }
-    void pulsePresence();
-    const presenceInterval = setInterval(pulsePresence, 60000);
-    document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') void pulsePresence();
-    });
-    addEventListener('pagehide', () => clearInterval(presenceInterval), {once:true});
 
 
     const frame = document.querySelector(

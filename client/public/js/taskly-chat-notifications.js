@@ -2,6 +2,37 @@
 // Le compteur est chargé uniquement dans le cadre principal (pas dans chaque iframe).
 document.addEventListener('DOMContentLoaded',async()=>{
  await attendreSession();const role=window.utilisateurCourant?.role;if(!['client','artisan'].includes(role))return;
+ // Presence reelle independante des autorisations d'appel.
+ let presenceAvailable = true;
+ let presenceBusy = false;
+
+ async function pulsePresence() {
+  if (!presenceAvailable || document.hidden || presenceBusy) return;
+  presenceBusy = true;
+  try {
+   await requeteAPI('/api/demandes/chat/presence', {
+    method:'POST',
+    body:'{}'
+   });
+  } catch(error) {
+   if ([401,403,404].includes(Number(error?.status))) {
+    presenceAvailable = false;
+   }
+  } finally {
+   presenceBusy = false;
+  }
+ }
+
+ void pulsePresence();
+ const presenceInterval = setInterval(pulsePresence,60000);
+
+ document.addEventListener('visibilitychange',()=>{
+  if (document.visibilityState==='visible') void pulsePresence();
+ });
+
+ addEventListener('pagehide',()=>{
+  clearInterval(presenceInterval);
+ },{once:true});
  const url='/espace/'+role+'/messagerie',link=document.querySelector('.sidebar [data-dashboard-link="messagerie"]');if(!link)return;
  if(!link.querySelector('svg'))link.insertAdjacentHTML('afterbegin','<svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11a8 8 0 0 1-8 8H4l2-5a8 8 0 1 1 15-3Z"/><path d="M8 11h8"/></svg>');
  const navIcons={"accueil": "<svg class=\"chat-nav-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1\"/></svg>", "demandes": "<svg class=\"chat-nav-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><path d=\"M9 3h6v4H9zM9 12h6m-6 4h6\"/></svg>", "profil": "<svg class=\"chat-nav-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"7\" r=\"4\"/><path d=\"M4 21v-2a8 8 0 0 1 16 0v2\"/></svg>", "support": "<svg class=\"chat-nav-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9 9a3 3 0 1 1 5 2c-2 1-2 2-2 3m0 3h.01\"/></svg>"};
