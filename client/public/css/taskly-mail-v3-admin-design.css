@@ -60,3 +60,64 @@
 .tmv3-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 @media(max-width:1000px){.tmv3-admin-page .tmv3-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.tmv3-admin-page .tmv3-conversation-layout{grid-template-columns:minmax(220px,42%) minmax(0,1fr)}}
 @media(max-width:720px){.tmv3-page-heading{padding:16px;flex-wrap:wrap}.tmv3-chip{margin-left:0}.tmv3-admin-page .tmv3-stats{grid-template-columns:1fr}.tmv3-admin-page .tmv3-conversation-layout{grid-template-columns:1fr}.tmv3-admin-page .tmv3-controls{flex-wrap:wrap}.tmv3-admin-page .tmv3-search{width:100%;flex-basis:100%}.tmv3-admin-page .tmv3-conversation-items{max-height:280px}}
+
+/* V4 VISUELLE : fidelite aux deux maquettes validees. Tout est scoped a l'administration Mail. */
+.tmv3-admin-page{--tmv3-green:#006347;--tmv3-border:#d9e8e3;--tmv3-mint:#e8f8f0;color:#142923}
+.tmv3-admin-page .tmv3-page-heading{padding:26px 30px;margin-bottom:18px;border-radius:20px;box-shadow:0 5px 22px rgba(9,63,45,.035)}
+.tmv3-admin-page .tmv3-mail-icon{width:68px;height:68px;background:linear-gradient(140deg,#d3f2e3,#edfbf4);font-family:Arial,sans-serif}
+.tmv3-admin-page .tmv3-admin-tabs{gap:12px;margin:0 0 20px}
+.tmv3-admin-page .tmv3-admin-tabs button{padding:14px 22px;border-radius:12px;box-shadow:0 2px 5px rgba(2,46,34,.025)}
+.tmv3-admin-page .tmv3-admin-tabs button[aria-selected=true]{background:linear-gradient(110deg,#047750,#004e39);box-shadow:0 3px 9px rgba(0,92,58,.16)}
+.tmv3-admin-page .tmv3-stats{margin-bottom:18px}
+.tmv3-admin-page .tmv3-stat{min-height:98px;border-radius:17px;padding:18px;box-shadow:0 5px 20px rgba(0,65,44,.025)}
+.tmv3-admin-page .tmv3-stat-icon{width:54px;height:54px;font-weight:800;font-size:27px}
+.tmv3-admin-page .tmv3-stat-label{font-weight:650;color:#314b40}
+.tmv3-admin-page .tmv3-controls{margin:0 0 16px}
+.tmv3-admin-page .tmv3-search{padding:15px 18px;border-radius:12px}
+.tmv3-admin-page .tmv3-primary-soft{background:#006345;color:#fff;border-color:#006345;padding:12px 20px}
+.tmv3-admin-page .tmv3-conversation-layout{grid-template-columns:minmax(280px,39%) minmax(0,61%);gap:16px;min-height:550px}
+.tmv3-admin-page .tmv3-conversations,.tmv3-admin-page .tmv3-thread-detail{border-radius:18px;box-shadow:0 4px 14px rgba(0,67,44,.03)}
+.tmv3-admin-page .tmv3-conversations>h3{font-size:1.02rem;font-weight:800;padding:19px 20px}
+.tmv3-admin-page .tmv3-conversation-items{gap:8px;padding:12px}
+.tmv3-admin-page .tmv3-conversation{display:flex;align-items:center;gap:12px;padding:13px 12px;border-color:transparent}
+.tmv3-admin-page .tmv3-conversation.is-active{border:1px solid #55b995;border-left:4px solid #008858;background:#e8f9f1}
+.tmv3-admin-page .tmv3-avatar{display:grid;place-items:center;background:#d9f6e8;color:#05643f;font-weight:800;font-size:18px;width:46px;height:46px;border-radius:50%;flex:none}
+.tmv3-admin-page .tmv3-conversation-text{display:grid;gap:6px;min-width:0;flex:1}
+.tmv3-admin-page .tmv3-conversation-head{gap:8px}
+.tmv3-admin-page .tmv3-conversation-head strong{font-size:.83rem;overflow-wrap:anywhere;line-height:1.25}
+.tmv3-admin-page .tmv3-conversation-subject{font-weight:600;font-size:.83rem}
+.tmv3-admin-page .tmv3-thread-detail{padding:0 18px 16px}
+.tmv3-admin-page .tmv3-detail-heading{padding:21px 3px}
+.tmv3-admin-page .tmv3-detail-heading strong{font-size:1.12rem}
+.tmv3-admin-page .tmv3-chat-messages{min-height:225px;max-height:520px}
+.tmv3-admin-page .tmv3-bubble{max-width:90%;border-radius:16px}
+.tmv3-admin-page .tmv3-bubble-user{margin-right:10%;background:#f0f2f4}
+.tmv3-admin-page .tmv3-bubble-admin{margin-left:10%;background:linear-gradient(130deg,#e8faef,#d9f4e8)}
+.tmv3-admin-page .tmv3-reply-form{border-color:#e4ebe7;border-radius:13px;background:#fff}
+.tmv3-admin-page .tmv3-reply-form textarea{min-height:64px;max-height:180px}
+.tmv3-admin-page .tmv3-primary{background:linear-gradient(110deg,#00895c,#00583f)}
+/* Second ecran : indicateurs et cartes de boites, sans donnees fictives. */
+.tmv3-admin-page .tmv3-mailbox-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.tmv3-admin-page .tmv3-mb-count{display:flex;align-items:center;gap:17px;padding:20px 24px;min-height:105px;border:1px solid #d6e5e0;background:#fff;border-radius:15px;min-width:0}
+.tmv3-admin-page .tmv3-mb-count:nth-child(2){background:#effaf4}
+.tmv3-admin-page .tmv3-mb-count:nth-child(3){background:#fffaf3;border-color:#f0e4d4}
+.tmv3-admin-page .tmv3-mb-symbol{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#ddf7e9;color:#006c47;font-size:27px;flex:none}
+.tmv3-admin-page .tmv3-mb-count:nth-child(3) .tmv3-mb-symbol{background:#fff0d8;color:#bd7000}
+.tmv3-admin-page .tmv3-mb-count>div{min-width:0;display:grid;gap:3px}
+.tmv3-admin-page .tmv3-mb-count strong{font-size:2rem;line-height:1;font-weight:800}
+.tmv3-admin-page .tmv3-mb-count span:last-child{font-size:.9rem;color:#354f43}
+.tmv3-admin-page .tmv3-mb-toolbar{display:flex;gap:12px;margin:0 0 20px}
+.tmv3-admin-page .tmv3-mb-search{flex:1;min-width:0}
+.tmv3-admin-page .tmv3-mb-toolbar input,.tmv3-admin-page .tmv3-mb-toolbar select{font:inherit;padding:14px 15px;min-height:50px;border:1px solid #cfded8;border-radius:12px;background:#fff;color:#183d30;width:100%}
+.tmv3-admin-page .tmv3-mb-filter-label{min-width:200px}
+.tmv3-admin-page .tmv3-mb-context{display:flex;align-items:center;padding:0 12px;border:1px solid #dbe9e3;background:#f3faf6;border-radius:12px;color:#46725c;font-size:.8rem}
+.tmv3-admin-page #professional-mail-pilot .panel-header{display:none}
+.tmv3-admin-page #professional-mail-pilot .panel-body{border:0;background:transparent;padding:0}
+.tmv3-admin-page #mail-pilot-status{color:#60786d;font-size:.82rem}
+.tmv3-admin-page #mail-pilot-content{display:grid;gap:16px}
+.tmv3-admin-page #mail-pilot-content>div,.tmv3-admin-page #mail-pilot-content>article{background:#fff;border:1px solid #dbe9e3;border-radius:16px;padding:22px 24px;box-shadow:0 5px 16px rgba(1,61,40,.035);font-size:.94rem;position:relative}
+.tmv3-admin-page #mail-pilot-content>div[hidden],.tmv3-admin-page #mail-pilot-content>article[hidden]{display:none!important}
+.tmv3-admin-page #mail-pilot-content :is(h2,h3,h4){overflow-wrap:anywhere;line-height:1.3;color:#112a20}
+.tmv3-admin-page #mail-pilot-content :is(button,a){max-width:100%}
+@media(max-width:1100px){.tmv3-admin-page .tmv3-mailbox-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.tmv3-admin-page .tmv3-mb-context{display:none}}
+@media(max-width:760px){.tmv3-admin-page .tmv3-mailbox-overview{grid-template-columns:1fr}.tmv3-admin-page .tmv3-conversation-layout{grid-template-columns:1fr}.tmv3-admin-page .tmv3-mb-toolbar{flex-wrap:wrap}.tmv3-admin-page .tmv3-mb-filter-label{flex:1}.tmv3-admin-page .tmv3-page-heading h1{font-size:2rem}.tmv3-admin-page .tmv3-chip{margin-left:0}}

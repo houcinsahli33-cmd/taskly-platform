@@ -32,12 +32,11 @@
     function card(icon,title,value,subtitle){const x=make('div','tmv3-stat');x.append(make('span','tmv3-stat-icon',icon));const txt=make('div');txt.append(make('span','tmv3-stat-label',title),make('strong',null,String(value)));if(subtitle)txt.append(make('small',null,subtitle));x.append(txt);return x;}
     const date=value=>{const d=new Date(value);return Number.isNaN(d.getTime())?'':d.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'});};
     const message=value=>{msg.textContent=value;};
-    function renderStats(){stats.replaceChildren(card('▣','Conversations Support',state.threads.length,'50 dernières au maximum'),card('✉','Boîte de service','support@taskly.dz','Messagerie interne'),card('✓','Accès','Administrateur','Session contrôlée'));}
+    function renderStats(){stats.replaceChildren(card('♧','Conversations actives',state.threads.length,'Conversations disponibles'),card('✉','Boîte de service','support@taskly.dz','Messagerie interne'),card('◇','Espace','Administration','Accès contrôlé côté serveur'));}
     function filtered(){const q=search.value.trim().toLocaleLowerCase('fr-FR');return state.threads.filter(t=>!q||String(t.subject||'').toLocaleLowerCase('fr-FR').includes(q)||String(t.user_address||'').toLocaleLowerCase('fr-FR').includes(q)||String(t.id).includes(q));}
     function renderList(){left.replaceChildren(make('h3',null,'Conversations ('+filtered().length+')'));const items=make('div','tmv3-conversation-items');for(const t of filtered()){
       const item=button('','tmv3-conversation'+(String(state.active)===String(t.id)?' is-active':''),()=>open(t.id));
-      const head=make('span','tmv3-conversation-head');head.append(make('strong',null,t.user_address||'Compte Taskly'),make('small',null,date(t.updated_at)));
-      item.append(head,make('span','tmv3-conversation-subject',t.subject||'Sans objet'),make('small','tmv3-conversation-meta','Conversation #'+t.id));items.append(item);
+      const head=make('span','tmv3-conversation-head'); const avatar=make('span','tmv3-avatar',String(t.user_address||'T').charAt(0).toLocaleUpperCase('fr-FR'));const text=make('span','tmv3-conversation-text'); const name=make('span','tmv3-conversation-head'); name.append(make('strong',null,t.user_address||'Compte Taskly'),make('small',null,date(t.updated_at)));text.append(name,make('span','tmv3-conversation-subject',t.subject||'Sans objet'),make('small','tmv3-conversation-meta','Conversation #'+t.id));item.append(avatar,text);items.append(item);
     }if(!items.children.length)items.append(make('p','tmv3-empty','Aucune conversation correspondante.'));left.append(items);}
     function emptyDetail(){right.replaceChildren(make('div','tmv3-placeholder','Sélectionnez une conversation à gauche pour consulter les messages et répondre depuis support@taskly.dz.'));}
     let currentRequest=0;
@@ -52,14 +51,42 @@
           wrap.append(label,make('p',null,entry.body||''));messages.append(wrap);
         }if(!messages.children.length)messages.append(make('p','tmv3-empty','Aucun message.'));right.append(messages);
         const form=make('form','tmv3-reply-form');const lbl=make('label',null,'Votre réponse');const body=make('textarea');body.placeholder='Rédigez votre réponse…';body.required=true;body.maxLength=10000;body.rows=4;lbl.append(body);
-        const actions=make('div','tmv3-reply-actions');const submit=make('button','tmv3-primary','➤ Envoyer');submit.type='submit';actions.append(make('span',null,'Réponse au fil Support'),submit);form.append(lbl,actions);
+        const actions=make('div','tmv3-reply-actions');const submit=make('button','tmv3-primary','➤ Envoyer');submit.type='submit';actions.append(make('span',null,'Depuis support@taskly.dz'),submit);form.append(lbl,actions);
         form.addEventListener('submit',async e=>{e.preventDefault();if(!form.reportValidity()||state.loading)return;state.loading=true;submit.disabled=true;try{await request('/support/threads/'+encodeURIComponent(id)+'/replies',{method:'POST',body:JSON.stringify({body:body.value})});await openAfterSubmit(id);message('Réponse enregistrée avec succès.');}catch(err){message(err?.message||'Envoi impossible.');}finally{state.loading=false;submit.disabled=false;}});
         right.append(form);
       }catch(e){right.replaceChildren(make('p','tmv3-status',e?.message||'Chargement impossible.'));}}
     async function openAfterSubmit(id){state.loading=false;await open(id);}
     async function load(){if(state.loading)return;state.loading=true;message('Actualisation…');try{const r=await request('/support/threads');state.threads=Array.isArray(r.threads)?r.threads:[];renderStats();renderList();message(state.threads.length+' conversation(s) Support disponibles.');const exists=state.threads.some(t=>String(t.id)===String(state.active));if(exists)await openAfterSubmit(state.active);else {state.active=null;emptyDetail();}}catch(e){message(e?.message||'Impossible de charger les conversations.');renderStats();emptyDetail();}finally{state.loading=false;}}
     search.addEventListener('input',renderList);renderStats();emptyDetail();if(typeof window.requeteAPI==='function')load();else message('Connexion API indisponible.');
-    // Garde la vue classique pilot intacte : pas de modification du rendu des demandes existantes.
+    // Ajoute uniquement une presentation et des filtres sur les boites deja rendues par le pilot.
+    // Aucune suppression, remplacement des boutons ou simulation de mutations serveur.
+    const mbHost=document.getElementById('mail-pilot-content');
+    const mbSearch=document.getElementById('tmv3-mb-search');
+    const mbFilter=document.getElementById('tmv3-mb-filter');
+    if(mbHost && mbSearch && mbFilter){
+      let refreshQueued=false;
+      function updateMailboxes(){
+        refreshQueued=false;
+        const cards=Array.from(mbHost.children).filter(el=>el.nodeType===1);
+        const norm=v=>String(v||'').toLocaleLowerCase('fr-FR');
+        const status=el=>norm(el.textContent);
+        let approved=0,pending=0;
+        cards.forEach(el=>{const t=status(el); if(/approuv[ée]/i.test(t))approved++;else if(/en attente|attente de v[ée]rification|pending/i.test(t))pending++;});
+        const totals={all:cards.length,approved,pending};
+        for(const [key,n] of Object.entries(totals)){
+          const target=document.querySelector('.tmv3-mb-count[data-metric="'+key+'"] strong');if(target)target.textContent=String(n);
+        }
+        const q=norm(mbSearch.value).trim();
+        const choice=mbFilter.value;
+        cards.forEach(el=>{const t=status(el);const isApproved=/approuv[ée]/i.test(t);const isPending=/en attente|attente de v[ée]rification|pending/i.test(t);el.hidden=!!q&&!t.includes(q)||(choice==='approved'&&!isApproved)||(choice==='pending'&&!isPending);});
+      }
+      const schedule=()=>{if(refreshQueued)return;refreshQueued=true;queueMicrotask(updateMailboxes);};
+      mbSearch.addEventListener('input',updateMailboxes);
+      mbFilter.addEventListener('change',updateMailboxes);
+      new MutationObserver(schedule).observe(mbHost,{childList:true,subtree:false});
+      updateMailboxes();
+    }
+    // Garde les elements du pilot et leurs gestionnaires d'evenements intacts.
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
