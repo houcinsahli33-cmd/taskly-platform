@@ -41,10 +41,10 @@ function preparerCadreArtisan(original,id) {
 
  const grille='<svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
 
- const menuAside=aside
+ const menuAside=chatEnabled?aside
   .replace(/(<p\b[^>]*class="[^"]*\bsidebar-title\b[^"]*"[^>]*>)\s*Espace artisan/i,'$1'+maison+'<span>Espace artisan</span>')
   .replace(/(<a\b[^>]*data-dashboard-link="accueil"[^>]*>)\s*(?:<svg\b[^>]*>[\s\S]*?<\/svg>\s*)?/i,'$1'+grille)
-;
+  :aside;
 
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<head\b[^>]*>/i,match=>match+'<style>@media(max-width:800px){body[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:hidden!important}body.taskly-mobile-ready[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body.taskly-mobile-ready[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:visible!important}}</style>').replace(/<\/head>/i,
   '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat-calls1"></script></head>');
@@ -52,7 +52,7 @@ function preparerCadreArtisan(original,id) {
  const callHead=chatEnabled&&callsPilot.autoriseCompte('artisan',id)
   ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=7"></script></head>')
   :finalHead;
- const mobileHead=callHead.replace('</head>', '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=6"><script defer src="/js/taskly-mobile-sidebar.js?v=4"></script></head>');
+ const mobileHead=callHead.replace('</head>', '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=8"><script defer src="/js/taskly-mobile-sidebar.js?v=4"></script></head>');
  const shellBody=body.replace(/>$/, ' data-taskly-artisan-shell="1">');
  return '<!doctype html><html lang="fr">'+mobileHead+shellBody+
   '<div id="site-header"></div><main class="dashboard-shell">'+menuAside+

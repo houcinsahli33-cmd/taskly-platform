@@ -270,7 +270,7 @@ async function confirmerEmail(req,res) {
             await db.query('UPDATE users SET email_verified=1 WHERE id=?',[utilisateur.id]);
         }
         const comptes=await userModel.trouverEspacesParEmail(utilisateur.email);
-        const disponibles=comptes.filter(c=>c.role!=='admin' && c.email_verified && !(c.role==='client' && c.statut_compte==='bloque'));
+        const disponibles=comptes.filter(c=>c.role!=='admin' && c.email_verified);
         await renouvelerSession(req); // anti-fixation de session
         if(disponibles.length>1){
           req.session.accountChoice={email:utilisateur.email,expiresAt:Date.now()+5*60*1000,comptes:disponibles.map(c=>({id:c.id,version:Number(c.admin_session_version||0)}))};
@@ -322,7 +322,7 @@ async function espacesDisponibles(req,res){
   if(!pending||pending.expiresAt<=Date.now())return res.status(401).json({message:'Reconnectez-vous pour choisir votre espace.'});
   const comptes=await userModel.trouverEspacesParEmail(pending.email);
   res.set('Cache-Control','no-store');
-  return res.json({comptes:comptes.filter(c=>require('../services/accountSpaces').choixValide(pending,c)).map(c=>({id:c.id,role:c.role,nom:c.nom,prenom:c.prenom,metier:c.service_nom,statut:c.statut_compte==='bloque'?'Compte bloqué':c.role==='artisan'?c.verification_statut:'actif'}))});
+  return res.json({comptes:comptes.filter(c=>require('../services/accountSpaces').choixValide(pending,c)).map(c=>({id:c.id,role:c.role,nom:c.nom,prenom:c.prenom,metier:c.service_nom,statut:c.statut_compte==='bloque'?'Compte bloqué':c.role==='artisan'?c.verification_statut:'actif',motifBlocage:c.statut_compte==='bloque'?(c.motif_blocage||null):null}))});
  }catch(e){return res.status(503).json({message:'Choix des espaces momentanément indisponible.'});}
 }
 async function choisirEspace(req,res){
@@ -331,7 +331,10 @@ async function choisirEspace(req,res){
   if(!Number.isSafeInteger(id)||id<=0)return res.status(400).json({message:'Choisissez un espace valide.'});
   const utilisateur=await userModel.trouverUtilisateurParId(id);
   if(!require('../services/accountSpaces').choixValide(req.session.accountChoice,utilisateur))return res.status(403).json({message:'Ce compte ne fait pas partie des espaces vérifiés. Reconnectez-vous.'});
-  if(utilisateur.role==='client'&&utilisateur.statut_compte==='bloque')return res.status(403).json({message:'Ce compte client est bloqué.'});
+  if(utilisateur.role==='client'&&utilisateur.statut_compte==='bloque'){
+   res.set('Cache-Control','no-store');
+   return res.status(403).json({message:'Ce compte client est bloqué.',statut:'Compte bloqué',motifBlocage:utilisateur.motif_blocage||null});
+  }
   await renouvelerSession(req);
   if(utilisateur.role==='artisan'){
    const artisan=await artisanModel.trouverArtisanParUserId(id);

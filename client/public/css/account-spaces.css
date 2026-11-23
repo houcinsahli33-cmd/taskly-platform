@@ -1,1 +1,39 @@
-.account-spaces-page{margin:0;min-height:100dvh;background:#f3f8f6;color:#142d39;font-family:Inter,"Segoe UI",Arial,sans-serif;display:grid;place-items:center;padding:32px 18px}.account-spaces-card{width:min(560px,100%);background:#fff;border:1px solid #dfeae6;border-radius:22px;padding:36px;box-shadow:0 14px 42px #103e3012}.spaces-logo img{width:145px;height:auto;margin-bottom:30px}.spaces-eyebrow{font-size:11px;letter-spacing:1.5px;font-weight:800;color:#008a70}.account-spaces-card h1{font:800 30px/1.2 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-.7px;margin:8px 0 12px}.spaces-intro{font-size:14px;line-height:1.65;color:#73879a;margin-bottom:25px}.spaces-list{display:grid;gap:12px}.space-option{display:flex;gap:14px;align-items:center;text-align:left;border:1px solid #dce9e3;background:#fff;border-radius:14px;padding:18px;color:#142d39;min-width:0}.space-option:hover,.space-option:focus-visible{background:#eaf8f2;border-color:#008a70;outline:2px solid #8bd8c3;outline-offset:2px}.space-option:disabled{opacity:.6;cursor:wait}.space-symbol{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;background:#e6f7ee;color:#008a70;border-radius:12px;font-size:23px}.space-option>span:nth-child(2){flex:1;min-width:0}.space-option strong,.space-option small{display:block;overflow-wrap:anywhere}.space-option strong{font-size:15px;margin-bottom:5px}.space-option small{font-size:12px;color:#73879a}.space-option>span:last-child{color:#008a70}#account-spaces-status{font-size:13px;line-height:1.6;color:#73879a;margin-top:18px}.spaces-return{font-size:13px;color:#008a70;text-decoration:underline}@media(max-width:500px){.account-spaces-card{padding:25px 20px}.account-spaces-card h1{font-size:26px}}
+/* Choix des espaces : maquette Taskly validée. */
+.account-spaces-page{box-sizing:border-box;margin:0;min-height:100dvh;padding:32px 18px;display:grid;place-items:center;position:relative;isolation:isolate;overflow-x:hidden;background:radial-gradient(ellipse at 9% 15%,#e2f8ed 0%,transparent 37%),radial-gradient(ellipse at 95% 95%,#e1f9ec 0%,transparent 40%),#f4fbf7;color:#10292e;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.account-spaces-page *, .account-spaces-page *::before,.account-spaces-page *::after{box-sizing:border-box}
+/* Courbes vert menthe de la capture de référence, purement décoratives. */
+.account-spaces-page::before,.account-spaces-page::after{content:"";position:fixed;pointer-events:none;z-index:0}
+.account-spaces-page::before{width:58vw;height:66vh;left:-30vw;top:-32vh;background:#dff6e9;border-radius:0 0 95% 0;transform:rotate(-17deg);opacity:.66}
+.account-spaces-page::after{width:56vw;height:66vh;right:-24vw;bottom:-32vh;background:#d9f5e5;border-radius:90% 0 0 0;transform:rotate(-16deg);opacity:.76}
+
+.account-spaces-card{width:min(625px,100%);position:relative;z-index:1;background:#fff;border:0;border-radius:28px;padding:40px 48px 36px;box-shadow:0 18px 48px #174b3515}
+.spaces-logo{display:inline-block}.spaces-logo img{display:block;width:156px;height:auto;margin:0 0 24px}
+.spaces-eyebrow{display:inline-block;background:#e5f7ed;color:#008851;border-radius:15px;padding:6px 13px;margin:0 0 8px;font-size:11px;letter-spacing:1.5px;font-weight:800}
+.account-spaces-card h1{font:800 clamp(25px,5.2vw,34px)/1.17 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-.7px;margin:8px 0 12px;color:#09272e}
+.spaces-intro{font-size:14px;line-height:1.65;color:#526778;margin:0 0 22px}
+.spaces-list{display:grid;gap:13px}
+.space-option{font:inherit;display:flex;gap:16px;align-items:center;text-align:left;border:1px solid #cfe9dc;background:#fff;border-radius:16px;padding:12px 18px;min-height:78px;color:#10292e;width:100%;cursor:pointer;transition:background .15s,border-color .15s}
+.space-option:hover,.space-option:focus-visible{background:#f3fbf7;border-color:#04965e;outline-offset:2px}
+.space-option:focus-visible{outline:2px solid #04965e}.space-option:disabled{opacity:.66;cursor:wait}
+.space-symbol{display:grid;place-items:center;width:54px;height:54px;flex:0 0 54px;background:#e5f7ee;color:#008c56;border-radius:13px}
+.space-symbol svg{width:28px;height:28px;display:block}.space-option .space-info{flex:1;min-width:0}.space-option strong,.space-option small{display:block;overflow-wrap:anywhere}
+.space-option strong{font-size:16px;font-weight:800;margin-bottom:5px}.space-option small{font-size:12px;color:#5d7180;line-height:1.5}
+.space-arrow{color:#008c56;font-size:24px;flex:none;line-height:1}
+#account-spaces-status{font-size:13px;line-height:1.55;color:#526778;margin:20px 0 5px}.spaces-return{font-size:13px;color:#008c56;text-decoration:underline}
+/* Modale identique à la référence, largeur commune aux petites fenêtres Taskly (510 px). */
+.spaces-blocked-dialog{position:fixed;inset:0;margin:auto;border:0;padding:0;width:min(510px,calc(100vw - 24px));max-width:510px;max-height:calc(100dvh - 30px);border-radius:18px;overflow:auto;background:white;color:#10292e;box-shadow:0 25px 75px #112c2b55;font:14px/1.45 Inter,"Segoe UI",Arial,sans-serif}
+.spaces-blocked-dialog::backdrop{background:#12272566;backdrop-filter:none}
+.blocked-dialog-body{padding:22px 28px 25px}.blocked-dialog-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:17px}
+.blocked-logo{display:block;width:119px;height:auto}.blocked-close{border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;color:#0d282d;padding:0 3px}
+.blocked-tag{display:inline-flex;align-items:center;gap:8px;border-radius:22px;background:#ffe6e6;color:#cc1e23;font-size:12px;font-weight:800;padding:5px 13px}
+.blocked-tag svg{width:16px;height:16px}.spaces-blocked-dialog h2{font-size:clamp(20px,4.8vw,23px);line-height:1.23;letter-spacing:-.4px;margin:11px 0 7px;font-weight:800;color:#0e2830}
+.blocked-lead{font-size:13px;color:#4e6172;margin:0 0 22px}.blocked-info-row{display:flex;gap:18px;border-top:1px solid #dae3e6;padding:16px 0 18px}
+.blocked-info-symbol{width:40px;height:40px;flex:0 0 40px;border-radius:11px;background:#e0faec;color:#069357;display:grid;place-items:center}.blocked-info-symbol svg{width:24px;height:24px}
+.blocked-info-row h3{font-size:14px;margin:0 0 3px;color:#0e2830;font-weight:800}.blocked-info-row p{font-size:12.5px;line-height:1.55;margin:0;color:#526576;overflow-wrap:anywhere}
+.blocked-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}.blocked-actions button{font:700 13px Inter,"Segoe UI",Arial,sans-serif;min-height:40px;border-radius:10px;padding:9px 19px;cursor:pointer}
+.blocked-dismiss{color:#008e56;background:#fff;border:1px solid #03a768}.blocked-support{color:#fff;background:#008b4f;border:1px solid #008b4f}.blocked-support:hover{background:#006c41}.blocked-actions button:focus-visible{outline:2px solid #007d4d;outline-offset:2px}
+@media(max-width:550px){.account-spaces-page{padding:20px 12px}.account-spaces-card{padding:25px 20px;border-radius:21px}.spaces-logo img{width:135px}.space-option{padding:12px;gap:11px}.space-option strong{font-size:14px}.space-option small{font-size:11px}.space-symbol{width:43px;height:43px;flex-basis:43px}.blocked-dialog-body{padding:20px 19px}.blocked-info-row{gap:12px}.blocked-actions{flex-wrap:wrap}.blocked-actions button{flex:1 1 auto}}
+@media(prefers-reduced-motion:reduce){.space-option{transition:none}}
+
+/* Icônes officielles tracées depuis les deux images validées. */
+.space-symbol img{display:block;width:28px;height:28px;object-fit:contain;object-position:center;flex:none}
