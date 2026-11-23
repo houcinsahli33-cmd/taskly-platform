@@ -58,3 +58,74 @@
 @media(max-width:1100px){.tmv3-admin-page .tmv5-metrics{grid-template-columns:repeat(3,minmax(0,1fr))!important}.tmv3-admin-page .tmv5-layout{grid-template-columns:1fr!important}.tmv3-admin-page .tmv6-mail-grid{grid-template-columns:minmax(170px,31%) minmax(0,1fr)!important}.tmv3-admin-page .tmv6-read-panel{grid-column:1/-1!important}}
 @media(max-width:720px){.tmv3-admin-page .tmv5-metrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}.tmv3-admin-page .tmv3-mailbox-overview,.tmv3-admin-page .tmv6-kpis{grid-template-columns:1fr!important}.tmv3-admin-page .tmv3-mb-toolbar{grid-template-columns:1fr!important}.tmv3-admin-page .tmv6-mail-grid{grid-template-columns:1fr!important}.tmv3-admin-page .tmv6-folder-panel{display:flex!important;flex-wrap:wrap!important;gap:6px}.tmv3-admin-page .tmv6-read-panel{grid-column:auto!important}.tmv3-admin-page .tmv3-admin-tabs button{flex:1 1 auto!important}.tmv3-admin-page .tmv5-items{max-height:330px!important}}
 @media(max-width:440px){.tmv3-admin-page .tmv5-metrics{grid-template-columns:1fr!important}}
+
+/* V16 — stricte géométrie des trois références 1648px.
+   Scope limité à la page admin; aucune modification client/artisan/LiveKit. */
+@media (min-width: 1300px) {
+ .tmv3-admin-page{padding-left:clamp(16px,2.1vw,38px)!important;padding-right:clamp(16px,2.1vw,38px)!important}
+ .tmv3-admin-page .tmv3-page-heading{margin:-16px -18px 15px!important;padding:20px 30px!important;min-height:101px!important;display:flex;align-items:center}
+ .tmv3-admin-page .tmv3-page-heading h1{font-size:clamp(27px,2.15vw,38px)!important;line-height:1.06!important;margin:0 0 5px!important}
+ .tmv3-admin-page .tmv3-page-heading p{font-size:15px!important;color:#3d5651!important}
+ .tmv3-admin-page .tmv3-admin-tabs{margin:0 0 22px!important;min-height:58px!important;gap:14px!important;align-items:flex-start}
+ .tmv3-admin-page .tmv3-admin-tabs button{padding:11px 24px!important;font-size:15px!important;min-height:52px!important}
+ .tmv3-admin-page .tmv5-metric{min-height:100px!important;padding:17px 18px!important}
+ .tmv3-admin-page .tmv5-layout{min-height:510px!important;grid-template-columns:minmax(360px,36%) minmax(0,1fr)!important}
+ .tmv3-admin-page .tmv5-list,.tmv3-admin-page .tmv5-detail{min-height:510px!important}
+ .tmv3-admin-page .tmv5-items{max-height:500px!important}
+ .tmv3-admin-page .tmv6-mail-grid{grid-template-columns:minmax(195px,19%) minmax(320px,34%) minmax(0,1fr)!important;min-height:600px!important}
+ .tmv3-admin-page .tmv6-kpis{grid-template-columns:repeat(3,minmax(0,250px))!important}
+}
+/* Message privé : disposition fidèle aux bulles approuvées. Le moteur de données existant est inchangé. */
+.tmv3-admin-page .tmv5-detail{display:flex!important;flex-direction:column!important;overflow:hidden}
+.tmv3-admin-page .tmv5-thread-header{background:#fff!important;min-height:76px!important;flex:0 0 auto}
+.tmv3-admin-page .tmv5-messages{flex:1 1 auto!important;max-height:none!important;min-height:290px!important;align-content:start!important;gap:22px!important;background:#fff!important;padding:30px 20px!important}
+.tmv3-admin-page .tmv5-message{max-width:84%!important;align-items:flex-end!important;gap:10px!important}
+.tmv3-admin-page .tmv5-message-content{border-radius:16px!important;background:#eff1f2!important;padding:12px 16px!important;box-shadow:none!important;gap:2px!important}
+.tmv3-admin-page .tmv5-message.is-admin .tmv5-message-content{background:#dcf9e8!important}
+.tmv3-admin-page .tmv5-message-meta{font-size:11px!important;color:#56756a!important;gap:10px!important}
+.tmv3-admin-page .tmv5-message-text{font-size:14px!important;line-height:1.5!important;color:#122520!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important}
+.tmv3-admin-page .tmv5-compose{margin:10px 13px 13px!important;flex:0 0 auto;background:#fff!important;padding:12px!important;box-shadow:none!important}
+.tmv3-admin-page .tmv5-compose-text{border-radius:10px!important;max-height:120px!important}
+.tmv3-admin-page .tmv5-send{border-radius:10px!important;font-weight:800!important;padding:12px 20px!important}
+.tmv3-admin-page .tmv5-info{background:transparent!important;border:none!important;margin:2px 17px!important;font-size:11px!important;color:#668176!important}
+.tmv3-admin-page .tmv5-list-heading{font-size:17px!important;font-weight:800!important}
+.tmv3-admin-page .tmv5-item{padding:15px 12px!important;border-left:4px solid transparent!important;border-right:0!important;border-top:0!important;min-height:91px!important}
+.tmv3-admin-page .tmv5-item.is-active{border-left-color:#00a663!important}
+/* Tableau des boîtes : une ligne par compte, pas de faux compte ni deuxième bouton. */
+.tmv3-admin-page .tmv6-mailbox-bar{display:flex!important;align-items:center!important;gap:12px!important;min-height:61px!important;padding:6px 12px 15px!important}
+.tmv3-admin-page .tmv6-mailbox-bar strong{font-size:18px!important;flex:1!important;color:#142c23!important}
+.tmv3-admin-page .tmv6-mailbox-bar .tmv6-action{padding:12px 19px!important;border-radius:11px!important;font-weight:800!important;background:linear-gradient(120deg,#008855,#005c3c)!important;color:#fff!important}
+.tmv3-admin-page .tmv6-table-head{font-weight:750!important;font-size:13px!important;min-height:50px!important;align-items:center!important}
+.tmv3-admin-page .tmv9-mailbox-row{margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;border-bottom:1px solid #dce8e1!important}
+.tmv3-admin-page .tmv9-mailbox-row .panel-body{min-height:76px!important;align-items:center!important}
+.tmv3-admin-page .tmv9-icon-button{border:1px solid #bbdbcb!important;border-radius:9px!important;min-width:34px!important;min-height:34px!important}
+/* Taskly Mail : trois zones fidèles avec lecture et réponse persistante. */
+.tmv3-admin-page .tmv6-mail-grid{align-items:stretch!important}
+.tmv3-admin-page .tmv6-folder-panel{padding:23px 10px!important;display:flex!important;flex-direction:column!important;gap:6px!important}
+.tmv3-admin-page .tmv6-folder{display:flex!important;align-items:center!important;gap:13px!important;width:100%!important;padding:11px 13px!important;text-align:left!important;color:#16392a!important;font-weight:650!important}
+.tmv3-admin-page .tmv6-folder[aria-current=page]{font-weight:800!important}
+.tmv3-admin-page .tmv6-message-panel{padding:12px 8px!important}
+.tmv3-admin-page .tmv6-search{display:flex!important;align-items:center!important;gap:9px!important;min-height:51px!important;margin:1px 5px 7px!important;padding:8px 12px!important;box-shadow:0 2px 8px #0c412014!important}
+.tmv3-admin-page .tmv6-search input{width:100%!important;min-width:0!important;outline:0!important}
+.tmv3-admin-page .tmv6-message-list{overflow:auto!important;max-height:560px!important}
+.tmv3-admin-page .tmv6-mail-item{width:100%!important;min-height:78px!important;display:flex!important;gap:12px!important;align-items:center!important;padding:10px!important;border-radius:10px!important;text-align:left!important;position:relative}
+.tmv3-admin-page .tmv6-mail-copy{min-width:0!important;flex:1!important;gap:2px!important}
+.tmv3-admin-page .tmv6-mail-copy strong,.tmv3-admin-page .tmv6-subject{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.tmv3-admin-page .tmv16-mail-top{display:flex!important;gap:8px!important;align-items:center!important;justify-content:space-between!important;min-width:0}
+.tmv3-admin-page .tmv16-mail-top strong{font-size:13px!important}
+.tmv3-admin-page .tmv16-mail-top time{font-size:11px!important;color:#47695c!important;flex:none}
+.tmv3-admin-page .tmv16-unread{position:absolute;right:13px;bottom:8px;min-width:18px;height:18px;display:grid;place-items:center;border-radius:15px;background:#008a54;color:white;font-weight:800;font-size:11px}
+.tmv3-admin-page .tmv6-read-panel{display:flex!important;flex-direction:column!important;padding:9px 12px!important}
+.tmv3-admin-page .tmv6-read-head{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:12px!important;padding:11px 2px 17px!important;min-height:67px!important;border-bottom:1px solid #d4e5dc!important}
+.tmv3-admin-page .tmv6-read-who{flex:1!important;min-width:170px!important}
+.tmv3-admin-page .tmv6-read-actions{display:flex!important;gap:6px!important;align-items:center!important}
+.tmv3-admin-page .tmv6-icon-btn{width:37px!important;height:37px!important;display:grid!important;place-items:center!important;border:1px solid #cbded5!important;background:white!important;border-radius:10px!important;padding:6px!important}
+.tmv3-admin-page .tmv6-read-body{flex:1!important;min-height:290px!important;overflow:auto!important;padding:19px 10px!important}
+.tmv3-admin-page .tmv6-read-body h2{font-weight:800!important;font-size:19px!important;margin-bottom:8px!important;color:#142d23!important}
+.tmv3-admin-page .tmv6-read-body pre{font-size:14px!important;line-height:1.6!important;color:#1c312a!important}
+.tmv3-admin-page .tmv16-reply-bar{display:flex!important;gap:10px!important;align-items:center!important;padding:9px!important;border:1px solid #cdded6!important;border-radius:12px!important;margin-top:auto!important}
+.tmv3-admin-page .tmv16-reply-bar textarea{flex:1!important;min-width:0!important;resize:vertical!important;border:1px solid #d2e1db!important;border-radius:9px!important;padding:10px!important;min-height:41px!important;font:inherit!important}
+.tmv3-admin-page .tmv16-reply-bar button{min-height:42px!important;padding:9px 15px!important}
+.tmv3-admin-page .tmv16-icon{width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linejoin:round!important;stroke-linecap:round!important;flex:none!important}
+@media(max-width:1100px){.tmv3-admin-page .tmv16-reply-bar{flex-wrap:wrap!important}}
+@media(max-width:720px){.tmv3-admin-page .tmv6-folder-panel{flex-direction:row!important;flex-wrap:wrap!important}.tmv3-admin-page .tmv16-reply-bar{flex-wrap:nowrap!important}}
