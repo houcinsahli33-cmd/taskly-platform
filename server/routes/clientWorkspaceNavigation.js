@@ -37,7 +37,7 @@ function preparerCadreClient(original,id) {
  const callHead=chatEnabled&&callsPilot.autoriseCompte('client',id)
   ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=7"></script></head>')
   :finalHead;
- const mobileHead=callHead.replace('</head>', '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=7"><script defer src="/js/taskly-mobile-sidebar.js?v=4"></script></head>');
+ const mobileHead=callHead.replace('</head>', '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=8"><script defer src="/js/taskly-mobile-sidebar.js?v=4"></script></head>');
  const shellBody=body.replace(/>$/, ' data-taskly-client-shell="1">');
  return '<!doctype html><html lang="fr">'+mobileHead+shellBody+
   '<div id="site-header"></div><main class="dashboard-shell">'+aside+
