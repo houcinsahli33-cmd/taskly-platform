@@ -30,6 +30,18 @@
           create('small',fmt(entry.created_at)),create('p',entry.body));messages.append(item);
       }
       detail.append(messages);
+      if(!admin){
+        const replyForm=create('form',undefined,'tmv3-form');
+        const replyLabel=create('label','Votre réponse');const replyBody=create('textarea');
+        replyBody.required=true;replyBody.maxLength=10000;replyBody.rows=4;
+        replyLabel.append(replyBody);
+        const replySubmit=create('button','Répondre au Support','tmv3-button');replySubmit.type='submit';
+        replyForm.append(replyLabel,replySubmit);
+        replyForm.addEventListener('submit',event=>{event.preventDefault();if(!replyForm.reportValidity())return;
+          run(async()=>{await request('/support/threads/'+encodeURIComponent(id)+'/replies','POST',{body:replyBody.value});
+            await openThread(id);notify('Réponse enregistrée.');});});
+        detail.append(replyForm);
+      }
       if(admin){
         const form=create('form',undefined,'tmv3-form');
         const label=create('label','Votre réponse');const body=create('textarea');body.required=true;body.maxLength=10000;body.rows=4;body.placeholder='Votre réponse au client ou à l’artisan';

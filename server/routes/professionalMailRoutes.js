@@ -183,7 +183,32 @@ admin.get('/',wrap(async(req,res)=>{
  res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,
   gatewayConfigured:gateway.configured,internalMode,autoInternal,
   adminActionsV10:v10&&!mailboxStateUnavailable,
-  mailboxStateUnavailable});
+  mailboxStateUnavailable,manualMailEnabled:process.env.TASKLY_ADMIN_MANUAL_MAIL_ENABLED==='true'&&internalMode&&joined&&!mailboxStateUnavailable});
+}));
+// Explicit admin-only manual provisioning of already approved/confirmed requests.
+// The automatic enrollment flow, OTP verification and all user routes remain unchanged.
+admin.post('/:id/manual-provision',sensible,wrap(async(req,res)=>{
+  if(process.env.TASKLY_ADMIN_MANUAL_MAIL_ENABLED!=='true')throw erreur('Option non activée.',404);
+  if(req.session?.adminVerified!==true||req.tasklyAdminContext!==true)throw erreur('Vérification administrateur requise.',403);
+  if(!internalMode||!gateway.configured)throw erreur('Création interne indisponible.',503);
+  const id=Number(req.params.id);
+  if(!Number.isSafeInteger(id)||id<1)throw erreur('Compte invalide.',400);
+  // Single transaction: no creation for unconfirmed requests, changed profiles, or duplicate boxes.
+  const result=await transaction(async conn=>{
+    const p=await profil(conn,id);
+    const [rows]=await conn.query('SELECT * FROM taskly_professional_mail_requests WHERE user_id=? FOR UPDATE',[id]);
+    const r=rows[0];
+    if(!r||r.status!=='approved_pending_provider'||!r.confirmed_at||!correspond(p,r))
+      throw erreur('Demande approuvée et confirmée requise.',409);
+    if(!internalAddress(r.proposed_address))throw erreur('Adresse interne invalide.',409);
+    const [existing]=await conn.query('SELECT user_id FROM taskly_professional_mailboxes WHERE user_id=? OR address=? FOR UPDATE',[id,r.proposed_address]);
+    if(existing.length)throw erreur('Une boîte existe déjà.',409);
+    const key=require('./professionalMailboxRoutes').provisionKey(id,r.proposed_address);
+    const providerId=await gateway.provision(r.proposed_address,key);
+    await conn.query('INSERT INTO taskly_professional_mailboxes (user_id,address,provider_id) VALUES (?,?,?)',[id,r.proposed_address,providerId]);
+    return {address:r.proposed_address};
+  });
+  res.status(201).json({message:'Boîte créée. Activation personnelle requise.',address:result.address});
 }));
 // Reversible change of mailbox access; no messages or user records are deleted.
 admin.post('/:id/access',sensible,wrap(async(req,res)=>{

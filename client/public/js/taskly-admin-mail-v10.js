@@ -3,8 +3,17 @@
 const base='/api/admin/taskly-mail-v10';
 const create=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=String(text);return e;};
 const btn=(label,fn,cls)=>{const x=create('button',cls||'',label);x.type='button';x.addEventListener('click',fn);return x;};
+let initialized=false;
 async function init(){
- const root=document.getElementById('tmv6-admin-mail');if(!root||typeof window.requeteAPI!=='function')return;
+ if(initialized)return;
+ const root=document.getElementById('tmv6-admin-mail');if(!root)return;
+ initialized=true;
+ if(typeof window.requeteAPI!=='function'){
+  const notice=create('p','tmv6-error','Connexion au service Taskly Mail indisponible. Rechargez la page.');
+  notice.setAttribute('role','status');
+  root.replaceChildren(notice);
+  return;
+ }
  const kpis=create('div','tmv6-kpis'),grid=create('div','tmv6-mail-grid'),nav=create('nav','tmv6-folder-panel'),list=create('section','tmv6-message-panel'),reader=create('section','tmv6-read-panel'),notice=create('p','tmv6-error');
  nav.setAttribute('aria-label','Dossiers de la messagerie administrative');list.setAttribute('aria-label','Liste des e-mails');reader.setAttribute('aria-label','Lecture du courrier');notice.setAttribute('role','status');notice.setAttribute('aria-live','polite');
  const counts=[];for(const name of ['Non lus','Aujourd’hui','Avec pièces jointes']){const card=create('div','tmv6-kpi');card.append(create('span','tmv6-kpi-icon','✉'));const content=create('div');content.append(create('span','',name));const value=create('strong','','—');counts.push(value);content.append(value);card.append(content);kpis.append(card);}
@@ -30,7 +39,17 @@ async function init(){
  const topic=create('input');topic.required=true;topic.maxLength=200;topic.value=subject;topic.placeholder='Objet';topic.setAttribute('aria-label','Objet');const text=create('textarea');text.required=true;text.maxLength=10000;text.rows=7;text.value=savedBody;text.placeholder='Votre message';text.setAttribute('aria-label','Message');const send=create('button','tmv6-new','Envoyer');send.type='submit';const draft=btn('Enregistrer brouillon',async()=>{try{await q('/draft','PUT',{to:dest.value,subject:topic.value,body:text.value});msg('Brouillon enregistré.');}catch(e){error(e);}},'tmv6-icon-btn');area.append(dest,suggestions,topic,text,draft,send);area.addEventListener('submit',async ev=>{ev.preventDefault();if(!area.reportValidity())return;send.disabled=true;try{await q('/send','POST',{to:dest.value.trim(),subject:topic.value.trim(),body:text.value});try{await q('/draft','DELETE');}catch(_){/* message already delivered */}msg('Message envoyé dans Taskly Mail.');active='sent';select('sent');await refresh();}catch(e){error(e);}finally{send.disabled=false;}});reader.append(area);dest.focus();}
  const folderBtns={};function select(key){active=key;selected=null;for(const k in folderBtns)folderBtns[k].setAttribute('aria-current',k===key?'page':'false');load();}
  for(const [key,title] of folderLabels){const b=btn(title,()=>select(key),'tmv6-folder');folderBtns[key]=b;nav.append(b);}nav.append(btn('＋ Nouveau message',()=>compose(),'tmv6-new'));search.addEventListener('input',()=>{if(ready)load();});grid.append(nav,list,reader);root.replaceChildren(kpis,grid,notice);showEmpty();
- try{await q('/counts');ready=true;select('inbox');await refresh();}catch(e){msg('Messagerie administrative indisponible : migration SQL ou activation V10 requise.');nav.querySelectorAll('button').forEach(b=>b.disabled=true);search.disabled=true;}
+ try{await q('/counts');ready=true;select('inbox');await refresh();}
+ catch(e){msg('Messagerie administrative non accessible : '+(e?.message||'vérifiez l’activation du service et les autorisations.'));nav.querySelectorAll('button').forEach(b=>b.disabled=true);search.disabled=true;}
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,0),{once:true});else setTimeout(init,0);
+function boot(){
+ init();
+ // Reattempt only if the API bootstrap was not ready at first paint.
+ const tab=document.getElementById('tmv3-tab-admin-mail');
+ if(tab)tab.addEventListener('click',()=>{
+  const root=document.getElementById('tmv6-admin-mail');
+  if(initialized && root && typeof window.requeteAPI==='function' && root.querySelector('.tmv6-mail-grid')===null){initialized=false;init();}
+ });
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();

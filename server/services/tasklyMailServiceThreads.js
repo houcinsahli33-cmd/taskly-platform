@@ -57,6 +57,39 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
       return {threadId,serviceAddress:SERVICE_ADDRESSES.support};
     });
   }
+  // Admin-initiated Support threads, scoped to a verified active mailbox.
+  // This does not read or mutate client-artisan private chats.
+  async function createFromAdmin(context, recipientUserId, subject, body) {
+    const adminId=await checkAdmin(context),uid=positiveId(recipientUserId);
+    const title=validSubject(subject),text=validBody(body);
+    return transaction(async conn=>{
+      const box=await verifiedUser(conn,uid);
+      const [result]=await conn.query(
+        `INSERT INTO taskly_mail_service_threads (service_name,user_id,user_address,subject)
+         VALUES ('support',?,?,?)`,[uid,box.address,title]);
+      const threadId=positiveId(result.insertId);
+      await conn.query(
+        `INSERT INTO taskly_mail_service_entries (thread_id,sender_kind,sender_admin_id,body)
+         VALUES (?,'admin',?,?)`,[threadId,adminId,text]);
+      return {threadId,serviceAddress:SERVICE_ADDRESSES.support};
+    });
+  }
+  async function replyAsUser(userId, threadId, body) {
+    const uid=positiveId(userId),tid=positiveId(threadId),text=validBody(body);
+    return transaction(async conn=>{
+      const current=await verifiedUser(conn,uid);
+      const [threads]=await conn.query(
+        `SELECT id,user_address FROM taskly_mail_service_threads
+         WHERE id=? AND user_id=? AND service_name='support' FOR UPDATE`,[tid,uid]);
+      if(!threads[0] || current.address!==threads[0].user_address)
+        throw failure('Conversation introuvable.',404);
+      const [result]=await conn.query(
+        `INSERT INTO taskly_mail_service_entries (thread_id,sender_kind,sender_user_id,body)
+         VALUES (?,'user',?,?)`,[tid,uid,text]);
+      await conn.query('UPDATE taskly_mail_service_threads SET updated_at=NOW() WHERE id=?',[tid]);
+      return {entryId:positiveId(result.insertId),threadId:tid};
+    });
+  }
   async function listForUser(userId) {
     const uid=positiveId(userId);
     return transaction(async conn=>{
@@ -131,6 +164,6 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
       return {entryId:positiveId(insert.insertId),threadId:tid};
     });
   }
-  return Object.freeze({createFromUser,listForUser,listForAdmin,readForUser,readForAdmin,replyAsAdmin});
+  return Object.freeze({createFromUser,createFromAdmin,replyAsUser,listForUser,listForAdmin,readForUser,readForAdmin,replyAsAdmin});
 }
 module.exports={createServiceThreads};

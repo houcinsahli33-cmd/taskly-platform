@@ -61,6 +61,7 @@ function createRouters({db,env=process.env}={}) {
   user.use(enabled,verifierConnexion,(req,res,next)=>
     ['client','artisan'].includes(req.session?.utilisateur?.role)?next():res.status(403).json({message:'Acces refuse.'}));
   admin.use(enabled,verifierConnexion,verifierAdmin);
+  admin.use((req,res,next)=>{res.set('Cache-Control','private, no-store');next();});
   // Uses server-chosen admin route context, never user supplied fields.
   const adminContext=req=>({userId:Number(req.session.utilisateur.id),verified:req.session.adminVerified===true,
     serverAdmin:req.tasklyAdminContext===true && req.session.utilisateur.role==='admin'});
@@ -79,6 +80,12 @@ function createRouters({db,env=process.env}={}) {
   }));
   admin.get('/support/threads/:id',limiter({max:60}),handle(async(req,res)=>{
     res.json(await service.readForAdmin(adminContext(req),req.params.id));
+  }));
+  admin.post('/support/threads',limiter({max:8}),handle(async(req,res)=>{
+    res.status(201).json(await service.createFromAdmin(adminContext(req),req.body?.userId,req.body?.subject,req.body?.body));
+  }));
+  user.post('/support/threads/:id/replies',limiter({max:20}),handle(async(req,res)=>{
+    res.status(201).json(await service.replyAsUser(req.session.utilisateur.id,req.params.id,req.body?.body));
   }));
   admin.post('/support/threads/:id/replies',limiter({max:20}),handle(async(req,res)=>{
     res.status(201).json(await service.replyAsAdmin(adminContext(req),req.params.id,req.body?.body));

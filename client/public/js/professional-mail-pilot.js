@@ -25,6 +25,34 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const fmtDate=value=>{if(!value)return '—';const x=new Date(value);return Number.isNaN(x.valueOf())?'—':x.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});};
   const lines=(title,items)=>{const wrap=document.createElement('div');wrap.className='tmv9-dialog-data';wrap.append(text('h3',title));for(const [key,value]of items){const line=document.createElement('p');line.append(text('strong',key+' : '),text('span',String(value??'—')));wrap.append(line);}return wrap;};
   function details(d){const overlay=document.createElement('div');overlay.className='tmv9-modal';const dialog=document.createElement('section');dialog.className='tmv9-dialog';dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Détails de la boîte');const x=button('Fermer',()=>overlay.remove(),'outline');const head=document.createElement('header');head.append(text('h2','Détails de la boîte'),x);dialog.append(head,lines('Adresse et compte', [['Adresse professionnelle',d.proposed_address],['Type de compte',d.artisan_id==null?'Client':'Artisan'],['Identifiant utilisateur',d.user_id],['Profil artisan',d.artisan_id],['Statut de la demande',labels[d.status]||d.status],['Accès à la boîte',d.mailbox_state==='active'?'Actif':d.mailbox_state==='activation_required'?'Activation requise':d.mailbox_state==='waiting_provider'?'En attente':'Non renseigné'],['Date de demande',fmtDate(d.requested_at)],['Décision',fmtDate(d.decided_at)]]));overlay.append(dialog);overlay.addEventListener('click',ev=>{if(ev.target===overlay)overlay.remove();});const key=ev=>{if(ev.key==='Escape'){overlay.remove();document.removeEventListener('keydown',key);}};document.addEventListener('keydown',key);document.body.append(overlay);x.focus();}
+  // Optional separate administrator action, never changes automatic activation.
+  if(data.manualMailEnabled){
+    const actionRow=document.createElement('div');actionRow.className='tmv9-manual-mail';
+    const open=button('＋ Ajouter une boîte manuellement',()=>{
+      const overlay=document.createElement('div');overlay.className='tmv9-modal';
+      const dialog=document.createElement('section');dialog.className='tmv9-dialog';
+      dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');
+      dialog.setAttribute('aria-label','Provisionnement manuel');
+      const form=document.createElement('form');
+      const heading=text('h2','Ajouter une boîte existante approuvée');
+      const description=text('p','Réservé aux demandes approuvées et confirmées. L’activation reste personnelle. La création automatique est inchangée.');
+      const selector=document.createElement('select');selector.required=true;selector.setAttribute('aria-label','Demande approuvée');
+      const blank=document.createElement('option');blank.value='';blank.textContent='Sélectionnez une demande';selector.append(blank);
+      for(const item of data.demandes.filter(d=>d.status==='approved_pending_provider'&&d.mailbox_state==='waiting_provider')){
+        const option=document.createElement('option');option.value=String(item.user_id);option.textContent=item.proposed_address;selector.append(option);
+      }
+      const send=button('Créer la boîte',()=>{},'primary');send.type='submit';
+      const cancel=button('Annuler',()=>overlay.remove(),'outline');
+      const feedback=text('p','');feedback.setAttribute('role','status');
+      form.append(heading,description,selector,feedback,send,cancel);
+      form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity())return;
+        if(!window.confirm('Créer manuellement cette boîte confirmée ?'))return;
+        send.disabled=true;try{await requeteAPI(base+'/'+encodeURIComponent(selector.value)+'/manual-provision',{method:'POST',body:JSON.stringify({})});overlay.remove();await load();}
+        catch(error){feedback.textContent=error.message||'Création refusée.';}finally{send.disabled=false;}});
+      dialog.append(form);overlay.append(dialog);overlay.addEventListener('click',event=>{if(event.target===overlay)overlay.remove();});
+      document.body.append(overlay);selector.focus();
+    },'primary');actionRow.append(open);root.append(actionRow);
+  }
   if(!data.demandes.length)root.append(text('p','Aucune boîte sur cette page.'));
   for(const d of data.demandes){
     const card=document.createElement('section');card.className='panel mt-22 tmv9-mailbox-row';

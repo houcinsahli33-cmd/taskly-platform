@@ -30,6 +30,22 @@
     filters.append(all,support,adm,unread);
     const searchWrap=el('label','tmv5-find-wrap');searchWrap.append(icon('⌕'),find);
     tools.append(searchWrap,filters,sort);
+    const initiate=btn('＋ Nouvelle conversation','tmv5-filter');
+    initiate.setAttribute('aria-label','Contacter un client ou un artisan par son identifiant de compte');
+    tools.append(initiate);
+    initiate.addEventListener('click',()=>{
+      const form=el('form','tmv5-compose');form.setAttribute('aria-label','Nouvelle conversation Support');
+      const uid=el('input','tmv5-compose-subject');uid.type='text';uid.inputMode='numeric';uid.required=true;uid.pattern='[1-9][0-9]*';uid.placeholder='Identifiant du compte client ou artisan';
+      const subject=el('input','tmv5-compose-subject');subject.required=true;subject.maxLength=200;subject.placeholder='Objet';
+      const body=el('textarea','tmv5-compose-text');body.required=true;body.maxLength=10000;body.rows=4;body.placeholder='Message de l’administration';
+      const send=el('button','tmv5-send','Envoyer');send.type='submit';
+      form.append(uid,subject,body,send);
+      form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity())return;send.disabled=true;
+        try{const result=await api('/support/threads',{method:'POST',body:JSON.stringify({userId:uid.value,subject:subject.value,body:body.value})});
+          await refresh();await open(result.threadId);status.textContent='Conversation créée.';
+        }catch(err){status.textContent=err?.message||'Envoi impossible.';}finally{send.disabled=false;}});
+      detail.replaceChildren(form);uid.focus();
+    });
     const layout=el('div','tmv5-layout');
     const list=el('section','tmv5-list');list.setAttribute('aria-label','Conversations Support');
     const detail=el('section','tmv5-detail');detail.setAttribute('aria-label','Conversation sélectionnée');

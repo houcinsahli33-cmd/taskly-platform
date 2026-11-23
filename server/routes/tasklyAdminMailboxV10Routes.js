@@ -10,6 +10,7 @@ const on=(req,res,next)=>process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true' &&
  process.env.TASKLY_MAIL_INTERNAL_ENABLED==='true' &&
  process.env.TASKLY_MAIL_FOLDERS_ENABLED==='true' ? next() : res.status(404).json({message:'Messagerie administrative non activée.'});
 router.use(on,verifierConnexion,verifierAdmin,(req,res,next)=>req.session?.adminVerified===true && req.tasklyAdminContext===true ? next():res.status(403).json({message:'Vérification administrateur requise.'}));
+router.use((req,res,next)=>{res.set('Cache-Control','private, no-store');next();});
 const error=(message,status=400)=>Object.assign(new Error(message),{status});
 const handle=fn=>async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Admin Mail V10 :',e.code||e.name);res.status(e.status||503).json({message:e.status?e.message:'Messagerie indisponible.'});}};
 async function tx(fn){let c;try{c=await db.getConnection();await c.beginTransaction();const r=await fn(c);await c.commit();return r;}catch(e){if(c)await c.rollback();throw e;}finally{c?.release();}}
