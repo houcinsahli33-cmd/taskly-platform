@@ -1,0 +1,17 @@
+/* Admin-only adapter: reuse Taskly Mail client/artisan visual tokens.
+   No selectors on client/artisan pages, no private-chat API changes. */
+.tmv3-admin-page{--tm-reuse-primary:#00866d;--tm-reuse-deep:#073b30;--tm-reuse-bg:#eef5f1;--tm-reuse-border:#dfece4;--tm-reuse-ink:#15343b;--tm-reuse-radius:14px}
+.tmv3-admin-page #tmv6-admin-mail{color:var(--tm-reuse-ink);min-width:0}
+.tmv3-admin-page #tmv6-admin-mail .tmv6-mail-grid{min-width:0;align-items:stretch}
+.tmv3-admin-page #tmv6-admin-mail .tmv6-folder-panel,
+.tmv3-admin-page #tmv6-admin-mail .tmv6-message-panel,
+.tmv3-admin-page #tmv6-admin-mail .tmv6-read-panel{min-width:0;background:#fff;border:1px solid var(--tm-reuse-border);border-radius:var(--tm-reuse-radius);box-shadow:0 8px 24px #0b362812;overflow-wrap:anywhere}
+.tmv3-admin-page #tmv6-admin-mail .tmv6-folder[aria-current=page]{background:#dbf4e9;color:#087e65;font-weight:700}
+.tmv3-admin-page #tmv6-admin-mail .tmv6-new{background:var(--tm-reuse-primary);color:#fff;border-radius:10px}
+.tmv3-admin-page #tmv6-admin-mail .tmv6-mail-item:focus-visible,
+.tmv3-admin-page #tmv6-admin-mail button:focus-visible,
+.tmv3-admin-page #tmv6-admin-mail input:focus-visible,
+.tmv3-admin-page #tmv6-admin-mail textarea:focus-visible{outline:2px solid var(--tm-reuse-primary);outline-offset:2px}
+.tmv3-admin-page #tmv6-admin-mail .tmv6-read-body pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}
+@media(max-width:920px){.tmv3-admin-page #tmv6-admin-mail .tmv6-mail-grid{max-width:100%;overflow-x:clip}}
+@media(max-width:600px){.tmv3-admin-page #tmv6-admin-mail .tmv6-folder-panel,.tmv3-admin-page #tmv6-admin-mail .tmv6-message-panel,.tmv3-admin-page #tmv6-admin-mail .tmv6-read-panel{border-radius:12px}}
