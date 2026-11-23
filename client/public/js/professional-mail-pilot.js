@@ -56,6 +56,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
   if(after!==0)root.append(button('Première page',()=>{after=0;load();},'outline'));
   if(data.next)root.append(button('Page suivante',()=>{after=data.next;load();},'outline'));
  }
- async function load(){try{const data=await requeteAPI(base+(admin?'?after='+after:''));message('');if(admin)adminPage(data);else await artisanPage(data.demande,data.gatewayConfigured,data.autoInternal,data.internalMode);}catch(e){message(e.message);}}
+ async function load(){try{const data=await requeteAPI(base+(admin?'?after='+after:''));message('');if(admin){adminPage(data);if(data.mailboxStateUnavailable)message('Demandes chargées. État des boîtes temporairement indisponible : aucune action sur les accès.');}else await artisanPage(data.demande,data.gatewayConfigured,data.autoInternal,data.internalMode);}catch(e){message(e.message);}}
  await load();
 });

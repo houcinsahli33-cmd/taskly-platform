@@ -89,17 +89,7 @@ const gateway=internalMode
  ? createInternalGateway({transaction,profil,correspond,clientEnabled:modeClient(process.env),enableNotifications:process.env.TASKLY_MAIL_READ_LINK_ENABLED==='true'&&require('../services/professionalMailNotifications').configured(process.env)})
  : createGateway();
 
-function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){
-if(e.code==='ER_PARSE_ERROR' &&
-   req.originalUrl?.split('?')[0]==='/api/admin/taskly-mail'){
-  console.error('[TASKLY SQL DIAGNOSTIC]',{
-    code:e.code,
-    errno:e.errno,
-    sqlState:e.sqlState,
-    sqlMessage:String(e.sqlMessage||'').slice(0,500)
-  });
-}
-console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
+function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
 artisan.get('/',wrap(async(req,res)=>{if(req.session.utilisateur.role==='client')await transaction(conn=>profil(conn,req.session.utilisateur.id));const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal,adminActionsV10:process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'});}));
 artisan.post('/request',sensible,wrap(async(req,res)=>{
  if(internalMode&&!gateway.configured)throw erreur('Configuration interne invalide.',503);
@@ -154,7 +144,47 @@ artisan.post('/confirm',sensible,wrap(async(req,res)=>{
  if(!ok)throw erreur('Code incorrect, expiré ou tentatives épuisées.',400);
  res.json({message:decision==='confirm'?(autoInternal?'Votre boîte interne est créée et activée.':'Demande transmise à l’administration.'):'Demande annulée.',activated:autoInternal&&decision==='confirm'});
 }));
-admin.get('/',wrap(async(req,res)=>{const after=Number(req.query.after||0);if(!Number.isSafeInteger(after)||after<0)throw erreur('Pagination invalide.',400);const joined=gateway.configured;const suspendedCase=process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'?"WHEN m.suspended_at IS NOT NULL THEN 'suspended' ":'';const fields=colonnes.split(',').map(c=>'r.'+c).join(',');const [rows]=await db.query(`SELECT ${fields}${joined?", CASE ${suspendedCase}WHEN m.activated_at IS NOT NULL THEN 'active' WHEN m.user_id IS NOT NULL THEN 'activation_required' ELSE 'waiting_provider' END AS mailbox_state":''} FROM taskly_professional_mail_requests r ${joined?'LEFT JOIN taskly_professional_mailboxes m ON m.user_id=r.user_id AND m.address=r.proposed_address':''} WHERE r.user_id>? AND r.status IN ('pending_admin','approved_pending_provider','rejected') ORDER BY r.user_id LIMIT 50`,[after]);res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,gatewayConfigured:gateway.configured,internalMode,autoInternal,adminActionsV10:process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'});}));
+// Read admin requests and mailbox states independently. This keeps the listing
+// available even when a complex JOIN/CASE query is rejected by the SQL provider.
+// It never changes mailbox access or writes to the database.
+admin.get('/',wrap(async(req,res)=>{
+ const after=Number(req.query.after||0);
+ if(!Number.isSafeInteger(after)||after<0)throw erreur('Pagination invalide.',400);
+ const joined=Boolean(gateway.configured);
+ const v10=process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true';
+ const [rows]=await db.query(
+  `SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id>? AND status IN ('pending_admin','approved_pending_provider','rejected') ORDER BY user_id LIMIT 50`,
+  [after]
+ );
+ let mailboxStateUnavailable=false;
+ if(joined&&rows.length){
+  const ids=rows.map(row=>row.user_id);
+  const placeholders=ids.map(()=>'?').join(',');
+  try{
+   const [boxes]=await db.query(
+    `SELECT user_id,address,activated_at${v10?',suspended_at':''} FROM taskly_professional_mailboxes WHERE user_id IN (${placeholders})`,
+    ids
+   );
+   const byAccount=new Map(boxes.map(box=>[String(box.user_id)+'|'+box.address,box]));
+   for(const row of rows){
+    const box=byAccount.get(String(row.user_id)+'|'+row.proposed_address);
+    row.mailbox_state=box
+     ? v10&&box.suspended_at!=null?'suspended':box.activated_at!=null?'active':'activation_required'
+     : 'waiting_provider';
+   }
+  }catch(e){
+   // Never show an unverified mailbox as active or allow access changes.
+   // Display the requests while reporting mailbox status as unavailable.
+   mailboxStateUnavailable=true;
+   for(const row of rows)row.mailbox_state=null;
+   console.error('Taskly Mail mailbox-state lookup:',e.code||e.name);
+  }
+ }
+ res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,
+  gatewayConfigured:gateway.configured,internalMode,autoInternal,
+  adminActionsV10:v10&&!mailboxStateUnavailable,
+  mailboxStateUnavailable});
+}));
 // Reversible change of mailbox access; no messages or user records are deleted.
 admin.post('/:id/access',sensible,wrap(async(req,res)=>{
  if(process.env.TASKLY_ADMIN_MAIL_V10_ENABLED!=='true')throw erreur('Fonction indisponible.',404);

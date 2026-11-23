@@ -49,6 +49,9 @@ if(mailboxes&&pilot){
  const tableHead=E('div','tmv6-table-head');['Adresse e-mail','Profil / Compte','Statut','Accès','Date de demande','Actions'].forEach(t=>tableHead.append(E('span',null,t)));
  if(panel)panel.insertBefore(tableHead,mailboxes);
 }
+// The V10 controller owns the administrative mailbox panel.
+// V6 keeps the approved tabs, icons, and mailbox-list layout only.
+return;
 const folderPanel=E('section','tmv6-folder-panel');const messagePanel=E('section','tmv6-message-panel');const readPanel=E('section','tmv6-read-panel');
 const root=document.getElementById('tmv6-admin-mail');if(!root)return;
 const kpis=E('div','tmv6-kpis');
