@@ -6,8 +6,8 @@
 <link rel="icon" type="image/svg+xml" href="/images/icons/favicon.svg">
 <link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/admin-settings.css">
 <link rel="stylesheet" href="/css/admin-integrated.css"><link rel="stylesheet" href="/css/admin-forms.css"><link rel="stylesheet" href="/css/admin-workspace.css"><link rel="stylesheet" href="/css/workspace-pro.css">
-<link rel="stylesheet" href="/css/admin-users-page.css"><link rel="stylesheet" href="/css/admin-support-page.css">
-<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/admin-settings.js"></script><script defer src="/js/admin-support-page.js"></script>
+<link rel="stylesheet" href="/css/admin-users-page.css"><link rel="stylesheet" href="/css/admin-support-page.css?v=taskly-support-exact-20261123">
+<script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/admin-settings.js"></script><script defer src="/js/admin-support-page.js?v=taskly-support-exact-20261123"></script>
 </head>
 <body class="dashboard-page admin-users-page admin-support-page" data-require-role="admin" data-workspace-page="contacts">
 <main class="admin-layout">
@@ -41,25 +41,25 @@
       </nav>
     </aside>
 <section class="admin-content">
-<header class="support-header"><div><p class="support-eyebrow">— ESPACE ADMINISTRATEUR</p><h1>Support</h1><p>Consultez, suivez et traitez les demandes d’assistance des utilisateurs.</p></div>
+<div class="support-topbar"><span>⌂ &nbsp; Accueil / Support (Administration)</span><span>♧ &nbsp; Administrateur</span></div><header class="support-header"><div class="support-header-identity"><span class="support-header-icon" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="2" y="13" width="4" height="7" rx="2"/><rect x="18" y="13" width="4" height="7" rx="2"/><path d="M20 20c0 1.6-1.5 2-4 2h-3"/></svg></span><div><p class="support-eyebrow">— ESPACE ADMINISTRATEUR</p><h1>Support — Administration</h1><p>Gestion des demandes des utilisateurs (support interne).</p></div></div>
 <button id="support-export" type="button" class="support-export">⇩ &nbsp; Exporter CSV</button></header>
 <section class="admin-section active" id="admin-contacts" aria-label="Gestion du support">
 <div class="support-counters" id="support-counters">
-<button class="support-counter active" data-support-card="tous" type="button"><span>Total des messages</span><span class="support-counter-icon mint">▣</span><strong id="support-total">—</strong><small>Toutes les demandes</small></button>
-<button class="support-counter" data-support-card="nouveau" type="button"><span>Nouveaux</span><span class="support-counter-icon blue">▤</span><strong id="support-nouveau">—</strong><small>À examiner</small></button>
-<button class="support-counter" data-support-card="en_cours" type="button"><span>En cours</span><span class="support-counter-icon amber">◷</span><strong id="support-en-cours">—</strong><small>Suivi en cours</small></button>
-<button class="support-counter" data-support-card="traite" type="button"><span>Traités</span><span class="support-counter-icon mint">✓</span><strong id="support-traite">—</strong><small>Demandes clôturées</small></button>
+<button class="support-counter active" data-support-card="tous" type="button"><span>Total des demandes</span><span class="support-counter-icon mint"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 7 9-7"/></svg></span><strong id="support-total">—</strong><small>Toutes les demandes</small></button>
+<button class="support-counter" data-support-card="nouveau" type="button"><span>Nouveaux</span><span class="support-counter-icon blue"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H8L3 22v-6a7.5 7.5 0 1 1 17-4.5Z"/><path d="M9 11h.01M12.5 11h.01M16 11h.01"/></svg></span><strong id="support-nouveau">—</strong><small>À examiner</small></button>
+<button class="support-counter" data-support-card="en_cours" type="button"><span>En cours</span><span class="support-counter-icon amber"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg></span><strong id="support-en-cours">—</strong><small>Suivi en cours</small></button>
+<button class="support-counter" data-support-card="traite" type="button"><span>Traités</span><span class="support-counter-icon mint"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 5 5 11-11"/></svg></span><strong id="support-traite">—</strong><small>Demandes clôturées</small></button>
 </div>
-<section class="support-panel"><div class="support-panel-heading"><div><h2>Messages support</h2><p>Retrouvez chaque message, son expéditeur et son état de traitement.</p></div><span id="support-count-chip" class="support-count-chip">— messages</span></div>
+<div class="support-workspace" id="support-workspace"><section class="support-panel"><div class="support-panel-heading"><div><h2>Messages support</h2><p>Retrouvez chaque message, son expéditeur et son état de traitement.</p></div><span id="support-count-chip" class="support-count-chip">— messages</span></div>
 <div class="support-tools"><label class="support-search"><span aria-hidden="true">⌕</span><input type="search" id="support-search" placeholder="Rechercher un sujet, un nom ou un email..." aria-label="Rechercher un message"></label>
 <div class="support-tools-right"><div class="support-tabs" role="group" aria-label="Filtrer par statut">
 <button type="button" class="active" data-support-status="tous">Tous</button><button type="button" data-support-status="nouveau">Nouveaux</button><button type="button" data-support-status="en_cours">En cours</button><button type="button" data-support-status="traite">Traités</button></div>
 <label class="support-sr" for="support-sort">Trier les messages</label><select id="support-sort"><option value="recent">Plus récents</option><option value="ancien">Plus anciens</option></select></div></div>
 <div class="support-table-wrap"><table class="support-table"><thead><tr><th>MESSAGE</th><th>EXPÉDITEUR</th><th>REÇU LE</th><th>STATUT</th><th>ACTIONS</th></tr></thead><tbody id="support-rows"><tr><td colspan="5" class="support-loading">Chargement des messages…</td></tr></tbody></table></div>
 <footer class="support-pagination"><span id="support-pagination-label">—</span><div><button type="button" id="support-prev">Précédent</button><span id="support-page-number" aria-live="polite">Page —</span><button type="button" id="support-next">Suivant</button></div></footer>
-</section>
+</section><section id="support-dialog-root" class="support-dialog-root" aria-label="Demande sélectionnée"><div class="support-inline-empty"><strong>Demande de support</strong><p>Sélectionnez une demande à gauche pour consulter son contenu et les actions disponibles.</p></div></section></div>
 <p class="support-bottom-hint">ⓘ &nbsp; Un message ne devient pas automatiquement « Traité » lorsqu’il est simplement consulté.</p>
 <p class="support-notice" id="support-notice" role="status" aria-live="polite"></p>
 </section></section></main>
-<div id="support-dialog-root" class="support-dialog-root" hidden></div>
+
 </body></html>
