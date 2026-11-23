@@ -167,6 +167,12 @@ if (process.env.TASKLY_MAIL_SERVICE_V3_ENABLED === 'true') {
 if (process.env.TASKLY_ADMIN_MAIL_V10_ENABLED === 'true') {
   app.use('/api/admin/taskly-mail-v10',require('./routes/tasklyAdminMailboxV10Routes'));
 }
+// ADMIN_PRIVATE_V17P2: independent, opt-in API. No legacy chat or Support routes changed.
+if (process.env.TASKLY_ADMIN_PRIVATE_V17_ENABLED === 'true') {
+  const prive = require('./routes/tasklyAdminPrivateV17Routes');
+  app.use('/api/admin/taskly-private-v17', prive.admin);
+  app.use('/api/taskly-private-v17', prive.user);
+}
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
 app.use("/api/contact", contactRoutes); // routes liÃƒÂ©es au contact/support
