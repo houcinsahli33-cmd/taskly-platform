@@ -1,17 +1,22 @@
 /* Choix des espaces : maquette Taskly validée. */
-.account-spaces-page{box-sizing:border-box;margin:0;min-height:100dvh;padding:32px 18px;display:grid;place-items:center;background:radial-gradient(ellipse at 10% 13%,#dcf6e9 0%,transparent 34%),radial-gradient(ellipse at 100% 95%,#d9f5e6 0%,transparent 38%),#f2faf6;color:#10292e;font-family:Inter,"Segoe UI",Arial,sans-serif}
+.account-spaces-page{box-sizing:border-box;margin:0;min-height:100dvh;padding:32px 18px;display:grid;place-items:center;position:relative;isolation:isolate;overflow-x:hidden;background:radial-gradient(ellipse at 9% 15%,#e2f8ed 0%,transparent 37%),radial-gradient(ellipse at 95% 95%,#e1f9ec 0%,transparent 40%),#f4fbf7;color:#10292e;font-family:Inter,"Segoe UI",Arial,sans-serif}
 .account-spaces-page *, .account-spaces-page *::before,.account-spaces-page *::after{box-sizing:border-box}
-.account-spaces-card{width:min(560px,100%);background:#fff;border:1px solid #e5eee9;border-radius:26px;padding:36px 42px 34px;box-shadow:0 18px 48px #174b3520}
-.spaces-logo{display:inline-block}.spaces-logo img{display:block;width:150px;height:auto;margin:0 0 23px}
+/* Courbes vert menthe de la capture de référence, purement décoratives. */
+.account-spaces-page::before,.account-spaces-page::after{content:"";position:fixed;pointer-events:none;z-index:0}
+.account-spaces-page::before{width:58vw;height:66vh;left:-30vw;top:-32vh;background:#dff6e9;border-radius:0 0 95% 0;transform:rotate(-17deg);opacity:.66}
+.account-spaces-page::after{width:56vw;height:66vh;right:-24vw;bottom:-32vh;background:#d9f5e5;border-radius:90% 0 0 0;transform:rotate(-16deg);opacity:.76}
+
+.account-spaces-card{width:min(625px,100%);position:relative;z-index:1;background:#fff;border:0;border-radius:28px;padding:40px 48px 36px;box-shadow:0 18px 48px #174b3515}
+.spaces-logo{display:inline-block}.spaces-logo img{display:block;width:156px;height:auto;margin:0 0 24px}
 .spaces-eyebrow{display:inline-block;background:#e5f7ed;color:#008851;border-radius:15px;padding:6px 13px;margin:0 0 8px;font-size:11px;letter-spacing:1.5px;font-weight:800}
-.account-spaces-card h1{font:800 clamp(25px,5.2vw,32px)/1.17 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-.7px;margin:8px 0 12px;color:#09272e}
-.spaces-intro{font-size:14px;line-height:1.65;color:#526778;margin:0 0 23px}
-.spaces-list{display:grid;gap:12px}
-.space-option{font:inherit;display:flex;gap:16px;align-items:center;text-align:left;border:1px solid #cfe9dc;background:#fff;border-radius:15px;padding:12px 18px;min-height:75px;color:#10292e;width:100%;cursor:pointer;transition:background .15s,border-color .15s}
+.account-spaces-card h1{font:800 clamp(25px,5.2vw,34px)/1.17 Inter,"Segoe UI",Arial,sans-serif;letter-spacing:-.7px;margin:8px 0 12px;color:#09272e}
+.spaces-intro{font-size:14px;line-height:1.65;color:#526778;margin:0 0 22px}
+.spaces-list{display:grid;gap:13px}
+.space-option{font:inherit;display:flex;gap:16px;align-items:center;text-align:left;border:1px solid #cfe9dc;background:#fff;border-radius:16px;padding:12px 18px;min-height:78px;color:#10292e;width:100%;cursor:pointer;transition:background .15s,border-color .15s}
 .space-option:hover,.space-option:focus-visible{background:#f3fbf7;border-color:#04965e;outline-offset:2px}
 .space-option:focus-visible{outline:2px solid #04965e}.space-option:disabled{opacity:.66;cursor:wait}
-.space-symbol{display:grid;place-items:center;width:50px;height:50px;flex:0 0 50px;background:#e5f7ee;color:#008c56;border-radius:13px}
-.space-symbol svg{width:27px;height:27px;display:block}.space-option .space-info{flex:1;min-width:0}.space-option strong,.space-option small{display:block;overflow-wrap:anywhere}
+.space-symbol{display:grid;place-items:center;width:54px;height:54px;flex:0 0 54px;background:#e5f7ee;color:#008c56;border-radius:13px}
+.space-symbol svg{width:28px;height:28px;display:block}.space-option .space-info{flex:1;min-width:0}.space-option strong,.space-option small{display:block;overflow-wrap:anywhere}
 .space-option strong{font-size:16px;font-weight:800;margin-bottom:5px}.space-option small{font-size:12px;color:#5d7180;line-height:1.5}
 .space-arrow{color:#008c56;font-size:24px;flex:none;line-height:1}
 #account-spaces-status{font-size:13px;line-height:1.55;color:#526778;margin:20px 0 5px}.spaces-return{font-size:13px;color:#008c56;text-decoration:underline}
