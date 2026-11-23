@@ -4,6 +4,7 @@
   const ready = () => {
     const host=document.getElementById('taskly-mail-v3-support');
     if(!host || typeof window.requeteAPI!=='function')return;
+    if(host.dataset.mode==='admin' && window.TasklyMailV3AdminUI)return;
     const admin=host.dataset.mode==='admin';
     const base=admin?'/api/admin/taskly-mail-service-v3':'/api/taskly-mail-service-v3';
     const create=(tag,txt,cls)=>{const e=document.createElement(tag);if(txt!==undefined)e.textContent=String(txt);if(cls)e.className=cls;return e;};
