@@ -31,12 +31,12 @@
       state.showAccounts=true;accounts.classList.add('is-selected');all.classList.remove('is-selected');support.classList.remove('is-selected');
       try{await loadDirectory();}catch(err){status.textContent=err?.message||'Comptes indisponibles.';}
     });
-    filters.append(all,support,accounts,adm,unread);
+    filters.append(all,support,adm,unread); // Keep the validated filter bar; account directory lives in the existing list menu.
     const searchWrap=el('label','tmv5-find-wrap');searchWrap.append(icon('⌕'),find);
     tools.append(searchWrap,filters,sort);
     const initiate=btn('＋ Nouvelle conversation','tmv5-filter');
     initiate.setAttribute('aria-label','Choisir un compte client ou artisan pour une conversation');
-    tools.append(initiate);
+    // No extra action in the validated toolbar; the existing list menu opens account selection.
     initiate.addEventListener('click',()=>showCompose());
     function showCompose(prefillAccount=null){
       const form=el('form','tmv5-compose');form.setAttribute('aria-label','Nouvelle conversation Support');
@@ -89,7 +89,7 @@
       state.contacts=Array.isArray(result.contacts)?result.contacts:[];
       paintList();status.textContent=state.contacts.length+' comptes affichés (recherche possible).';
     }
-    function paintList(){const threads=ordered();const header=el('div','tmv5-list-heading');header.append(el('strong',null,state.showAccounts?'Comptes clients et artisans ('+state.contacts.length+')':'Conversations ('+threads.length+')'));const more=icon('•••','tmv5-more');more.setAttribute('aria-hidden','true');header.append(more);const items=el('div','tmv5-items');
+    function paintList(){const threads=ordered();const header=el('div','tmv5-list-heading');header.append(el('strong',null,state.showAccounts?'Comptes clients et artisans ('+state.contacts.length+')':'Conversations ('+threads.length+')'));const more=btn('•••','tmv5-more',async()=>{state.showAccounts=!state.showAccounts;if(state.showAccounts){await loadDirectory();}else{paintList();status.textContent=state.threads.length+' conversation(s) Support disponibles.';}});more.setAttribute('aria-label','Afficher les comptes clients et artisans ou revenir aux conversations');more.title='Choisir un compte ou revenir aux conversations';header.append(more);const items=el('div','tmv5-items');
       if(state.showAccounts){
         for(const account of state.contacts){
           const label=[account.prenom,account.nom].filter(Boolean).join(' ')||account.email;

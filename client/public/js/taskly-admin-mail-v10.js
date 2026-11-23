@@ -43,13 +43,16 @@ async function init(){
  catch(e){msg('Messagerie administrative non accessible : '+(e?.message||'vérifiez la migration SQL et les autorisations.')+' Cliquez sur Réessayer.');const retry=btn('Réessayer',async()=>{retry.disabled=true;try{await q('/counts');ready=true;retry.remove();select('inbox');await refresh();msg('');}catch(err){error(err);retry.disabled=false;}},'tmv6-new');notice.append(retry);}
 }
 function boot(){
- init();
- // Reattempt only if the API bootstrap was not ready at first paint.
- const tab=document.getElementById('tmv3-tab-admin-mail');
- if(tab)tab.addEventListener('click',()=>{
+ // Always show the approved three-column shell, even when the API is disabled.
+ function ensureMailPanel(){
   const root=document.getElementById('tmv6-admin-mail');
-  if(initialized && root && typeof window.requeteAPI==='function' && root.querySelector('.tmv6-mail-grid')===null){initialized=false;init();}
- });
+  if(!root)return;
+  if(!initialized || !root.querySelector('.tmv6-mail-grid')){initialized=false;init();}
+ }
+ ensureMailPanel();
+ const tab=document.getElementById('tmv3-tab-admin-mail');
+ if(tab)tab.addEventListener('click',()=>{if(typeof window.requeteAPI==='function')ensureMailPanel();else ensureMailPanel();});
+ window.addEventListener('taskly:admin-mail-visible',ensureMailPanel);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();

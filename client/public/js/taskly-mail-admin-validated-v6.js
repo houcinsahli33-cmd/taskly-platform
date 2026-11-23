@@ -19,6 +19,7 @@ function chooseTab(i){
  if(fullTabs.some(x=>!x)||fullPanels.some(x=>!x))return;
  fullTabs.forEach((tab,j)=>{tab.setAttribute('aria-selected',String(i===j));tab.tabIndex=i===j?0:-1;});
  fullPanels.forEach((panel,j)=>{panel.hidden=i!==j;panel.toggleAttribute('inert',i!==j);});
+ if(i===2){const mail=document.getElementById('tmv6-admin-mail');if(mail && !mail.children.length)mail.append(E('p','tmv6-error','Chargement de Taskly Mail…'));window.dispatchEvent(new Event('taskly:admin-mail-visible'));}
 }
 fullTabs.forEach((tab,i)=>{
  if(!tab)return;
@@ -43,7 +44,7 @@ if(mailboxes&&pilot){
  const panel=pilot.querySelector('.panel-body');
  const hd=E('div','tmv6-mailbox-bar');
  const title=E('strong',null,'Boîtes de messagerie');
- const add=E('button','tmv6-action','＋ Ajouter une boîte');add.type='button';add.disabled=true;add.title='Création manuelle non disponible : API administrative à connecter après vérification des comptes.';
+ const add=E('button','tmv6-action','＋ Ajouter une boîte');add.type='button';add.id='tmv6-manual-add';add.disabled=true;add.title='Vérification des autorisations de création manuelle…';add.addEventListener('click',()=>window.dispatchEvent(new Event('taskly:open-manual-mail')));
  hd.append(ico('mail'),title,add);
  if(panel)panel.prepend(hd);
  const tableHead=E('div','tmv6-table-head');['Adresse e-mail','Profil / Compte','Statut','Accès','Date de demande','Actions'].forEach(t=>tableHead.append(E('span',null,t)));
