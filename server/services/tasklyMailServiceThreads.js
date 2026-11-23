@@ -57,6 +57,29 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
       return {threadId,serviceAddress:SERVICE_ADDRESSES.support};
     });
   }
+  async function listForUser(userId) {
+    const uid=positiveId(userId);
+    return transaction(async conn=>{
+      await verifiedUser(conn,uid);
+      const [threads]=await conn.query(
+        `SELECT id,service_name,subject,created_at,updated_at
+         FROM taskly_mail_service_threads
+         WHERE user_id=? AND service_name='support'
+         ORDER BY updated_at DESC,id DESC LIMIT 50`,[uid]);
+      return {threads};
+    });
+  }
+  async function listForAdmin(adminContext) {
+    await checkAdmin(adminContext);
+    return transaction(async conn=>{
+      const [threads]=await conn.query(
+        `SELECT id,service_name,user_id,user_address,subject,created_at,updated_at
+         FROM taskly_mail_service_threads
+         WHERE service_name='support'
+         ORDER BY updated_at DESC,id DESC LIMIT 50`);
+      return {threads};
+    });
+  }
   async function readForUser(userId, threadId) {
     const uid=positiveId(userId), tid=positiveId(threadId);
     return transaction(async conn=>{
@@ -99,6 +122,6 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
       return {entryId:positiveId(insert.insertId),threadId:tid};
     });
   }
-  return Object.freeze({createFromUser,readForUser,readForAdmin,replyAsAdmin});
+  return Object.freeze({createFromUser,listForUser,listForAdmin,readForUser,readForAdmin,replyAsAdmin});
 }
 module.exports={createServiceThreads};

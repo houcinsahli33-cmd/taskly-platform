@@ -1,0 +1,15 @@
+/* Module autonome : n'affecte ni le header ni la barre laterale Taskly. */
+#taskly-mail-v3-support{margin:22px 0;padding:22px;border:1px solid #d7eadf;border-radius:16px;background:#fff;color:#153d2b;max-width:100%;box-sizing:border-box}
+#taskly-mail-v3-support h2{margin:0 0 8px;font-size:1.25rem;color:#146943}
+#taskly-mail-v3-support .tmv3-toolbar{display:flex;flex-direction:column;gap:12px}
+#taskly-mail-v3-support .tmv3-form{display:grid;gap:12px;margin:12px 0;max-width:740px}
+#taskly-mail-v3-support .tmv3-form label{display:grid;gap:5px;font-weight:600}
+#taskly-mail-v3-support input,#taskly-mail-v3-support textarea{box-sizing:border-box;width:100%;font:inherit;border:1px solid #b6cfc2;border-radius:9px;padding:10px;min-width:0}
+#taskly-mail-v3-support .tmv3-button{cursor:pointer;border:1px solid #b4d9c5;border-radius:9px;padding:10px 14px;background:#ebf8f1;color:#136542;text-align:left;font:inherit;overflow-wrap:anywhere}
+#taskly-mail-v3-support .tmv3-form .tmv3-button{background:#147e50;color:white;text-align:center}
+#taskly-mail-v3-support .tmv3-list{display:grid;gap:7px;margin:12px 0}
+#taskly-mail-v3-support .tmv3-detail{border-top:1px solid #e1eee6;padding-top:12px;overflow-wrap:anywhere}
+#taskly-mail-v3-support .tmv3-messages{display:grid;gap:12px}
+#taskly-mail-v3-support .tmv3-message{background:#f3faf6;border:1px solid #e0eee5;padding:14px;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+#taskly-mail-v3-support .tmv3-message small{display:block;color:#547766;margin-top:4px}
+@media(max-width:600px){#taskly-mail-v3-support{padding:14px;margin:16px 0}}

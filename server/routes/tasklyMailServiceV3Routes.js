@@ -63,6 +63,12 @@ function createRouters({db,env=process.env}={}) {
   // Uses server-chosen admin route context, never user supplied fields.
   const adminContext=req=>({userId:Number(req.session.utilisateur.id),verified:req.session.adminVerified===true,
     serverAdmin:req.tasklyAdminContext===true && req.session.utilisateur.role==='admin'});
+  user.get('/support/threads',limiter({max:60}),handle(async(req,res)=>{
+    res.json(await service.listForUser(req.session.utilisateur.id));
+  }));
+  admin.get('/support/threads',limiter({max:60}),handle(async(req,res)=>{
+    res.json(await service.listForAdmin(adminContext(req)));
+  }));
   user.post('/support/threads',limiter({max:8}),handle(async(req,res)=>{
     const result=await service.createFromUser(req.session.utilisateur.id,req.body?.to,req.body?.subject,req.body?.body);
     res.status(201).json(result);
