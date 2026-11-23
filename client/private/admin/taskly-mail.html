@@ -21,10 +21,10 @@
   
 <script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/professional-mail-pilot.js?v=9"></script><link rel="stylesheet" href="/css/taskly-mail-v3-support.css">
 <link rel="stylesheet" href="/css/taskly-mail-v3-admin-design.css">
-<link rel="stylesheet" href="/css/taskly-mail-admin-validated-v6.css?v=1">
+<link rel="stylesheet" href="/css/taskly-mail-admin-validated-v6.css?v=2">
 <script defer src="/js/taskly-mail-v3-support.js"></script>
 <script defer src="/js/taskly-mail-v3-admin-design.js"></script>
-<script defer src="/js/taskly-mail-admin-validated-v6.js?v=1"></script></head><body class="dashboard-page admin-users-page" data-require-role="admin" data-workspace-page="taskly-mail"><main class="admin-layout"><aside class="admin-sidebar" aria-label="Menu d’administration">
+<script defer src="/js/taskly-mail-admin-validated-v6.js?v=2"></script></head><body class="dashboard-page admin-users-page" data-require-role="admin" data-workspace-page="taskly-mail"><main class="admin-layout"><aside class="admin-sidebar" aria-label="Menu d’administration">
       <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
         <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
         <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
@@ -61,4 +61,27 @@
 </div>
 <div id="tmv3-view-support" role="tabpanel" aria-labelledby="tmv3-tab-support"><section id="taskly-mail-v3-support" data-mode="admin" aria-label="Conversations Support V3"><h2 class="tmv3-sr-only">Conversations Support</h2></section></div>
 <div id="tmv3-view-mailboxes" role="tabpanel" aria-labelledby="tmv3-tab-mailboxes" hidden><div class="tmv3-mailbox-overview" aria-label="Statistiques des boîtes professionnelles"><div class="tmv3-mb-count" data-metric="all"><span class="tmv3-mb-symbol" aria-hidden="true">✉</span><div><strong>—</strong><span>Boîtes de messagerie</span></div></div><div class="tmv3-mb-count" data-metric="approved"><span class="tmv3-mb-symbol" aria-hidden="true">✓</span><div><strong>—</strong><span>Approuvées</span></div></div><div class="tmv3-mb-count" data-metric="pending"><span class="tmv3-mb-symbol" aria-hidden="true">◷</span><div><strong>—</strong><span>En attente de vérification</span></div></div></div><div class="tmv3-mb-toolbar"><label class="tmv3-mb-search"><span class="tmv3-sr-only">Rechercher une boîte</span><input type="search" id="tmv3-mb-search" placeholder="Rechercher une boîte (adresse, profil…)" autocomplete="off"></label><label class="tmv3-mb-filter-label"><span class="tmv3-sr-only">Filtrer par statut</span><select id="tmv3-mb-filter"><option value="all">Tous les statuts</option><option value="approved">Approuvées</option><option value="pending">En attente</option></select></label><span class="tmv3-mb-context">Gestion des accès existants</span></div><section class="panel" id="professional-mail-pilot"><div class="panel-header"><h2>Boîtes professionnelles</h2></div><div class="panel-body"><p id="mail-pilot-status" role="status" aria-live="polite">Chargement…</p><div id="mail-pilot-content"></div></div></section></div></section>
-<div id="tmv3-view-admin-mail" role="tabpanel" aria-labelledby="tmv3-tab-admin-mail" hidden><section id="tmv6-admin-mail" aria-label="Messagerie Taskly Mail Administration"></section></div></section></main></body></html>
+<div id="tmv3-view-admin-mail" role="tabpanel" aria-labelledby="tmv3-tab-admin-mail" hidden><section id="tmv6-admin-mail" aria-label="Messagerie Taskly Mail Administration">
+  <div class="tmv6-kpis" aria-label="Indicateurs de la messagerie administrative">
+    <div class="tmv6-kpi"><span class="tmv6-kpi-icon" aria-hidden="true">✉</span><div><span>Non lus</span><strong>—</strong></div></div>
+    <div class="tmv6-kpi"><span class="tmv6-kpi-icon" aria-hidden="true">▦</span><div><span>Aujourd’hui</span><strong>—</strong></div></div>
+    <div class="tmv6-kpi"><span class="tmv6-kpi-icon" aria-hidden="true">♧</span><div><span>Avec pièces jointes</span><strong>—</strong></div></div>
+  </div>
+  <div class="tmv6-mail-grid">
+    <nav class="tmv6-folder-panel" aria-label="Dossiers administrateur">
+      <span class="tmv6-folder" aria-current="page">▱ <span>Réception</span></span>
+      <span class="tmv6-folder">➤ <span>Envoyés</span></span>
+      <span class="tmv6-folder">▤ <span>Brouillons</span></span>
+      <span class="tmv6-folder">☆ <span>Favoris</span></span>
+      <span class="tmv6-folder">▣ <span>Archives</span></span>
+      <span class="tmv6-folder">♲ <span>Corbeille</span></span>
+      <button class="tmv6-new" type="button" disabled title="Envoi administratif en attente de connexion au serveur">＋ Nouveau message</button>
+    </nav>
+    <section class="tmv6-message-panel" aria-label="Liste des courriers">
+      <div class="tmv6-search"><span aria-hidden="true">⌕</span><input type="search" aria-label="Rechercher un e-mail" placeholder="Rechercher un e-mail (expéditeur, sujet…)" disabled></div>
+      <p class="tmv6-read-placeholder">Aucun e-mail administratif chargé.</p>
+    </section>
+    <section class="tmv6-read-panel" aria-label="Lecture du courrier"><div class="tmv6-read-placeholder">Sélectionnez un e-mail pour consulter son contenu.</div></section>
+  </div>
+  <p class="tmv6-error" role="status">Messagerie administrative : connexion au serveur à finaliser. Aucun courrier fictif affiché.</p>
+</section></div></section></main></body></html>

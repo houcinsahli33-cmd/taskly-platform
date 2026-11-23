@@ -42,7 +42,7 @@ const statEls=[];
 for(const [n,title]of vals){const card=E('div','tmv6-kpi');const image=E('span','tmv6-kpi-icon');image.append(ico(n));const box=E('div');box.append(E('span',null,title));const strong=E('strong',null,'—');statEls.push(strong);box.append(strong);card.append(image,box);kpis.append(card);}
 const grid=E('div','tmv6-mail-grid');grid.append(folderPanel,messagePanel,readPanel);
 const notice=E('p','tmv6-error');notice.setAttribute('role','status');notice.setAttribute('aria-live','polite');
-root.append(kpis,grid,notice);
+root.replaceChildren(kpis,grid,notice);
 const folders=[['inbox','Réception','inbox'],['sent','Envoyés','sent'],['draft','Brouillons','draft'],['favorites','Favoris','favorite'],['archive','Archives','archive'],['trash','Corbeille','trash']];
 let current='inbox',messages=[],selected=null;
 const folderBtns={};
