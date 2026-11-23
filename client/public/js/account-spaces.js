@@ -6,10 +6,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
  const reason=document.getElementById('blocked-space-reason');
  const support=document.getElementById('blocked-support');
  let blockedAccount=null;
- const ICONS={
-  client:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
-  artisan:'<path d="M4.6 19.4 15.3 8.7" stroke-width="3.15"/><path d="M12.9 6.4 16.2 3.1 20.9 7.8 17.6 11.1" stroke-width="2.7"/><path d="M19.4 19.4 8.7 8.7" stroke-width="3.15"/><path d="M3.1 7.8 7.8 3.1 11.1 6.4" stroke-width="2.7"/>'
- };
+ const ICON_FILES={client:'/images/icons/taskly-client-valide.svg',artisan:'/images/icons/taskly-artisan-valide.svg'};
  function showBlocked(compte){
   blockedAccount=compte;
   reason.textContent=compte.motifBlocage || 'Contactez le support pour connaître le motif.';
@@ -43,8 +40,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   for(const compte of comptes){
    const button=document.createElement('button');button.type='button';button.className='space-option';
    const symbol=document.createElement('span');symbol.className='space-symbol';symbol.setAttribute('aria-hidden','true');
-   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-   svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');svg.innerHTML=ICONS[compte.role==='client'?'client':'artisan'];symbol.append(svg);
+   const img=document.createElement('img');img.src=ICONS_FILES[compte.role==='client'?'client':'artisan'];img.alt='';img.decoding='async';symbol.append(img);
    const info=document.createElement('span');info.className='space-info';
    const title=document.createElement('strong');const detail=document.createElement('small');const arrow=document.createElement('span');arrow.className='space-arrow';
    title.textContent=compte.role==='client'?'Mon espace client':`Artisan — ${compte.metier||'Mon activité'}`;
