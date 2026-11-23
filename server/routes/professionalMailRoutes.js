@@ -89,7 +89,17 @@ const gateway=internalMode
  ? createInternalGateway({transaction,profil,correspond,clientEnabled:modeClient(process.env),enableNotifications:process.env.TASKLY_MAIL_READ_LINK_ENABLED==='true'&&require('../services/professionalMailNotifications').configured(process.env)})
  : createGateway();
 
-function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
+function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){
+if(e.code==='ER_PARSE_ERROR' &&
+   req.originalUrl?.split('?')[0]==='/api/admin/taskly-mail'){
+  console.error('[TASKLY SQL DIAGNOSTIC]',{
+    code:e.code,
+    errno:e.errno,
+    sqlState:e.sqlState,
+    sqlMessage:String(e.sqlMessage||'').slice(0,500)
+  });
+}
+console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
 artisan.get('/',wrap(async(req,res)=>{if(req.session.utilisateur.role==='client')await transaction(conn=>profil(conn,req.session.utilisateur.id));const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal,adminActionsV10:process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'});}));
 artisan.post('/request',sensible,wrap(async(req,res)=>{
  if(internalMode&&!gateway.configured)throw erreur('Configuration interne invalide.',503);
