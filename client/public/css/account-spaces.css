@@ -34,3 +34,6 @@
 .blocked-dismiss{color:#008e56;background:#fff;border:1px solid #03a768}.blocked-support{color:#fff;background:#008b4f;border:1px solid #008b4f}.blocked-support:hover{background:#006c41}.blocked-actions button:focus-visible{outline:2px solid #007d4d;outline-offset:2px}
 @media(max-width:550px){.account-spaces-page{padding:20px 12px}.account-spaces-card{padding:25px 20px;border-radius:21px}.spaces-logo img{width:135px}.space-option{padding:12px;gap:11px}.space-option strong{font-size:14px}.space-option small{font-size:11px}.space-symbol{width:43px;height:43px;flex-basis:43px}.blocked-dialog-body{padding:20px 19px}.blocked-info-row{gap:12px}.blocked-actions{flex-wrap:wrap}.blocked-actions button{flex:1 1 auto}}
 @media(prefers-reduced-motion:reduce){.space-option{transition:none}}
+
+/* Icônes officielles tracées depuis les deux images validées. */
+.space-symbol img{display:block;width:28px;height:28px;object-fit:contain;object-position:center;flex:none}
