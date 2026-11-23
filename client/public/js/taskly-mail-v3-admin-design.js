@@ -1,92 +1,102 @@
-/* Taskly Mail V3 - interface Administration. Aucune donnée fictive, aucune écriture hors réponse Support. */
+/* Taskly Mail V3 — vues fidèles aux deux maquettes validées.
+   Données réelles uniquement. Pas de modification de la sidebar, des comptes, du backend ni du pilot. */
 (() => {
   'use strict';
   window.TasklyMailV3AdminUI = true;
-  const mount = () => {
-    const root = document.getElementById('taskly-mail-v3-support');
+  function mount() {
+    const host = document.getElementById('taskly-mail-v3-support');
     const tabs = [document.getElementById('tmv3-tab-support'), document.getElementById('tmv3-tab-mailboxes')];
-    const panes = [document.getElementById('tmv3-view-support'), document.getElementById('tmv3-view-mailboxes')];
-    if (!root || tabs.some(x => !x) || panes.some(x => !x)) return;
-    const make = (tag, cls, txt) => { const x=document.createElement(tag); if(cls)x.className=cls; if(txt!==undefined)x.textContent=String(txt); return x; };
-    const button = (label, cls, fn) => { const x=make('button',cls,label); x.type='button'; x.addEventListener('click',fn); return x; };
-    const switchTo = i => {tabs.forEach((t,n)=>{t.setAttribute('aria-selected',String(n===i));t.tabIndex=n===i?0:-1;panes[n].hidden=n!==i;});};
-    tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>switchTo(i));tab.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const next=(i+(e.key==='ArrowRight'?1:-1)+2)%2;switchTo(next);tabs[next].focus();}});});
-    const base='/api/admin/taskly-mail-service-v3';
-    const request=(path,options={})=>window.requeteAPI(base+path,options);
-    const state={threads:[],active:null,loading:false,filter:'all'};
-    const msg=make('p','tmv3-status','Chargement des conversations…');msg.setAttribute('role','status');msg.setAttribute('aria-live','polite');
-    const stats=make('div','tmv3-stats');
-    const controls=make('div','tmv3-controls');
-    const search=make('input','tmv3-search');search.type='search';search.placeholder='Rechercher une conversation (email, sujet…)';search.setAttribute('aria-label','Rechercher une conversation');
-    const filter=make('select','tmv3-filter');filter.setAttribute('aria-label','Filtrer les conversations');
-    [['all','Toutes les conversations'],['client','Clients'],['artisan','Artisans']].forEach(([value,label])=>{const o=make('option',null,label);o.value=value;filter.append(o);});
-    // Le backend n'expose pas le rôle dans la liste ; aucun filtrage client/artisan fictif.
-    filter.hidden=true;
-    const refresh=button('↻ Actualiser','tmv3-primary-soft',()=>load());
-    controls.append(search,refresh);
-    const layout=make('div','tmv3-conversation-layout');
-    const left=make('section','tmv3-conversations');left.setAttribute('aria-label','Liste des conversations');
-    const right=make('section','tmv3-thread-detail');right.setAttribute('aria-label','Détail de la conversation');
-    layout.append(left,right);
-    root.replaceChildren(stats,controls,msg,layout);
-    function card(icon,title,value,subtitle){const x=make('div','tmv3-stat');x.append(make('span','tmv3-stat-icon',icon));const txt=make('div');txt.append(make('span','tmv3-stat-label',title),make('strong',null,String(value)));if(subtitle)txt.append(make('small',null,subtitle));x.append(txt);return x;}
-    const date=value=>{const d=new Date(value);return Number.isNaN(d.getTime())?'':d.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'});};
-    const message=value=>{msg.textContent=value;};
-    function renderStats(){stats.replaceChildren(card('♧','Conversations actives',state.threads.length,'Conversations disponibles'),card('✉','Boîte de service','support@taskly.dz','Messagerie interne'),card('◇','Espace','Administration','Accès contrôlé côté serveur'));}
-    function filtered(){const q=search.value.trim().toLocaleLowerCase('fr-FR');return state.threads.filter(t=>!q||String(t.subject||'').toLocaleLowerCase('fr-FR').includes(q)||String(t.user_address||'').toLocaleLowerCase('fr-FR').includes(q)||String(t.id).includes(q));}
-    function renderList(){left.replaceChildren(make('h3',null,'Conversations ('+filtered().length+')'));const items=make('div','tmv3-conversation-items');for(const t of filtered()){
-      const item=button('','tmv3-conversation'+(String(state.active)===String(t.id)?' is-active':''),()=>open(t.id));
-      const head=make('span','tmv3-conversation-head'); const avatar=make('span','tmv3-avatar',String(t.user_address||'T').charAt(0).toLocaleUpperCase('fr-FR'));const text=make('span','tmv3-conversation-text'); const name=make('span','tmv3-conversation-head'); name.append(make('strong',null,t.user_address||'Compte Taskly'),make('small',null,date(t.updated_at)));text.append(name,make('span','tmv3-conversation-subject',t.subject||'Sans objet'),make('small','tmv3-conversation-meta','Conversation #'+t.id));item.append(avatar,text);items.append(item);
-    }if(!items.children.length)items.append(make('p','tmv3-empty','Aucune conversation correspondante.'));left.append(items);}
-    function emptyDetail(){right.replaceChildren(make('div','tmv3-placeholder','Sélectionnez une conversation à gauche pour consulter les messages et répondre depuis support@taskly.dz.'));}
-    let currentRequest=0;
-    async function open(id){if(state.loading)return;state.active=id;renderList();const seq=++currentRequest;right.replaceChildren(make('p','tmv3-status','Chargement de la conversation…'));
-      try {const r=await request('/support/threads/'+encodeURIComponent(id));if(seq!==currentRequest)return;const t=r.thread||{};right.replaceChildren();
-        const heading=make('div','tmv3-detail-heading');const identity=make('div');identity.append(make('strong',null,t.user_address||'Compte Taskly'),make('span',null,t.subject||'Sans objet'));
-        heading.append(identity,make('span','tmv3-service-chip','Support'));right.append(heading);
-        const notice=make('div','tmv3-detail-note','Réponse interne depuis support@taskly.dz · Conversations visibles seulement aux utilisateurs autorisés.');right.append(notice);
-        const messages=make('div','tmv3-chat-messages');for(const entry of (r.entries||[])){
-          const outgoing=entry.sender_kind==='admin';const wrap=make('article','tmv3-bubble '+(outgoing?'tmv3-bubble-admin':'tmv3-bubble-user'));
-          const label=make('div','tmv3-bubble-label');label.append(make('strong',null,outgoing?'support@taskly.dz':(t.user_address||'Utilisateur')),make('small',null,date(entry.created_at)));
-          wrap.append(label,make('p',null,entry.body||''));messages.append(wrap);
-        }if(!messages.children.length)messages.append(make('p','tmv3-empty','Aucun message.'));right.append(messages);
-        const form=make('form','tmv3-reply-form');const lbl=make('label',null,'Votre réponse');const body=make('textarea');body.placeholder='Rédigez votre réponse…';body.required=true;body.maxLength=10000;body.rows=4;lbl.append(body);
-        const actions=make('div','tmv3-reply-actions');const submit=make('button','tmv3-primary','➤ Envoyer');submit.type='submit';actions.append(make('span',null,'Depuis support@taskly.dz'),submit);form.append(lbl,actions);
-        form.addEventListener('submit',async e=>{e.preventDefault();if(!form.reportValidity()||state.loading)return;state.loading=true;submit.disabled=true;try{await request('/support/threads/'+encodeURIComponent(id)+'/replies',{method:'POST',body:JSON.stringify({body:body.value})});await openAfterSubmit(id);message('Réponse enregistrée avec succès.');}catch(err){message(err?.message||'Envoi impossible.');}finally{state.loading=false;submit.disabled=false;}});
-        right.append(form);
-      }catch(e){right.replaceChildren(make('p','tmv3-status',e?.message||'Chargement impossible.'));}}
-    async function openAfterSubmit(id){state.loading=false;await open(id);}
-    async function load(){if(state.loading)return;state.loading=true;message('Actualisation…');try{const r=await request('/support/threads');state.threads=Array.isArray(r.threads)?r.threads:[];renderStats();renderList();message(state.threads.length+' conversation(s) Support disponibles.');const exists=state.threads.some(t=>String(t.id)===String(state.active));if(exists)await openAfterSubmit(state.active);else {state.active=null;emptyDetail();}}catch(e){message(e?.message||'Impossible de charger les conversations.');renderStats();emptyDetail();}finally{state.loading=false;}}
-    search.addEventListener('input',renderList);renderStats();emptyDetail();if(typeof window.requeteAPI==='function')load();else message('Connexion API indisponible.');
-    // Ajoute uniquement une presentation et des filtres sur les boites deja rendues par le pilot.
-    // Aucune suppression, remplacement des boutons ou simulation de mutations serveur.
-    const mbHost=document.getElementById('mail-pilot-content');
-    const mbSearch=document.getElementById('tmv3-mb-search');
-    const mbFilter=document.getElementById('tmv3-mb-filter');
-    if(mbHost && mbSearch && mbFilter){
-      let refreshQueued=false;
-      function updateMailboxes(){
-        refreshQueued=false;
-        const cards=Array.from(mbHost.children).filter(el=>el.nodeType===1);
-        const norm=v=>String(v||'').toLocaleLowerCase('fr-FR');
-        const status=el=>norm(el.textContent);
-        let approved=0,pending=0;
-        cards.forEach(el=>{const t=status(el); if(/approuv[ée]/i.test(t))approved++;else if(/en attente|attente de v[ée]rification|pending/i.test(t))pending++;});
-        const totals={all:cards.length,approved,pending};
-        for(const [key,n] of Object.entries(totals)){
-          const target=document.querySelector('.tmv3-mb-count[data-metric="'+key+'"] strong');if(target)target.textContent=String(n);
-        }
-        const q=norm(mbSearch.value).trim();
-        const choice=mbFilter.value;
-        cards.forEach(el=>{const t=status(el);const isApproved=/approuv[ée]/i.test(t);const isPending=/en attente|attente de v[ée]rification|pending/i.test(t);el.hidden=!!q&&!t.includes(q)||(choice==='approved'&&!isApproved)||(choice==='pending'&&!isPending);});
-      }
-      const schedule=()=>{if(refreshQueued)return;refreshQueued=true;queueMicrotask(updateMailboxes);};
-      mbSearch.addEventListener('input',updateMailboxes);
-      mbFilter.addEventListener('change',updateMailboxes);
-      new MutationObserver(schedule).observe(mbHost,{childList:true,subtree:false});
-      updateMailboxes();
+    const panels = [document.getElementById('tmv3-view-support'), document.getElementById('tmv3-view-mailboxes')];
+    if (!host || tabs.some(x=>!x) || panels.some(x=>!x)) return;
+    const el=(tag, cls, value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=String(value);return n;};
+    const btn=(label,cls,click)=>{const n=el('button',cls,label);n.type='button';if(click)n.addEventListener('click',click);return n;};
+    const icon=(value,cls='tmv5-icon')=>el('span',cls,value);
+    function switchTo(i){tabs.forEach((tab,j)=>{tab.setAttribute('aria-selected',String(i===j));tab.tabIndex=i===j?0:-1;panels[j].hidden=i!==j;});}
+    tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>switchTo(i));tab.addEventListener('keydown',ev=>{if(!['ArrowRight','ArrowLeft'].includes(ev.key))return;ev.preventDefault();const k=(i+(ev.key==='ArrowRight'?1:-1)+2)%2;switchTo(k);tabs[k].focus();});});
+    const state={threads:[],selected:null,search:'',sort:'recent',busy:false,displayed:null,loadError:null};
+    const api=(path,opt={})=>window.requeteAPI('/api/admin/taskly-mail-service-v3'+path,opt);
+    const date=(v)=>{if(!v)return '';const d=new Date(v);return Number.isNaN(d.getTime())?'':d.toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});};
+    const status=el('p','tmv5-status','Chargement des conversations…');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+    const metricRow=el('div','tmv5-metrics');
+    const tools=el('div','tmv5-tools');
+    const find=el('input','tmv5-find');find.type='search';find.placeholder='Rechercher une conversation (email, sujet, message…)';find.setAttribute('aria-label','Rechercher une conversation');
+    const filters=el('div','tmv5-filters');
+    const all=btn('Tous','tmv5-filter is-selected',()=>{find.value='';paintList();});
+    const support=btn('Support','tmv5-filter',()=>{all.classList.remove('is-selected');support.classList.add('is-selected');paintList();});
+    const adm=btn('Administration','tmv5-filter');adm.disabled=true;adm.title='Les conversations Administration ne sont pas encore exposées par l’API V3.';
+    const unread=btn('Non lus','tmv5-filter');unread.disabled=true;unread.title='Le serveur ne fournit pas encore de statut de lecture.';
+    all.addEventListener('click',()=>{support.classList.remove('is-selected');all.classList.add('is-selected');});
+    const sort=el('select','tmv5-sort');[['recent','Plus récents'],['old','Plus anciens']].forEach(([key,label])=>{const o=el('option',null,label);o.value=key;sort.append(o);});sort.setAttribute('aria-label','Ordre des conversations');
+    filters.append(all,support,adm,unread);
+    const searchWrap=el('label','tmv5-find-wrap');searchWrap.append(icon('⌕'),find);
+    tools.append(searchWrap,filters,sort);
+    const layout=el('div','tmv5-layout');
+    const list=el('section','tmv5-list');list.setAttribute('aria-label','Conversations Support');
+    const detail=el('section','tmv5-detail');detail.setAttribute('aria-label','Conversation sélectionnée');
+    layout.append(list,detail);host.replaceChildren(metricRow,tools,status,layout);
+    function metric(symbol,label,value,note,kind){const n=el('div','tmv5-metric'+(kind?' tmv5-'+kind:''));const pict=icon(symbol,'tmv5-metric-icon');const copy=el('div','tmv5-metric-copy');copy.append(el('span','tmv5-metric-title',label),el('strong','tmv5-metric-value',value));if(note)copy.append(el('small','tmv5-metric-note',note));n.append(pict,copy);return n;}
+    function paintMetrics(){
+      metricRow.replaceChildren(
+        metric('☏','Conversations actives',state.threads.length,'Fils Support disponibles','main'),
+        metric('✉','Non lus','—','Statut non disponible',''),
+        metric('♧','Clients','—','Profil non transmis',''),
+        metric('⚒','Artisans','—','Profil non transmis',''),
+        metric('✓','Résolus','—','Statut non disponible','')
+      );
     }
-    // Garde les elements du pilot et leurs gestionnaires d'evenements intacts.
-  };
+    function ordered(){const q=find.value.trim().toLocaleLowerCase('fr-FR');return state.threads.filter(t=>!q||[t.user_address,t.subject,t.id].some(v=>String(v??'').toLocaleLowerCase('fr-FR').includes(q))).sort((a,b)=>{const da=Date.parse(a.updated_at||a.created_at)||0;const db=Date.parse(b.updated_at||b.created_at)||0;return sort.value==='old'?da-db:db-da;});}
+    function paintList(){const threads=ordered();const header=el('div','tmv5-list-heading');header.append(el('strong',null,'Conversations ('+threads.length+')'));const more=icon('•••','tmv5-more');more.setAttribute('aria-hidden','true');header.append(more);const items=el('div','tmv5-items');
+      for(const t of threads){const active=String(t.id)===String(state.selected);const item=btn('','tmv5-item'+(active?' is-active':''),()=>open(t.id));item.setAttribute('aria-label','Ouvrir la conversation '+String(t.subject||t.id));
+        const av=icon(String(t.user_address||'T').charAt(0).toUpperCase(),'tmv5-avatar');const content=el('div','tmv5-item-body');const line=el('div','tmv5-item-line');line.append(el('strong','tmv5-email',t.user_address||'Utilisateur Taskly'),el('small','tmv5-when',date(t.updated_at||t.created_at)));content.append(line,el('strong','tmv5-subject',t.subject||'Sans objet'),el('p','tmv5-preview','Conversation Support • #'+t.id));const foot=el('div','tmv5-item-foot');foot.append(el('span','tmv5-type','Support'),el('span','tmv5-state','Conversation'));content.append(foot);item.append(av,content);items.append(item);
+      }
+      if(!threads.length)items.append(el('p','tmv5-empty','Aucune conversation correspondante.'));list.replaceChildren(header,items);
+    }
+    function emptyDetail(){detail.replaceChildren(el('div','tmv5-placeholder','Sélectionnez une conversation à gauche pour consulter les messages et répondre depuis support@taskly.dz.'));}
+    let seq=0;
+    async function open(id){state.selected=id;paintList();const current=++seq;detail.replaceChildren(el('p','tmv5-load','Chargement de la conversation…'));
+      try{const data=await api('/support/threads/'+encodeURIComponent(id));if(current!==seq)return;const thread=data.thread||{};
+        const head=el('header','tmv5-thread-header');const who=el('div','tmv5-person');who.append(icon(String(thread.user_address||'U').charAt(0).toUpperCase(),'tmv5-avatar'),el('div','tmv5-person-meta'));who.lastChild.append(el('strong',null,thread.user_address||'Compte Taskly'),el('span',null,thread.subject||'Sans objet'));head.append(who);
+        const actions=el('div','tmv5-actions');const reply=btn('↩ Répondre','tmv5-reply-top',()=>detail.querySelector('textarea')?.focus());const archive=btn('▣ Archiver','tmv5-secondary');archive.disabled=true;archive.title='Fonction non disponible dans l’API Support V3.';const close=btn('✓ Clore','tmv5-secondary');close.disabled=true;close.title='Fonction non disponible dans l’API Support V3.';actions.append(reply,archive,close);head.append(actions);
+        const note=el('p','tmv5-info','ⓘ Réponse envoyée depuis support@taskly.dz · Historique visible uniquement pour les comptes autorisés.');
+        const messages=el('div','tmv5-messages');for(const e of (data.entries||[])){const sent=e.sender_kind==='admin';const entry=el('article','tmv5-message '+(sent?'is-admin':'is-user'));const avatar=icon(sent?'✿':String(thread.user_address||'U').charAt(0).toUpperCase(),'tmv5-avatar');const content=el('div','tmv5-message-content');const meta=el('div','tmv5-message-meta');meta.append(el('strong',null,sent?'support@taskly.dz':(thread.user_address||'Utilisateur')),el('span',null,date(e.created_at)));content.append(meta,el('p','tmv5-message-text',e.body||''));entry.append(avatar,content);messages.append(entry);}if(!messages.children.length)messages.append(el('p','tmv5-empty','Aucun message dans cette conversation.'));
+        const form=el('form','tmv5-compose');const subjectLabel=el('label','tmv5-compose-label','Sujet');const subject=el('input','tmv5-compose-subject');subject.value='RE : '+String(thread.subject||'Conversation Support');subject.readOnly=true;subjectLabel.append(subject);const textLabel=el('label','tmv5-compose-label','Message');const body=el('textarea','tmv5-compose-text');body.required=true;body.maxLength=10000;body.placeholder='Rédigez votre réponse…';body.rows=3;textLabel.append(body);const toolbar=el('div','tmv5-compose-toolbar');toolbar.append(el('span','tmv5-compose-hint','Réponse interne · sans pièce jointe'));const send=el('button','tmv5-send','➤ Envoyer');send.type='submit';toolbar.append(send);form.append(subjectLabel,textLabel,toolbar);
+        form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity()||state.busy)return;state.busy=true;send.disabled=true;try{await api('/support/threads/'+encodeURIComponent(id)+'/replies',{method:'POST',body:JSON.stringify({body:body.value})});status.textContent='Réponse enregistrée.';await open(id);}catch(err){status.textContent=err?.message||'Réponse non envoyée.';}finally{state.busy=false;send.disabled=false;}});
+        detail.replaceChildren(head,note,messages,form);
+      }catch(err){if(current!==seq)return;detail.replaceChildren(el('p','tmv5-load',err?.message||'Impossible de charger la conversation.'));}
+    }
+    async function refresh(){if(state.busy)return;state.busy=true;status.textContent='Actualisation…';try{const data=await api('/support/threads');state.threads=Array.isArray(data.threads)?data.threads:[];paintMetrics();paintList();status.textContent=state.threads.length+' conversation(s) Support disponibles.';if(state.threads.some(t=>String(t.id)===String(state.selected)))await open(state.selected);else{state.selected=null;emptyDetail();}}catch(err){state.loadError=true;status.textContent=err?.message||'Liste des conversations indisponible.';paintMetrics();emptyDetail();}finally{state.busy=false;}}
+    find.addEventListener('input',paintList);sort.addEventListener('change',paintList);paintMetrics();emptyDetail();
+    if(typeof window.requeteAPI==='function')refresh();else status.textContent='Connexion API indisponible.';
+
+    // Gestion des boîtes : enrichissement purement visuel des cartes réelles rendues par professional-mail-pilot.js.
+    const mbHost=document.getElementById('mail-pilot-content'),mbSearch=document.getElementById('tmv3-mb-search'),mbFilter=document.getElementById('tmv3-mb-filter');
+    if(mbHost&&mbSearch&&mbFilter){
+      const toolbar=document.querySelector('.tmv3-mb-toolbar');
+      const profileSelect=el('select','tmv5-profile-filter');profileSelect.setAttribute('aria-label','Filtrer par profil');[['all','Tous les profils'],['client','Clients'],['artisan','Artisans']].forEach(([v,l])=>{const o=el('option',null,l);o.value=v;profileSelect.append(o);});
+      const profileLabel=el('label','tmv5-profile-label');profileLabel.append(el('span','tmv3-sr-only','Filtrer les profils'),profileSelect);
+      if(toolbar)toolbar.append(profileLabel);
+      let queued=false;
+      function update(){queued=false;
+        const cards=Array.from(mbHost.children).filter(n=>n.nodeType===1&&!n.matches('[hidden]'));
+        const lower=s=>String(s||'').toLocaleLowerCase('fr-FR');
+        let approved=0,pending=0;
+        for(const card of cards){const raw=lower(card.textContent);const ok=/approuv[ée]e?|approved/i.test(raw);const wait=/en attente|pending|confirmation personnelle/i.test(raw)&&!ok;
+          if(ok)approved++;else if(wait)pending++;
+          const filtered=!!mbSearch.value.trim()&&!raw.includes(lower(mbSearch.value.trim()))||(mbFilter.value==='approved'&&!ok)||(mbFilter.value==='pending'&&!wait)||(profileSelect.value==='client'&&!raw.includes('compte client'))||(profileSelect.value==='artisan'&&!raw.includes('profil artisan'));
+          card.hidden=filtered;
+          if(!card.classList.contains('tmv5-mailbox-card')){
+            card.classList.add('tmv5-mailbox-card');
+            // Le contenu d'origine reste présent avec tous ses contrôles et gestionnaires d'événement.
+            const box=el('div','tmv5-mailbox-tags');box.append(el('span','tmv5-mailbox-pill',ok?'✓ Approuvée':wait?'◷ En attente':'État à vérifier'));
+            const access= /accès activé/i.test(raw)?'● Accès activé':/activation requise/i.test(raw)?'Activation requise':'État de la boîte à vérifier';box.append(el('span','tmv5-mailbox-pill tmv5-access-pill',access));card.append(box);
+          }else{const badges=card.querySelector('.tmv5-mailbox-tags');if(badges){badges.children[0].textContent=ok?'✓ Approuvée':wait?'◷ En attente':'État à vérifier';}}
+        }
+        [['all',cards.length],['approved',approved],['pending',pending]].forEach(([key,value])=>{const strong=document.querySelector('.tmv3-mb-count[data-metric="'+key+'"] strong');if(strong)strong.textContent=String(value);});
+      }
+      function schedule(){if(queued)return;queued=true;queueMicrotask(update);}
+      mbSearch.addEventListener('input',update);mbFilter.addEventListener('change',update);profileSelect.addEventListener('change',update);
+      new MutationObserver(schedule).observe(mbHost,{childList:true,subtree:false});update();
+    }
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();

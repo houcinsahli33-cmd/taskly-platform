@@ -121,3 +121,105 @@
 .tmv3-admin-page #mail-pilot-content :is(button,a){max-width:100%}
 @media(max-width:1100px){.tmv3-admin-page .tmv3-mailbox-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.tmv3-admin-page .tmv3-mb-context{display:none}}
 @media(max-width:760px){.tmv3-admin-page .tmv3-mailbox-overview{grid-template-columns:1fr}.tmv3-admin-page .tmv3-conversation-layout{grid-template-columns:1fr}.tmv3-admin-page .tmv3-mb-toolbar{flex-wrap:wrap}.tmv3-admin-page .tmv3-mb-filter-label{flex:1}.tmv3-admin-page .tmv3-page-heading h1{font-size:2rem}.tmv3-admin-page .tmv3-chip{margin-left:0}}
+
+/* V5 — reproduction des deux maquettes de référence (les comptes et filtres reflètent les capacités serveur). */
+.tmv3-admin-page{font-family:inherit;--tmv5-dark:#063e30;--tmv5-green:#006746;--tmv5-border:#dce8e2;--tmv5-mint:#e8f8f0}
+.tmv3-admin-page .tmv3-page-heading{background:transparent;border:0;box-shadow:none;padding:8px 4px 18px;margin-bottom:4px}
+.tmv3-admin-page .tmv3-page-heading h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(2.2rem,3vw,3.3rem);font-weight:750}
+.tmv3-admin-page .tmv3-page-heading p{font-size:.92rem;margin-top:4px}
+.tmv3-admin-page .tmv3-mail-icon{width:58px;height:58px;border-radius:18px}
+.tmv3-admin-page .tmv3-admin-tabs{margin:0 0 14px;gap:9px}
+.tmv3-admin-page .tmv3-admin-tabs button{padding:10px 18px;border:1px solid #dde9e3;border-radius:10px;font-size:.9rem;box-shadow:none}
+.tmv3-admin-page .tmv3-admin-tabs button[aria-selected=true]{background:#005841;box-shadow:0 0 0 2px #d9f6e9 inset}
+.tmv3-admin-page .tmv5-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin:10px 0 17px}
+.tmv3-admin-page .tmv5-metric{display:flex;align-items:center;gap:11px;min-width:0;padding:16px 13px;border-radius:13px;border:1px solid var(--tmv5-border);background:#fff;min-height:86px}
+.tmv3-admin-page .tmv5-metric.tmv5-main{background:linear-gradient(120deg,#f5fbf8,#eaf8f2)}
+.tmv3-admin-page .tmv5-metric-icon{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:13px;background:#e2f7ed;color:#06764d;font-size:25px;font-weight:700}
+.tmv3-admin-page .tmv5-metric-copy{display:grid;gap:2px;min-width:0}
+.tmv3-admin-page .tmv5-metric-title{color:#1b342e;font-weight:680;font-size:.79rem}
+.tmv3-admin-page .tmv5-metric-value{font-size:1.65rem;color:#073d2d;line-height:1.15;overflow-wrap:anywhere}
+.tmv3-admin-page .tmv5-metric-note{color:#6d8076;font-size:.69rem;line-height:1.25}
+.tmv3-admin-page .tmv5-tools{display:flex;gap:12px;align-items:center;margin:0 0 18px;min-width:0}
+.tmv3-admin-page .tmv5-find-wrap{display:flex;align-items:center;gap:9px;flex:1;min-width:210px;background:#fff;border:1px solid #d1ded8;border-radius:10px;padding:0 14px;height:43px}
+.tmv3-admin-page .tmv5-find-wrap .tmv5-icon{font-size:26px;color:#576e62}
+.tmv3-admin-page .tmv5-find{width:100%;min-width:0;border:0!important;outline:0!important;background:transparent!important;font:inherit;font-size:.85rem;color:#213a2e}
+.tmv3-admin-page .tmv5-filters{display:flex;gap:8px;min-width:0}
+.tmv3-admin-page .tmv5-filter{font:inherit;font-weight:650;font-size:.79rem;padding:10px 13px;white-space:nowrap;border-radius:10px;border:1px solid #dee7e3;color:#174535;background:#fff;cursor:pointer}
+.tmv3-admin-page .tmv5-filter.is-selected{background:#005c40;color:#fff;border-color:#005c40}
+.tmv3-admin-page .tmv5-filter:disabled{opacity:.45;cursor:not-allowed}
+.tmv3-admin-page .tmv5-sort{font:inherit;font-size:.8rem;padding:10px 12px;border:1px solid #d5e0dc;border-radius:10px;background:#fff;color:#234639;max-width:147px}
+.tmv3-admin-page .tmv5-status{font-size:.76rem;color:#526f60;margin:0 0 10px;min-height:14px}
+.tmv3-admin-page .tmv5-layout{display:grid;grid-template-columns:minmax(300px,37%) minmax(0,1fr);gap:15px;min-height:635px}
+.tmv3-admin-page .tmv5-list,.tmv3-admin-page .tmv5-detail{background:#fff;border:1px solid #dce8e3;border-radius:18px;overflow:hidden;min-width:0;box-shadow:0 2px 9px rgba(0,70,42,.02)}
+.tmv3-admin-page .tmv5-list-heading{display:flex;align-items:center;justify-content:space-between;padding:19px 20px;border-bottom:1px solid #e2ebe6;font-size:.96rem}
+.tmv3-admin-page .tmv5-more{font-size:20px;color:#517c69}
+.tmv3-admin-page .tmv5-items{padding:12px;display:grid;gap:10px;align-content:start;max-height:690px;overflow:auto}
+.tmv3-admin-page .tmv5-item{display:flex;text-align:left;gap:10px;padding:14px 12px;border:1px solid #e0eae5;border-radius:12px;background:#fff;min-width:0;font:inherit;cursor:pointer}
+.tmv3-admin-page .tmv5-item.is-active{background:linear-gradient(120deg,#f2fbf7,#e6f8ef);border-color:#42ae86;box-shadow:0 0 0 1px rgba(0,105,67,.09)}
+.tmv3-admin-page .tmv5-avatar{display:grid;place-items:center;flex:none;width:43px;height:43px;border-radius:50%;background:#dff7eb;color:#04744d;font-size:18px;font-weight:800}
+.tmv3-admin-page .tmv5-item-body{display:grid;gap:4px;min-width:0;flex:1}
+.tmv3-admin-page .tmv5-item-line{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;min-width:0}
+.tmv3-admin-page .tmv5-email{font-weight:800;font-size:.81rem;line-height:1.25;overflow-wrap:anywhere}
+.tmv3-admin-page .tmv5-when{color:#74837e;white-space:nowrap;font-size:.69rem}
+.tmv3-admin-page .tmv5-subject{font-size:.78rem;line-height:1.35}
+.tmv3-admin-page .tmv5-preview{font-size:.74rem;color:#596e62;line-height:1.35;margin:0}
+.tmv3-admin-page .tmv5-item-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:3px}
+.tmv3-admin-page .tmv5-type,.tmv3-admin-page .tmv5-state{font-size:.68rem;padding:4px 9px;border-radius:999px;background:#dff8e9;color:#0c6b41;font-weight:700}
+.tmv3-admin-page .tmv5-state{background:#edf4f0;color:#547060}
+.tmv3-admin-page .tmv5-thread-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:19px;border-bottom:1px solid #e3ebe6}
+.tmv3-admin-page .tmv5-person{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.tmv3-admin-page .tmv5-person-meta{display:grid;gap:4px;min-width:0;overflow-wrap:anywhere}
+.tmv3-admin-page .tmv5-person-meta strong{font-size:.88rem}
+.tmv3-admin-page .tmv5-person-meta span{font-size:.77rem;color:#5b6f64}
+.tmv3-admin-page .tmv5-actions{display:flex;gap:6px;flex-wrap:wrap}
+.tmv3-admin-page .tmv5-actions button{font:inherit;font-size:.73rem;font-weight:700;padding:9px 12px;border-radius:9px;border:1px solid #dce7e1;background:#fff;color:#315745;cursor:pointer}
+.tmv3-admin-page .tmv5-actions .tmv5-reply-top{background:#006247;color:#fff;border-color:#006247}
+.tmv3-admin-page .tmv5-actions button:disabled{opacity:.42;cursor:not-allowed}
+.tmv3-admin-page .tmv5-info{margin:14px 17px 0;padding:10px 13px;background:#e3f9ef;border:1px solid #bcefd8;color:#116344;font-size:.76rem;border-radius:8px}
+.tmv3-admin-page .tmv5-messages{padding:16px 19px;display:grid;gap:18px;align-content:start;min-height:280px;max-height:465px;overflow:auto}
+.tmv3-admin-page .tmv5-message{display:flex;align-items:flex-start;gap:9px;max-width:93%}
+.tmv3-admin-page .tmv5-message.is-admin{justify-self:end;flex-direction:row-reverse}
+.tmv3-admin-page .tmv5-message-content{min-width:0;display:grid;gap:5px}
+.tmv3-admin-page .tmv5-message-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.71rem;color:#4f6b5d}
+.tmv3-admin-page .tmv5-message-text{margin:0;padding:14px 15px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;border-radius:14px;background:#f0f2f5;font-size:.82rem}
+.tmv3-admin-page .tmv5-message.is-admin .tmv5-message-text{background:linear-gradient(125deg,#e4f8ed,#d6f1e5)}
+.tmv3-admin-page .tmv5-compose{margin:0 16px 16px;padding:12px;border:1px solid #dfeae4;border-radius:14px;display:grid;gap:10px}
+.tmv3-admin-page .tmv5-compose-label{display:grid;gap:4px;font-size:.73rem;font-weight:750}
+.tmv3-admin-page .tmv5-compose-subject,.tmv3-admin-page .tmv5-compose-text{font:inherit;font-size:.83rem;color:#273b33;border:1px solid #d2ded8;border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+.tmv3-admin-page .tmv5-compose-subject{background:#f7f9f8}
+.tmv3-admin-page .tmv5-compose-text{resize:vertical;min-height:72px}
+.tmv3-admin-page .tmv5-compose-toolbar{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.tmv3-admin-page .tmv5-compose-hint{color:#698174;font-size:.71rem}
+.tmv3-admin-page .tmv5-send{background:linear-gradient(110deg,#008a5b,#005d41);color:#fff;border:0;border-radius:8px;padding:11px 22px;font:inherit;font-size:.82rem;font-weight:800;cursor:pointer}
+.tmv3-admin-page .tmv5-send:disabled{opacity:.4}
+.tmv3-admin-page .tmv5-placeholder,.tmv3-admin-page .tmv5-load,.tmv3-admin-page .tmv5-empty{text-align:center;color:#647b6f;padding:28px 18px;font-size:.85rem}
+.tmv3-admin-page .tmv5-placeholder{padding:110px 30px}
+/* Boîtes & activations : titre unique, trois KPI, filtres et cartes alignées, sans remplacer le contenu pilot */
+.tmv3-admin-page .tmv3-mailbox-overview{gap:16px;margin:8px 0 25px}
+.tmv3-admin-page .tmv3-mb-count{min-height:95px;background:#fff;padding:20px 22px}
+.tmv3-admin-page .tmv3-mb-count:nth-child(2){background:#eefbf4}
+.tmv3-admin-page .tmv3-mb-count:nth-child(3){background:#fffaf4}
+.tmv3-admin-page .tmv3-mb-count>div{display:flex;flex-direction:column-reverse;gap:6px}
+.tmv3-admin-page .tmv3-mb-count strong{font-size:2rem}
+.tmv3-admin-page .tmv3-mb-toolbar{display:grid;grid-template-columns:minmax(200px,1fr) minmax(150px,200px) minmax(150px,190px);gap:13px;margin-bottom:22px}
+.tmv3-admin-page .tmv3-mb-context{display:none}
+.tmv3-admin-page .tmv3-mb-filter-label{min-width:0}
+.tmv3-admin-page .tmv5-profile-label{min-width:0}
+.tmv3-admin-page .tmv5-profile-filter{width:100%;height:100%;font:inherit;min-height:50px;border:1px solid #cfded8;background:#fff;color:#183d30;padding:12px;border-radius:12px}
+.tmv3-admin-page #professional-mail-pilot{border:0;box-shadow:none;margin:0;padding:0}
+.tmv3-admin-page #professional-mail-pilot .panel-header{display:none!important}
+.tmv3-admin-page #professional-mail-pilot .panel-body{padding:0;border:0;background:transparent}
+.tmv3-admin-page #mail-pilot-content{display:grid;gap:17px}
+.tmv3-admin-page #mail-pilot-content>.tmv5-mailbox-card{display:grid;gap:13px;padding:25px 26px 20px 98px!important;background:#fff;border:1px solid #dce8e2;border-radius:17px;position:relative;min-height:143px;box-shadow:0 5px 18px rgba(4,65,43,.035)}
+.tmv3-admin-page #mail-pilot-content>.tmv5-mailbox-card::before{content:'✉';position:absolute;top:24px;left:25px;display:grid;place-items:center;width:52px;height:52px;background:#daf6e8;color:#006a48;border-radius:15px;font-size:26px}
+.tmv3-admin-page .tmv5-mailbox-card .panel-body{padding:0!important;border:0!important;display:grid;gap:8px}
+.tmv3-admin-page .tmv5-mailbox-card h2{font-size:clamp(1.15rem,1.9vw,1.85rem)!important;font-weight:800!important;color:#122c23!important;margin:0 0 8px!important;line-height:1.24!important}
+.tmv3-admin-page .tmv5-mailbox-card p{font-size:.84rem!important;color:#38594a!important;margin:2px 0!important}
+.tmv3-admin-page .tmv5-mailbox-tags{display:flex;flex-wrap:wrap;gap:9px;padding-top:7px;border-top:1px solid #e4eee7}
+.tmv3-admin-page .tmv5-mailbox-pill{background:#dff7e9;border-radius:999px;padding:6px 12px;font-weight:700;color:#086a42;font-size:.76rem}
+.tmv3-admin-page .tmv5-access-pill{background:#e7f4ee}
+.tmv3-admin-page #mail-pilot-content>.tmv5-mailbox-card[hidden]{display:none!important}
+@media(max-width:1440px){.tmv3-admin-page .tmv5-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.tmv3-admin-page .tmv5-tools{flex-wrap:wrap}.tmv3-admin-page .tmv5-find-wrap{flex:1 1 100%}.tmv3-admin-page .tmv5-filters{flex:1}.tmv3-admin-page .tmv5-layout{grid-template-columns:minmax(250px,40%) minmax(0,1fr)}}
+@media(max-width:1000px){.tmv3-admin-page .tmv5-layout{grid-template-columns:minmax(0,1fr)}.tmv3-admin-page .tmv5-items{max-height:360px}.tmv3-admin-page .tmv5-detail{min-height:380px}}
+@media(max-width:760px){.tmv3-admin-page .tmv5-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.tmv3-admin-page .tmv5-filters{overflow-x:auto;max-width:100%}.tmv3-admin-page .tmv5-filter{flex:none}.tmv3-admin-page .tmv3-mb-toolbar{grid-template-columns:1fr}.tmv3-admin-page .tmv5-thread-header{align-items:flex-start}.tmv3-admin-page #mail-pilot-content>.tmv5-mailbox-card{padding:76px 17px 17px!important}.tmv3-admin-page #mail-pilot-content>.tmv5-mailbox-card::before{top:15px;left:16px}.tmv3-admin-page .tmv3-page-heading{flex-wrap:wrap}}
+@media(max-width:410px){.tmv3-admin-page .tmv5-metrics{grid-template-columns:1fr}.tmv3-admin-page .tmv5-actions{width:100%}}
