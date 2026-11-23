@@ -12,8 +12,8 @@ test('Taskly Administration : trois onglets et panneaux distincts, avec selectio
   assert.match(html,new RegExp('id="'+tab+'"[^>]*aria-controls="'+panel+'"'));
   assert.match(html,new RegExp('id="'+panel+'"[^>]*aria-labelledby="'+tab+'"'));
  }
- assert.match(html,/taskly-mail-admin-validated-v6\.css\?v=3/);
- assert.match(html,/taskly-mail-admin-validated-v6\.js\?v=3/);
+ assert.match(html,/taskly-mail-admin-validated-v6\.css\?v=4/);
+ assert.match(html,/taskly-mail-admin-validated-v6\.js\?v=4/);
 });
 test('les scripts Support V3 et boites automatiques restent presents',()=>{
  const html=read('client/private/admin/taskly-mail.html');

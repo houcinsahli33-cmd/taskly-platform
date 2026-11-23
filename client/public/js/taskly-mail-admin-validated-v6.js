@@ -46,7 +46,7 @@ if(mailboxes&&pilot){
  const add=E('button','tmv6-action','＋ Ajouter une boîte');add.type='button';add.disabled=true;add.title='Création manuelle non disponible : API administrative à connecter après vérification des comptes.';
  hd.append(ico('mail'),title,add);
  if(panel)panel.prepend(hd);
- const tableHead=E('div','tmv6-table-head');['Adresse e-mail','Profil / Compte','Statut','Accès','Informations'].forEach(t=>tableHead.append(E('span',null,t)));
+ const tableHead=E('div','tmv6-table-head');['Adresse e-mail','Profil / Compte','Statut','Accès','Date de demande','Actions'].forEach(t=>tableHead.append(E('span',null,t)));
  if(panel)panel.insertBefore(tableHead,mailboxes);
 }
 const folderPanel=E('section','tmv6-folder-panel');const messagePanel=E('section','tmv6-message-panel');const readPanel=E('section','tmv6-read-panel');

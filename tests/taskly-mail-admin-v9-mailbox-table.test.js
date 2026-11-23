@@ -1,0 +1,5 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const root=path.join(__dirname,'..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+test('V9: tableau a six colonnes et ressources versionnees',()=>{const html=read('client/private/admin/taskly-mail.html');const js=read('client/public/js/taskly-mail-admin-validated-v6.js');assert.match(html,/professional-mail-pilot\.js\?v=10/);assert.match(html,/taskly-mail-admin-validated-v6\.css\?v=4/);assert.match(html,/taskly-mail-admin-validated-v6\.js\?v=4/);assert.ok(js.includes('Date de demande'));assert.ok(js.includes('Actions'));});
+test('V9: actions non autorisees desactivees, details autorises',()=>{const js=read('client/public/js/professional-mail-pilot.js');assert.match(js,/btn\.disabled=true/);assert.match(js,/function details\(d\)/);assert.match(js,/d\.requested_at/);assert.match(js,/d\.mailbox_state/);});
