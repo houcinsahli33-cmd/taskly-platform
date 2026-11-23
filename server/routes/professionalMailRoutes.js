@@ -90,7 +90,7 @@ const gateway=internalMode
  : createGateway();
 
 function wrap(fn){return async(req,res)=>{try{await fn(req,res);}catch(e){console.error('Taskly Mail pilote :',e.code||e.status||e.name);res.status(e.status||503).json({message:e.status?e.message:'Service temporairement indisponible.'});}};}
-artisan.get('/',wrap(async(req,res)=>{if(req.session.utilisateur.role==='client')await transaction(conn=>profil(conn,req.session.utilisateur.id));const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal});}));
+artisan.get('/',wrap(async(req,res)=>{if(req.session.utilisateur.role==='client')await transaction(conn=>profil(conn,req.session.utilisateur.id));const [rows]=await db.query(`SELECT ${colonnes} FROM taskly_professional_mail_requests WHERE user_id=?`,[req.session.utilisateur.id]);res.json({demande:rows[0]||null,pilote:true,gatewayConfigured:gateway.configured,internalMode,autoInternal,adminActionsV10:process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'});}));
 artisan.post('/request',sensible,wrap(async(req,res)=>{
  if(internalMode&&!gateway.configured)throw erreur('Configuration interne invalide.',503);
  const domain=domaine(internalMode?'taskly.dz':process.env.TASKLY_MAIL_DOMAIN);if(!domain||!require('../services/emailService').estConfigure())throw erreur('Domaine ou service de confirmation non configuré.',503);
@@ -144,7 +144,20 @@ artisan.post('/confirm',sensible,wrap(async(req,res)=>{
  if(!ok)throw erreur('Code incorrect, expiré ou tentatives épuisées.',400);
  res.json({message:decision==='confirm'?(autoInternal?'Votre boîte interne est créée et activée.':'Demande transmise à l’administration.'):'Demande annulée.',activated:autoInternal&&decision==='confirm'});
 }));
-admin.get('/',wrap(async(req,res)=>{const after=Number(req.query.after||0);if(!Number.isSafeInteger(after)||after<0)throw erreur('Pagination invalide.',400);const joined=gateway.configured;const fields=colonnes.split(',').map(c=>'r.'+c).join(',');const [rows]=await db.query(`SELECT ${fields}${joined?", CASE WHEN m.activated_at IS NOT NULL THEN 'active' WHEN m.user_id IS NOT NULL THEN 'activation_required' ELSE 'waiting_provider' END AS mailbox_state":''} FROM taskly_professional_mail_requests r ${joined?'LEFT JOIN taskly_professional_mailboxes m ON m.user_id=r.user_id AND m.address=r.proposed_address':''} WHERE r.user_id>? AND r.status IN ('pending_admin','approved_pending_provider','rejected') ORDER BY r.user_id LIMIT 50`,[after]);res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,gatewayConfigured:gateway.configured,internalMode,autoInternal});}));
+admin.get('/',wrap(async(req,res)=>{const after=Number(req.query.after||0);if(!Number.isSafeInteger(after)||after<0)throw erreur('Pagination invalide.',400);const joined=gateway.configured;const suspendedCase=process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'?"WHEN m.suspended_at IS NOT NULL THEN 'suspended' ":'';const fields=colonnes.split(',').map(c=>'r.'+c).join(',');const [rows]=await db.query(`SELECT ${fields}${joined?", CASE ${suspendedCase}WHEN m.activated_at IS NOT NULL THEN 'active' WHEN m.user_id IS NOT NULL THEN 'activation_required' ELSE 'waiting_provider' END AS mailbox_state":''} FROM taskly_professional_mail_requests r ${joined?'LEFT JOIN taskly_professional_mailboxes m ON m.user_id=r.user_id AND m.address=r.proposed_address':''} WHERE r.user_id>? AND r.status IN ('pending_admin','approved_pending_provider','rejected') ORDER BY r.user_id LIMIT 50`,[after]);res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,gatewayConfigured:gateway.configured,internalMode,autoInternal,adminActionsV10:process.env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'});}));
+// Reversible change of mailbox access; no messages or user records are deleted.
+admin.post('/:id/access',sensible,wrap(async(req,res)=>{
+ if(process.env.TASKLY_ADMIN_MAIL_V10_ENABLED!=='true')throw erreur('Fonction indisponible.',404);
+ if(req.session?.adminVerified!==true||req.tasklyAdminContext!==true)throw erreur('Vérification administrateur requise.',403);
+ const id=Number(req.params.id),action=req.body?.action;
+ if(!Number.isSafeInteger(id)||id<1||!['suspend','restore'].includes(action))throw erreur('Opération invalide.',400);
+ await transaction(async conn=>{
+  const [rows]=await conn.query(`SELECT m.user_id,m.activated_at,m.suspended_at,u.statut_compte,u.email_verified,r.status FROM taskly_professional_mailboxes m JOIN users u ON u.id=m.user_id JOIN taskly_professional_mail_requests r ON r.user_id=m.user_id AND r.proposed_address=m.address WHERE m.user_id=? FOR UPDATE`,[id]);
+  const m=rows[0];if(!m||!m.activated_at||m.status!=='approved_pending_provider')throw erreur('Boîte non autorisée.',409);
+  if(action==='restore'&&(m.statut_compte!=='actif'||Number(m.email_verified)!==1))throw erreur('Le compte doit être actif et vérifié.',409);
+  await conn.query(`UPDATE taskly_professional_mailboxes SET suspended_at=${action==='suspend'?'NOW()':'NULL'} WHERE user_id=?`,[id]);
+ });res.json({message:action==='suspend'?'Boîte désactivée sans suppression des messages.':'Boîte réactivée.'});
+}));
 admin.post('/:id/decision',sensible,wrap(async(req,res)=>{
  if(autoInternal)throw erreur('Activation automatique : aucune décision manuelle.',409);
  const id=Number(req.params.id),{decision,motif}=req.body||{};

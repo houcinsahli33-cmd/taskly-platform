@@ -118,6 +118,15 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
       const [insert]=await conn.query(
         `INSERT INTO taskly_mail_service_entries (thread_id,sender_kind,sender_admin_id,body)
          VALUES (?,'admin',?,?)`,[tid,aid,text]);
+      // Mirror Support response in the user's existing private inbox (feature-flagged).
+      if(process.env.TASKLY_MAIL_UNIFIED_SUPPORT_ENABLED==='true'){
+        const [users]=await conn.query("SELECT user_id, user_address, subject FROM taskly_mail_service_threads WHERE id=? AND service_name='support' FOR UPDATE",[tid]);
+        const thread=users[0];if(!thread)throw failure('Conversation introuvable.',404);
+        // Client/Artisan account authorization checked against current active mailbox.
+        const current=await verifiedUser(conn,Number(thread.user_id));
+        if(current.address!==thread.user_address)throw failure('Adresse de conversation modifiée.',409);
+        await conn.query("INSERT INTO taskly_professional_mail_messages (owner_user_id,message_id,folder,from_address,to_address,subject,body,is_read) VALUES (?,UUID(),'inbox','support@taskly.dz',?,?,?,0)",[current.user_id,current.address,'Re: '+thread.subject,text]);
+      }
       await conn.query('UPDATE taskly_mail_service_threads SET updated_at=NOW() WHERE id=?',[tid]);
       return {entryId:positiveId(insert.insertId),threadId:tid};
     });

@@ -23,7 +23,7 @@ function createRouters({db,env=process.env}={}) {
   // The caller ID comes ONLY from the server session; account validity and
   // professional-mail ownership are rechecked against the live database.
   async function userMailbox(conn,uid){
-    const [rows]=await conn.query(`SELECT m.user_id,m.address,m.provider_id,u.role,u.statut_compte,
+    const [rows]=await conn.query(`SELECT m.user_id,m.address,m.provider_id,${env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'?'m.suspended_at':'NULL AS suspended_at'},u.role,u.statut_compte,
       u.email_verified,r.status,r.confirmed_at,r.proposed_address,
       r.client_id,r.artisan_id,r.service_id,
       c.id AS actual_client_id,a.id AS actual_artisan_id,
@@ -35,6 +35,7 @@ function createRouters({db,env=process.env}={}) {
       LEFT JOIN artisans a ON a.user_id=u.id
       WHERE m.user_id=? AND m.activated_at IS NOT NULL`,[uid]);
     const m=rows[0];
+    if(env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true'&&m?.suspended_at)return null;
     if(!m||m.statut_compte!=='actif'||Number(m.email_verified)!==1||
        m.status!=='approved_pending_provider'||!m.confirmed_at||
        m.address!==m.proposed_address||!/^internal:[a-f0-9]{64}$/.test(m.provider_id)||

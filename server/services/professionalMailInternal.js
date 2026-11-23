@@ -46,6 +46,8 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
 
         const m = rows[0];
 
+        if (env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true' && m?.suspended_at)throw error('Boîte désactivée.',403);
+
         if (!m || !correspond(p, m) ||
             m.address !== m.proposed_address ||
             !internalAddress(m.address) ||
@@ -209,8 +211,56 @@ function createInternalGateway({transaction, profil, correspond, env = process.e
             d.to = d.to.toLowerCase();
             d.key = d.key.toLowerCase();
 
-            if (!internalAddress(d.to)) {
+            const specialAdmin=d.to==='administration@taskly.dz' && env.TASKLY_ADMIN_MAIL_V10_ENABLED==='true' && foldersEnabled;
+            const specialSupport=d.to==='support@taskly.dz' && env.TASKLY_MAIL_UNIFIED_SUPPORT_ENABLED==='true' && foldersEnabled;
+            if (!internalAddress(d.to) && !specialAdmin && !specialSupport) {
                 throw error('Seules les adresses Taskly internes sont acceptees.', 400);
+            }
+
+            // Administrative destination is a special internal mailbox, not an account.
+            // Existing user-to-user delivery remains unchanged when disabled or for other addresses.
+            if (specialSupport) {
+                if(file)throw error('Pièces jointes Support non encore disponibles.',400);
+                const id=await transaction(async conn=>{
+                    const sender=await own(conn,mailbox);
+                    const [old]=await conn.query('SELECT message_id,to_address,subject,body FROM taskly_professional_mail_messages WHERE owner_user_id=? AND idempotency_key=? FOR UPDATE',[sender.user_id,d.key]);
+                    if(old[0]){
+                      if(old[0].to_address!==d.to||old[0].subject!==d.subject||old[0].body!==d.body)throw error('Identifiant envoi deja utilise.',409);
+                      return old[0].message_id;
+                    }
+                    // A reply to a Support subject stays in the user's existing private thread.
+                    // own() already locks the sender's mailbox row for this transaction.
+                    const topic=d.subject.replace(/^(?:Re\s*:\s*)+/i,'').trim() || d.subject;
+                    const [existingThreads]=await conn.query(
+                      "SELECT id FROM taskly_mail_service_threads WHERE service_name='support' AND user_id=? AND user_address=? AND subject=? ORDER BY id DESC LIMIT 1 FOR UPDATE",
+                      [sender.user_id,sender.address,topic]);
+                    let threadId=existingThreads[0]?.id;
+                    if(!threadId){
+                      const [thread]=await conn.query("INSERT INTO taskly_mail_service_threads (service_name,user_id,user_address,subject) VALUES ('support',?,?,?)",[sender.user_id,sender.address,topic]);
+                      threadId=thread.insertId;
+                    }
+                    await conn.query("INSERT INTO taskly_mail_service_entries (thread_id,sender_kind,sender_user_id,body) VALUES (?,'user',?,?)",[threadId,sender.user_id,d.body]);
+                    await conn.query('UPDATE taskly_mail_service_threads SET updated_at=NOW() WHERE id=?',[threadId]);
+                    const id=crypto.randomUUID();
+                    await conn.query("INSERT INTO taskly_professional_mail_messages (owner_user_id,message_id,idempotency_key,folder,from_address,to_address,subject,body,is_read) VALUES (?,?,?,'sent',?,?,?,?,1)",[sender.user_id,id,d.key,sender.address,d.to,d.subject,d.body]);
+                    return id;
+                });return {id};
+            }
+            if (specialAdmin) {
+                if(file)throw error('Pièces jointes administrateur non encore disponibles.',400);
+                const id=await transaction(async conn=>{
+                    const sender=await own(conn,mailbox);
+                    const [previous]=await conn.query('SELECT message_id,to_address,subject,body FROM taskly_professional_mail_messages WHERE owner_user_id=? AND idempotency_key=? FOR UPDATE',[sender.user_id,d.key]);
+                    if(previous[0]){
+                        if(previous[0].to_address!==d.to||previous[0].subject!==d.subject||previous[0].body!==d.body)throw error('Identifiant envoi deja utilise.',409);
+                        return previous[0].message_id;
+                    }
+                    const id=crypto.randomUUID();
+                    await conn.query("INSERT INTO taskly_admin_mail_messages (message_id,folder,from_address,to_address,subject,body,is_read) VALUES (?,'inbox',?,?,?,?,0)",[id,sender.address,d.to,d.subject,d.body]);
+                    await conn.query("INSERT INTO taskly_professional_mail_messages (owner_user_id,message_id,idempotency_key,folder,from_address,to_address,subject,body,is_read) VALUES (?,?,?,'sent',?,?,?,?,1)",[sender.user_id,id,d.key,sender.address,d.to,d.subject,d.body]);
+                    return id;
+                });
+                return {id};
             }
 
             const result = await transaction(async conn => {

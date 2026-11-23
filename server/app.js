@@ -163,6 +163,10 @@ if (process.env.TASKLY_MAIL_SERVICE_V3_ENABLED === 'true') {
   app.use('/api/admin/taskly-mail-service-v3',serviceRouters.admin);
 }
 // TASKLY_MAIL_SERVICE_V3_PHASE2B_END
+// TASKLY_ADMIN_MAIL_V10: separate, opt-in, verified administrative mailbox.
+if (process.env.TASKLY_ADMIN_MAIL_V10_ENABLED === 'true') {
+  app.use('/api/admin/taskly-mail-v10',require('./routes/tasklyAdminMailboxV10Routes'));
+}
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
 app.use("/api/contact", contactRoutes); // routes liÃƒÂ©es au contact/support
