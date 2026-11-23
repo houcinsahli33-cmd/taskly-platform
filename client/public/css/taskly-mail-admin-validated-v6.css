@@ -135,3 +135,36 @@
 .tmv3-admin-page .tmv6-mailbox-bar .tmv6-action{margin-left:auto}
 .tmv3-admin-page .tmv6-action:disabled,.tmv3-admin-page .tmv6-icon-btn:disabled,.tmv3-admin-page .tmv6-new:disabled{opacity:.55;cursor:not-allowed}
 .tmv3-admin-page .tmv6-kpi-icon .tmv6-svg,.tmv3-admin-page .tmv3-mb-symbol .tmv6-svg{width:23px;height:23px}
+
+/* V8 : alignement sur les captures approuvees — pages admin uniquement. */
+.tmv3-admin-page .tmv3-page-heading{background:linear-gradient(112deg,#fff 57%,#e2faef 78%,#92e4c2 100%)!important}
+.tmv3-admin-page .tmv3-chip{display:inline-flex;align-items:center;gap:7px;font-weight:800!important}
+.tmv3-admin-page .tmv5-metric{min-height:91px!important}
+.tmv3-admin-page .tmv5-metrics{gap:12px!important}
+.tmv3-admin-page #tmv3-view-admin-mail:not([hidden]){display:block!important;min-width:0}
+.tmv3-admin-page #tmv3-view-admin-mail[hidden]{display:none!important}
+.tmv3-admin-page .tmv6-kpis{grid-template-columns:repeat(3,minmax(0,250px));gap:15px;margin:0 0 16px}
+.tmv3-admin-page .tmv6-kpi{position:relative;isolation:isolate;overflow:hidden;min-height:79px;border-radius:15px;box-shadow:0 5px 14px #002e1f09}
+.tmv3-admin-page .tmv6-kpi::after{content:'';position:absolute;right:-26px;bottom:-43px;width:140px;height:94px;background:#bdf4d8;transform:rotate(-17deg);border-radius:70%;z-index:-1;opacity:.5}
+.tmv3-admin-page .tmv6-kpi:first-child{background:linear-gradient(120deg,#f5fffa,#ddf9eb)}
+.tmv3-admin-page .tmv6-mail-grid{grid-template-columns:minmax(175px,19%) minmax(290px,33%) minmax(0,1fr);gap:10px;min-height:575px}
+.tmv3-admin-page .tmv6-folder-panel{padding:20px 10px;gap:5px}
+.tmv3-admin-page .tmv6-folder{min-height:48px;font-size:13px!important;font-weight:700!important}
+.tmv3-admin-page .tmv6-folder .tmv6-svg{width:21px;height:21px}
+.tmv3-admin-page .tmv6-new{min-height:45px;border-radius:11px;font-size:13px!important}
+.tmv3-admin-page .tmv6-search{padding:10px 8px;position:relative;border:0}
+.tmv3-admin-page .tmv6-search>svg{position:absolute;left:19px;z-index:1}
+.tmv3-admin-page .tmv6-search input{padding:11px 34px;font-size:12px!important;min-height:43px}
+.tmv3-admin-page .tmv8-search-options{position:absolute;right:18px;pointer-events:none;color:#087046}
+.tmv3-admin-page .tmv8-search-options svg{height:17px;width:17px}
+.tmv3-admin-page .tmv6-read-placeholder{min-height:350px}
+.tmv3-admin-page .tmv6-mail-copy strong{font-size:12px}
+.tmv3-admin-page .tmv6-read-body{padding:22px 19px}
+.tmv3-admin-page .tmv6-mailbox-bar{padding:15px 18px}
+.tmv3-admin-page .tmv6-table-head{font-weight:800!important}
+.tmv3-admin-page #professional-mail-pilot{overflow:hidden}
+.tmv3-admin-page #mail-pilot-content>.tmv5-mailbox-card{min-height:77px!important}
+.tmv3-admin-page .tmv3-admin-tabs button[aria-selected=true]{box-shadow:0 3px 12px #01694322,inset 0 -3px 0 #34bb83!important}
+@media(max-width:1350px){.tmv3-admin-page .tmv6-mail-grid{grid-template-columns:minmax(145px,23%) minmax(220px,35%) minmax(0,1fr)}.tmv3-admin-page .tmv6-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1050px){.tmv3-admin-page .tmv6-mail-grid{grid-template-columns:minmax(160px,32%) minmax(0,1fr)}.tmv3-admin-page .tmv6-read-panel{grid-column:1/-1}}
+@media(max-width:750px){.tmv3-admin-page .tmv6-mail-grid{grid-template-columns:minmax(0,1fr)}.tmv3-admin-page .tmv6-kpis{grid-template-columns:1fr}.tmv3-admin-page .tmv6-read-panel{grid-column:1}}

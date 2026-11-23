@@ -11,6 +11,21 @@ const page=document.querySelector('.tmv3-admin-page');if(!page)return;
 page.dataset.tmv6='1';
 const tabs=[['tmv3-tab-support','chat'],['tmv3-tab-mailboxes','mail'],['tmv3-tab-admin-mail','inbox']];
 tabs.forEach(([id,name])=>withIcon(document.getElementById(id),name));
+/* V8 : navigation commune a TROIS onglets. Le controle V3 precedent n'en connait que deux.
+   Interception en capture pour neutraliser sa bascule partielle et l'ancienne page blanche. */
+const fullTabs=['tmv3-tab-support','tmv3-tab-mailboxes','tmv3-tab-admin-mail'].map(id=>document.getElementById(id));
+const fullPanels=['tmv3-view-support','tmv3-view-mailboxes','tmv3-view-admin-mail'].map(id=>document.getElementById(id));
+function chooseTab(i){
+ if(fullTabs.some(x=>!x)||fullPanels.some(x=>!x))return;
+ fullTabs.forEach((tab,j)=>{tab.setAttribute('aria-selected',String(i===j));tab.tabIndex=i===j?0:-1;});
+ fullPanels.forEach((panel,j)=>{panel.hidden=i!==j;panel.toggleAttribute('inert',i!==j);});
+}
+fullTabs.forEach((tab,i)=>{
+ if(!tab)return;
+ tab.addEventListener('click',ev=>{ev.stopImmediatePropagation();chooseTab(i);},true);
+ tab.addEventListener('keydown',ev=>{if(!['ArrowRight','ArrowLeft','Home','End'].includes(ev.key))return;ev.preventDefault();ev.stopImmediatePropagation();const j=ev.key==='Home'?0:ev.key==='End'?2:(i+(ev.key==='ArrowRight'?1:2))%3;chooseTab(j);fullTabs[j].focus();},true);
+});
+chooseTab(0);
 const metrics=document.querySelector('.tmv5-metrics');
 const metricsMap=['headset','mail','users','tools','check'];
 function decorateMetrics(){if(!metrics)return;metrics.querySelectorAll('.tmv5-metric-icon').forEach((e,i)=>{if(!e.querySelector('svg.tmv6-svg'))e.replaceChildren(ico(metricsMap[i]||'mail'));});}
@@ -50,7 +65,7 @@ function selectFolder(folder){current=folder;for(const key in folderBtns){folder
 for(const [key,label,icon]of folders){const b=E('button','tmv6-folder');b.type='button';b.append(ico(icon),E('span',null,label));b.addEventListener('click',()=>selectFolder(key));folderPanel.append(b);folderBtns[key]=b;}
 const newBtn=E('button','tmv6-new');newBtn.append(ico('plus'),E('span',null,'Nouveau message'));
 newBtn.disabled=true;newBtn.title='Envoi administratif non raccordé à une API autorisée dans les fichiers fournis.';folderPanel.append(newBtn);
-const searchWrap=E('label','tmv6-search');searchWrap.append(ico('search'));const query=E('input');query.type='search';query.placeholder='Rechercher un e-mail (expéditeur, sujet…)';query.setAttribute('aria-label','Rechercher un e-mail');searchWrap.append(query);const items=E('div','tmv6-message-list');messagePanel.append(searchWrap,items);query.addEventListener('input',renderList);
+const searchWrap=E('label','tmv6-search');searchWrap.append(ico('search'));const query=E('input');query.type='search';query.placeholder='Rechercher un e-mail (expéditeur, sujet…)';query.setAttribute('aria-label','Rechercher un e-mail');searchWrap.append(query);const settings=E('span','tmv8-search-options');settings.setAttribute('aria-hidden','true');settings.append(ico('menu'));searchWrap.append(settings);const items=E('div','tmv6-message-list');messagePanel.append(searchWrap,items);query.addEventListener('input',renderList);
 function clearRead(){selected=null;readPanel.replaceChildren(E('div','tmv6-read-placeholder','Sélectionnez un e-mail pour consulter son contenu.'));}
 function renderList(){items.replaceChildren();const q=query.value.trim().toLocaleLowerCase('fr-FR');const filtered=messages.filter(m=>(m.folder||'inbox')===current&&[m.subject,m.from,m.to,m.body].some(v=>String(v||'').toLocaleLowerCase('fr-FR').includes(q)));
  if(!filtered.length){items.append(E('p','tmv6-read-placeholder',messages.length?'Aucun message dans ce dossier.':'Aucun e-mail disponible dans la boîte administrative.'));return;}
