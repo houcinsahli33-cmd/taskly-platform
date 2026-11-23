@@ -5,14 +5,14 @@
   window.TasklyMailV3AdminUI = true;
   function mount() {
     const host = document.getElementById('taskly-mail-v3-support');
-    const tabs = [document.getElementById('tmv3-tab-support'), document.getElementById('tmv3-tab-mailboxes')];
-    const panels = [document.getElementById('tmv3-view-support'), document.getElementById('tmv3-view-mailboxes')];
+    const tabs = [document.getElementById('tmv3-tab-support'), document.getElementById('tmv3-tab-mailboxes'),document.getElementById('tmv3-tab-admin-mail')];
+    const panels = [document.getElementById('tmv3-view-support'), document.getElementById('tmv3-view-mailboxes'),document.getElementById('tmv3-view-admin-mail')];
     if (!host || tabs.some(x=>!x) || panels.some(x=>!x)) return;
     const el=(tag, cls, value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=String(value);return n;};
     const btn=(label,cls,click)=>{const n=el('button',cls,label);n.type='button';if(click)n.addEventListener('click',click);return n;};
     const icon=(value,cls='tmv5-icon')=>el('span',cls,value);
     function switchTo(i){tabs.forEach((tab,j)=>{tab.setAttribute('aria-selected',String(i===j));tab.tabIndex=i===j?0:-1;panels[j].hidden=i!==j;});}
-    tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>switchTo(i));tab.addEventListener('keydown',ev=>{if(!['ArrowRight','ArrowLeft'].includes(ev.key))return;ev.preventDefault();const k=(i+(ev.key==='ArrowRight'?1:-1)+2)%2;switchTo(k);tabs[k].focus();});});
+    tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>switchTo(i));tab.addEventListener('keydown',ev=>{if(!['ArrowRight','ArrowLeft'].includes(ev.key))return;ev.preventDefault();const k=(i+(ev.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;switchTo(k);tabs[k].focus();});});
     const state={threads:[],selected:null,search:'',sort:'recent',busy:false,displayed:null,loadError:null};
     const api=(path,opt={})=>window.requeteAPI('/api/admin/taskly-mail-service-v3'+path,opt);
     const date=(v)=>{if(!v)return '';const d=new Date(v);return Number.isNaN(d.getTime())?'':d.toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});};

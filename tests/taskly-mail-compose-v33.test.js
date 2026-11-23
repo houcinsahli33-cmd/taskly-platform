@@ -21,7 +21,7 @@ test('V3.3 : boîte de rédaction réelle, destinataire unique, envoi et brouill
   assert.match(js,/request\('\/draft','DELETE'/);
   assert.match(js,/attach\.disabled=true/);
   assert.match(js,/b\.disabled=true/);
-  assert.match(js,/\/\^\[\^@\]\+@\[a-z0-9-\]\+\\\.taskly\\\.test\$\/i\.test\(v\.to\)/);
+  assert.ok(js.includes(String.raw`/^[^@]+@[a-z0-9-]+\.taskly\.(?:test|dz)$/i.test(v.to)`));
 });
 test('V3.3 : envoi sans modification du backend ni HTML injecté',()=>{
   assert.doesNotMatch(js,/\.innerHTML\s*=/);

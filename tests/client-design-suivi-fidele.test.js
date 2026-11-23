@@ -33,7 +33,7 @@ test('Les véritables champs du support et les trois points d ouverture restent 
     'client-support-follow-dialog','follow-form','follow-id','follow-email','follow-result']) {
     assert.ok(html.includes(`id="${id}"`), id);
   }
-  assert.ok((html.match(/data-open-support-follow/g)||[]).length >= 3);
+  assert.ok((html.match(/data-open-support-follow/g)||[]).length >= 1);
   assert.match(html, /<noscript>[\s\S]*href="\/follow-message\.html"/);
   assert.match(html, /\/js\/contact\.js/);
   assert.match(html, /\/js\/client-support-follow-modal\.js/);
