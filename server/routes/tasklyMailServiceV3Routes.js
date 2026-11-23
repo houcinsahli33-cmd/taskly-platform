@@ -50,7 +50,16 @@ function createRouters({db,env=process.env}={}) {
     }else return null;
     return {user_id:m.user_id,address:m.address};
   }
-  const service=createServiceThreads({transaction,userMailbox,
+  async function contactAccount(conn,uid){
+    const [rows]=await conn.query(`SELECT u.id AS user_id,u.email AS account_email,u.role,u.statut_compte,
+       m.address AS mailbox_address
+       FROM users u LEFT JOIN taskly_professional_mailboxes m ON m.user_id=u.id
+       AND m.activated_at IS NOT NULL
+       WHERE u.id=? AND u.role IN ('client','artisan') AND u.statut_compte='actif' AND u.email_verified=1`,[uid]);
+    const row=rows[0];if(!row)return null;
+    return {user_id:row.user_id,address:row.mailbox_address||row.account_email};
+  }
+  const service=createServiceThreads({transaction,userMailbox,contactAccount,
     authorizeAdmin:async ctx=>Boolean(ctx?.verified===true && ctx?.serverAdmin===true && Number.isSafeInteger(ctx?.userId)&&ctx.userId>0)});
   const handle=fn=>async(req,res)=>{
     try{await fn(req,res);}catch(e){
@@ -67,6 +76,18 @@ function createRouters({db,env=process.env}={}) {
     serverAdmin:req.tasklyAdminContext===true && req.session.utilisateur.role==='admin'});
   user.get('/support/threads',limiter({max:60}),handle(async(req,res)=>{
     res.json(await service.listForUser(req.session.utilisateur.id));
+  }));
+  // Directory: account names only for a verified administrator, never private messages.
+  admin.get('/support/contacts',limiter({max:30}),handle(async(req,res)=>{
+    if(!adminContext(req).verified || !adminContext(req).serverAdmin) return res.status(403).json({message:'Administration non autorisée.'});
+    const q=String(req.query.q||'').trim();
+    const page=Number(req.query.page||0);
+    if(q.length>100||!Number.isSafeInteger(page)||page<0||page>10000)return res.status(400).json({message:'Recherche invalide.'});
+    const [contacts]=await db.query(`SELECT id,nom,prenom,email,role FROM users
+      WHERE role IN ('client','artisan') AND statut_compte='actif' AND email_verified=1
+      AND (?='' OR LOCATE(LOWER(?),LOWER(CONCAT_WS(' ',nom,prenom,email,CAST(id AS CHAR))))>0)
+      ORDER BY id DESC LIMIT 51 OFFSET ?`,[q,q,page*50]);
+    res.json({contacts:contacts.slice(0,50),hasMore:contacts.length>50,page});
   }));
   admin.get('/support/threads',limiter({max:60}),handle(async(req,res)=>{
     res.json(await service.listForAdmin(adminContext(req)));

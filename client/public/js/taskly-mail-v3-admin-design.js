@@ -13,7 +13,7 @@
     const icon=(value,cls='tmv5-icon')=>el('span',cls,value);
     function switchTo(i){tabs.forEach((tab,j)=>{tab.setAttribute('aria-selected',String(i===j));tab.tabIndex=i===j?0:-1;panels[j].hidden=i!==j;});}
     tabs.forEach((tab,i)=>{tab.addEventListener('click',()=>switchTo(i));tab.addEventListener('keydown',ev=>{if(!['ArrowRight','ArrowLeft'].includes(ev.key))return;ev.preventDefault();const k=(i+(ev.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;switchTo(k);tabs[k].focus();});});
-    const state={threads:[],selected:null,search:'',sort:'recent',busy:false,displayed:null,loadError:null};
+    const state={threads:[],contacts:[],showAccounts:false,selected:null,search:'',sort:'recent',busy:false,displayed:null,loadError:null};
     const api=(path,opt={})=>window.requeteAPI('/api/admin/taskly-mail-service-v3'+path,opt);
     const date=(v)=>{if(!v)return '';const d=new Date(v);return Number.isNaN(d.getTime())?'':d.toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});};
     const status=el('p','tmv5-status','Chargement des conversations…');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
@@ -21,31 +21,54 @@
     const tools=el('div','tmv5-tools');
     const find=el('input','tmv5-find');find.type='search';find.placeholder='Rechercher une conversation (email, sujet, message…)';find.setAttribute('aria-label','Rechercher une conversation');
     const filters=el('div','tmv5-filters');
-    const all=btn('Tous','tmv5-filter is-selected',()=>{find.value='';paintList();});
-    const support=btn('Support','tmv5-filter',()=>{all.classList.remove('is-selected');support.classList.add('is-selected');paintList();});
-    const adm=btn('Administration','tmv5-filter');adm.disabled=true;adm.title='Les conversations Administration ne sont pas encore exposées par l’API V3.';
+    const all=btn('Tous','tmv5-filter is-selected',()=>{state.showAccounts=false;accounts.classList.remove('is-selected');find.value='';paintList();});
+    const support=btn('Support','tmv5-filter',()=>{state.showAccounts=false;accounts.classList.remove('is-selected');all.classList.remove('is-selected');support.classList.add('is-selected');paintList();});
+    const adm=btn('Administration','tmv5-filter');adm.disabled=true;adm.title='Les fils Support et Administration sont distincts : aucun message privé client-artisan n’est consultable ici.';
     const unread=btn('Non lus','tmv5-filter');unread.disabled=true;unread.title='Le serveur ne fournit pas encore de statut de lecture.';
     all.addEventListener('click',()=>{support.classList.remove('is-selected');all.classList.add('is-selected');});
     const sort=el('select','tmv5-sort');[['recent','Plus récents'],['old','Plus anciens']].forEach(([key,label])=>{const o=el('option',null,label);o.value=key;sort.append(o);});sort.setAttribute('aria-label','Ordre des conversations');
-    filters.append(all,support,adm,unread);
+    const accounts=btn('Comptes','tmv5-filter',async()=>{
+      state.showAccounts=true;accounts.classList.add('is-selected');all.classList.remove('is-selected');support.classList.remove('is-selected');
+      try{await loadDirectory();}catch(err){status.textContent=err?.message||'Comptes indisponibles.';}
+    });
+    filters.append(all,support,accounts,adm,unread);
     const searchWrap=el('label','tmv5-find-wrap');searchWrap.append(icon('⌕'),find);
     tools.append(searchWrap,filters,sort);
     const initiate=btn('＋ Nouvelle conversation','tmv5-filter');
-    initiate.setAttribute('aria-label','Contacter un client ou un artisan par son identifiant de compte');
+    initiate.setAttribute('aria-label','Choisir un compte client ou artisan pour une conversation');
     tools.append(initiate);
-    initiate.addEventListener('click',()=>{
+    initiate.addEventListener('click',()=>showCompose());
+    function showCompose(prefillAccount=null){
       const form=el('form','tmv5-compose');form.setAttribute('aria-label','Nouvelle conversation Support');
-      const uid=el('input','tmv5-compose-subject');uid.type='text';uid.inputMode='numeric';uid.required=true;uid.pattern='[1-9][0-9]*';uid.placeholder='Identifiant du compte client ou artisan';
+      const lookup=el('input','tmv5-compose-subject');lookup.type='search';lookup.placeholder='Rechercher un client ou artisan (nom, e-mail…)';lookup.setAttribute('aria-label','Rechercher un compte');
+      const uid=el('select','tmv5-compose-subject');uid.required=true;uid.setAttribute('aria-label','Choisir le compte destinataire');
+      const pages=el('div','tmv5-compose-toolbar');let currentPage=0;
+      const more=btn('Afficher d’autres comptes','tmv5-secondary',()=>loadContacts(currentPage+1,true));
+      const found=el('p','tmv5-status','Recherche des comptes…');pages.append(more);
+      async function loadContacts(page=0,append=false){
+        try{const data=await api('/support/contacts?q='+encodeURIComponent(lookup.value.trim())+'&page='+page);
+          if(!append)uid.replaceChildren(el('option',null,'Sélectionnez un compte'));
+          if(!append)uid.firstChild.value='';
+          for(const account of data.contacts||[]){const option=el('option',null,
+            [account.prenom,account.nom].filter(Boolean).join(' ')+' · '+account.role+' · '+account.email);
+            option.value=String(account.id);uid.append(option);}
+          currentPage=page;more.hidden=!data.hasMore;
+          found.textContent=(data.contacts||[]).length+' compte(s) dans cette page.';
+        }catch(error){found.textContent=error?.message||'Annuaire indisponible.';more.hidden=true;}
+      }
+      let searchSequence=0;lookup.addEventListener('input',()=>{const seq=++searchSequence;
+        Promise.resolve().then(()=>{if(seq===searchSequence)loadContacts(0);});});
+      loadContacts().then(()=>{if(prefillAccount){const existing=Array.from(uid.options).find(o=>o.value===String(prefillAccount.id));if(!existing){const option=el('option',null,prefillAccount.email);option.value=String(prefillAccount.id);uid.append(option);}uid.value=String(prefillAccount.id);}});
       const subject=el('input','tmv5-compose-subject');subject.required=true;subject.maxLength=200;subject.placeholder='Objet';
       const body=el('textarea','tmv5-compose-text');body.required=true;body.maxLength=10000;body.rows=4;body.placeholder='Message de l’administration';
       const send=el('button','tmv5-send','Envoyer');send.type='submit';
-      form.append(uid,subject,body,send);
+      form.append(lookup,uid,found,pages,subject,body,send);
       form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity())return;send.disabled=true;
         try{const result=await api('/support/threads',{method:'POST',body:JSON.stringify({userId:uid.value,subject:subject.value,body:body.value})});
           await refresh();await open(result.threadId);status.textContent='Conversation créée.';
         }catch(err){status.textContent=err?.message||'Envoi impossible.';}finally{send.disabled=false;}});
-      detail.replaceChildren(form);uid.focus();
-    });
+      detail.replaceChildren(form);lookup.focus();
+    }
     const layout=el('div','tmv5-layout');
     const list=el('section','tmv5-list');list.setAttribute('aria-label','Conversations Support');
     const detail=el('section','tmv5-detail');detail.setAttribute('aria-label','Conversation sélectionnée');
@@ -53,7 +76,7 @@
     function metric(symbol,label,value,note,kind){const n=el('div','tmv5-metric'+(kind?' tmv5-'+kind:''));const pict=icon(symbol,'tmv5-metric-icon');const copy=el('div','tmv5-metric-copy');copy.append(el('span','tmv5-metric-title',label),el('strong','tmv5-metric-value',value));if(note)copy.append(el('small','tmv5-metric-note',note));n.append(pict,copy);return n;}
     function paintMetrics(){
       metricRow.replaceChildren(
-        metric('☏','Conversations actives',state.threads.length,'Fils Support disponibles','main'),
+        metric('☏','Conversations actives',state.threads.length,'Fils Support enregistrés','main'),
         metric('✉','Non lus','—','Statut non disponible',''),
         metric('♧','Clients','—','Profil non transmis',''),
         metric('⚒','Artisans','—','Profil non transmis',''),
@@ -61,7 +84,23 @@
       );
     }
     function ordered(){const q=find.value.trim().toLocaleLowerCase('fr-FR');return state.threads.filter(t=>!q||[t.user_address,t.subject,t.id].some(v=>String(v??'').toLocaleLowerCase('fr-FR').includes(q))).sort((a,b)=>{const da=Date.parse(a.updated_at||a.created_at)||0;const db=Date.parse(b.updated_at||b.created_at)||0;return sort.value==='old'?da-db:db-da;});}
-    function paintList(){const threads=ordered();const header=el('div','tmv5-list-heading');header.append(el('strong',null,'Conversations ('+threads.length+')'));const more=icon('•••','tmv5-more');more.setAttribute('aria-hidden','true');header.append(more);const items=el('div','tmv5-items');
+    async function loadDirectory(){
+      const q=find.value.trim();const result=await api('/support/contacts?q='+encodeURIComponent(q)+'&page=0');
+      state.contacts=Array.isArray(result.contacts)?result.contacts:[];
+      paintList();status.textContent=state.contacts.length+' comptes affichés (recherche possible).';
+    }
+    function paintList(){const threads=ordered();const header=el('div','tmv5-list-heading');header.append(el('strong',null,state.showAccounts?'Comptes clients et artisans ('+state.contacts.length+')':'Conversations ('+threads.length+')'));const more=icon('•••','tmv5-more');more.setAttribute('aria-hidden','true');header.append(more);const items=el('div','tmv5-items');
+      if(state.showAccounts){
+        for(const account of state.contacts){
+          const label=[account.prenom,account.nom].filter(Boolean).join(' ')||account.email;
+          const item=btn('','tmv5-item',()=>showCompose(account));
+          item.append(icon(label[0]?.toUpperCase()||'U','tmv5-avatar'));
+          const content=el('div','tmv5-item-body');content.append(el('strong','tmv5-email',label),el('p','tmv5-preview',account.email),el('span','tmv5-type',account.role+' · Contacter'));
+          item.append(content);items.append(item);
+        }
+        if(!state.contacts.length)items.append(el('p','tmv5-empty','Aucun compte correspondant.'));
+        list.replaceChildren(header,items);return;
+      }
       for(const t of threads){const active=String(t.id)===String(state.selected);const item=btn('','tmv5-item'+(active?' is-active':''),()=>open(t.id));item.setAttribute('aria-label','Ouvrir la conversation '+String(t.subject||t.id));
         const av=icon(String(t.user_address||'T').charAt(0).toUpperCase(),'tmv5-avatar');const content=el('div','tmv5-item-body');const line=el('div','tmv5-item-line');line.append(el('strong','tmv5-email',t.user_address||'Utilisateur Taskly'),el('small','tmv5-when',date(t.updated_at||t.created_at)));content.append(line,el('strong','tmv5-subject',t.subject||'Sans objet'),el('p','tmv5-preview','Conversation Support • #'+t.id));const foot=el('div','tmv5-item-foot');foot.append(el('span','tmv5-type','Support'),el('span','tmv5-state','Conversation'));content.append(foot);item.append(av,content);items.append(item);
       }
@@ -81,7 +120,7 @@
       }catch(err){if(current!==seq)return;detail.replaceChildren(el('p','tmv5-load',err?.message||'Impossible de charger la conversation.'));}
     }
     async function refresh(){if(state.busy)return;state.busy=true;status.textContent='Actualisation…';try{const data=await api('/support/threads');state.threads=Array.isArray(data.threads)?data.threads:[];paintMetrics();paintList();status.textContent=state.threads.length+' conversation(s) Support disponibles.';if(state.threads.some(t=>String(t.id)===String(state.selected)))await open(state.selected);else{state.selected=null;emptyDetail();}}catch(err){state.loadError=true;status.textContent=err?.message||'Liste des conversations indisponible.';paintMetrics();emptyDetail();}finally{state.busy=false;}}
-    find.addEventListener('input',paintList);sort.addEventListener('change',paintList);paintMetrics();emptyDetail();
+    find.addEventListener('input',()=>{if(state.showAccounts)loadDirectory().catch(err=>{status.textContent=err?.message||'Recherche indisponible.';});else paintList();});sort.addEventListener('change',paintList);paintMetrics();emptyDetail();
     if(typeof window.requeteAPI==='function')refresh();else status.textContent='Connexion API indisponible.';
 
     // Gestion des boîtes : enrichissement purement visuel des cartes réelles rendues par professional-mail-pilot.js.

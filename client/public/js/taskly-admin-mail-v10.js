@@ -40,7 +40,7 @@ async function init(){
  const folderBtns={};function select(key){active=key;selected=null;for(const k in folderBtns)folderBtns[k].setAttribute('aria-current',k===key?'page':'false');load();}
  for(const [key,title] of folderLabels){const b=btn(title,()=>select(key),'tmv6-folder');folderBtns[key]=b;nav.append(b);}nav.append(btn('＋ Nouveau message',()=>compose(),'tmv6-new'));search.addEventListener('input',()=>{if(ready)load();});grid.append(nav,list,reader);root.replaceChildren(kpis,grid,notice);showEmpty();
  try{await q('/counts');ready=true;select('inbox');await refresh();}
- catch(e){msg('Messagerie administrative non accessible : '+(e?.message||'vérifiez l’activation du service et les autorisations.'));nav.querySelectorAll('button').forEach(b=>b.disabled=true);search.disabled=true;}
+ catch(e){msg('Messagerie administrative non accessible : '+(e?.message||'vérifiez la migration SQL et les autorisations.')+' Cliquez sur Réessayer.');const retry=btn('Réessayer',async()=>{retry.disabled=true;try{await q('/counts');ready=true;retry.remove();select('inbox');await refresh();msg('');}catch(err){error(err);retry.disabled=false;}},'tmv6-new');notice.append(retry);}
 }
 function boot(){
  init();

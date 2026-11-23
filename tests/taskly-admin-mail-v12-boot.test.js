@@ -21,6 +21,6 @@ test('V12: existing feature flags, admin verification, and mailbox ownership rem
 });
 test('V12: admin UI cache version updated and no change to call UX',()=>{
  const html=load('client/private/admin/taskly-mail.html');
- assert.match(html,/taskly-admin-mail-v10\.js\?v=12/);
+ assert.match(html,/taskly-admin-mail-v10\.js\?v=14/);
  assert.match(html,/taskly-mail-admin-validated-v6\.js/);
 });

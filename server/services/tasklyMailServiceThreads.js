@@ -22,7 +22,7 @@ function validSubject(subject) {
     throw failure('Objet invalide.',400);
   return subject.trim();
 }
-function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
+function createServiceThreads({transaction, userMailbox, contactAccount, authorizeAdmin}) {
   if(typeof transaction!=='function'||typeof userMailbox!=='function'||typeof authorizeAdmin!=='function')
     throw new TypeError('Dependances de securite requises.');
 
@@ -34,6 +34,16 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
       !/^[^\s@]+@[a-z0-9-]+\.taskly\.(?:test|dz)$/i.test(box.address))
       throw failure('Boite utilisateur non autorisee.');
     return box;
+  }
+  // Support-only identity lookup. Never accesses client/artisan private-chat data.
+  async function contactUser(conn, uid) {
+    if(typeof contactAccount!=='function')return verifiedUser(conn,uid);
+    const user=await contactAccount(conn,uid);
+    if(!user || Number(user.user_id)!==uid ||
+       typeof user.address!=='string' || user.address.length>254 ||
+       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.address))
+      throw failure('Compte utilisateur indisponible.',404);
+    return user;
   }
   // authorizeAdmin(adminContext) DOIT verifier une session admin et les
   // permissions cote serveur. Jamais un role fourni par le navigateur.
@@ -63,7 +73,7 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
     const adminId=await checkAdmin(context),uid=positiveId(recipientUserId);
     const title=validSubject(subject),text=validBody(body);
     return transaction(async conn=>{
-      const box=await verifiedUser(conn,uid);
+      const box=await contactUser(conn,uid);
       const [result]=await conn.query(
         `INSERT INTO taskly_mail_service_threads (service_name,user_id,user_address,subject)
          VALUES ('support',?,?,?)`,[uid,box.address,title]);
@@ -77,11 +87,11 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
   async function replyAsUser(userId, threadId, body) {
     const uid=positiveId(userId),tid=positiveId(threadId),text=validBody(body);
     return transaction(async conn=>{
-      const current=await verifiedUser(conn,uid);
+      const current=await contactUser(conn,uid);
       const [threads]=await conn.query(
         `SELECT id,user_address FROM taskly_mail_service_threads
          WHERE id=? AND user_id=? AND service_name='support' FOR UPDATE`,[tid,uid]);
-      if(!threads[0] || current.address!==threads[0].user_address)
+      if(!threads[0])
         throw failure('Conversation introuvable.',404);
       const [result]=await conn.query(
         `INSERT INTO taskly_mail_service_entries (thread_id,sender_kind,sender_user_id,body)
@@ -93,7 +103,7 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
   async function listForUser(userId) {
     const uid=positiveId(userId);
     return transaction(async conn=>{
-      await verifiedUser(conn,uid);
+      await contactUser(conn,uid);
       const [threads]=await conn.query(
         `SELECT id,service_name,subject,created_at,updated_at
          FROM taskly_mail_service_threads
@@ -116,10 +126,10 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
   async function readForUser(userId, threadId) {
     const uid=positiveId(userId), tid=positiveId(threadId);
     return transaction(async conn=>{
-      await verifiedUser(conn,uid);
+      await contactUser(conn,uid);
       const [threads]=await conn.query(
         `SELECT id,service_name,user_id,subject,created_at,updated_at
-         FROM taskly_mail_service_threads WHERE id=? AND user_id=?`, [tid,uid]);
+         FROM taskly_mail_service_threads WHERE id=? AND user_id=? AND service_name='support'`, [tid,uid]);
       if(!threads[0])throw failure('Conversation introuvable.',404);
       const [entries]=await conn.query(
         `SELECT id,sender_kind,body,created_at FROM taskly_mail_service_entries
@@ -156,9 +166,13 @@ function createServiceThreads({transaction, userMailbox, authorizeAdmin}) {
         const [users]=await conn.query("SELECT user_id, user_address, subject FROM taskly_mail_service_threads WHERE id=? AND service_name='support' FOR UPDATE",[tid]);
         const thread=users[0];if(!thread)throw failure('Conversation introuvable.',404);
         // Client/Artisan account authorization checked against current active mailbox.
-        const current=await verifiedUser(conn,Number(thread.user_id));
-        if(current.address!==thread.user_address)throw failure('Adresse de conversation modifiée.',409);
-        await conn.query("INSERT INTO taskly_professional_mail_messages (owner_user_id,message_id,folder,from_address,to_address,subject,body,is_read) VALUES (?,UUID(),'inbox','support@taskly.dz',?,?,?,0)",[current.user_id,current.address,'Re: '+thread.subject,text]);
+        let current=null;
+        try{current=await verifiedUser(conn,Number(thread.user_id));}
+        catch(e){if(e.status!==403)throw e;}
+        // An account without a mailbox still receives the Support reply in its Support thread.
+        if(current && current.address===thread.user_address){
+          await conn.query("INSERT INTO taskly_professional_mail_messages (owner_user_id,message_id,folder,from_address,to_address,subject,body,is_read) VALUES (?,UUID(),'inbox','support@taskly.dz',?,?,?,0)",[current.user_id,current.address,'Re: '+thread.subject,text]);
+        }
       }
       await conn.query('UPDATE taskly_mail_service_threads SET updated_at=NOW() WHERE id=?',[tid]);
       return {entryId:positiveId(insert.insertId),threadId:tid};

@@ -183,12 +183,12 @@ admin.get('/',wrap(async(req,res)=>{
  res.json({demandes:rows,next:rows.length===50?rows.at(-1).user_id:null,
   gatewayConfigured:gateway.configured,internalMode,autoInternal,
   adminActionsV10:v10&&!mailboxStateUnavailable,
-  mailboxStateUnavailable,manualMailEnabled:process.env.TASKLY_ADMIN_MANUAL_MAIL_ENABLED==='true'&&internalMode&&joined&&!mailboxStateUnavailable});
+  mailboxStateUnavailable,manualMailEnabled:process.env.TASKLY_ADMIN_MANUAL_MAIL_ENABLED!=='false'&&internalMode&&joined&&!mailboxStateUnavailable});
 }));
 // Explicit admin-only manual provisioning of already approved/confirmed requests.
 // The automatic enrollment flow, OTP verification and all user routes remain unchanged.
 admin.post('/:id/manual-provision',sensible,wrap(async(req,res)=>{
-  if(process.env.TASKLY_ADMIN_MANUAL_MAIL_ENABLED!=='true')throw erreur('Option non activée.',404);
+  if(process.env.TASKLY_ADMIN_MANUAL_MAIL_ENABLED==='false')throw erreur('Option désactivée.',404);
   if(req.session?.adminVerified!==true||req.tasklyAdminContext!==true)throw erreur('Vérification administrateur requise.',403);
   if(!internalMode||!gateway.configured)throw erreur('Création interne indisponible.',503);
   const id=Number(req.params.id);
