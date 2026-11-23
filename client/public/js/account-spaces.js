@@ -8,21 +8,22 @@ document.addEventListener('DOMContentLoaded',async()=>{
  let blockedAccount=null;
  const ICONS={
   client:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
-  artisan:'<path d="m5 4 4 4M4 5l4-1 12 12a2 2 0 0 1-3 3L5 7 4 5Zm15-2-5 5m2-6 3-3 2 2-3 3M6 14l-3 3 4 4 3-3"/>'
+  artisan:'<path d="M3 4 7 3l4 4-3 3-4-4-1-2Z"/><path d="m8 10 11 11"/><path d="m21 4-4-1-4 4 3 3 4-4 1-2Z"/><path d="M16 10 5 21"/>'
  };
  function showBlocked(compte){
   blockedAccount=compte;
   reason.textContent=compte.motifBlocage || 'Contactez le support pour connaître le motif.';
-  if(typeof dialog.showModal==='function')dialog.showModal();
+  if(!dialog.open && typeof dialog.showModal==='function')dialog.showModal();
   else dialog.setAttribute('open','');
  }
- function closeBlocked(){dialog.close?.();dialog.removeAttribute('open');blockedAccount=null;}
+ function closeBlocked(){if(dialog.open && typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open');blockedAccount=null;}
  dialog.querySelectorAll('[data-close-blocked]').forEach(el=>el.addEventListener('click',closeBlocked));
  dialog.addEventListener('click',e=>{if(e.target===dialog)closeBlocked();});
  dialog.addEventListener('close',()=>{blockedAccount=null;});
  support.addEventListener('click',async()=>{
   const compte=blockedAccount;
   if(!compte)return;
+  // Le formulaire de contact enregistre une demande dans contacts_support, visible par l'administration.
   if(compte.role==='client'){location.assign('/contact.html');return;}
   support.disabled=true;
   try{
@@ -51,16 +52,32 @@ document.addEventListener('DOMContentLoaded',async()=>{
    detail.textContent=compte.role==='client'?'Mes demandes, mon profil et le support':compte.statut==='approuve'?'Mon activité, mes demandes et mon profil':'Dossier et suivi auprès du support';
    arrow.textContent='→';arrow.setAttribute('aria-hidden','true');info.append(title,detail);button.append(symbol,info,arrow);list.append(button);
    button.addEventListener('click',async()=>{
-    if(blocked){showBlocked(compte);return;}
-    list.querySelectorAll('button').forEach(b=>b.disabled=true);status.textContent='Ouverture de votre espace…';
+    list.querySelectorAll('button').forEach(b=>b.disabled=true);
+    status.textContent=blocked?'Vérification du statut de cet espace…':'Ouverture de votre espace…';
     try{
+     // Une décision administrative peut avoir changé depuis le chargement de la liste.
+     // Le serveur reste la seule source de vérité avant tout accès à l'espace.
+     const etat=await requeteAPI('/api/auth/spaces');
+     const courant=Array.isArray(etat.comptes)?etat.comptes.find(c=>Number(c.id)===Number(compte.id)):null;
+     if(!courant){status.textContent='Cet espace n’est plus accessible. Reconnectez-vous.';return;}
+     if(courant.statut==='Compte bloqué'){
+      status.textContent='Votre identité est vérifiée. Sélectionnez l’espace à ouvrir.';
+      showBlocked(courant);return;
+     }
+     if(blocked){status.textContent='Le statut de cet espace a changé. Actualisez la page pour mettre à jour vos espaces.';return;}
      const data=await requeteAPI('/api/auth/select-space',{method:'POST',body:JSON.stringify({compteId:compte.id})});
      if(data.supportSeulement){location.replace(data.supportUrl||'/artisan-pending.html');return;}
      const pending=Number(sessionStorage.getItem('tasklyReportPending'));
      if(data.utilisateur.role==='client'&&Number.isSafeInteger(pending)&&pending>0){location.replace('/espace/client/demandes?signaler='+pending);return;}
      location.replace(data.utilisateur.role==='artisan'?'/espace/artisan/accueil':'/espace/client/accueil');
     }catch(e){
-     status.textContent=e.message||'Impossible d’ouvrir cet espace.';
+     if(e.status===403 && e.data?.statut==='Compte bloqué'){
+      showBlocked({...compte,statut:'Compte bloqué',motifBlocage:e.data.motifBlocage||null});
+      status.textContent='Votre identité est vérifiée. Sélectionnez l’espace à ouvrir.';
+     }else{
+      status.textContent=e.message||'Impossible d’ouvrir cet espace.';
+     }
+    }finally{
      list.querySelectorAll('button').forEach(b=>b.disabled=false);
     }
    });
