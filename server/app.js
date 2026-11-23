@@ -155,6 +155,14 @@ if (process.env.TASKLY_MAIL_PILOT_ENABLED === 'true') {
   app.use('/api/taskly-mail',mail.artisan);
   app.use('/api/admin/taskly-mail',mail.admin);
 }
+// TASKLY_MAIL_SERVICE_V3_PHASE2B_START
+// Feature disabled unless explicitly enabled after the isolated SQL migration.
+if (process.env.TASKLY_MAIL_SERVICE_V3_ENABLED === 'true') {
+  const serviceRouters=require('./routes/tasklyMailServiceV3Routes').createRouters({db:require('./config/db').promise()});
+  app.use('/api/taskly-mail-service-v3',serviceRouters.user);
+  app.use('/api/admin/taskly-mail-service-v3',serviceRouters.admin);
+}
+// TASKLY_MAIL_SERVICE_V3_PHASE2B_END
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements
 app.use("/api/contact", contactRoutes); // routes liÃƒÂ©es au contact/support
