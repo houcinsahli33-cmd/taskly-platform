@@ -7,6 +7,13 @@ const callsPilot=require('../services/chatCallPilot');
 const chatEnabled=process.env.TASKLY_CHAT_WORKSPACE_ENABLED==='true';
 if(chatEnabled)pages.add('messagerie');
 
+const adminPrivateV17Enabled =
+ process.env.TASKLY_ADMIN_PRIVATE_V17_ENABLED === 'true';
+
+if(adminPrivateV17Enabled){
+ pages.add('messagerie-administration');
+}
+
 const mailClientEnabled=
  process.env.TASKLY_MAIL_CLIENT_ENABLED==='true'
  && require('../services/professionalMailAccess').modeClient(process.env);
@@ -23,16 +30,32 @@ function menuChat(original){
  const link='<a href="/espace/client/messagerie" data-dashboard-link="messagerie"><svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11a8 8 0 0 1-8 8H4l2-5a8 8 0 1 1 15-3Z"/><path d="M8 11h8"/></svg><span>Messagerie privée</span><span class="chat-nav-count" data-chat-unread hidden></span></a>';
  return original.replace(/<a href="\/espace\/client\/profil"/,link+'<a href="/espace/client/profil"');
 }
+function menuAdminPrivateV17(original){
+ if(!adminPrivateV17Enabled)return original;
+
+ if(original.includes('data-dashboard-link="messagerie-administration"')){
+  return original;
+ }
+
+ const link='<a href="/espace/client/messagerie-administration" data-dashboard-link="messagerie-administration"><svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 4 8 8 10 4-2 8-5 8-10V6z"/><rect x="9" y="10" width="6" height="5" rx="1"/><path d="M10 10V8a2 2 0 0 1 4 0v2"/></svg><span>Messages administration</span></a>';
+
+ return original.replace(
+  /<a href="\/espace\/client\/profil"/,
+  link+'<a href="/espace/client/profil"'
+ );
+}
+
 const dossier=path.join(__dirname,'../../client/private/client');
 function preparerCadreClient(original,id) {
  original=menuChat(original);
+ original=menuAdminPrivateV17(original);
  original=menuMail(original);
  const head=original.match(/<head\b[^>]*>[\s\S]*?<\/head>/i)?.[0];
  const body=original.match(/<body\b[^>]*>/i)?.[0];
  const aside=original.match(/<aside\b[^>]*class="[^"]*sidebar[^"]*"[^>]*>[\s\S]*?<\/aside>/i)?.[0];
  if(!head||!body||!aside)throw new Error('Document client non reconnu.');
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<head\b[^>]*>/i,match=>match+'<style>@media(max-width:800px){body[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:hidden!important}body.taskly-mobile-ready[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body.taskly-mobile-ready[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:visible!important}}</style>').replace(/<\/head>/i,
-  '<link rel="stylesheet" href="/css/client-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/client-navigation-stable.js?v=taskly-mail1"></script></head>');
+  '<link rel="stylesheet" href="/css/client-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/client-navigation-stable.js?v=taskly-mail1-v17"></script></head>');
  const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=5"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
  const callHead=chatEnabled&&callsPilot.autoriseCompte('client',id)
   ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=7"></script></head>')
@@ -45,6 +68,7 @@ function preparerCadreClient(original,id) {
 }
 function preparerPageClientIntegree(original,id){
  original=menuChat(original);
+ original=menuAdminPrivateV17(original);
  original=menuMail(original);
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw new Error('Document client invalide.');
  return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/client-navigation-embedded.css?v=20261012-maquette"></head>')
@@ -53,6 +77,10 @@ function preparerPageClientIntegree(original,id){
 function monterNavigationClient(app){
  app.get('/espace/client/:page',verifierConnexion,async(req,res,next)=>{
   const {page}=req.params;
+
+  if(page==='messagerie-administration' && !adminPrivateV17Enabled){
+   return res.status(404).send('Messagerie administrative indisponible.');
+  }
   if(page==='taskly-mail'&&!mailClientEnabled){
    return res.status(404).send('Taskly Mail indisponible.');
   }

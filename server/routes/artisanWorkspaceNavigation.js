@@ -7,11 +7,33 @@ if(process.env.TASKLY_MAIL_PILOT_ENABLED==='true')pages.add('taskly-mail');
 const callsPilot=require('../services/chatCallPilot');
 const chatEnabled=process.env.TASKLY_CHAT_WORKSPACE_ENABLED==='true';
 if(chatEnabled)pages.add('messagerie');
+
+const adminPrivateV17Enabled =
+ process.env.TASKLY_ADMIN_PRIVATE_V17_ENABLED === 'true';
+
+if(adminPrivateV17Enabled){
+ pages.add('messagerie-administration');
+}
 function menuChat(original){
  if(!chatEnabled)return original;
  const link='<a href="/espace/artisan/messagerie" data-dashboard-link="messagerie"><svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11a8 8 0 0 1-8 8H4l2-5a8 8 0 1 1 15-3Z"/><path d="M8 11h8"/></svg><span>Messagerie privée</span><span class="chat-nav-count" data-chat-unread hidden></span></a>';
  return original.replace(/<a href="\/espace\/artisan\/profil"/,link+'<a href="/espace/artisan/profil"');
 }
+function menuAdminPrivateV17(original){
+ if(!adminPrivateV17Enabled)return original;
+
+ if(original.includes('data-dashboard-link="messagerie-administration"')){
+  return original;
+ }
+
+ const link='<a href="/espace/artisan/messagerie-administration" data-dashboard-link="messagerie-administration"><svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 4 8 8 10 4-2 8-5 8-10V6z"/><rect x="9" y="10" width="6" height="5" rx="1"/><path d="M10 10V8a2 2 0 0 1 4 0v2"/></svg><span>Messages administration</span></a>';
+
+ return original.replace(
+  /<a href="\/espace\/artisan\/profil"/,
+  link+'<a href="/espace/artisan/profil"'
+ );
+}
+
 const dossier=path.join(__dirname,'../../client/private/artisan');
 const {modeGeneral}=require('../services/professionalMailAccess');
 
@@ -32,6 +54,7 @@ function menuMail(original,id) {
 }
 function preparerCadreArtisan(original,id) {
  original=menuChat(original);
+ original=menuAdminPrivateV17(original);
  original=menuMail(original,id);
  const head=original.match(/<head\b[^>]*>[\s\S]*?<\/head>/i)?.[0];
  const body=original.match(/<body\b[^>]*>/i)?.[0];
@@ -47,7 +70,7 @@ function preparerCadreArtisan(original,id) {
   :aside;
 
  const shellHead=head.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<head\b[^>]*>/i,match=>match+'<style>@media(max-width:800px){body[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:hidden!important}body.taskly-mobile-ready[data-taskly-client-shell="1"] .dashboard-shell>.sidebar,body.taskly-mobile-ready[data-taskly-artisan-shell="1"] .dashboard-shell>.sidebar{visibility:visible!important}}</style>').replace(/<\/head>/i,
-  '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat-calls1"></script></head>');
+  '<link rel="stylesheet" href="/css/artisan-navigation-shell.css?v=20261119-audit1"><script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/artisan-navigation-stable.js?v=chat-calls1-v17"></script></head>');
  const finalHead=chatEnabled?shellHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=5"><script defer src="/js/taskly-chat-notifications.js?v=2"></script></head>'):shellHead;
  const callHead=chatEnabled&&callsPilot.autoriseCompte('artisan',id)
   ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=7"></script></head>')
@@ -60,6 +83,7 @@ function preparerCadreArtisan(original,id) {
 }
 function preparerPageArtisanIntegree(original,id){
  original=menuChat(original);
+ original=menuAdminPrivateV17(original);
  original=menuMail(original,id);
  if(!/<\/head>/i.test(original)||!/<body\b/i.test(original))throw new Error('Document artisan invalide.');
  return original.replace(/<\/head>/i,'<link rel="stylesheet" href="/css/artisan-navigation-embedded.css?v=20261012-navigation-11"></head>')
@@ -68,6 +92,10 @@ function preparerPageArtisanIntegree(original,id){
 function monterNavigationArtisan(app){
  app.get('/espace/artisan/:page',verifierConnexion,async(req,res,next)=>{
   const {page}=req.params;
+
+  if(page==='messagerie-administration' && !adminPrivateV17Enabled){
+   return res.status(404).send('Messagerie administrative indisponible.');
+  }
   if(!pages.has(page))return next();
   if(req.session.utilisateur.role!=='artisan')return res.status(403).json({message:'Accès refusé.'});
   if(page==='taskly-mail'&&!mailAutorise(req.session.utilisateur.id)){

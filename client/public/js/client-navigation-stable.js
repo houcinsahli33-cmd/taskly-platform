@@ -5,6 +5,10 @@
  if(!iframe)return;
  const pages=new Set(['accueil','demandes','profil','support']);
  pages.add('messagerie');
+
+ if(document.querySelector('[data-dashboard-link="messagerie-administration"]')){
+  pages.add('messagerie-administration');
+ }
  if(document.querySelector('[data-dashboard-link="taskly-mail"]')){
   pages.add('taskly-mail');
  }

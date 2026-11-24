@@ -6,6 +6,10 @@
  const pages=new Set(['accueil','demandes','avis','profil','support']);
  pages.add('taskly-mail');
  pages.add('messagerie');
+
+ if(document.querySelector('[data-dashboard-link="messagerie-administration"]')){
+  pages.add('messagerie-administration');
+ }
  const base='/espace/artisan/';
  let selected=location.pathname+location.search+location.hash;
  let observer;
