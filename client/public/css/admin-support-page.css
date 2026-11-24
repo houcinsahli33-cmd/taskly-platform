@@ -325,4 +325,268 @@ body.admin-support-page .support-export {min-height:44px;}
   body.admin-support-page .support-detail-side dl{row-gap:12px}
 }
 
+/* V7 — finition COMPACTE, ciblée uniquement sur le contenu Support Admin.
+   Référence: capture validée. Aucun changement aux liens, aux événements ou au menu. */
+@media (min-width: 1081px) {
+  body.dashboard-page.admin-users-page.admin-support-page .admin-content {padding:0 11px 14px;}
+  body.admin-support-page .support-topbar {min-height:55px;margin:0 -11px 8px;padding:0 18px;}
+  body.admin-support-page .support-header {min-height:72px;margin:0 11px 9px;gap:12px;}
+  body.admin-support-page .support-header-identity{gap:14px;}
+  body.admin-support-page .support-header-icon{width:68px;height:68px;border-radius:16px;}
+  body.admin-support-page .support-header-icon svg{width:35px;height:35px;}
+  body.admin-support-page .support-header h1{font-size:28px;line-height:1.13;margin:0 0 4px;}
+  body.admin-support-page .support-header p:not(.support-eyebrow){font-size:15px;line-height:1.25;}
+  body.admin-support-page .support-export{padding:10px 15px;min-height:40px;font-size:12px;}
+  body.admin-support-page .support-counters{gap:12px;margin:0 10px 14px;}
+  body.admin-support-page .support-counter{min-height:80px;padding:10px 12px;grid-template-columns:58px minmax(0,1fr);gap:2px 10px;border-radius:14px;}
+  body.admin-support-page .support-counter-icon{width:52px;height:52px;border-radius:14px;}
+  body.admin-support-page .support-counter-icon svg{width:27px;height:27px;}
+  body.admin-support-page .support-counter>span:first-child{font-size:12px;}
+  body.admin-support-page .support-counter strong{font-size:26px;}
+  body.admin-support-page .support-counter[data-support-card="tous"]::after{right:18px;top:31px;transform:scale(.85);transform-origin:top right;}
+  body.admin-support-page .support-workspace{gap:8px;grid-template-columns:minmax(335px,30.25%) minmax(0,1fr);}
+  body.admin-support-page .support-panel{min-height:506px;border-radius:15px;}
+  body.admin-support-page .support-panel-heading{padding:13px 13px 6px;}
+  body.admin-support-page .support-panel-heading h2{font-size:17px;}
+  body.admin-support-page .support-tools{padding:5px 11px 8px;gap:8px;}
+  body.admin-support-page .support-search{height:40px;padding:0 10px;}
+  body.admin-support-page .support-tabs button{padding:8px 3px;font-size:10px;}
+  body.admin-support-page #support-sort{padding:8px 5px;font-size:10px;flex-basis:93px;max-width:93px;}
+  body.admin-support-page .support-table-wrap{max-height:405px;padding:0 9px;}
+  body.admin-support-page .support-table td{padding:9px 7px;}
+  body.admin-support-page .support-ticket-avatar{width:40px;height:40px;font-size:12px;}
+  body.admin-support-page .support-ticket-row{gap:9px;}
+  body.admin-support-page .support-ticket-head{gap:5px;margin:1px 0 4px;}
+  body.admin-support-page .support-ticket-head strong{font-size:12px;}
+  body.admin-support-page .support-ticket-sub small{font-size:11px;}
+  body.admin-support-page .support-badge{font-size:10px;padding:5px 7px;}
+  body.admin-support-page .support-pagination{gap:4px;padding:6px 8px 8px;}
+  body.admin-support-page .support-pagination button{min-height:28px;padding:4px 7px;}
+  body.admin-support-page .support-dialog{min-height:506px;grid-template-columns:minmax(0,1fr) minmax(220px,29.5%);column-gap:7px;}
+  body.admin-support-page .support-dialog-header{padding:12px 12px 10px;border-radius:15px 15px 0 0;}
+  body.admin-support-page .support-dialog h2{font-size:17px;}
+  body.admin-support-page .support-dialog-body{padding:9px 11px 11px;gap:9px;border-radius:0 0 15px 15px;}
+  body.admin-support-page .support-chat-stream{gap:10px;}
+  body.admin-support-page .support-chat-message{padding:10px 11px;border-radius:12px;gap:8px;}
+  body.admin-support-page .support-chat-message p{font-size:12px;line-height:1.4;}
+  body.admin-support-page .support-compose{padding:9px 10px 8px;border-radius:11px;}
+  body.admin-support-page .support-compose-label{font-size:12px;margin:0 0 6px;}
+  body.admin-support-page .support-compose textarea{min-height:72px;padding:9px 10px;font-size:12px;}
+  body.admin-support-page .support-compose-bottom{gap:6px;margin-top:6px;}
+  body.admin-support-page .support-attach{padding:8px 8px;font-size:10px;}
+  body.admin-support-page .support-compose-bottom .support-send{padding:9px 10px;font-size:10px;}
+  body.admin-support-page .support-detail-side{padding:14px 13px 10px;border-radius:15px;}
+  body.admin-support-page .support-detail-side h3{font-size:14px;margin:0 0 12px;padding-bottom:12px;}
+  body.admin-support-page .support-detail-side dl{font-size:11px;gap:14px 4px;padding-bottom:14px;}
+  body.admin-support-page .support-detail-side dd{max-width:140px;}
+  body.admin-support-page .support-note-zone{padding-top:12px;}
+  body.admin-support-page .support-note-zone h3{font-size:12px;}
+  body.admin-support-page .support-note-zone textarea{min-height:75px;padding:9px;font-size:11px;}
+  body.admin-support-page .support-actions-bar{min-height:65px;padding:8px 13px;border-radius:14px;gap:10px;}
+  body.admin-support-page .support-history h3{font-size:13px;}
+  body.admin-support-page .support-history p{font-size:11px;}
+  body.admin-support-page .support-dialog-footer>div{gap:9px;}
+  body.admin-support-page .support-dialog-footer button{min-height:36px;padding:9px 12px;font-size:11px;border-radius:9px;}
+  /* Conserve partout les proportions des SVG validés. */
+  body.admin-support-page .support-ui-icon{flex-shrink:0;}
+}
+/* Les polices du contenu sont uniformisées, jamais celles de la navigation latérale. */
+body.admin-support-page .support-header h1,
+body.admin-support-page .support-panel-heading h2,
+body.admin-support-page .support-dialog h2,
+body.admin-support-page .support-detail-side h3,
+body.admin-support-page .support-compose-label,
+body.admin-support-page .support-history h3{font-family:Inter,Arial,Helvetica,sans-serif;}
+/* ================================================================
+   TASKLY — SUPPORT ADMINISTRATION — FINITION FIDÈLE & COMPACTE
+   Basé sur la V7, ajusté à la deuxième capture validée.
+   À ajouter EN FIN de admin-support-page.css.
+   Ne cible ni la barre latérale, ni les actions JavaScript.
+   ================================================================ */
+@media (min-width:1081px) {
+  body.admin-support-page .admin-content {
+    min-width:0;
+    padding:0 12px 18px;
+    background:#f8fbff;
+  }
+  body.admin-support-page .support-topbar {
+    min-height:55px;
+    margin:0 -12px 8px;
+    padding:0 18px;
+  }
+  body.admin-support-page .support-header {
+    min-height:72px;
+    margin:0 12px 12px;
+    gap:16px;
+  }
+  body.admin-support-page .support-header-identity {gap:17px;}
+  body.admin-support-page .support-header-icon {
+    width:72px;height:72px;border-radius:18px;
+  }
+  body.admin-support-page .support-header-icon svg {width:36px;height:36px;}
+  body.admin-support-page .support-header h1 {
+    font-size:29px;line-height:1.12;letter-spacing:-.025em;
+    margin:0 0 5px;
+  }
+  body.admin-support-page .support-header p:not(.support-eyebrow) {
+    font-size:15px;line-height:1.3;
+  }
+  body.admin-support-page .support-export {
+    min-height:43px;padding:10px 17px;border-radius:12px;
+    font-size:12px;
+  }
 
+  /* Quatre cartes sur une seule ligne, sans les agrandir. */
+  body.admin-support-page .support-counters {
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:15px;margin:0 11px 18px;
+  }
+  body.admin-support-page .support-counter {
+    min-height:89px;padding:12px 15px;
+    grid-template-columns:65px minmax(0,1fr);
+    gap:3px 12px;border-radius:16px;
+    box-shadow:0 4px 12px rgba(16,44,61,.07);
+  }
+  body.admin-support-page .support-counter-icon {
+    width:58px;height:58px;border-radius:17px;
+  }
+  body.admin-support-page .support-counter-icon svg {width:29px;height:29px;}
+  body.admin-support-page .support-counter>span:first-child {
+    font-size:13px;line-height:1.2;
+  }
+  body.admin-support-page .support-counter strong {font-size:28px;}
+  body.admin-support-page .support-counter[data-support-card="tous"]::after {
+    top:33px;right:18px;transform:scale(.85);transform-origin:top right;
+  }
+
+  /* Colonnes : liste 30%, conversation 49%, détails 21%. */
+  body.admin-support-page .support-workspace {
+    grid-template-columns:minmax(320px,30.4%) minmax(0,1fr);
+    gap:8px;align-items:stretch;
+  }
+  body.admin-support-page .support-panel {
+    min-height:532px;border-radius:18px;
+    border-color:#dce6ec;box-shadow:0 5px 15px rgba(20,50,68,.07);
+  }
+  body.admin-support-page .support-panel-heading {padding:16px 15px 7px;}
+  body.admin-support-page .support-panel-heading h2 {
+    font-size:18px;line-height:1.25;
+  }
+  body.admin-support-page .support-panel-heading .support-heading-icon svg {
+    width:19px;height:19px;
+  }
+  body.admin-support-page .support-tools {padding:7px 13px 9px;gap:10px;}
+  body.admin-support-page .support-search {
+    height:43px;padding:0 12px;border-radius:11px;
+  }
+  body.admin-support-page .support-search input {font-size:12px;}
+  body.admin-support-page .support-tabs {padding:3px;gap:2px;}
+  body.admin-support-page .support-tabs button {
+    min-height:33px;padding:7px 5px;font-size:11px;
+  }
+  body.admin-support-page #support-sort {
+    flex:0 0 99px;max-width:99px;padding:9px 6px;font-size:10px;
+  }
+  body.admin-support-page .support-table-wrap {max-height:422px;padding:0 10px;}
+  body.admin-support-page .support-table td {padding:11px 7px;}
+  body.admin-support-page .support-ticket-row {gap:10px;align-items:center;}
+  body.admin-support-page .support-ticket-avatar {
+    width:44px;height:44px;font-size:13px;
+  }
+  body.admin-support-page .support-ticket-head {
+    align-items:center;gap:7px;margin:1px 0 5px;
+  }
+  body.admin-support-page .support-ticket-head strong {font-size:12px;}
+  body.admin-support-page .support-ticket-head time {font-size:10px;}
+  body.admin-support-page .support-ticket-sub small {
+    font-size:11px;line-height:1.3;
+  }
+  body.admin-support-page .support-badge {
+    padding:5px 8px;font-size:10px;border-radius:8px;
+  }
+  body.admin-support-page .support-pagination {
+    padding:7px 10px 9px;gap:5px;
+  }
+
+  /* Conversation centrale et détails dans des panneaux distincts. */
+  body.admin-support-page .support-dialog {
+    grid-template-columns:minmax(0,1fr) minmax(235px,29.5%);
+    min-height:532px;column-gap:8px;
+  }
+  body.admin-support-page .support-dialog-header {
+    padding:15px 14px 12px;border-radius:18px 18px 0 0;
+  }
+  body.admin-support-page .support-title-icon {
+    width:44px;height:44px;flex-basis:44px;
+  }
+  body.admin-support-page .support-dialog h2 {font-size:18px;}
+  body.admin-support-page .support-dialog-title p {font-size:11px;}
+  body.admin-support-page .support-dialog-body {
+    padding:12px 13px 13px;gap:11px;
+    border-radius:0 0 18px 18px;
+  }
+  body.admin-support-page .support-chat-stream {gap:12px;}
+  body.admin-support-page .support-chat-message {
+    padding:13px 13px;gap:10px;border-radius:14px;
+  }
+  body.admin-support-page .support-chat-avatar {
+    width:42px;height:42px;flex-basis:42px;
+  }
+  body.admin-support-page .support-chat-message p {
+    font-size:12px;line-height:1.45;
+  }
+  body.admin-support-page .support-compose {
+    padding:11px 12px 10px;border-radius:13px;
+    background:#f5f7fa;
+  }
+  body.admin-support-page .support-compose-label {
+    margin-bottom:8px;font-size:13px;
+  }
+  body.admin-support-page .support-compose textarea {
+    min-height:79px;padding:10px 12px;font-size:12px;
+  }
+  body.admin-support-page .support-compose-bottom {gap:9px;margin-top:8px;}
+  body.admin-support-page .support-attach {padding:9px;font-size:10px;}
+  body.admin-support-page .support-compose-bottom .support-send {
+    padding:10px 13px;font-size:11px;
+  }
+  body.admin-support-page .support-detail-side {
+    padding:16px 14px 12px;border-radius:18px;
+  }
+  body.admin-support-page .support-detail-side h3 {
+    font-size:15px;margin:0 0 15px;padding-bottom:14px;
+  }
+  body.admin-support-page .support-detail-side dl {
+    font-size:11px;gap:17px 6px;padding-bottom:16px;
+  }
+  body.admin-support-page .support-detail-side dd {max-width:145px;}
+  body.admin-support-page .support-note-zone {padding-top:14px;}
+  body.admin-support-page .support-note-zone h3 {font-size:12px;}
+  body.admin-support-page .support-note-zone textarea {
+    min-height:84px;padding:10px;font-size:11px;
+  }
+  body.admin-support-page .support-actions-bar {
+    min-height:76px;padding:12px 18px;gap:12px;
+    border-radius:17px;
+  }
+  body.admin-support-page .support-history h3 {font-size:13px;}
+  body.admin-support-page .support-history p {font-size:11px;}
+  body.admin-support-page .support-dialog-footer>div {gap:12px;}
+  body.admin-support-page .support-dialog-footer button {
+    min-height:42px;padding:10px 16px;font-size:12px;
+    border-radius:11px;
+  }
+}
+
+/* Sur une fenêtre PC plus étroite, empêcher tout débordement. */
+@media (min-width:1081px) and (max-width:1350px) {
+  body.admin-support-page .support-workspace {
+    grid-template-columns:minmax(280px,32%) minmax(0,1fr);
+  }
+  body.admin-support-page .support-dialog {
+    grid-template-columns:minmax(0,1fr) minmax(205px,30%);
+  }
+  body.admin-support-page .support-tools-right {flex-wrap:wrap;}
+  body.admin-support-page #support-sort {flex:0 0 100%;max-width:100%;}
+  body.admin-support-page .support-compose-bottom {flex-wrap:wrap;}
+}
