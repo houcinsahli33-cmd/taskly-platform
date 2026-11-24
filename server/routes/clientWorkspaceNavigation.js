@@ -37,7 +37,7 @@ function menuAdminPrivateV17(original){
   return original;
  }
 
- const link='<a href="/espace/client/messagerie-administration" data-dashboard-link="messagerie-administration"><svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 4 8 8 10 4-2 8-5 8-10V6z"/><rect x="9" y="10" width="6" height="5" rx="1"/><path d="M10 10V8a2 2 0 0 1 4 0v2"/></svg><span>Messages administration</span></a>';
+ const link='<a href="/espace/client/messagerie-administration" data-dashboard-link="messagerie-administration"><svg class="chat-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v6c0 5 4 8 8 10 4-2 8-5 8-10V6z"/><rect x="9" y="10" width="6" height="5" rx="1"/><path d="M10 10V8a2 2 0 0 1 4 0v2"/></svg><span>Messages administration</span><span class="apv17-unread-badge" data-apv17-unread hidden></span></a>';
 
  return original.replace(
   /<a href="\/espace\/client\/profil"/,
@@ -61,8 +61,11 @@ function preparerCadreClient(original,id) {
   ?finalHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-call.css?v=2"><script defer src="/js/taskly-call-notifications.js?v=7"></script></head>')
   :finalHead;
  const mobileHead=callHead.replace('</head>', '<link rel="stylesheet" href="/css/taskly-mobile-sidebar.css?v=9"><script defer src="/js/taskly-mobile-sidebar.js?v=4"></script></head>');
+ const privateHead=adminPrivateV17Enabled
+  ?mobileHead.replace('</head>','<link rel="stylesheet" href="/css/taskly-admin-private-workspace-v17.css?v=3"><script defer src="/js/taskly-admin-private-notifications-v17.js?v=1"></script></head>')
+  :mobileHead;
  const shellBody=body.replace(/>$/, ' data-taskly-client-shell="1">');
- return '<!doctype html><html lang="fr">'+mobileHead+shellBody+
+ return '<!doctype html><html lang="fr">'+privateHead+shellBody+
   '<div id="site-header"></div><main class="dashboard-shell">'+aside+
   '<section class="client-frame-container" aria-label="Rubrique client"><iframe id="taskly-client-content-frame"'+(chatEnabled&&callsPilot.autoriseCompte('client',id)?' allow="camera \'self\'; microphone \'self\'"':'')+' title="Contenu de l’espace client"></iframe></section></main></body></html>';
 }

@@ -39,6 +39,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     let selected = null;
     let busy = false;
     let loaded = false;
+    let disposed = false;
+    let readyToPoll = false;
+    let lastSignature = null;
+    const confirmedReceipts = new Map();
 
     function status(message) {
         $("status").textContent = message;
@@ -56,11 +60,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function clearMessages() {
+        lastSignature = null;
         $("messages").replaceChildren();
         enableSend(false);
     }
 
     function clearConversation() {
+        readyToPoll = false;
         clearMessages();
         connector = null;
         selected = null;
@@ -87,7 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const method = options.method || "GET";
 
         const threadPath =
-            /^\/threads(?:\/[1-9][0-9]{0,18}(?:\/(?:keys|messages))?)?$/
+            /^\/threads(?:\/[1-9][0-9]{0,18}(?:\/(?:keys|messages|read))?)?$/
                 .test(endpoint);
 
         const contactPath =
@@ -117,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function run(operation) {
-        if (busy) return;
+        if (busy || disposed) return;
 
         busy = true;
 
@@ -203,26 +209,113 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function showMessages() {
-        clearMessages();
+        const active = connector;
+        const threadAtStart = selected;
 
-        const messages = await connector.read();
+        if (!active || disposed) return;
 
-        for (const message of messages) {
-            const bubble = document.createElement("div");
+        const messages = await active.read();
 
-            bubble.className = "apv17-bubble" +
-                (message.own ? " own" : "");
+        if (disposed ||
+            active !== connector ||
+            threadAtStart !== selected) return;
 
-            // Messages are always rendered as text, not HTML.
-            bubble.textContent = message.content;
+        readyToPoll = true;
 
-            $("messages").append(bubble);
+        if (!root.open ||
+            document.visibilityState !== "visible") return;
+
+        const container = $("messages");
+        const signature = JSON.stringify(messages);
+
+        if (lastSignature !== signature) {
+            const firstRender = lastSignature === null;
+            const previousScroll = container.scrollTop;
+
+            const nearBottom =
+                container.scrollHeight -
+                container.scrollTop -
+                container.clientHeight < 80;
+
+            const fragment = document.createDocumentFragment();
+
+            for (const message of messages) {
+                const bubble = document.createElement("div");
+
+                bubble.className = "apv17-bubble" +
+                    (message.own ? " own" : "");
+
+                bubble.textContent = message.content;
+
+                fragment.append(bubble);
+            }
+
+            container.replaceChildren(fragment);
+
+            lastSignature = signature;
+
+            container.scrollTop = firstRender || nearBottom
+                ? container.scrollHeight
+                : previousScroll;
         }
-
-        $("messages").scrollTop = $("messages").scrollHeight;
 
         enableSend(true);
         status("Conversation accessible sur cet appareil.");
+
+        if(root.open &&
+           document.visibilityState === "visible" &&
+           selected) {
+
+            const thread = selected;
+
+            if(!confirmedReceipts.has(thread)) {
+                confirmedReceipts.set(thread,new Set());
+            }
+
+            const confirmed = confirmedReceipts.get(thread);
+
+            const messageIds = messages
+                .filter(m => !m.own &&
+                    !confirmed.has(String(m.id)))
+                .map(m => String(m.id));
+
+            if(messageIds.length) {
+                try {
+                    await request(
+                        "/threads/" + thread + "/read",
+                        {
+                            method:"POST",
+                            body:{messageIds}
+                        }
+                    );
+
+                    messageIds.forEach(
+                        id => confirmed.add(id)
+                    );
+
+                    window.dispatchEvent(
+                        new Event("taskly:apv17-read")
+                    );
+
+                    if(window.parent !== window) {
+                        try {
+                            window.parent.dispatchEvent(
+                                new window.parent.Event("taskly:apv17-read")
+                            );
+                        } catch {}
+                    }
+
+                } catch(error) {
+                    if([401,403].includes(error.status)) {
+                        throw error;
+                    }
+
+                    status(
+                        "Messages affiches. Compteur de lecture a actualiser."
+                    );
+                }
+            }
+        }
     }
 
     async function refreshConversation() {
@@ -388,7 +481,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         run(loadThreads);
     }
 
-    window.addEventListener("pagehide", clearConversation);
+    function refreshOpenConversation() {
+        if (disposed ||
+            busy ||
+            !readyToPoll ||
+            !connector ||
+            !selected ||
+            !root.open ||
+            document.visibilityState !== "visible") return;
+
+        run(showMessages);
+    }
+
+    const pollingTimer = setInterval(
+        refreshOpenConversation,60000
+    );
+
+    window.addEventListener("pagehide",()=>{
+        disposed = true;
+        clearInterval(pollingTimer);
+        clearConversation();
+    });
 
     window.addEventListener("pageshow", event => {
         if (event.persisted) window.location.reload();

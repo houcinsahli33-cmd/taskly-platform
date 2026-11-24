@@ -172,3 +172,29 @@
 #apv17 [hidden] {
     display: none !important;
 }
+
+.apv17-unread-badge:not([hidden]) {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
+    margin-left: auto;
+    border-radius: 999px;
+    box-sizing: border-box;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.apv17-unread-badge[hidden] {
+    display: none !important;
+}
+
+#apv17 summary .apv17-unread-badge {
+    margin-left: 8px;
+}
