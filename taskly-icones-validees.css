@@ -1,0 +1,57 @@
+/* TASKLY — Icônes validées, planche 12 pictogrammes — 24/11/2026
+   Déposer les PNG dans client/public/images/icons/
+   Utilisation : <span class="taskly-image-icon taskly-icon--mon-compte" aria-hidden="true"></span>
+   IMPORTANT : classes volontaires uniquement. Aucune règle ne touche aux SVG
+   de navigation, ni aux liens, ni au fonctionnement du Support Administration.
+*/
+:root {
+  --taskly-icon-size: 36px;
+  --taskly-icon-radius: 11px;
+}
+.taskly-image-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: var(--taskly-icon-size);
+  height: var(--taskly-icon-size);
+  aspect-ratio: 1 / 1;
+  border-radius: var(--taskly-icon-radius);
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  vertical-align: middle;
+  overflow: hidden;
+}
+.taskly-icon--mon-compte { background-image: url('/images/icons/mon-compte.png'); }
+.taskly-icon--identite { background-image: url('/images/icons/identite.png'); }
+.taskly-icon--verification { background-image: url('/images/icons/verification.png'); }
+.taskly-icon--cadenas { background-image: url('/images/icons/cadenas.png'); }
+.taskly-icon--messagerie { background-image: url('/images/icons/messagerie.png'); }
+.taskly-icon--cle { background-image: url('/images/icons/cle.png'); }
+.taskly-icon--notifications { background-image: url('/images/icons/notifications.png'); }
+.taskly-icon--parametres { background-image: url('/images/icons/parametres.png'); }
+.taskly-icon--paiement { background-image: url('/images/icons/paiement.png'); }
+.taskly-icon--localisation { background-image: url('/images/icons/localisation.png'); }
+.taskly-icon--historique { background-image: url('/images/icons/historique.png'); }
+.taskly-icon--deconnexion { background-image: url('/images/icons/deconnexion.png'); }
+
+/* Tailles disponibles ; dimensionnement uniforme sans déformation. */
+.taskly-icon--xs { --taskly-icon-size: 22px; --taskly-icon-radius: 7px; }
+.taskly-icon--sm { --taskly-icon-size: 28px; --taskly-icon-radius: 9px; }
+.taskly-icon--md { --taskly-icon-size: 36px; --taskly-icon-radius: 11px; }
+.taskly-icon--lg { --taskly-icon-size: 48px; --taskly-icon-radius: 15px; }
+.taskly-icon--xl { --taskly-icon-size: 58px; --taskly-icon-radius: 18px; }
+
+/* Emploi dans une ligne existante, sans modifier les boutons. */
+.taskly-icon-label { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.taskly-icon-label > .taskly-image-icon { flex-shrink: 0; }
+
+/* Exemple HTML dans une page :
+  <link rel="stylesheet" href="/css/taskly-icones-validees.css?v=1">
+  <span class="taskly-icon-label">
+    <span class="taskly-image-icon taskly-icon--mon-compte taskly-icon--sm" aria-hidden="true"></span>
+    Mon compte
+  </span>
+  Pour un bouton, conserver le <button> et sa logique JS actuelle ; ajouter
+  seulement le <span> graphique à l'intérieur.
+*/
