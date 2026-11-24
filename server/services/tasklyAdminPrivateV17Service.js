@@ -1,5 +1,6 @@
 'use strict';
 // Storage and ACLs only. No encryption/key exchange is implemented server-side.
+const { ECDH } = require('node:crypto');
 const error = (message, status=400) => Object.assign(new Error(message), {status});
 const id = input => {
   const s=String(input);
@@ -26,6 +27,7 @@ function createService({db}){
     if(!rows[0] || !(role==='admin'?rows[0].role==='admin':['client','artisan'].includes(rows[0].role)))throw error('Compte non autorise.',403);
   }
   async function check(c,uid,role,tid){
+    if(!['admin','user'].includes(role))throw error('Role invalide.',403);
     const [rows]=await c.query('SELECT id,admin_user_id,member_user_id FROM taskly_admin_private_threads WHERE id=CAST(? AS UNSIGNED) LIMIT 1',[tid]);
     const t=rows[0];
     if(!t || Number(t[role==='admin'?'admin_user_id':'member_user_id'])!==uid)throw error('Conversation introuvable.',404);
@@ -66,6 +68,91 @@ function createService({db}){
       return {id:String(result.insertId)};
     });
   }
-  return {open,list,read,send};
+  function validatePublicKey(value) {
+    if (typeof value !== 'string' ||
+        !/^[A-Za-z0-9_-]{87}$/.test(value)) {
+      throw error('Cle publique invalide.');
+    }
+
+    const raw = Buffer.from(value, 'base64url');
+
+    if (raw.length !== 65 ||
+        raw[0] !== 4 ||
+        raw.toString('base64url') !== value) {
+      throw error('Format de cle invalide.');
+    }
+
+    try {
+      ECDH.convertKey(
+        raw, 'prime256v1',
+        undefined, undefined, 'uncompressed'
+      );
+    } catch {
+      throw error('Point cryptographique invalide.');
+    }
+
+    return value;
+  }
+
+  async function publishPublicKey(uid, role, tid, input) {
+    const user = id(uid);
+    const thread = threadId(tid);
+    const publicKey = validatePublicKey(input);
+
+    return tx(async c => {
+      await check(c, user, role, thread);
+
+      await c.query(
+        `INSERT INTO taskly_admin_private_public_keys
+          (thread_id,user_id,public_key)
+         VALUES (CAST(? AS UNSIGNED),?,?)
+         ON DUPLICATE KEY UPDATE public_key=public_key`,
+        [thread, user, publicKey]
+      );
+
+      const [rows] = await c.query(
+        `SELECT public_key
+         FROM taskly_admin_private_public_keys
+         WHERE thread_id=CAST(? AS UNSIGNED)
+           AND user_id=? LIMIT 1`,
+        [thread, user]
+      );
+
+      if (!rows[0] || rows[0].public_key !== publicKey) {
+        throw error('Identite deja enregistree.',409);
+      }
+
+      return { registered:true };
+    });
+  }
+
+  async function getPublicKeys(uid, role, tid) {
+    const user = id(uid);
+    const thread = threadId(tid);
+
+    const participants = await check(db,user,role,thread);
+
+    const [rows] = await db.query(
+      `SELECT u.id AS userId,u.role,k.public_key AS publicKey
+       FROM users u
+       LEFT JOIN taskly_admin_private_public_keys k
+         ON k.user_id=u.id
+         AND k.thread_id=CAST(? AS UNSIGNED)
+       WHERE u.id IN (?,?)
+       ORDER BY u.id`,
+      [
+        thread,
+        participants.admin_user_id,
+        participants.member_user_id
+      ]
+    );
+
+    return rows;
+  }
+
+  return {
+    open,list,read,send,
+    publishPublicKey,getPublicKeys
+  };
 }
 module.exports={createService,envelope};

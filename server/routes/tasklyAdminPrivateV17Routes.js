@@ -12,6 +12,32 @@ for(const router of [admin,user])router.use((req,res,next)=>{res.set('Cache-Cont
 const handle=fn=>async(req,res)=>{try{await fn(req,res);}catch(e){res.status(e.status||503).json({message:e.status?e.message:'Messagerie indisponible.'});}};
 admin.post('/threads',limiter({max:8}),handle(async(req,res)=>res.status(201).json({thread:await service.open(req.session.utilisateur.id,req.body?.memberUserId)})));
 for(const [router,role] of [[admin,'admin'],[user,'user']]){
+  router.get('/threads/:id/keys',limiter({max:30}),
+    handle(async(req,res)=>res.json({
+      keys:await service.getPublicKeys(
+        req.session.utilisateur.id,
+        role,
+        req.params.id
+      )
+    })));
+
+  router.post('/threads/:id/keys',limiter({max:8}),
+    handle(async(req,res)=>{
+      const body=req.body;
+      if(!body || Object.keys(body).length!==1 ||
+         typeof body.publicKey!=='string'){
+        return res.status(400).json({
+          message:'Cle publique uniquement.'
+        });
+      }
+
+      res.json(await service.publishPublicKey(
+        req.session.utilisateur.id,
+        role,
+        req.params.id,
+        body.publicKey
+      ));
+    }));
   router.get('/threads',limiter({max:60}),handle(async(req,res)=>res.json({threads:await service.list(req.session.utilisateur.id,role)})));
   router.get('/threads/:id',limiter({max:60}),handle(async(req,res)=>res.json({messages:await service.read(req.session.utilisateur.id,role,req.params.id)})));
   router.post('/threads/:id/messages',limiter({max:15}),handle(async(req,res)=>res.status(201).json({message:await service.send(req.session.utilisateur.id,role,req.params.id,req.body)})));
