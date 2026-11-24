@@ -50,7 +50,22 @@ function createService({db}){
     const user=id(uid); if(!['admin','user'].includes(role))throw error('Role invalide.',403);
     await validAccount(db,user,role);
     const column=role==='admin'?'admin_user_id':'member_user_id';
-    const [rows]=await db.query(`SELECT CAST(id AS CHAR) AS id,admin_user_id,member_user_id,updated_at FROM taskly_admin_private_threads WHERE ${column}=? ORDER BY updated_at DESC,id DESC LIMIT 100`,[user]);
+    const peerColumn=role==='admin'?'member_user_id':'admin_user_id';
+
+    const [rows]=await db.query(
+      `SELECT CAST(t.id AS CHAR) AS id,
+              t.admin_user_id,t.member_user_id,t.updated_at,
+              u.role AS peer_role,
+              CONCAT_WS(' ',u.prenom,u.nom) AS peer_name
+       FROM taskly_admin_private_threads t
+       JOIN users u ON u.id=t.${peerColumn}
+       WHERE t.${column}=?
+         AND u.statut_compte='actif'
+         AND u.email_verified=1
+       ORDER BY t.updated_at DESC,t.id DESC
+       LIMIT 100`,
+      [user]
+    );
     return rows;
   }
   async function read(uid,role,tid){
@@ -150,8 +165,40 @@ function createService({db}){
     return rows;
   }
 
+  async function contacts(adminId, input) {
+    const aid=id(adminId);
+
+    await validAccount(db,aid,'admin');
+
+    if(typeof input!=='string' ||
+       input.trim().length<2 ||
+       input.trim().length>100){
+      throw error('Recherche invalide.');
+    }
+
+    const q=input.trim();
+
+    const [rows]=await db.query(
+      `SELECT id AS userId,role,
+              CONCAT_WS(' ',prenom,nom) AS name
+       FROM users
+       WHERE role IN ('client','artisan')
+         AND statut_compte='actif'
+         AND email_verified=1
+         AND (
+           LOCATE(?,CONCAT_WS(' ',prenom,nom))>0
+           OR CAST(id AS CHAR)=?
+         )
+       ORDER BY prenom,nom,id
+       LIMIT 30`,
+      [q,q]
+    );
+
+    return rows;
+  }
+
   return {
-    open,list,read,send,
+    contacts,open,list,read,send,
     publishPublicKey,getPublicKeys
   };
 }

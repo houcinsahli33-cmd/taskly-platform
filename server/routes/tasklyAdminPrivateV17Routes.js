@@ -10,6 +10,13 @@ admin.use(on,verifierConnexion,verifierAdmin,(req,res,next)=>req.tasklyAdminCont
 user.use(on,verifierConnexion,(req,res,next)=>req.tasklyAdminContext!==true&&['client','artisan'].includes(req.session?.utilisateur?.role)?next():res.status(403).json({message:'Acces refuse.'}));
 for(const router of [admin,user])router.use((req,res,next)=>{res.set('Cache-Control','private, no-store');next();});
 const handle=fn=>async(req,res)=>{try{await fn(req,res);}catch(e){res.status(e.status||503).json({message:e.status?e.message:'Messagerie indisponible.'});}};
+admin.get('/contacts',limiter({max:30}),
+  handle(async(req,res)=>res.json({
+    contacts:await service.contacts(
+      req.session.utilisateur.id,req.query.q
+    )
+  })));
+
 admin.post('/threads',limiter({max:8}),handle(async(req,res)=>res.status(201).json({thread:await service.open(req.session.utilisateur.id,req.body?.memberUserId)})));
 for(const [router,role] of [[admin,'admin'],[user,'user']]){
   router.get('/threads/:id/keys',limiter({max:30}),
