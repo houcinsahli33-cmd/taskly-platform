@@ -103,6 +103,6 @@ test('V26: pilote strict conserve la verification cryptographique et le moteur V
     assert.match(src,/await window\.TasklyE2EEIdentityGateV25\.verify\(/);
     assert.match(src,/await window\.TasklyE2EEIdentityGateV25\.trustedFingerprint\(/);
     assert.match(src,/console\.warn\('\[Taskly E2EE V25\] Appel entrant refuse :',reason\)/);
-    const sha=createHash('sha256').update(read('client/public/js/taskly-call-livekit.js')).digest('hex');
+    const sha=createHash('sha256').update(read('client/public/js/taskly-call-livekit.js').replace(/\r\n/g,"\n").replace(/\n/g,"\r\n")).digest('hex');
     assert.equal(sha,'54ac63dfc920644f550ec698957c0e576be3857ed2efb13a09a27d3e5339e081');
 });

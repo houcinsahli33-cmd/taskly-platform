@@ -137,7 +137,7 @@ test('V25: pilote strict coupe par defaut et moteur V19 preserve',()=>{
     const c=code('server/controllers/chatController.js');
     const service=code('server/services/chatCallService.js');
     assert.equal(require('node:crypto').createHash('sha256')
-        .update(code('client/public/js/taskly-call-livekit.js')).digest('hex'),
+        .update(code('client/public/js/taskly-call-livekit.js').replace(/\r\n/g,"\n").replace(/\n/g,"\r\n")).digest('hex'),
         '54ac63dfc920644f550ec698957c0e576be3857ed2efb13a09a27d3e5339e081');
     assert.match(c,/TASKLY_E2EE_V25_TEST_DEMANDE_IDS/);
     assert.match(c,/if \(!e2eeRequisPourDemande\(demandeId\)\) return false/);
