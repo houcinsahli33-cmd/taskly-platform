@@ -197,7 +197,120 @@ function createService({db}){
     return rows;
   }
 
+  async function unread(uid,role) {
+    const user=id(uid);
+
+    if(!['admin','user'].includes(role)){
+      throw error('Role invalide.',403);
+    }
+
+    await validAccount(db,user,role);
+
+    const own=role==='admin'
+      ? 'admin_user_id'
+      : 'member_user_id';
+
+    const peer=role==='admin'
+      ? 'member_user_id'
+      : 'admin_user_id';
+
+    const allowedPeer=role==='admin'
+      ? "p.role IN ('client','artisan')"
+      : "p.role='admin'";
+
+    const [rows]=await db.query(
+      `SELECT CAST(t.id AS CHAR) AS id,
+              COUNT(*) AS unread
+       FROM taskly_admin_private_threads t
+       JOIN taskly_admin_private_messages m
+         ON m.thread_id=t.id
+       JOIN users p ON p.id=t.${peer}
+       LEFT JOIN taskly_admin_private_receipts r
+         ON r.message_id=m.id
+         AND r.reader_user_id=?
+       WHERE t.${own}=?
+         AND m.sender_user_id=t.${peer}
+         AND ${allowedPeer}
+         AND p.statut_compte='actif'
+         AND p.email_verified=1
+         AND r.message_id IS NULL
+       GROUP BY t.id`,
+      [user,user]
+    );
+
+    const threads=rows.map(row=>{
+      const count=Number(row.unread);
+
+      if(!Number.isSafeInteger(count)||count<0){
+        throw error('Compteur invalide.',503);
+      }
+
+      return {
+        id:String(row.id),
+        unread:count
+      };
+    });
+
+    const total=threads.reduce(
+      (sum,t)=>sum+t.unread,0
+    );
+
+    if(!Number.isSafeInteger(total)){
+      throw error('Compteur invalide.',503);
+    }
+
+    return {total,threads};
+  }
+
+  async function markRead(uid,role,tid,input) {
+    const user=id(uid);
+    const thread=threadId(tid);
+
+    if(!['admin','user'].includes(role)){
+      throw error('Role invalide.',403);
+    }
+
+    if(!Array.isArray(input) ||
+       input.length<1 ||
+       input.length>50 ||
+       input.some(value=>typeof value!=='string')){
+      throw error('Liste de messages invalide.');
+    }
+
+    const ids=[...new Set(input.map(threadId))];
+
+    return tx(async c=>{
+      const t=await check(c,user,role,thread);
+
+      const partner=Number(
+        t[role==='admin'
+          ? 'member_user_id'
+          : 'admin_user_id']
+      );
+
+      const placeholders=ids.map(
+        ()=>'CAST(? AS UNSIGNED)'
+      ).join(',');
+
+      await c.query(
+        `INSERT INTO taskly_admin_private_receipts
+           (message_id,reader_user_id)
+         SELECT m.id,?
+         FROM taskly_admin_private_messages m
+         WHERE m.thread_id=CAST(? AS UNSIGNED)
+           AND m.sender_user_id=?
+           AND m.id IN (${placeholders})
+         ON DUPLICATE KEY UPDATE
+           read_at=taskly_admin_private_receipts.read_at`,
+        [user,thread,partner,...ids]
+      );
+
+      return {ok:true};
+    });
+  }
+
   return {
+    unread,markRead,
     contacts,open,list,read,send,
     publishPublicKey,getPublicKeys
   };

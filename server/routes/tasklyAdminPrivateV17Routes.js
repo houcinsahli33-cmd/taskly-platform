@@ -19,6 +19,34 @@ admin.get('/contacts',limiter({max:30}),
 
 admin.post('/threads',limiter({max:8}),handle(async(req,res)=>res.status(201).json({thread:await service.open(req.session.utilisateur.id,req.body?.memberUserId)})));
 for(const [router,role] of [[admin,'admin'],[user,'user']]){
+  router.get('/unread',limiter({max:60}),
+    handle(async(req,res)=>res.json(
+      await service.unread(
+        req.session.utilisateur.id,
+        role
+      )
+    )));
+
+  router.post('/threads/:id/read',limiter({max:30}),
+    handle(async(req,res)=>{
+      const body=req.body;
+
+      if(!body ||
+         Object.keys(body).length!==1 ||
+         !Array.isArray(body.messageIds)){
+        return res.status(400).json({
+          message:'Liste de messages requise.'
+        });
+      }
+
+      res.json(await service.markRead(
+        req.session.utilisateur.id,
+        role,
+        req.params.id,
+        body.messageIds
+      ));
+    }));
+
   router.get('/threads/:id/keys',limiter({max:30}),
     handle(async(req,res)=>res.json({
       keys:await service.getPublicKeys(
