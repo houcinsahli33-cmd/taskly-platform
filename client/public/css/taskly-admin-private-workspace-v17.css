@@ -168,3 +168,7 @@
         min-height: 380px;
     }
 }
+
+#apv17 [hidden] {
+    display: none !important;
+}

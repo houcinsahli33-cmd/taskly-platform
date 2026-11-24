@@ -9,20 +9,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     await attendreSession();
 
     const account = window.utilisateurCourant;
+    const role = account?.role;
+    const isAdmin = role === "admin";
+    const expectedRole = document.body.dataset.requireRole;
     const uid = Number(account?.id);
 
     if (
-        account?.role !== "admin" ||
+        !["admin","client","artisan"].includes(role) ||
+        role !== expectedRole ||
         !Number.isSafeInteger(uid) ||
         uid < 1 ||
         uid > 2147483647 ||
-        !contexteAdminTaskly()
+        contexteAdminTaskly() !== isAdmin
     ) {
-        $("status").textContent = "Session administrative requise.";
+        $("status").textContent = "Session Taskly valide requise.";
         return;
     }
 
-    const base = "/api/admin/taskly-private-v17";
+    const base = isAdmin
+        ? "/api/admin/taskly-private-v17"
+        : "/api/taskly-private-v17";
+
+    if (!isAdmin) {
+        $("search").hidden = true;
+        $("found").hidden = true;
+    }
 
     let connector = null;
     let selected = null;
@@ -66,9 +77,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function request(endpoint, options = {}) {
         if (
-            window.utilisateurCourant?.role !== "admin" ||
+            window.utilisateurCourant?.role !== role ||
             Number(window.utilisateurCourant?.id) !== uid ||
-            !contexteAdminTaskly()
+            contexteAdminTaskly() !== isAdmin
         ) {
             throw new Error("Session administrative modifiée.");
         }
@@ -80,10 +91,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 .test(endpoint);
 
         const contactPath =
+            isAdmin &&
             endpoint.startsWith("/contacts?q=") &&
             method === "GET";
 
-        if ((!threadPath && !contactPath) ||
+        const forbiddenCreation =
+            !isAdmin &&
+            endpoint === "/threads" &&
+            method === "POST";
+
+        if (forbiddenCreation ||
+            (!threadPath && !contactPath) ||
             !["GET","POST"].includes(method)) {
             throw new Error("Route non autorisée.");
         }
@@ -137,7 +155,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function roleName(role) {
-        return role === "artisan" ? "Artisan" : "Client";
+        return {
+            admin: "Administration",
+            client: "Client",
+            artisan: "Artisan"
+        }[role] || "Utilisateur Taskly";
     }
 
     async function loadThreads() {
@@ -155,7 +177,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         for (const thread of data.threads) {
             const peer = {
-                userId: Number(thread.member_user_id),
+                userId: Number(
+                    isAdmin
+                        ? thread.member_user_id
+                        : thread.admin_user_id
+                ),
                 role: thread.peer_role,
                 name: thread.peer_name || "Utilisateur Taskly"
             };
@@ -222,13 +248,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function selectThread(thread, peer) {
         clearConversation();
 
-        if (!["client","artisan"].includes(peer.role)) {
+        if (isAdmin
+            ? !["client","artisan"].includes(peer.role)
+            : peer.role !== "admin") {
             throw new Error("Correspondant invalide.");
         }
 
         connector = window.TasklyAdminPrivateConnectorV17.create({
             request,
-            role: "admin",
+            role,
             userId: uid,
             peerRole: peer.role,
             peerId: Number(peer.userId),
@@ -259,6 +287,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         event.preventDefault();
 
         run(async () => {
+            if (!isAdmin) return;
+
             const q = $("query").value.trim();
 
             if (q.length < 2 || q.length > 100) return;
@@ -353,6 +383,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             run(loadThreads);
         }
     });
+
+    if (root.open && !loaded) {
+        run(loadThreads);
+    }
 
     window.addEventListener("pagehide", clearConversation);
 
