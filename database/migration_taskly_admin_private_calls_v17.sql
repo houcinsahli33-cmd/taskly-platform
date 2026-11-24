@@ -25,7 +25,14 @@ CREATE TABLE IF NOT EXISTS taskly_admin_private_calls (
     updated_at DATETIME(3) NOT NULL,
     expires_at DATETIME(3) NOT NULL,
 
+    cleanup_stage TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    cleanup_next_at DATETIME(3) NULL,
+
     PRIMARY KEY (id),
+
+    KEY idx_apv17_cleanup (
+        state,cleanup_stage,cleanup_next_at
+    ),
 
     KEY idx_apv17_call_thread (
         thread_id,state,created_at

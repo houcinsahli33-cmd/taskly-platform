@@ -22,6 +22,16 @@ function validUserId(value){
 // Call only after session and thread ACL verification,
 // accepted state verification and media security checks.
 
+function roomName(threadId,callId){
+    const thread=String(threadId);
+
+    if(!/^[1-9][0-9]{0,18}$/.test(thread)){
+        throw fail("Conversation invalide.");
+    }
+
+    return "taskly-apv17-"+thread+"-"+validateCallId(callId);
+}
+
 async function issueToken({
     call,
     userId,
@@ -74,8 +84,7 @@ async function issueToken({
     }
 
     // Separate room namespace.
-    const room=
-        "taskly-apv17-"+call.threadId+"-"+callId;
+    const room=roomName(call.threadId,callId);
 
     const identity=
         "apv17-"+role+"-"+uid;
@@ -110,4 +119,4 @@ async function issueToken({
     };
 }
 
-module.exports={issueToken};
+module.exports={issueToken,roomName};
