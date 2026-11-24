@@ -16,7 +16,7 @@ const envelope=input=>{
   if(!input || typeof input!=='object' || input.alg!=='AES-256-GCM' ||
       !Number.isSafeInteger(input.keyVersion) || input.keyVersion<1 || input.keyVersion>100000 ||
       typeof input.nonce!=='string' || !/^[A-Za-z0-9_-]{16}$/.test(input.nonce) ||
-      typeof input.ciphertext!=='string' || !/^[A-Za-z0-9_-]{24,16384}$/.test(input.ciphertext))
+      typeof input.ciphertext!=='string' || !/^[A-Za-z0-9_-]{23,16384}$/.test(input.ciphertext))
     throw error('Enveloppe chiffree invalide.');
   return {alg:input.alg,version:input.keyVersion,nonce:input.nonce,ciphertext:input.ciphertext};
 };
