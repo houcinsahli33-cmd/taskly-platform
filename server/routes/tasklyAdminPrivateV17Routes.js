@@ -33,7 +33,7 @@ admin.post('/threads',limiter({max:8}),handle(async(req,res)=>res.status(201).js
 for(const [router,role] of [[admin,'admin'],[user,'user']]){
   // Administrative calls are isolated from legacy calls.
   router.get('/calls/config',callsOn,mediaOn,limiter({max:30}),
-    handle(async(req,res)=>res.json({enabled:true,e2eeRequired:true,ringingSeconds:45})));
+    handle(async(req,res)=>res.json({enabled:true,e2eeRequired:true,ringingSeconds:180})));
   router.get('/calls/incoming',callsOn,mediaOn,limiter({max:120}),
     handle(async(req,res)=>res.json(await service.calls.incoming(req.session.utilisateur.id,role))));
   router.post('/threads/:id/calls/:callId/proof',callsOn,mediaOn,limiter({max:20}),

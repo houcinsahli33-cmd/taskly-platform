@@ -197,7 +197,7 @@ function createCallService({
                    UTC_TIMESTAMP(3),
                    DATE_ADD(
                        UTC_TIMESTAMP(3),
-                       INTERVAL 45 SECOND
+                       INTERVAL 3 MINUTE
                    ))`,
                 [callId,thread,user,recipient,kind]
             );

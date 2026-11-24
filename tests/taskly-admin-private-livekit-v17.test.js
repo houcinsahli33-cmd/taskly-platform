@@ -38,7 +38,7 @@ function claims(token){
     );
 }
 
-test("V17 calls: ringing duration is 45 seconds",()=>{
+test("V17 calls: ringing duration is 180 seconds",()=>{
     const source=fs.readFileSync(
         path.join(root,
             "server/services/tasklyAdminPrivateCallsV17.js"),
@@ -46,11 +46,11 @@ test("V17 calls: ringing duration is 45 seconds",()=>{
     );
 
     assert.match(
-        source,/INTERVAL 45 SECOND/
+        source,/INTERVAL 3 MINUTE/
     );
 
     assert.doesNotMatch(
-        source,/INTERVAL 3 MINUTE/
+        source,/INTERVAL 45 SECOND/
     );
 });
 
