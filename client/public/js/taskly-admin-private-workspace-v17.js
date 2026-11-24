@@ -43,6 +43,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let readyToPoll = false;
     let lastSignature = null;
     const confirmedReceipts = new Map();
+    const privateTab = isAdmin ? document.getElementById("tmv3-tab-private-v17") : null;
+    const privatePanel = privateTab ? document.getElementById("tmv3-view-private-v17") : null;
+    const adminDesign = Boolean(privateTab && privatePanel);
 
     function status(message) {
         $("status").textContent = message;
@@ -70,6 +73,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         clearMessages();
         connector = null;
         selected = null;
+        if (adminDesign) root.classList.remove("cw-has-selection", "apv17-show-details");
+        if (adminDesign) $("details-toggle").setAttribute("aria-expanded", "false");
         enableVerify(false);
         $("message").value = "";
         $("fingerprint").value = "";
@@ -151,8 +156,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         const button = document.createElement("button");
 
         button.type = "button";
-        button.className = "apv17-contact";
-        button.textContent = name;
+        button.className = adminDesign ? "cw-conversation" : "apv17-contact";
+        if (adminDesign) {
+            const avatar = document.createElement("span");
+            avatar.className = "cw-avatar";
+            avatar.textContent = name.trim().slice(0,1).toUpperCase() || "—";
+            const copy = document.createElement("span");
+            copy.className = "cw-conversation-main";
+            const head = document.createElement("span");
+            head.className = "cw-conversation-head";
+            const label = document.createElement("strong");
+            label.textContent = name;
+            head.append(label); copy.append(head); button.append(avatar,copy);
+        } else button.textContent = name;
 
         button.addEventListener("click", () => run(action));
 
@@ -247,7 +263,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 bubble.textContent = message.content;
 
-                fragment.append(bubble);
+                if (adminDesign) {
+                    const line = document.createElement("div");
+                    line.className = "cw-message-line" + (message.own ? " mine" : "");
+                    bubble.className = "cw-bubble";
+                    const text = document.createElement("p");
+                    text.textContent = message.content;
+                    bubble.replaceChildren(text);
+                    const date = new Date(message.createdAt);
+                    if (message.createdAt && !Number.isNaN(date.getTime())) {
+                        const time = document.createElement("small");
+                        time.textContent = date.toLocaleString("fr-FR", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+                        bubble.append(time);
+                    }
+                    line.append(bubble); fragment.append(line);
+                } else fragment.append(bubble);
             }
 
             container.replaceChildren(fragment);
@@ -357,6 +387,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         selected = thread;
+        if (adminDesign) root.classList.add("cw-has-selection");
 
         $("name").textContent = peer.name;
         $("avatar").textContent =
@@ -470,6 +501,68 @@ document.addEventListener("DOMContentLoaded", async () => {
     $("refresh").addEventListener("click", () => {
         run(refreshConversation);
     });
+
+    // Admin only: the existing three tabs retain their own controller.
+    // The V17 tab remains hidden until the authenticated API is available.
+    if (adminDesign) {
+        const oldTabs = ["support", "mailboxes", "admin-mail"].map(k => document.getElementById("tmv3-tab-" + k));
+        const oldPanels = ["support", "mailboxes", "admin-mail"].map(k => document.getElementById("tmv3-view-" + k));
+        const tabbar = privateTab.parentElement;
+        if (oldTabs.every(Boolean) && oldPanels.every(Boolean) && tabbar) {
+            function fitPrivate() {
+                if (privatePanel.hidden) return;
+                const top = root.getBoundingClientRect().top;
+                root.style.setProperty("--apv17-height", Math.max(320, window.innerHeight - top - 20) + "px");
+            }
+            function closePrivate() {
+                root.open = false;
+                privatePanel.hidden = true;
+                privatePanel.setAttribute("inert", "");
+                privateTab.setAttribute("aria-selected", "false");
+                privateTab.tabIndex = -1;
+            }
+            function openPrivate() {
+                if (privateTab.hidden || disposed) return;
+                oldTabs.forEach(t => { t.setAttribute("aria-selected", "false"); t.tabIndex = -1; });
+                oldPanels.forEach(p => { p.hidden = true; p.setAttribute("inert", ""); });
+                privatePanel.hidden = false;
+                privatePanel.removeAttribute("inert");
+                privateTab.setAttribute("aria-selected", "true");
+                privateTab.tabIndex = 0;
+                root.open = true;
+                fitPrivate();
+                if (connector && readyToPoll) run(showMessages);
+            }
+            tabbar.addEventListener("click", event => {
+                const target = event.target.closest('[role="tab"]');
+                if (oldTabs.includes(target)) closePrivate();
+                if (target === privateTab) openPrivate();
+            }, true);
+            tabbar.addEventListener("keydown", event => {
+                if (privateTab.hidden || !["ArrowLeft","ArrowRight","Home","End"].includes(event.key)) return;
+                const tabs = [...oldTabs, privateTab];
+                const i = tabs.indexOf(event.target);
+                if (i < 0) return;
+                event.preventDefault(); event.stopPropagation();
+                const j = event.key === "Home" ? 0 : event.key === "End" ? tabs.length-1 : (i + (event.key === "ArrowRight" ? 1 : tabs.length-1)) % tabs.length;
+                tabs[j].click(); tabs[j].focus();
+            }, true);
+            $("back").addEventListener("click", () => {
+                // Returning to the list hides the conversation, without marking unread messages as read.
+                clearConversation();
+                $("list").querySelectorAll("[aria-current]").forEach(b => b.setAttribute("aria-current", "false"));
+                $("query").focus();
+            });
+            $("details-toggle").addEventListener("click", () => {
+                const visible = root.classList.toggle("apv17-show-details");
+                $("details-toggle").setAttribute("aria-expanded", String(visible));
+            });
+            window.addEventListener("resize", fitPrivate);
+            // Keep unavailable features out of the production UI; no auth bypass.
+            try { await loadThreads(); if (!disposed) privateTab.hidden = false; }
+            catch { closePrivate(); }
+        }
+    }
 
     root.addEventListener("toggle", () => {
         if (root.open && !loaded) {
