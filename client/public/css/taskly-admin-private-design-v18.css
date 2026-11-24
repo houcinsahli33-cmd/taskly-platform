@@ -1,53 +1,32 @@
-/* Reuse the existing Taskly chat components. Only admin V17 layout adapters. */
-#tmv3-tab-private-v17[hidden], #tmv3-view-private-v17[hidden], #tmv3-view-private-v17 [hidden] {display:none!important}
-#tmv3-view-private-v17 {min-width:0;max-width:100%;container-type:inline-size;}
-#tmv3-view-private-v17 #apv17 {position:relative;isolation:isolate;min-width:0;max-width:100%;margin:0;padding:0;border:0;box-sizing:border-box;height:var(--apv17-height, max(320px,calc(100dvh - 240px)));display:flex;flex-direction:column;gap:8px;}
-#tmv3-view-private-v17 #apv17:not([open]) {display:none!important}
-#apv17 .apv17-summary {display:none!important}
-#tmv3-view-private-v17 #apv17::before,#tmv3-view-private-v17 #apv17::after {display:none}
-#tmv3-view-private-v17 #apv17-status {flex:none;min-width:0;font-size:12px;color:#506373;overflow-wrap:anywhere;margin:0 6px;}
-#tmv3-view-private-v17 #apv17 .cw-grid {position:relative;display:grid;flex:1;min-height:0;height:auto;min-width:0;max-width:100%;grid-template-columns:minmax(0,29.4fr) minmax(0,44fr) minmax(0,26.6fr);gap:6px;}
-#tmv3-view-private-v17 #apv17 .cw-card {height:auto;min-width:0;min-height:0;max-width:100%;box-sizing:border-box;}
-#tmv3-view-private-v17 #apv17 .cw-list {display:flex;overflow:hidden;gap:8px;}
-#tmv3-view-private-v17 #apv17 .cw-thread {display:flex;overflow:hidden;}
-#tmv3-view-private-v17 #apv17 .cw-details {display:block;grid-column:auto;max-height:none;overflow:auto;}
-#tmv3-view-private-v17 #apv17 .cw-conversations {overflow:auto;min-height:0;flex:1;}
-#tmv3-view-private-v17 #apv17-found {max-height:32%;overflow:auto;flex:none;}
-#tmv3-view-private-v17 #apv17-search {display:grid;gap:6px;min-width:0;margin:0;}
-#tmv3-view-private-v17 #apv17-search .cw-search {margin:0;min-width:0;}
-#tmv3-view-private-v17 #apv17-search .cw-send {min-height:34px;}
-#tmv3-view-private-v17 #apv17 .cw-conversation[aria-current=true] {background:#edf8f3;border:1px solid #56a995;border-radius:13px;}
-#tmv3-view-private-v17 #apv17 .cw-thread-header {min-height:68px;gap:8px;padding:12px;}
-#tmv3-view-private-v17 #apv17 .cw-thread-actions {gap:5px;}
-#tmv3-view-private-v17 #apv17 .cw-icon-btn {width:36px;height:36px;}
-#tmv3-view-private-v17 #apv17 .cw-thread-title {min-width:0;overflow-wrap:anywhere;}
-#tmv3-view-private-v17 #apv17 .cw-messages {overflow:auto;flex:1;min-height:0;min-width:0;}
-#tmv3-view-private-v17 #apv17 .cw-composer {flex:none;flex-wrap:nowrap;min-width:0;padding:10px;}
-#tmv3-view-private-v17 #apv17 .cw-input-wrap {min-width:0;flex:1;}
-#tmv3-view-private-v17 #apv17-message {min-width:0;width:100%;resize:none;}
-#tmv3-view-private-v17 #apv17 .cw-detail-block {overflow-wrap:anywhere;}
-#tmv3-view-private-v17 #apv17 .cw-detail-block input:not([type=checkbox]),#tmv3-view-private-v17 #apv17 .cw-detail-block button {max-width:100%;width:100%;box-sizing:border-box;white-space:normal;}
-#tmv3-view-private-v17 #apv17-own-fingerprint {display:block;overflow-wrap:anywhere;white-space:normal;margin:8px 0;}
-#tmv3-view-private-v17 #apv17-verify {display:grid;gap:8px;margin-top:10px;font-size:12px;}
-#tmv3-view-private-v17 #apv17 .apv17-confirm {display:flex;align-items:flex-start;gap:6px;}
-#tmv3-view-private-v17 #apv17 .apv17-confirm input {flex:none;}
-#tmv3-view-private-v17 #apv17 .cw-back,#tmv3-view-private-v17 #apv17-details-toggle {display:none;}
-#tmv3-tab-private-v17 .apv17-unread-badge:not([hidden]) {background:#cf2938;color:white;border-radius:20px;padding:2px 6px;font-size:11px;}
-@container (max-width: 980px) {
- #tmv3-view-private-v17 #apv17 .cw-grid {grid-template-columns:minmax(0,36fr) minmax(0,64fr);}
- #tmv3-view-private-v17 #apv17 .cw-details {display:none;position:absolute;inset:0 0 0 auto;width:min(340px,100%);z-index:5;box-shadow:-5px 0 25px #11382b26;}
- #tmv3-view-private-v17 #apv17-details-toggle {display:grid;}
- #tmv3-view-private-v17 #apv17.apv17-show-details .cw-details {display:block;top:68px;}
-}
-@container (max-width: 610px) {
- #tmv3-view-private-v17 #apv17 .cw-grid {grid-template-columns:minmax(0,1fr);}
- #tmv3-view-private-v17 #apv17 .cw-thread {display:none;}
- #tmv3-view-private-v17 #apv17.cw-has-selection .cw-list {display:none;}
- #tmv3-view-private-v17 #apv17.cw-has-selection .cw-thread {display:flex;}
- #tmv3-view-private-v17 #apv17 .cw-back {display:grid;}
- #tmv3-view-private-v17 #apv17 .cw-thread-actions .cw-icon-btn {width:30px;height:30px;}
- #tmv3-view-private-v17 #apv17 .cw-thread-header .cw-avatar {width:32px;height:32px;font-size:15px;}
- #tmv3-view-private-v17 #apv17 .cw-thread-header {padding:8px;gap:5px;}
-}
-
-#tmv3-view-private-v17 #apv17 .cw-grid {height:calc(var(--apv17-height, max(320px,calc(100dvh - 240px))) - 38px);}
+/* Admin container adapter only: existing client chat markup and CSS. */
+#tmv3-tab-private-v17[hidden],#tmv3-view-private-v17[hidden],#tmv3-view-private-v17 [hidden]{display:none!important}
+#tmv3-view-private-v17{min-width:0;max-width:100%;container-type:inline-size}
+#tmv3-view-private-v17 #apv17{position:relative;isolation:isolate;box-sizing:border-box;min-width:0;max-width:100%!important;width:100%;min-height:0;height:var(--apv17-height,520px);margin:0;border:0;display:flex;flex-direction:column;padding:0!important}
+#tmv3-view-private-v17 #apv17:not([open]),#apv17 .apv17-summary{display:none!important}
+#tmv3-view-private-v17 #apv17::before,#tmv3-view-private-v17 #apv17::after{display:none}
+#tmv3-view-private-v17 .cw-heading{flex:none}
+#tmv3-view-private-v17 .cw-grid{position:relative;display:grid;flex:1;min-height:0;height:auto;min-width:0;grid-template-columns:minmax(0,29.4fr) minmax(0,44fr) minmax(0,26.6fr)}
+#tmv3-view-private-v17 .cw-card{height:auto;min-width:0;min-height:0;max-width:100%;box-sizing:border-box}
+#tmv3-view-private-v17 .cw-list,#tmv3-view-private-v17 .cw-thread{display:flex;overflow:hidden}
+#tmv3-view-private-v17 .cw-details{display:block;grid-column:auto;max-height:none;overflow:auto}
+#tmv3-view-private-v17 .cw-conversations{overflow:auto;min-height:0;flex:1}
+#tmv3-view-private-v17 #apv17-found{max-height:32%;overflow:auto;flex:none}
+#tmv3-view-private-v17 #apv17-search{min-width:0;margin:0}
+#tmv3-view-private-v17 #apv17-search .cw-more{display:block;margin:0 4px 12px;width:calc(100% - 8px)}
+#tmv3-view-private-v17 #apv17-status{flex:none;font-size:12px;overflow-wrap:anywhere;padding:0 12px}
+#tmv3-view-private-v17 #apv17-status:not(:empty){padding:8px 12px}
+#tmv3-view-private-v17 .cw-thread-title{min-width:0;overflow-wrap:anywhere}
+#tmv3-view-private-v17 .cw-messages{flex:1;min-height:0;overflow:auto}
+#tmv3-view-private-v17 .cw-composer{flex:none;min-width:0;flex-wrap:nowrap}
+#tmv3-view-private-v17 .cw-input-wrap{min-width:0;flex:1}
+#tmv3-view-private-v17 #apv17-message{min-width:0;width:100%}
+#tmv3-view-private-v17 #apv17-own-fingerprint{display:block;overflow-wrap:anywhere;white-space:normal}
+#tmv3-view-private-v17 #apv17-verify{display:grid;gap:8px;min-width:0}
+#tmv3-view-private-v17 #apv17-verify input:not([type=checkbox]),#tmv3-view-private-v17 #apv17-verify button,#tmv3-view-private-v17 #apv17-refresh{max-width:100%;min-width:0;box-sizing:border-box;white-space:normal}
+#tmv3-view-private-v17 .apv17-confirm{display:flex;gap:6px;align-items:flex-start}
+#tmv3-view-private-v17 .cw-back{display:none}
+#tmv3-view-private-v17 #apv17.apv17-show-details .cw-details{display:none}
+#tmv3-view-private-v17 #apv17.apv17-show-details .cw-grid{grid-template-columns:minmax(0,36fr) minmax(0,64fr)}
+@container(max-width:980px){#tmv3-view-private-v17 .cw-grid{grid-template-columns:minmax(0,36fr) minmax(0,64fr)}#tmv3-view-private-v17 .cw-details{display:none;position:absolute;inset:0 0 0 auto;width:min(340px,100%);z-index:5}#tmv3-view-private-v17 #apv17.apv17-show-details .cw-details{display:block}}
+@container(max-width:700px){#tmv3-view-private-v17 .cw-grid,#tmv3-view-private-v17 #apv17.apv17-show-details .cw-grid{grid-template-columns:minmax(0,1fr)}#tmv3-view-private-v17 .cw-thread{display:none}#tmv3-view-private-v17 #apv17.cw-has-selection .cw-list{display:none}#tmv3-view-private-v17 #apv17.cw-has-selection .cw-thread{display:flex}#tmv3-view-private-v17 .cw-back{display:grid}#tmv3-view-private-v17 .cw-thread-actions{gap:4px}#tmv3-view-private-v17 .cw-thread-actions .cw-icon-btn{width:31px;height:31px}#tmv3-view-private-v17 .cw-composer{gap:5px;padding:9px 8px}#tmv3-view-private-v17 .cw-composer>.cw-icon-btn{width:34px}#tmv3-view-private-v17 .cw-send{padding:10px;font-size:12px}}
+#tmv3-tab-private-v17 .apv17-unread-badge:not([hidden]){background:#cf2938;color:white;border-radius:20px;padding:2px 6px;font-size:11px}

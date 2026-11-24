@@ -46,6 +46,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const privateTab = isAdmin ? document.getElementById("tmv3-tab-private-v17") : null;
     const privatePanel = privateTab ? document.getElementById("tmv3-view-private-v17") : null;
     const adminDesign = Boolean(privateTab && privatePanel);
+    const copiedDesign = adminDesign && root.dataset.apv17Copy === "1";
+    let unreadByThread = new Map(), unreadOnly = false;
 
     function status(message) {
         $("status").textContent = message;
@@ -74,6 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         connector = null;
         selected = null;
         if (adminDesign) root.classList.remove("cw-has-selection", "apv17-show-details");
+        if (copiedDesign) { $("info-avatar").textContent = "—"; $("info-role").textContent = ""; }
         if (adminDesign) $("details-toggle").setAttribute("aria-expanded", "false");
         enableVerify(false);
         $("message").value = "";
@@ -112,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             method === "POST";
 
         if (forbiddenCreation ||
-            (!threadPath && !contactPath) ||
+            (!threadPath && !contactPath && !(copiedDesign && endpoint === "/unread" && method === "GET")) ||
             !["GET","POST"].includes(method)) {
             throw new Error("Route non autorisée.");
         }
@@ -191,6 +194,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             throw new Error("Liste des conversations invalide.");
         }
 
+        if (copiedDesign) {
+            try {
+                const counts = await request("/unread");
+                if (!Array.isArray(counts.threads)) throw new Error("Compteurs invalides.");
+                unreadByThread = new Map(counts.threads.map(t => [String(t.id), Number(t.unread) || 0]));
+                $("count").textContent = String(counts.total) + " non lu(s)";
+                $("unread-label").textContent = "Non lus (" + unreadByThread.size + ")";
+            } catch (error) {
+                if ([401,403,404].includes(error.status)) throw error;
+                unreadByThread.clear(); $("count").textContent = "Compteurs indisponibles";
+            }
+        }
         $("list").replaceChildren();
 
         if (!data.threads.length) {
@@ -215,6 +230,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             );
 
             button.dataset.threadId = String(thread.id);
+            if (copiedDesign) {
+                const head = button.querySelector(".cw-conversation-head");
+                head.querySelector("strong").textContent = peer.name;
+                const time = document.createElement("time");
+                const dt = new Date(thread.updated_at);
+                if (thread.updated_at && !Number.isNaN(dt.getTime())) time.textContent = dt.toLocaleDateString("fr-FR", {day:"numeric",month:"short"});
+                head.append(time);
+                const roleText = document.createElement("small"); roleText.textContent = roleName(peer.role);
+                const sub = document.createElement("span"); sub.className = "cw-conversation-sub";
+                const count = unreadByThread.get(String(thread.id)) || 0;
+                if (count > 0) { const badge = document.createElement("b"); badge.className = "cw-unread"; badge.textContent = count > 99 ? "99+" : String(count); sub.append(badge); }
+                button.querySelector(".cw-conversation-main").append(roleText,sub);
+                button.hidden = unreadOnly && count === 0;
+                button.classList.toggle("active", selected === String(thread.id));
+            }
 
             if (selected === String(thread.id)) {
                 button.setAttribute("aria-current", "true");
@@ -276,6 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         time.textContent = date.toLocaleString("fr-FR", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
                         bubble.append(time);
                     }
+                    if (copiedDesign && !message.own) { const avatar = $("avatar").cloneNode(true); avatar.removeAttribute("id"); avatar.className = "cw-avatar cw-message-avatar"; line.append(avatar); }
                     line.append(bubble); fragment.append(line);
                 } else fragment.append(bubble);
             }
@@ -322,6 +353,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     messageIds.forEach(
                         id => confirmed.add(id)
                     );
+                    if (copiedDesign) await loadThreads();
 
                     window.dispatchEvent(
                         new Event("taskly:apv17-read")
@@ -395,9 +427,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         $("role").textContent = roleName(peer.role);
         $("info").textContent =
-            peer.name + " · Identifiant " + peer.userId;
+            copiedDesign ? peer.name : peer.name + " · Identifiant " + peer.userId;
+        if (copiedDesign) { $("info-avatar").textContent = $("avatar").textContent; $("info-role").textContent = roleName(peer.role) + " · Identifiant " + peer.userId; }
 
         $("list").querySelectorAll("[data-thread-id]").forEach(b => {
+            if (copiedDesign) b.classList.toggle("active", b.dataset.threadId === selected);
             b.setAttribute(
                 "aria-current",
                 String(b.dataset.threadId === selected)
@@ -426,6 +460,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
 
             $("found").replaceChildren();
+            if (copiedDesign) $("found").hidden = false;
 
             if (!result.contacts.length) {
                 $("found").textContent = "Aucun utilisateur trouvé.";
@@ -444,6 +479,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         });
 
                         await loadThreads();
+                        if (copiedDesign) $("found").hidden = true;
 
                         await selectThread(
                             String(result.thread.id), peer
@@ -502,6 +538,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         run(refreshConversation);
     });
 
+    if (copiedDesign) {
+        root.querySelectorAll("[data-cw-filter]").forEach(b => b.addEventListener("click", () => {
+            unreadOnly = b.dataset.cwFilter === "unread";
+            root.querySelectorAll("[data-cw-filter]").forEach(x => x.setAttribute("aria-pressed",String(x === b)));
+            run(loadThreads);
+        }));
+        const picker = $("emoji-picker");
+        for (const emoji of ["🙂","😊","👍","👋","✅","🙏","🔧","📅"]) {
+            const b = document.createElement("button"); b.type = "button"; b.textContent = emoji;
+            b.addEventListener("click", () => { const input = $("message"); if (!input.disabled && input.value.length + emoji.length <= input.maxLength) { input.setRangeText(emoji,input.selectionStart,input.selectionEnd,"end"); input.focus(); } picker.hidden = true; $("emoji-toggle").setAttribute("aria-expanded","false"); }); picker.append(b);
+        }
+        $("emoji-toggle").addEventListener("click", () => { if ($("message").disabled) return; picker.hidden = !picker.hidden; $("emoji-toggle").setAttribute("aria-expanded",String(!picker.hidden)); });
+    }
     // Admin only: the existing three tabs retain their own controller.
     // The V17 tab remains hidden until the authenticated API is available.
     if (adminDesign) {
@@ -512,10 +561,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             function fitPrivate() {
                 if (privatePanel.hidden) return;
                 const top = root.getBoundingClientRect().top;
-                root.style.setProperty("--apv17-height", Math.max(320, window.innerHeight - top - 20) + "px");
+                root.style.setProperty("--apv17-height", Math.max(400, window.innerHeight - top - 20) + "px");
+                if (copiedDesign) $("details-toggle").setAttribute("aria-expanded", String(privatePanel.clientWidth > 980 ? !root.classList.contains("apv17-show-details") : root.classList.contains("apv17-show-details")));
             }
             function closePrivate() {
                 root.open = false;
+                oldPanels.forEach(p => p.removeAttribute("inert"));
                 privatePanel.hidden = true;
                 privatePanel.setAttribute("inert", "");
                 privateTab.setAttribute("aria-selected", "false");
@@ -524,7 +575,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             function openPrivate() {
                 if (privateTab.hidden || disposed) return;
                 oldTabs.forEach(t => { t.setAttribute("aria-selected", "false"); t.tabIndex = -1; });
-                oldPanels.forEach(p => { p.hidden = true; p.setAttribute("inert", ""); });
+                oldPanels.forEach(p => { p.hidden = true; });
                 privatePanel.hidden = false;
                 privatePanel.removeAttribute("inert");
                 privateTab.setAttribute("aria-selected", "true");
@@ -551,10 +602,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Returning to the list hides the conversation, without marking unread messages as read.
                 clearConversation();
                 $("list").querySelectorAll("[aria-current]").forEach(b => b.setAttribute("aria-current", "false"));
+                if (copiedDesign) $("list").querySelectorAll(".active").forEach(b => b.classList.remove("active"));
                 $("query").focus();
             });
             $("details-toggle").addEventListener("click", () => {
-                const visible = root.classList.toggle("apv17-show-details");
+                const toggled = root.classList.toggle("apv17-show-details");
+                const visible = copiedDesign && privatePanel.clientWidth > 980 ? !toggled : toggled;
                 $("details-toggle").setAttribute("aria-expanded", String(visible));
             });
             window.addEventListener("resize", fitPrivate);
