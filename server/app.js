@@ -121,6 +121,7 @@ app.get('/api/internal/expire-sessions', async(req,res)=>{
  catch(e){console.error('Cron session :',e.code||e.message);res.status(503).json({message:'Tâche indisponible.'});}
 });
 app.use('/api/internal', require('./routes/livekitMaintenanceRoutes').creerRouteMaintenanceLiveKit());
+require('./routes/tasklyAdminPrivateMaintenanceV17')(app);
 app.use('/api',verifierCsrf);
 // L'API de connexion admin partage le meme chemin prive aleatoire.
 app.use('/api' + adminEntryPath + '/auth', headersAdminPrive, adminAuthRoutes);
@@ -166,6 +167,12 @@ if (process.env.TASKLY_MAIL_SERVICE_V3_ENABLED === 'true') {
 // TASKLY_ADMIN_MAIL_V10: separate, opt-in, verified administrative mailbox.
 if (process.env.TASKLY_ADMIN_MAIL_V10_ENABLED === 'true') {
   app.use('/api/admin/taskly-mail-v10',require('./routes/tasklyAdminMailboxV10Routes'));
+}
+// ADMIN_PRIVATE_V17P2: independent, opt-in API. No legacy chat or Support routes changed.
+if (process.env.TASKLY_ADMIN_PRIVATE_V17_ENABLED === 'true') {
+  const prive = require('./routes/tasklyAdminPrivateV17Routes');
+  app.use('/api/admin/taskly-private-v17', prive.admin);
+  app.use('/api/taskly-private-v17', prive.user);
 }
 app.use("/api/admin", adminRoutes); // routes liees a l'administration
 app.use("/api/signalements", signalementRoutes); // routes liees aux signalements

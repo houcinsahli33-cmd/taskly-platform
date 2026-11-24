@@ -22,11 +22,21 @@
 <script defer src="/js/api.js"></script><script defer src="/js/auth.js"></script><script defer src="/js/professional-mail-pilot.js?v=10&fix=15"></script><link rel="stylesheet" href="/css/taskly-mail-v3-support.css">
 <link rel="stylesheet" href="/css/taskly-mail-v3-admin-design.css">
 <link rel="stylesheet" href="/css/taskly-mail-admin-validated-v6.css?v=4">
+<link rel="stylesheet" href="/css/professional-mailbox.css?v=104">
 <link rel="stylesheet" href="/css/taskly-mail-fidele-2026.css?v=160">
+<link rel="stylesheet" href="/css/taskly-admin-mail-reuse-v17.css?v=1">
 <script defer src="/js/taskly-mail-v3-support.js"></script>
 <script defer src="/js/taskly-mail-v3-admin-design.js?v=14&fix=15"></script>
 <script defer src="/js/taskly-mail-admin-validated-v6.js?v=4&fix=15"></script>
-<script defer src="/js/taskly-admin-mail-v10.js?v=14&fix=15&ui=16"></script></head><body class="dashboard-page admin-users-page" data-require-role="admin" data-workspace-page="taskly-mail"><main class="admin-layout"><aside class="admin-sidebar" aria-label="Menu d’administration">
+<script defer src="/js/taskly-admin-mail-v10.js?v=14&fix=15&ui=16"></script><link rel="stylesheet" href="/css/taskly-chat-workspace.css?v=11">
+<link rel="stylesheet" href="/css/taskly-admin-private-workspace-v17.css?v=3">
+<script defer src="/js/taskly-admin-private-crypto-v17.js"></script>
+<script defer src="/js/taskly-admin-private-keys-v17.js?v=2"></script>
+<script defer src="/js/taskly-admin-private-vault-v17.js?v=2"></script>
+<script defer src="/js/taskly-admin-private-connector-v17.js?v=2"></script>
+<script defer src="/js/taskly-admin-private-call-proof-v17.js?v=1"></script>
+<script defer src="/js/taskly-admin-private-workspace-v17.js?v=2"></script>
+<script defer src="/js/taskly-admin-private-notifications-v17.js?v=1"></script></head><body class="dashboard-page admin-users-page" data-require-role="admin" data-workspace-page="taskly-mail"><main class="admin-layout"><aside class="admin-sidebar" aria-label="Menu d’administration">
       <svg class="taskly-svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
         <symbol id="nav-home" viewBox="0 0 24 24"><path d="m3 10 9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></symbol>
         <symbol id="nav-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"></path></symbol>
@@ -56,6 +66,131 @@
       </nav>
     </aside><section class="admin-content tmv3-admin-page">
 <div class="tmv3-page-heading"><div class="tmv3-mail-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div><div><h1>Taskly Mail</h1><p>Suivi des demandes, activations et conversations de messagerie professionnelle.</p></div><span class="tmv3-chip">Support V3</span></div>
+<details id="apv17">
+  <summary>Messagerie privée — Administration (pilote V17) <span class="apv17-unread-badge" data-apv17-unread hidden></span></summary>
+
+  <p id="apv17-status" role="status" aria-live="polite">
+    Ouvrez le panneau pour charger vos conversations.
+  </p>
+
+  <div class="apv17-grid chat-workspace">
+
+    <aside class="cw-card cw-list">
+      <h2>Conversations</h2>
+
+      <form id="apv17-search">
+        <input type="search" id="apv17-query"
+          minlength="2" maxlength="100" required
+          placeholder="Nom ou identifiant"
+          aria-label="Rechercher un utilisateur">
+        <button class="btn outline small" type="submit">
+          Rechercher
+        </button>
+      </form>
+
+      <div id="apv17-found"></div>
+      <button id="apv17-reload" type="button"
+        class="btn outline small">Actualiser</button>
+
+      <div id="apv17-list"
+        class="cw-conversations"></div>
+    </aside>
+
+    <section class="cw-card cw-thread">
+      <header class="cw-thread-header">
+        <div class="cw-avatar cw-person-avatar"
+          id="apv17-avatar">—</div>
+
+        <div class="cw-thread-title">
+          <h2 id="apv17-name">Messagerie privée</h2>
+          <p id="apv17-role">Sélectionnez un correspondant</p>
+        </div>
+
+        <div class="cw-thread-actions">
+          <button type="button" class="cw-icon-btn"
+            disabled aria-label="Appel audio non disponible"
+            title="Appels audio à intégrer">
+            <svg class="cw-icon" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <path d="M22 16.9v3a2 2 0 0 1-2.2 2 18 18 0 0 1-8-2.8 18 18 0 0 1-5.6-5.6 18 18 0 0 1-2.8-8A2 2 0 0 1 5.4 3h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 2.1L9 11a14 14 0 0 0 4 4l1.2-1.3a2 2 0 0 1 2.1-.5l3 .5a2 2 0 0 1 2.7 3.2Z"/>
+            </svg>
+          </button>
+
+          <button type="button" class="cw-icon-btn"
+            disabled aria-label="Appel vidéo non disponible"
+            title="Appels vidéo à intégrer">
+            <svg class="cw-icon" viewBox="0 0 24 24"
+              aria-hidden="true">
+              <rect x="3" y="5" width="13" height="14" rx="2"/>
+              <path d="m16 10 5-4v12l-5-4"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="cw-messages" id="apv17-messages"
+        role="log" aria-label="Messages privés">
+        <p class="cw-empty">
+          Choisissez une conversation pour commencer.
+        </p>
+      </div>
+
+      <form id="apv17-compose">
+        <textarea id="apv17-message"
+          maxlength="10000" required disabled
+          aria-label="Message"
+          placeholder="Écrire un message…"></textarea>
+        <button class="btn primary" id="apv17-send"
+          type="submit" disabled>Envoyer</button>
+      </form>
+    </section>
+
+    <aside class="cw-card cw-details">
+      <h2>Informations</h2>
+
+      <div class="cw-detail-block">
+        <p id="apv17-info">Aucun correspondant sélectionné.</p>
+      </div>
+
+      <h2>Sécurité</h2>
+
+      <div class="cw-detail-block">
+        <p>Votre empreinte cryptographique :</p>
+        <code id="apv17-own-fingerprint">—</code>
+
+        <button class="btn outline small" type="button"
+          id="apv17-refresh">Actualiser la conversation</button>
+
+        <form id="apv17-verify">
+          <label for="apv17-fingerprint">
+            Empreinte vérifiée du correspondant
+          </label>
+
+          <input id="apv17-fingerprint"
+            maxlength="64" minlength="64"
+            pattern="[a-fA-F0-9]{64}"
+            autocomplete="off" required disabled>
+
+          <label class="apv17-confirm">
+            <input type="checkbox" id="apv17-confirm"
+              required disabled>
+            J'ai vérifié cette empreinte par un canal indépendant.
+          </label>
+
+          <button class="btn primary small"
+            id="apv17-verify-button"
+            type="submit" disabled>Vérifier l'identité</button>
+        </form>
+      </div>
+
+      <div class="cw-note">
+        Cette messagerie privée est indépendante du Support
+        et des demandes de prestation.
+      </div>
+    </aside>
+
+  </div>
+</details>
 <div class="tmv3-admin-tabs" role="tablist" aria-label="Vues Taskly Mail">
 <button id="tmv3-tab-support" type="button" role="tab" aria-selected="true" aria-controls="tmv3-view-support">Conversations Support</button>
 <button id="tmv3-tab-mailboxes" type="button" role="tab" aria-selected="false" aria-controls="tmv3-view-mailboxes" tabindex="-1">Boîtes &amp; activations</button>
