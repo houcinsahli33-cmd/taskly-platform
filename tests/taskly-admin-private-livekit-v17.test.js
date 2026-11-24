@@ -38,7 +38,7 @@ function claims(token){
     );
 }
 
-test("V17 calls: ringing duration is 180 seconds",()=>{
+test("V17 calls: ringing duration is 45 seconds",()=>{
     const source=fs.readFileSync(
         path.join(root,
             "server/services/tasklyAdminPrivateCallsV17.js"),
@@ -46,11 +46,11 @@ test("V17 calls: ringing duration is 180 seconds",()=>{
     );
 
     assert.match(
-        source,/INTERVAL 3 MINUTE/
+        source,/INTERVAL 45 SECOND/
     );
 
     assert.doesNotMatch(
-        source,/INTERVAL 45 SECOND/
+        source,/INTERVAL 3 MINUTE/
     );
 });
 
@@ -338,7 +338,7 @@ test("V17 call routes: session identity used and extra fields rejected",async()=
     );
 });
 
-test("V17 call routes: state transitions and no token endpoint",async()=>{
+test("V17 call routes: state transitions and media endpoint disabled",async()=>{
     const f=fixture();
 
     await f.invoke(
@@ -369,11 +369,10 @@ test("V17 call routes: state transitions and no token endpoint",async()=>{
         ]
     );
 
-    for(const router of Object.values(f.routers)){
-        for(const route of router.routes.keys()){
-            assert.doesNotMatch(
-                route,/token|jeton/i
-            );
+    for(const role of ["admin","user"]){
+        for(const route of ["POST /threads/:id/calls/:callId/token","POST /threads/:id/calls/:callId/proof","GET /calls/incoming","GET /calls/config"]){
+            const result=await f.invoke(role,route);
+            assert.equal(result.status,404);
         }
     }
 });

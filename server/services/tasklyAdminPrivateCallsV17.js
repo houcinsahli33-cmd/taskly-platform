@@ -69,6 +69,9 @@ function createCallService({
             recipientUserId:Number(row.recipient_user_id),
             kind:row.kind,
             state:row.state,
+            callerProof:row.caller_proof || null,
+            recipientProof:row.recipient_proof || null,
+            remainingMs:Math.max(0,Number(row.remaining_ms)||0),
             createdAt:row.created_at,
             updatedAt:row.updated_at
         };
@@ -113,11 +116,13 @@ function createCallService({
             `SELECT id,
                     CAST(thread_id AS CHAR) AS thread_id,
                     caller_user_id,recipient_user_id,
-                    kind,state,created_at,updated_at
+                    kind,state,created_at,updated_at,
+                    caller_proof,recipient_proof,
+                    TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(3),expires_at) DIV 1000 AS remaining_ms
              FROM taskly_admin_private_calls
              WHERE thread_id=CAST(? AS UNSIGNED)
                AND id=?
-             LIMIT 1`,
+             LIMIT 1 FOR UPDATE`,
             [thread,callId]
         );
 
@@ -192,7 +197,7 @@ function createCallService({
                    UTC_TIMESTAMP(3),
                    DATE_ADD(
                        UTC_TIMESTAMP(3),
-                       INTERVAL 3 MINUTE
+                       INTERVAL 45 SECOND
                    ))`,
                 [callId,thread,user,recipient,kind]
             );
@@ -228,7 +233,9 @@ function createCallService({
                 `SELECT id,
                         CAST(thread_id AS CHAR) AS thread_id,
                         caller_user_id,recipient_user_id,
-                        kind,state,created_at,updated_at
+                        kind,state,created_at,updated_at,
+                    caller_proof,recipient_proof,
+                    TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(3),expires_at) DIV 1000 AS remaining_ms
                  FROM taskly_admin_private_calls
                  WHERE thread_id=CAST(? AS UNSIGNED)
                    AND state IN ('ringing','accepted')
@@ -263,6 +270,10 @@ function createCallService({
                 call,user,action
             );
 
+            if(action==="accept" && (!call.caller_proof || !call.recipient_proof)){
+                throw fail("Confirmation cryptographique incomplete.",409);
+            }
+
             await c.query(
                 `UPDATE taskly_admin_private_calls
                  SET state=?,
@@ -287,7 +298,57 @@ function createCallService({
         });
     }
 
-    return {start,get,current,transition};
+    async function publishProof(uid,role,tid,cid,proof){
+        const user=id(uid),thread=threadId(tid),callId=validateCallId(cid);
+        if(typeof proof!=="string"||!/^[a-f0-9]{64}$/.test(proof))throw fail("Preuve invalide.");
+        return tx(async c=>{
+            await lock(c,user,role,thread);
+            const call=await find(c,thread,callId);
+            if(call.state!=="ringing")throw fail("Appel non disponible.",409);
+            const caller=Number(call.caller_user_id)===user;
+            if(!caller&&Number(call.recipient_user_id)!==user)throw fail("Appel introuvable.",404);
+            const column=caller?"caller_proof":"recipient_proof";
+            if(!caller&&!call.caller_proof)throw fail("Offre non confirmee.",409);
+            if(call[column]&&call[column]!==proof)throw fail("Preuve deja enregistree.",409);
+            await c.query(`UPDATE taskly_admin_private_calls SET ${column}=?
+                WHERE id=? AND thread_id=CAST(? AS UNSIGNED) AND state='ringing' AND (${column} IS NULL OR ${column}=?)`,[proof,callId,thread,proof]);
+            return publicCall(await find(c,thread,callId));
+        });
+    }
+    async function incoming(uid,role){
+        const user=id(uid);
+        if(!["admin","user"].includes(role))throw fail("Role invalide.",403);
+        const own=role==="admin"?"admin_user_id":"member_user_id";
+        const peer=role==="admin"?"member_user_id":"admin_user_id";
+        const selfRole=role==="admin"?"u.role='admin'":"u.role IN ('client','artisan')";
+        const peerRole=role==="admin"?"p.role IN ('client','artisan')":"p.role='admin'";
+        return tx(async c=>{
+            const [rows]=await c.query(`SELECT a.id,CAST(a.thread_id AS CHAR) AS thread_id,
+                a.caller_user_id,a.recipient_user_id,a.kind,a.state,a.created_at,a.updated_at,
+                a.caller_proof,a.recipient_proof,
+                TIMESTAMPDIFF(MICROSECOND,UTC_TIMESTAMP(3),a.expires_at) DIV 1000 AS remaining_ms,
+                p.id AS peer_id,p.role AS peer_role,CONCAT_WS(' ',p.prenom,p.nom) AS peer_name
+                FROM taskly_admin_private_calls a JOIN taskly_admin_private_threads t ON t.id=a.thread_id
+                JOIN users u ON u.id=t.${own} JOIN users p ON p.id=t.${peer}
+                WHERE t.${own}=? AND a.recipient_user_id=? AND a.caller_user_id=p.id
+                AND a.state='ringing' AND a.expires_at>UTC_TIMESTAMP(3) AND a.caller_proof IS NOT NULL
+                AND ${selfRole} AND ${peerRole} AND u.statut_compte='actif' AND p.statut_compte='actif'
+                AND u.email_verified=1 AND p.email_verified=1 ORDER BY a.created_at LIMIT 10`,[user,user]);
+            return {calls:rows.map(row=>({...publicCall(row),peer:{userId:Number(row.peer_id),role:row.peer_role,name:row.peer_name}}))};
+        });
+    }
+    async function mediaToken(uid,role,tid,cid,sessionRole){
+        const user=id(uid),thread=threadId(tid),callId=validateCallId(cid);
+        return tx(async c=>{
+            await lock(c,user,role,thread);
+            const call=await find(c,thread,callId);
+            if(call.state!=="accepted"||!call.caller_proof||!call.recipient_proof||Number(call.remaining_ms)<=0)throw fail("Appel non confirme.",409);
+            const [accounts]=await c.query("SELECT role FROM users WHERE id=? AND statut_compte='actif' AND email_verified=1 LIMIT 1",[user]);
+            if(accounts[0]?.role!==sessionRole)throw fail("Session invalide.",403);
+            return require("./tasklyAdminPrivateLiveKitV17").issueToken({call:publicCall(call),userId:user,role:sessionRole});
+        });
+    }
+    return {start,get,current,transition,publishProof,incoming,mediaToken};
 }
 
 module.exports={

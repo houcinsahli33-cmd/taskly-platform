@@ -17,6 +17,10 @@ const callsOn=(req,res,next)=>
         message:'Appels administratifs indisponibles.'
       });
 
+const mediaOn=(req,res,next)=>
+  process.env.TASKLY_ADMIN_PRIVATE_MEDIA_V17_ENABLED==='true' &&
+  process.env.TASKLY_ADMIN_PRIVATE_CLEANUP_V17_ENABLED==='true'
+    ? next():res.status(404).json({message:'Pilote media indisponible.'});
 const handle=fn=>async(req,res)=>{try{await fn(req,res);}catch(e){res.status(e.status||503).json({message:e.status?e.message:'Messagerie indisponible.'});}};
 admin.get('/contacts',limiter({max:30}),
   handle(async(req,res)=>res.json({
@@ -28,6 +32,21 @@ admin.get('/contacts',limiter({max:30}),
 admin.post('/threads',limiter({max:8}),handle(async(req,res)=>res.status(201).json({thread:await service.open(req.session.utilisateur.id,req.body?.memberUserId)})));
 for(const [router,role] of [[admin,'admin'],[user,'user']]){
   // Administrative calls are isolated from legacy calls.
+  router.get('/calls/config',callsOn,mediaOn,limiter({max:30}),
+    handle(async(req,res)=>res.json({enabled:true,e2eeRequired:true,ringingSeconds:45})));
+  router.get('/calls/incoming',callsOn,mediaOn,limiter({max:120}),
+    handle(async(req,res)=>res.json(await service.calls.incoming(req.session.utilisateur.id,role))));
+  router.post('/threads/:id/calls/:callId/proof',callsOn,mediaOn,limiter({max:20}),
+    handle(async(req,res)=>{
+      const body=req.body;
+      if(!body||Object.keys(body).length!==1||typeof body.proof!=='string')return res.status(400).json({message:'Preuve requise.'});
+      res.json({call:await service.calls.publishProof(req.session.utilisateur.id,role,req.params.id,req.params.callId,body.proof)});
+    }));
+  router.post('/threads/:id/calls/:callId/token',callsOn,mediaOn,limiter({max:12}),
+    handle(async(req,res)=>{
+      if(Object.keys(req.body||{}).length)return res.status(400).json({message:'Requete invalide.'});
+      res.json({...await service.calls.mediaToken(req.session.utilisateur.id,role,req.params.id,req.params.callId,req.session.utilisateur.role),e2eeRequired:true});
+    }));
 
   router.post(
     '/threads/:id/calls',

@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS taskly_admin_private_calls (
     cleanup_stage TINYINT UNSIGNED NOT NULL DEFAULT 0,
     cleanup_next_at DATETIME(3) NULL,
 
+    caller_proof CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+    recipient_proof CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
     PRIMARY KEY (id),
 
     KEY idx_apv17_cleanup (

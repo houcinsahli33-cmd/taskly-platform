@@ -91,7 +91,8 @@
         peer,
         verifiedFingerprint,
         threadId,
-        version = 1
+        version = 1,
+        callId = null
     ) {
         if (!own?.privateKey || !peer) {
             throw new Error("Identites manquantes.");
@@ -155,9 +156,23 @@
 
         try {
             const base = await subtle.importKey(
-                "raw", bits, "HKDF", false, ["deriveKey"]
+                "raw", bits, "HKDF", false, ["deriveKey", "deriveBits"]
             );
 
+            if (callId !== null) {
+                if (typeof callId !== "string" ||
+                    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(callId)) {
+                    throw new Error("Appel invalide.");
+                }
+                const callContext = encoder.encode(JSON.stringify([
+                    "Taskly-APV17-Call-v1", String(threadId), callId, version, participants
+                ]));
+                return await subtle.deriveBits({
+                    name: "HKDF", hash: "SHA-256",
+                    salt: await subtle.digest("SHA-256", callContext),
+                    info: encoder.encode("Taskly-APV17-Media-And-Proof-v1")
+                }, base, 512);
+            }
             return await subtle.deriveKey(
                 {
                     name: "HKDF",

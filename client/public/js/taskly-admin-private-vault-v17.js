@@ -189,7 +189,8 @@
         userId,
         peer,
         threadId,
-        version = 1
+        version = 1,
+        callId = null
     ) {
         const identity = await loadOwn(role, userId);
 
@@ -202,7 +203,7 @@
         }
 
         return keys().derive(
-            identity, peer, trusted, threadId, version
+            identity, peer, trusted, threadId, version, callId
         );
     }
 

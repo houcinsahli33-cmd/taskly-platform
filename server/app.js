@@ -121,6 +121,7 @@ app.get('/api/internal/expire-sessions', async(req,res)=>{
  catch(e){console.error('Cron session :',e.code||e.message);res.status(503).json({message:'Tâche indisponible.'});}
 });
 app.use('/api/internal', require('./routes/livekitMaintenanceRoutes').creerRouteMaintenanceLiveKit());
+require('./routes/tasklyAdminPrivateMaintenanceV17')(app);
 app.use('/api',verifierCsrf);
 // L'API de connexion admin partage le meme chemin prive aleatoire.
 app.use('/api' + adminEntryPath + '/auth', headersAdminPrive, adminAuthRoutes);

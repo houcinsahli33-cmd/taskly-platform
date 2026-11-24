@@ -104,7 +104,7 @@
             );
         }
 
-        async function conversationKey() {
+        async function conversationKey(callId = null) {
             const remote = await directory();
             const local = await vault.getIdentity(role, userId);
 
@@ -117,7 +117,7 @@
             }
 
             return vault.deriveForConversation(
-                role, userId, remote.peer, thread, 1
+                role, userId, remote.peer, thread, 1, callId
             );
         }
 
@@ -184,6 +184,13 @@
         return Object.freeze({
             prepare,
             verifyPeer,
+            async callMaterial(callId) {
+                if (typeof callId !== "string" ||
+                    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(callId)) {
+                    throw new Error("Appel invalide.");
+                }
+                return conversationKey(callId);
+            },
             send,
             read
         });
