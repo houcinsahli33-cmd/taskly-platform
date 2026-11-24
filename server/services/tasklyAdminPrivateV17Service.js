@@ -309,7 +309,14 @@ function createService({db}){
     });
   }
 
+  const calls = require(
+    './tasklyAdminPrivateCallsV17'
+  ).createCallService({
+    tx,check,id,threadId
+  });
+
   return {
+    calls,
     unread,markRead,
     contacts,open,list,read,send,
     publishPublicKey,getPublicKeys

@@ -9,6 +9,14 @@ const on=(req,res,next)=>process.env.TASKLY_ADMIN_PRIVATE_V17_ENABLED==='true' ?
 admin.use(on,verifierConnexion,verifierAdmin,(req,res,next)=>req.tasklyAdminContext===true&&req.session?.adminVerified===true?next():res.status(403).json({message:'Session admin requise.'}));
 user.use(on,verifierConnexion,(req,res,next)=>req.tasklyAdminContext!==true&&['client','artisan'].includes(req.session?.utilisateur?.role)?next():res.status(403).json({message:'Acces refuse.'}));
 for(const router of [admin,user])router.use((req,res,next)=>{res.set('Cache-Control','private, no-store');next();});
+const callsOn=(req,res,next)=>
+  process.env.TASKLY_ADMIN_PRIVATE_V17_ENABLED==='true' &&
+  process.env.TASKLY_ADMIN_PRIVATE_CALLS_V17_ENABLED==='true'
+    ? next()
+    : res.status(404).json({
+        message:'Appels administratifs indisponibles.'
+      });
+
 const handle=fn=>async(req,res)=>{try{await fn(req,res);}catch(e){res.status(e.status||503).json({message:e.status?e.message:'Messagerie indisponible.'});}};
 admin.get('/contacts',limiter({max:30}),
   handle(async(req,res)=>res.json({
@@ -19,6 +27,90 @@ admin.get('/contacts',limiter({max:30}),
 
 admin.post('/threads',limiter({max:8}),handle(async(req,res)=>res.status(201).json({thread:await service.open(req.session.utilisateur.id,req.body?.memberUserId)})));
 for(const [router,role] of [[admin,'admin'],[user,'user']]){
+  // Administrative calls are isolated from legacy calls.
+
+  router.post(
+    '/threads/:id/calls',
+    callsOn,
+    limiter({max:10}),
+    handle(async(req,res)=>{
+      const body=req.body;
+
+      if(!body ||
+         Object.keys(body).length!==1 ||
+         !['audio','video'].includes(body.kind)){
+        return res.status(400).json({
+          message:'Type appel invalide.'
+        });
+      }
+
+      res.status(201).json({
+        call:await service.calls.start(
+          req.session.utilisateur.id,
+          role,
+          req.params.id,
+          body.kind
+        )
+      });
+    })
+  );
+
+  router.get(
+    '/threads/:id/calls/current',
+    callsOn,
+    limiter({max:60}),
+    handle(async(req,res)=>{
+      res.json(await service.calls.current(
+        req.session.utilisateur.id,
+        role,
+        req.params.id
+      ));
+    })
+  );
+
+  router.get(
+    '/threads/:id/calls/:callId',
+    callsOn,
+    limiter({max:60}),
+    handle(async(req,res)=>{
+      res.json({
+        call:await service.calls.get(
+          req.session.utilisateur.id,
+          role,
+          req.params.id,
+          req.params.callId
+        )
+      });
+    })
+  );
+
+  router.post(
+    '/threads/:id/calls/:callId/action',
+    callsOn,
+    limiter({max:20}),
+    handle(async(req,res)=>{
+      const body=req.body;
+
+      if(!body ||
+         Object.keys(body).length!==1 ||
+         !['accept','reject','cancel','end'].includes(body.action)){
+        return res.status(400).json({
+          message:'Action invalide.'
+        });
+      }
+
+      res.json({
+        call:await service.calls.transition(
+          req.session.utilisateur.id,
+          role,
+          req.params.id,
+          req.params.callId,
+          body.action
+        )
+      });
+    })
+  );
+
   router.get('/unread',limiter({max:60}),
     handle(async(req,res)=>res.json(
       await service.unread(
